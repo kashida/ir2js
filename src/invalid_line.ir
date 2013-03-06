@@ -1,0 +1,11 @@
+either blank line or comment only line.
+::InvalidLine
+  @input+\InputLine\$
+
+:+str\s\
+  => @input.line
+
+:output\LineOutput\
+  out := new LineOutput(@input)
+  out.append_line(@input.trim)
+  => out

@@ -1,0 +1,10 @@
+::CodeSection <SectionHead
+  @lines&\A.<InputLine>\ []
+  %()
+
+abstract method.
+:close
+ pkg\!Package\?
+
+:set_type
+  types\TypeSet\$

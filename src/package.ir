@@ -1,0 +1,35 @@
+package name.
+
+::Package
+  @pkg\s\$
+
+:empty\b\
+  => !@pkg
+
+:fullname\s\
+  id\s\$
+  => (@pkg ? @pkg + '.' : '') + id
+
+:replace
+  str\s\$
+  pkg := @pkg
+  // up package reference if there are two or more "%"s.
+  while (~/^\%\%/.test(str))
+    if (pkg)
+      // drop the last element.
+      pkg = pkg.replace(~/\.?[^\.]+$/, '')
+    str = str.substr(1)
+  // replace "%" with the current package name.
+  => str.replace(~/^\%(\:\:|\.)/, ##)
+    _\A.<s>\$
+    connector\s\$
+    => pkg ? pkg + connector: ''
+
+:replace_str
+  str\s\$
+  => str.replace(~/\%+(\:\:|\.)/g, ##)
+    ref\s\$
+    => @.replace(ref)
+
+:toString\s\
+  => @pkg

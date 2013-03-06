@@ -1,0 +1,9 @@
+input code section.
+::InputSection
+  @header+\InputLine\$
+  @lines+\A.<InputLine>\ []
+  @code&\CodeSection\
+
+:push
+  line\s\$
+  @lines.push(line)

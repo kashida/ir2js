@@ -1,0 +1,8 @@
+#{ output as is
+:~
+  abc();
+  a := b;
+#=
+  abc();
+  a := b;
+#}

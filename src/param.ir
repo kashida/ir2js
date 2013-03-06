@@ -1,0 +1,100 @@
+function parameter and / or member declarion.
+::Param
+  @context\!Context\$
+  @is_ctor\b\$
+  @is_member+\b\ false
+  @name+\s\ ''
+  @type+\TypeDecoder\
+  @access_type+\s\ ''
+  @init_type+\s\ ''
+  @success+\b\ false
+  @value_line+\LineParser\
+  @has_init\b\ false
+
+:parse
+  line\CodeLine\$
+  re := ~/^\s*([\@]?)(\w+)([+*&]?)\\([^\\]+)\\([\$\?]?)\s*(.*)/.exec(line.str)
+  @success = !!re
+  if (!@success)
+    =>
+
+  // split the re results into fields.
+  @is_member = !!re[1]
+  @name = re[2]
+  @access_type = re[3]
+  @type = new TypeDecoder(@context.pkg, re[4])
+  @init_type = re[5]
+  init_value := re[6]
+
+  if (@is_member && @init_type != '$' && !init_value)
+    // member with no initializer or optional param init.
+    init_value = 'null'
+
+  // sanity check the param consistency.
+  if (!@is_ctor && @is_member)
+    warn(line.input, 'member param for non-constructor method')
+  if (!@is_member && @init_type != '?' && init_value)
+    warn(line.input, 'initial value for non-member non-optional')
+
+  // set up the init value which later gets picked up by CodeLine.
+  @value_line = new LineParser(new InputLine(#))
+    init_value || ''
+    line.input.row_index
+  @has_init = !!init_value
+
+:@param_name\s\
+  => (@has_init ? 'opt_' : '') + @name
+
+:output_decl\s\
+  => @type && @init_type != '' ? ([#].join('')) : ''
+    '@param {'
+    @type.output()
+    @init_type == '?' ? '=' : ''
+    '} '
+    @param_name()
+
+:output_param\s\
+  => @init_type == '' ? '' : @param_name()
+
+variable initialization output as first statements of function body.
+:output_init
+  out\LineOutput\$
+  pname := @param_name()
+
+  if (@is_member)
+    out.append_prefix_line('/**')
+    if (@type)
+      out.append_prefix_line(' * @type {' + @type.output() + '}')
+    out.append_prefix_line(' * @private')
+    out.append_prefix_line(' */')
+  if (@is_member || @has_init)
+    out.line_prefix = [#].join('')
+      @is_member ? 'this._' : 'var '
+      @name
+      ' = '
+    if (@init_type != '')
+      out.line_prefix += pname
+      if (@has_init)
+        out.line_prefix += ' === undefined ? ('
+        out.line_suffix = ') : ' + pname
+    else
+      out.line_prefix += '('
+      out.line_suffix = ')'
+  else
+    out.remove_empty_lines()
+
+:output_argtype\s\
+  type := @type.output()
+  re := ~/^\!?([a-zA-Z][\w\.]*)$/.exec(type)
+  if (!re)
+    => 'null'
+  type_name := re[1]
+  => ARG_TYPE_REPLACE_MAP[type_name] || type_name
+
+:argtype\?s\
+  type := @type.output()
+  re := ~/^\!?([a-zA-Z][\w\.]*)$/.exec(type)
+  if (!re)
+    => null
+  type_name := re[1]
+  => ARG_TYPE_REPLACE_MAP[type_name] || type_name

@@ -1,0 +1,104 @@
+#{[abc.def] self reference
+:
+  a(%.call_function())
+#=
+  a(abc.def.call_function());
+#}
+
+#{[abc.def] up reference
+:
+  a(%%.call_function(), %%%.call_function())
+#=
+  a(abc.call_function(), call_function());
+#}
+
+#{[abc.def] class
+::classname <%.path.parent
+  @param\s\? %.value
+  %(param)
+
+:methodname\\
+  param\n\$
+  a(%.something)
+  %(param, 0)
+#=
+/**
+ * @param {string=} opt_param
+ * @constructor
+ * @extends {abc.def.path.parent}
+ */
+abc.def.classname = function(opt_param){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param = opt_param === undefined ? (abc.def.value) : opt_param;
+  abc.def.path.parent.call(this, param);
+};
+goog.inherits(abc.def.classname, abc.def.path.parent);
+abc.def.classname.prototype._classname = 'abc.def.classname';
+
+/** @param {number} param */
+abc.def.classname.prototype.methodname = function(param){
+var _self = this;
+  a(abc.def.something);
+  goog.base(this, 'methodname', param, 0);
+};
+{
+  cls:[
+    {
+      name:abc.def.classname
+      args:[
+        String
+      ]
+      parent:abc.def.path.parent
+      methods:[
+        {
+          name:methodname
+          args:[
+            Number
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+#}
+
+#{[abc.def] type
+:=func ##\%.some.type\
+  p0\%.another.type\$
+  p1\A.<%%.yet.another.type>\? %%%%.global.value
+#=
+/**
+ * @param {abc.def.another.type} p0
+ * @param {Array.<abc.yet.another.type>=} opt_p1
+ * @return {abc.def.some.type}
+ */
+abc.def.func = function(p0, opt_p1){
+  var p1 = opt_p1 === undefined ? (global.value) : opt_p1;
+};
+{
+  fns:[
+    {
+      name:abc.def.func
+      args:[
+        abc.def.another.type
+        null
+      ]
+    }
+  ]
+}
+
+#}
+
+#{[abc.def] package ref member lookup
+:
+  %.varname
+  %.varname
+#=
+  abc.def.varname;
+  abc.def.varname;
+#}

@@ -1,0 +1,113 @@
+::SectionGenerator
+  @scope\FileScope\$
+
+:generate\CodeSection\
+  header\InputLine\$
+  lines\A.<InputLine>\$
+  section := null
+  header_line := header.line.substr(1)
+  if (![#].some(##))
+    '_create_ctor'
+    '_create_method'
+    '_create_accessor'
+    '_create_global_function'
+    '_create_multi_line_str'
+    '_create_global_code'
+    '_create_native_code'
+    '_create_anonymous_scope'
+    //'_create_interface'
+    '_create_typedef'
+    //'_create_var' -- any type including array, map, number, etc.
+    //'_create_class_context' -- for adding methods to e.g. Object.
+    --
+    method\s\$
+    section = @[method].call(@, header_line, header)
+    if (section)
+      section.lines = lines
+      section.close(@scope.context.pkg)
+      section.set_type(@scope.types)
+    => !!section
+    --
+    warn(header, 'line starts with colon and not a code section marker')
+  => section
+
+:@create_ctor\Constructor\
+  line\s\$
+  re := ~/^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line)
+  if (!re)
+    => null
+
+  // need to keep this in a member var too.
+  @scope.context.cls = new Class()
+  ctor := new Constructor(@scope.copy_context_with_name(re[1]), re[3])
+  @scope.context.cls.ctor = ctor
+  @scope.types.add_ctor(ctor.name())
+  if (re[3])
+    @scope.types.set_parent(ctor.parent_name())
+  => ctor
+
+:@create_method\Method\
+  line\s\$
+  header\InputLine\$
+  re := ~/^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
+  if (!re)
+    => null
+
+  // we should have seen a ctor.
+  if (!@scope.context.cls)
+    warn(header, 'method marker w/o class')
+    => null
+  => new Method(#)
+      @scope.copy_context(@scope.context.cls.method_name((re[2] ? '_' : '') + re[3]))
+      re[5]
+      !!re[1]
+
+:@create_accessor\OverridingAccessor\
+  line\s\$
+  header\InputLine\$
+  re := ~/^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
+  if (!re)
+    => null
+
+  // we should have seen a ctor.
+  if (!@scope.context.cls)
+    warn(header, 'accessor marker w/o class')
+    => null
+  type := re[1]
+  name := re[2]
+  ret_type := re[4]
+  ctx := @scope.copy_context(@scope.context.cls.method_name(name))
+  => new OverridingAccessor(ctx, name, ret_type, type == '+')
+
+:@create_global_function\GlobalFunction\
+  line\s\$
+  re := ~/^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line)
+  if (!re)
+    => null
+  => new GlobalFunction(@scope.copy_context_with_name(re[1]), re[3])
+
+:@create_multi_line_str\MultiLineStr\
+  line\s\$
+  re := ~/^'\s*(\w+)$/.exec(line)
+  if (!re)
+    => null
+  => new MultiLineStr(@scope.copy_context_with_name(re[1]))
+
+:@create_global_code\GlobalCode\
+  line\s\$
+  => line == '' ? new GlobalCode() : null
+
+:@create_native_code\NativeCode\
+  line\s\$
+  => line == '~' ? new NativeCode() : null
+
+:@create_anonymous_scope\AnonymousScope\
+  line\s\$
+  => line == '{' ? new AnonymousScope() : null
+
+:@create_typedef\Typedef\
+  line\s\$
+  re := ~/^\!\s*(\w+)$/.exec(line)
+  if (!re)
+    => null
+  => new Typedef(@scope.copy_context_with_name(re[1]))

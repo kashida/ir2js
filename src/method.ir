@@ -1,0 +1,25 @@
+::Method <Callable
+  context\!Context\$
+  return_type\s\$
+  @overriding\b\$
+  context.is_method = true
+  %(context, return_type)
+
+:output\A\
+  decls := []
+  if (@overriding)
+    decls = ['@override']
+  else
+    decls = @.params.output_decls()
+  if (/^_/.test(@.context.name.id))
+    decls.push('@private')
+  => [#]
+    doc_lines(decls)
+    @.output_func()
+    'var _self = this;'
+    @.output_body('};')
+
+:<set_type
+  types\s\$
+  @.params.set_argtypes(#)
+    types.get_current_ctor().add_method(@.context.name.id)

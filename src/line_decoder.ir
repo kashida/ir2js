@@ -1,0 +1,108 @@
+decodes blockc markers.
+::LineDecoder
+  @context\!Context\$
+  @line\A.<s>\$
+  @input_line\InputLine\$
+  @fragments\!InterlacedLine\ new InterlacedLine
+  // whether this line is a statement that comes with a block, like 'if'.
+  @is_block_statement+\b\ false
+
+:transform
+  blocks\A.<IndentBlock>\$
+  // make the fragments and blocks.
+  // pass a shallow copy of the blocks.
+  @split_to_fragments(blocks.slice(0))
+  @transform_blocks()
+
+:@split_to_fragments
+  blocks\A.<IndentBlock>\$
+  // go thru all the matches one by one.
+  @line.forEach(##)
+    seg\s\$
+    i\n\$
+    if (~/^['"\/]/.test(seg))
+      // string, regular expression, and comment don't need to be split.
+      @fragments.add_str(seg)
+    else
+      @split_segment(seg, i == @line.length - 1, blocks)
+
+:@split_segment
+  seg\s\$
+  last_seg\b\$
+  blocks\A.<IndentBlock>\$
+  re := ~/(\{#\}|\[#\]|\(#\)|##?)/g
+  last_index := 0
+  match := re.exec(seg)
+  sub_context := null
+  while (match)
+    @fragments.add_str(seg.substring(last_index, match.index))
+    block := {marker: match[1]}
+    if (blocks.length == 0)
+      warn(@input_line, 'ran out of blocks: ' + seg)
+    else
+      b := blocks.shift()
+      if (block.marker == '##')
+        if (!sub_context)
+          sub_context = @context.clone()
+          sub_context.is_file_scope = false
+        block.params = new ParamSet(sub_context, b)
+      block.block = b
+
+    @fragments.add_block(block)
+    last_index = re.lastIndex
+    match = re.exec(seg)
+
+  last_fragment := seg.substr(last_index)
+  if (last_fragment)
+    @fragments.add_str(last_fragment)
+    if (last_seg && blocks.length > 0)
+      @fragments.add_block({marker: '#', block: blocks.shift()})
+      @is_block_statement = true
+  assert(!last_seg || blocks.length == 0, @input_line, 'too many blocks for the #s')
+
+:@transform_blocks
+  @fragments.blocks.forEach(##)
+    b\O\$
+    // transform the blocks.
+    if (b.params)
+      b.params.transform()
+    if (b.block)
+      b.block.transform({#}[b.marker])
+        '##': BlockType.BLOCK
+        '#': BlockType.BLOCK
+        '{#}': BlockType.OBJ
+        '[#]': BlockType.ARRAY
+        '(#)': BlockType.PARAMS
+
+:first_line\A.<s>\
+  // there should be at least one fragment.
+  => @compose_line(@fragments.first_fragment(), 0)
+
+:each_fragment
+  cb\function(IndentBlock, A.<s>)\$
+  @fragments.each(##)
+    b\O\$
+    f\s\$
+    i\n\$
+    cb(b.block, @compose_line(#))
+      b.block.end_str() + f
+      i + 1
+
+:@compose_line
+  prefix\s\$
+  i\n\$
+  if (@fragments.blocks.length <= i)
+    => [prefix]
+
+  b := @fragments.blocks[i]
+  bstart := [b.block.start_str()]
+  if (!b.params)
+    => [prefix + bstart]
+  if (b.params.is_decl_empty())
+    => [prefix + 'function(' + b.params.output_params() + ')' + bstart]
+
+  // we don't try to merge the prefix into first line.
+  => arr_flatten([#])
+    prefix
+    doc_lines(b.params.output_decls())
+    'function(' + b.params.output_params() + ')' + bstart

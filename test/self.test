@@ -1,0 +1,35 @@
+#{: self reference
+@abc
+@def()
+@.ghi
+@.jkl()
+#=
+_self._abc;
+_self._def();
+_self.ghi;
+_self.jkl();
+#}
+
+#{: multi-self reference
+@abc(@def())
+ghi jkl @mno()
+#=
+_self._abc(_self._def());
+ghi jkl _self._mno();
+#}
+
+#{: non-member / non-method self reference
+@[abc].bind(@)
+#=
+_self[abc].bind(_self);
+#}
+
+#{: accessor invocation -- no more xform
+aa.bb = def + ghi
+abc(def.ghi)
+abc(def.ghi.jkl())
+#=
+aa.bb = def + ghi;
+abc(def.ghi);
+abc(def.ghi.jkl());
+#}

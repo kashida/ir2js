@@ -1,0 +1,5 @@
+::AnonymousScope <Runnable
+  %()
+
+:output\A\
+  => ['(function() {', @.output_body('})();')]

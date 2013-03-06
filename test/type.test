@@ -1,0 +1,366 @@
+#{: anonymous function param types
+abc(##)
+  \boolean\
+  param0\string\$
+  param1\number\$
+  body0
+  body1
+#=
+abc(
+/**
+ * @param {string} param0
+ * @param {number} param1
+ * @return {boolean}
+ */
+function(param0, param1){
+  body0;
+  body1;
+});
+#}
+
+#{: type annotation short hand
+abc(##)
+  \b\
+  param0\s\$
+  param1\n\$
+  param2\O.<s,s>\?
+  param3\F\?
+  body0
+  body1
+#=
+abc(
+/**
+ * @param {string} param0
+ * @param {number} param1
+ * @param {Object.<string,string>=} param2
+ * @param {Function=} param3
+ * @return {boolean}
+ */
+function(param0, param1, param2, param3){
+  body0;
+  body1;
+});
+#}
+
+#{ global function param types
+:=func_name ##
+  param0\string\$
+  param1\number\? value
+  param2\!Test\?
+  a := param0
+  c := param1
+#=
+/**
+ * @param {string} param0
+ * @param {number=} opt_param1
+ * @param {!Test=} param2
+ */
+var func_name = function(param0, opt_param1, param2){
+  var param1 = opt_param1 === undefined ? (value) : opt_param1;
+  var a = param0;
+  var c = param1;
+};
+{
+  fns:[
+    {
+      name:func_name
+      args:[
+        String
+        Number
+        Test
+      ]
+    }
+  ]
+}
+
+#}
+
+#{[some.package] special arg types
+:=func_name ##
+  p0\string\$
+  p1\!%.SomeClass\?
+  p2\!number\?
+  p3\RegExp\?
+#=
+/**
+ * @param {string} p0
+ * @param {!some.package.SomeClass=} p1
+ * @param {!number=} p2
+ * @param {RegExp=} p3
+ */
+some.package.func_name = function(p0, p1, p2, p3){
+};
+{
+  fns:[
+    {
+      name:some.package.func_name
+      args:[
+        String
+        some.package.SomeClass
+        Number
+        null
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ method param types
+::classname
+
+:methodname1
+  param_a\string\$
+  param_b\Test\? init_val
+
+:@methodname2
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+};
+classname.prototype._classname = 'classname';
+
+/**
+ * @param {string} param_a
+ * @param {Test=} opt_param_b
+ */
+classname.prototype.methodname1 = function(param_a, opt_param_b){
+var _self = this;
+  var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
+};
+
+/** @private */
+classname.prototype._methodname2 = function(){
+var _self = this;
+};
+{
+  cls:[
+    {
+      name:classname
+      methods:[
+        {
+          name:methodname1
+          args:[
+            String
+            Test
+          ]
+        }
+        {
+          name:_methodname2
+        }
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ class
+::classname
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+};
+classname.prototype._classname = 'classname';
+{
+  cls:[
+    {
+      name:classname
+    }
+  ]
+}
+
+#}
+
+#{ class ctor param types
+::classname
+  param_a\string\$
+  param_b\number\? init_val
+#=
+/**
+ * @param {string} param_a
+ * @param {number=} opt_param_b
+ * @constructor
+ */
+var classname = function(param_a, opt_param_b){
+var _self = this;
+  var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
+};
+classname.prototype._classname = 'classname';
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+        Number
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ member types
+::classname
+  @param_a\string\ init_val
+  @param_b\number\
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param_a = (init_val);
+  /**
+   * @type {number}
+   * @private
+   */
+  this._param_b = (null);
+};
+classname.prototype._classname = 'classname';
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+        Number
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ types with param init members 
+::classname
+  @param_a\string\$
+  @param_b\number\? init_val
+#=
+/**
+ * @param {string} param_a
+ * @param {number=} opt_param_b
+ * @constructor
+ */
+var classname = function(param_a, opt_param_b){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param_a = param_a;
+  /**
+   * @type {number}
+   * @private
+   */
+  this._param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
+};
+classname.prototype._classname = 'classname';
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+        Number
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ read only accessor
+::classname
+  @param+\string\
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param = (null);
+};
+classname.prototype._classname = 'classname';
+/** @type {string} */
+classname.prototype.param;
+classname.prototype.__defineGetter__('param', function() {
+return this._param;
+});
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ read / write
+::classname
+  @param0&\string\
+  @param1&\Test\
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param0 = (null);
+  /**
+   * @type {Test}
+   * @private
+   */
+  this._param1 = (null);
+};
+classname.prototype._classname = 'classname';
+/** @type {string} */
+classname.prototype.param0;
+classname.prototype.__defineGetter__('param0', function() {
+return this._param0;
+});
+classname.prototype.__defineSetter__('param0', function(value) {
+this._param0 = value;
+});
+/** @type {Test} */
+classname.prototype.param1;
+classname.prototype.__defineGetter__('param1', function() {
+return this._param1;
+});
+classname.prototype.__defineSetter__('param1', function(value) {
+this._param1 = value;
+});
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+        Test
+      ]
+    }
+  ]
+}
+
+#}
+
+#{: cast
+a = \bool\(b)
+a = \funciton(number):string\(b)
+#=
+a = /** @type {bool} */(b);
+a = /** @type {funciton(number):string} */(b);
+#}

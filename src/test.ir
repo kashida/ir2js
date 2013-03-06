@@ -1,0 +1,185 @@
+test input file format.
+
+#{ test name
+... file scope ir code ...
+#=
+... corresponding js code ...
+#}
+
+or
+
+#{[package/name] test name
+... file scope ir body ...
+#=
+... corresponding js function code ...
+#}
+
+or
+
+#{: test name
+... code scope ir body ...
+#=
+... corresponding js function code ...
+#}
+
+::TestFile
+  @filename\s\$
+  @state\s\ ''
+  @name\s\ ''
+  @input\A.<s>\ []
+  @output\A.<s>\ []
+  @tests\A.<%.Test>\ []
+  @is_global\b\ false
+  @failed+\b\ false
+
+:parse
+  input\s\$
+  input.split('\n').forEach(##)
+    line\s\$
+    index\n\$
+    @check_line(line, index)
+
+  if (@state != '')
+    console.warn(@filename + ': last test did not terminate?')
+
+:@check_line
+  line\s\$
+  index\n\$
+  input_re := ~/^#\{((:)|\[(.*)\])?\s*(.*\S)\s*$/.exec(line)
+  if (input_re)
+    @state = 'i'
+    @name = input_re[4]
+    @package_name = input_re[3] || ''
+    @is_global = !input_re[2]
+    =>
+    
+  if (~/^#\=\s*$/.test(line))
+    @state = 'o'
+    =>
+
+  if (~/^#\}\s*$/.test(line))
+    @state = ''
+    @tests.push(new Test(@name, @package_name, @input, @output, @is_global))
+    @name = ''
+    @input = []
+    @output = []
+    @is_global = true
+    =>
+
+  switch (@state)
+    case 'i':
+    @input.push(line)
+    break
+
+    case 'o':
+    @output.push(line)
+    break
+
+    case '':
+    if (!~/^\s*$/.test(line))
+      console.warn(@filename + ' (line ' + index + ')? ' + line)
+    break
+
+:run
+  @tests.forEach(##)
+    test\%.Test\$
+    test.run()
+    if (test.failed)
+      //@failed = true
+      process.exit(-1)
+
+::Test
+  @name\s\$
+  @package_name\s\$
+  @input\A.<s>\$
+  @output\A.<s>\$
+  @is_global\b\$
+  @failed+\b\ false
+
+:run
+  c := @is_global ? (#) : (#)
+    new FileScope(@package_name)
+    --
+    new CodeScope(new Context(new Package('')))
+
+  actual_output := ''
+  try
+    c.process_lines(@input)
+    actual_output = c.output()
+    if (@is_global)
+      type_str := obj_stringify(c.types.extract(), true)
+      if (type_str)
+        actual_output = actual_output.concat(type_str.split('\n'))
+  |catch (e)
+    console.log('EXCEPTION: ' + @name)
+    @warn_with_indent('input', @input)
+    @warn_with_indent('expected', @output)
+    throw e
+
+  if (actual_output.join('\n') == @output.join('\n'))
+    console.log('PASS: ' + @name)
+  else
+    console.log('FAIL: ' + @name)
+    @warn_with_indent('input', @input)
+    @warn_with_indent('expected', @output)
+    @warn_with_indent('actual', actual_output)
+    @warn_with_indent('diff', @make_diff(@output, actual_output))
+    @failed = true
+
+:@warn_with_indent
+  title\s\$
+  content\A.<s>\$
+  console.log('  ' + title + ':')
+  warn_rec := ##
+    lines\s|A\$
+    level\n\$
+    if (typeof(lines) == 'string')
+      console.log(whitespaces(4 + level * 2) + lines)
+    else
+      if (lines instanceof LineOutput)
+        lines = lines.output
+      lines.forEach(##)
+        line\s|A\$
+        warn_rec(line, level + 1)
+  warn_rec(content, 0)
+
+:@make_diff
+  lines0\A.<s>\$
+  lines1\A.<s>\$
+  result := []
+  lines0.forEach(##)
+    line0\s\$
+    i\n\$
+    if (lines1.length <= i)
+      result.push('- ' + line0)
+      =>
+    line1 := lines1[i]
+    if (line0 != line1)
+      result.push('< ' + line0)
+      result.push(' >' + line1)
+    else
+      result.push('= ' + line0)
+  lines1.slice(lines0.length).forEach(##)
+    line\s\$
+    result.push('+ ' + line)
+  => result
+
+
+////////////////////////////////////////////////////////////
+starting point.
+
+argv[0] is node binary and argv[1] is the executing js.
+:
+  process.argv.slice(2).forEach(##)
+    infile\s\$
+    i\n\$
+    contents := _fs.readFileSync(infile, 'utf-8')
+    console.log(' [ ' + infile + ' ] ')
+
+    test := new TestFile(infile)
+    test.parse(contents)
+    test.run()
+    if (test.failed)
+      process.exit(-1)
+
+  process.exit(0)

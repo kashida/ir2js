@@ -1,0 +1,259 @@
+#{ private
+::classname
+  @param\s\
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param = (null);
+};
+classname.prototype._classname = 'classname';
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ getter and setter
+::classname
+  @param0+\s\
+  @param1*\s\
+  @param2&\s\
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param0 = (null);
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param1 = (null);
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param2 = (null);
+};
+classname.prototype._classname = 'classname';
+/** @type {string} */
+classname.prototype.param0;
+classname.prototype.__defineGetter__('param0', function() {
+return this._param0;
+});
+/** @type {string} */
+classname.prototype.param1;
+classname.prototype.__defineSetter__('param1', function(value) {
+this._param1 = value;
+});
+/** @type {string} */
+classname.prototype.param2;
+classname.prototype.__defineGetter__('param2', function() {
+return this._param2;
+});
+classname.prototype.__defineSetter__('param2', function(value) {
+this._param2 = value;
+});
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+        String
+        String
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ overriding getter and setter
+::classname
+  @member\s\
+:+member
+  => ''
+:*member
+  do_something_with(value)
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._member = (null);
+};
+classname.prototype._classname = 'classname';
+/** @type {string} */
+classname.prototype.member;
+classname.prototype.__defineGetter__('member', function() {
+var _self = this;
+  return '';
+});
+classname.prototype.__defineSetter__('member', function(value) {
+var _self = this;
+  do_something_with(value);
+});
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ overriding getter only
+::classname
+  @member*\s\
+:+member
+  do_something()
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._member = (null);
+};
+classname.prototype._classname = 'classname';
+/** @type {string} */
+classname.prototype.member;
+classname.prototype.__defineSetter__('member', function(value) {
+this._member = value;
+});
+classname.prototype.__defineGetter__('member', function() {
+var _self = this;
+  do_something();
+});
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ accessor w/o member
+::classname
+:+member\s\
+  => ''
+:*member
+  v\s\$
+  do_something_with(v)
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+};
+classname.prototype._classname = 'classname';
+/** @type {string} */
+classname.prototype.member;
+classname.prototype.__defineGetter__('member', function() {
+var _self = this;
+  return '';
+});
+classname.prototype.__defineSetter__('member', function(v) {
+var _self = this;
+  do_something_with(v);
+});
+{
+  cls:[
+    {
+      name:classname
+    }
+  ]
+}
+
+#}
+
+#{: no method change
+@method()
+obj.method()
+'2d' @pixels()
+'2d @pixels()'
+#=
+_self._method();
+obj.method();
+'2d' _self._pixels();
+'2d @pixels()';
+#}
+
+#{: self ref
+a = @member
+@member = a
+#=
+a = _self._member;
+_self._member = a;
+#}
+
+#{: other ref -- no more xform
+a = obj.member
+obj.member = a
+#=
+a = obj.member;
+obj.member = a;
+#}
+
+#{: equality should not become set_member
+obj.member == a
+#=
+obj.member == a;
+#}
+
+#{: direct member access -- no more special.
+obj.member = a
+obj._member = a
+#=
+obj.member = a;
+obj._member = a;
+#}
+
+#{: no conversion in string
+'a.b'
+#=
+'a.b';
+#}
+
+#{: no repeated application of transform with a block
+str.length
+  =>
+str.length
+  =>
+#=
+str.length{
+  return ;
+}
+str.length{
+  return ;
+}
+#}

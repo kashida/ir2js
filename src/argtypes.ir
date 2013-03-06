@@ -1,0 +1,18 @@
+:=create_argtypes ##
+  basedir\s\$
+  files\A.<s>\$
+  output := []
+  files.forEach(##)
+    file\s\$
+    tk := JSON.parse(_fs.readFileSync(file.replace(/\.js/, '.tk'), 'utf-8'))
+    tk['cls'].forEach(##)
+      cls\*\$
+      output.push(cls.name + '._argtypes = [' + cls['args'].join(', ') + '];')
+      cls.methods.forEach(##)
+        method\*\$
+        output.push(cls.name + '.prototype.' + method.name + '._argtypes = [' +
+        |method['args'].join(', ') + '];')
+    tk['fns'].forEach(##)
+      fn\*\$
+      output.push(fn.name + '._argtypes = [' + fn['args'].join(', ') + '];')
+  _fs.writeFileSync(basedir + '/_argtypes.js', output.join('\n'), 'utf-8')

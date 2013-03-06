@@ -1,0 +1,24 @@
+::Runnable <CodeSection
+  %()
+
+:<close
+  pkg\!Package\?
+  c := new CodeScope(new Context(pkg || new Package('')), @)
+  c.process(@.lines)
+
+:<transform
+  assert(#)
+    @.num_blocks() == 1
+    @.lines[0]
+    'Runnable has ' + @.num_blocks() + ' blocks'
+  @.block(0).transform()
+
+:output_body\A.<LineOutput>\
+  block_suffix\s\$
+  lines := []
+  body_lines := @.last_block().output()
+  if (block_suffix)
+    body_lines.suffix = block_suffix
+  if (!body_lines.is_empty)
+    lines.push(body_lines)
+  => lines

@@ -1,0 +1,33 @@
+#{ one line typedef
+:!short_name
+  boolean|Array.<string>
+#=
+/** @typedef {boolean|Array.<string>} */
+var short_name;
+#}
+
+#{[abc.def] with package name
+:!short_name
+  boolean|Array.<string>|%.MyClass
+#=
+/** @typedef {boolean|Array.<string>|abc.def.MyClass} */
+abc.def.short_name;
+#}
+
+#{ type name short-hands
+:!short_name
+  b|A.<s>
+#=
+/** @typedef {boolean|Array.<string>} */
+var short_name;
+#}
+
+#{ mluti-line
+:!short_name
+  boolean|
+  A.<s>|
+  number
+#=
+/** @typedef {boolean|Array.<string>|number} */
+var short_name;
+#}

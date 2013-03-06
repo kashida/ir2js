@@ -1,0 +1,36 @@
+::BlockOutput
+  @lines\A.<LineOutput>\ []
+  // the suffix, if assigned a value, will be inserted after the last nonblank line.
+  @suffix&\s?\
+
+:append_line
+  line\LineOutput\$
+  @lines.push(line)
+
+:+is_empty\b\
+  => !@lines.length && !@suffix
+
+inserts the suffix line to the array passed as a parameter.
+:@add_suffix
+  lines\A.<s>\$
+  // find the last non-blank line.
+  last_nonblank := -1
+  lines.forEach(##)
+    line\s\$
+    i\n\$
+    if (line)
+      last_nonblank = i
+  if (last_nonblank < 0)
+    lines.unshift(@suffix)
+  else
+    lines.splice(last_nonblank + 1, 0, @suffix)
+
+:+output\A.<s>\
+  lines := @lines.reduce(##, [])
+    prev\A.<s>\$
+    line\LineOutput\$
+    i\n\$
+    => prev.concat(line.output)
+  if (@suffix)
+    @add_suffix(lines)
+  => lines

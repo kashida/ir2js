@@ -1,0 +1,14 @@
+::GlobalFunction <Callable
+  context\!Context\$
+  return_type\s\$
+  %(context, return_type)
+
+:output\A\
+  => [#]
+    doc_lines(@.params.output_decls())
+    @.output_func()
+    @.output_body('};')
+
+:<set_type
+  types\s\$
+  @.params.set_argtypes(types.add_funct(@.context.name.ref()))

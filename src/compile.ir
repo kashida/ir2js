@@ -1,0 +1,47 @@
+:=transform_to_js ##
+  basedir\s\$
+  infile\s\$
+  outfile\s\$
+  pkg_name := infile.replace(~/[\/\\][^\/\\]*$/, '')
+  if (basedir && pkg_name.indexOf(basedir) == 0)
+    // strip off the basedir.
+    pkg_name = pkg_name.substr(basedir.length)
+  pkg_name = pkg_name.replace(~/[\/\\]/, '.')
+
+  c := new FileScope(pkg_name)
+  input := _fs.readFileSync(infile, 'utf-8')
+  c.process_lines(input.split('\n'))
+  _fs.writeFileSync(#)
+    outfile
+    c.provides().join('\n') + '\n\n' + c.output().join('\n')
+    'utf-8'
+  _fs.writeFileSync(#)
+    outfile.replace(/\.js$/, '.tk')
+    JSON.stringify(c.types.extract())
+    'utf-8'
+
+:=need_compile  ##
+  src\s\$
+  dst\s\$
+  if (!_path.existsSync(dst))
+    => true
+  src_stat := _fs.statSync(src)
+  dst_stat := _fs.statSync(dst)
+  => src_stat.mtime.getTime() > dst_stat.mtime.getTime()
+
+:=compile_files ##
+  basedir\s\$
+  inout_filenames\A.<s>\$
+  i := 0
+  while(i < inout_filenames.length)
+    infile := inout_filenames[i++]
+    outfile := inout_filenames[i++]
+
+    logstr := '[' + infile + ' => ' + outfile + '] '
+    if (!_path.existsSync(infile))
+      console.error(logstr + 'input not found')
+    else if (need_compile(infile, outfile))
+      console.log(logstr + 'compiling')
+      transform_to_js(basedir, infile, outfile)
+    else
+      console.log(logstr + 'skipping')

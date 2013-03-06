@@ -1,0 +1,33 @@
+::MultiLineStr <CodeSection
+  @context+\!Context\$
+  @indent\n\ -1
+  %()
+
+same number of strings as @.lines.
+:strlines\A.<s>\
+  result := []
+  @.lines.forEach(##)
+    line\InputLine\$
+    if (line.is_blank)
+      // empty line is fine.
+      result.push('')
+      =>
+    if (@indent < 0)
+      @indent = line.indent
+    else if (line.indent < @indent)
+      warn(line, 'inconsistent indentation')
+      =>
+    result.push(line.line.substr(@indent))
+  => result
+
+:output\A.<LineOutput>\
+  lines := @.strlines()
+  => [#]
+    @context.name.decl() + ' ='
+    lines.map(##)
+      line\s\$
+      i\n\$
+      out := new LineOutput(@.lines[i])
+      out.indent = @indent
+      out.append_line("'" + line + "\\n'" + (i == lines.length - 1 ? ';' : ' +'))
+      => out

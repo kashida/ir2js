@@ -1,0 +1,141 @@
+#{ class method
+::classname
+
+:methodname
+:@methodname_2
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+};
+classname.prototype._classname = 'classname';
+
+classname.prototype.methodname = function(){
+var _self = this;
+};
+/** @private */
+classname.prototype._methodname_2 = function(){
+var _self = this;
+};
+{
+  cls:[
+    {
+      name:classname
+      methods:[
+        {
+          name:methodname
+        }
+        {
+          name:_methodname_2
+        }
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ parameters
+::classname
+
+:methodname\s\
+  param_a\s\$
+  param_b\s\? init_val
+#=
+/** @constructor */
+var classname = function(){
+var _self = this;
+};
+classname.prototype._classname = 'classname';
+
+/**
+ * @param {string} param_a
+ * @param {string=} opt_param_b
+ * @return {string}
+ */
+classname.prototype.methodname = function(param_a, opt_param_b){
+var _self = this;
+  var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
+};
+{
+  cls:[
+    {
+      name:classname
+      methods:[
+        {
+          name:methodname
+          args:[
+            String
+            String
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ overriding method
+::Classname <Parent
+  %()
+
+:<methodname\n\
+  param_a\s\$
+  param_b\s\? init_val
+
+:<@methodname2\n\
+  param_a\s\$
+  param_b\s\? init_val
+#=
+/**
+ * @constructor
+ * @extends {Parent}
+ */
+var Classname = function(){
+var _self = this;
+  Parent.call(this);
+};
+goog.inherits(Classname, Parent);
+Classname.prototype._classname = 'Classname';
+
+/** @override */
+Classname.prototype.methodname = function(param_a, opt_param_b){
+var _self = this;
+  var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
+};
+
+/**
+ * @override
+ * @private
+ */
+Classname.prototype._methodname2 = function(param_a, opt_param_b){
+var _self = this;
+  var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
+};
+{
+  cls:[
+    {
+      name:Classname
+      parent:Parent
+      methods:[
+        {
+          name:methodname
+          args:[
+            String
+            String
+          ]
+        }
+        {
+          name:_methodname2
+          args:[
+            String
+            String
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+#}

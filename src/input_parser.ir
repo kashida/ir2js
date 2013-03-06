@@ -1,0 +1,57 @@
+parses input lines into lines and sections.
+'line' is used only during processing.
+::InputParser
+  @input\A.<s>\$
+  @result\A.<GlobalComment|InputSection>\ []
+  @buffer\A.<InputLine>\ []
+  @last_valid_index\n?\
+
+:parse\A.<GlobalComment|InputSection>\
+  @input.forEach(##)
+    line\s\$
+    index\n\$
+    line = line.trimRight()
+    @process_line(new InputLine(line, index))
+  @flush_buffer()
+  => @result
+
+:@process_line
+  line\InputLine\$
+  if (line.starts_with_colon)
+    // should be a start of a code section.
+    @flush_buffer()
+    @last_valid_index = 0
+  else if (line.is_indented)
+    // indented line -- continues either comment or code section.
+    if (@last_valid_index !== null)
+      @last_valid_index = @buffer.length
+  else if (!line.is_blank)
+    // global comment.
+    if (@last_valid_index !== null)
+      // close the code section.
+      @flush_buffer()
+  // anything else is invalid line -- continues either comment or code section.
+  @buffer.push(line)
+
+:@flush_buffer
+  while (@buffer.length)
+    next_buffer := []
+    if (@last_valid_index !== null)
+      section := new InputSection(@buffer[0])
+      @result.push(section)
+      @buffer.forEach(##)
+        line\InputLine\$
+        index\n\$
+        if (index == 0)
+          // we already passed the header line to section.
+          =>
+        else if (index <= @last_valid_index)
+          section.push(line)
+        else
+          // end of section invaild lines.
+          next_buffer.push(line)
+    else
+      // we'll give buffer a new array so no need to clone for global comment.
+      @result.push(new GlobalComment(@buffer))
+    @last_valid_index = null
+    @buffer = next_buffer

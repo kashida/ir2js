@@ -1,0 +1,47 @@
+pseudo member is a place holder for class members that don't exist, but there are accessors for.
+::Member
+  @name\s\$
+  @type\TypeDecoder\$
+  @access_type\s\$
+  @is_pseudo\b\$
+  @declared\b\ false
+
+returns an array with member declaration if it hasn't been output already.
+returns an empty array otherwise.
+:output_decl\A.<s>\
+  class_name\!Name\$
+  if (@declared)
+    => []
+  @declared = true
+  // TODO: this member decl always allows setting a value to it even when only the
+  // getter is provided.
+  => [#]
+    '/** @type {' + @type.output() + '}' + ' */'
+    class_name.property(@name).decl() + ';'
+
+output a getter or a setter.
+:output_accessor\A\
+  class_name\!Name\$
+  is_getter\b\$
+  body\A\$
+  params\ParamSet\?
+  p := @is_pseudo && params ? params.output_params() : 'value'
+  => [#]
+    is_getter ? (#) : (#)
+      class_name.property('__defineGetter__').decl() + "('" + @name + "', function() {"
+      --
+      class_name.property('__defineSetter__').decl() + "('" + @name + "', function(" + p + ') {'
+    body
+    '});'
+
+produce necessary accessor methods based on the access type specification.
+:output_accessors\A\
+  class_name\!Name\$
+  if (!@access_type || @is_pseudo)
+    => []
+  result := [@.output_decl(class_name)]
+  if ('+&'.indexOf(@access_type) >= 0)
+    result.push(@.output_accessor(class_name, true, ['return this._' + @name + ';']))
+  if ('*&'.indexOf(@access_type) >= 0)
+    result.push(@.output_accessor(class_name, false, ['this._' + @name + ' = value;']))
+  => result

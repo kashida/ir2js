@@ -1,0 +1,5 @@
+#{: var decl-assign
+a := b
+#=
+var a = b;
+#}

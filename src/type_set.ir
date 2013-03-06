@@ -1,0 +1,37 @@
+::TypeSet
+  @ctor\CallableType\
+  @classes\A\ []
+  @functs\A\ []
+
+:add_ctor\CallableType\
+  name\s\$
+  @ctor = new CallableType(name)
+  @classes.push(@ctor)
+  => @ctor
+
+:add_funct\CallableType\
+  name\s\$
+  fn := new CallableType(name)
+  @functs.push(fn)
+  => fn
+
+:get_current_ctor\CallableType\
+  => @ctor
+
+:set_parent
+  parent_name\s\$
+  if (!@ctor)
+    throw 'set parent called w/o ctor.'
+  @ctor.set_parent(parent_name)
+
+:extract\O\
+  obj := {}
+  if (@classes)
+    obj['cls'] = @classes.map(##)
+      cls\TypeSet\$
+      => cls.extract()
+  if (@functs)
+    obj['fns'] = @functs.map(##)
+      fn\CallableType\$
+      => fn.extract()
+  => obj

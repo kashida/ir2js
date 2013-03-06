@@ -1,0 +1,229 @@
+#{: semicolon
+abc def
+#=
+abc def;
+#}
+
+#{: multiline object
+a := {#}
+  x: line1
+  y: line2
+  z: line3
+#=
+var a = {
+  x: line1,
+  y: line2,
+  z: line3
+};
+#}
+
+#{: multiline object 2
+a := {#} + x
+  x: line1
+  y: line2
+  z: line3
+#=
+var a = {
+  x: line1,
+  y: line2,
+  z: line3
+} + x;
+#}
+
+#{: multiline array
+a := [#]
+  line1
+  line2
+  line3
+#=
+var a = [
+  line1,
+  line2,
+  line3
+];
+#}
+
+#{: multiline array 2
+a := [#] + x
+  line1
+  line2
+  line3
+#=
+var a = [
+  line1,
+  line2,
+  line3
+] + x;
+#}
+
+#{: multiline parenthesis
+a := (#)
+  line1
+  line2
+  line3
+#=
+var a = (
+  line1,
+  line2,
+  line3
+);
+#}
+
+#{: multiline parenthesis 2
+a := (#) + x
+  line1
+  line2
+  line3
+#=
+var a = (
+  line1,
+  line2,
+  line3
+) + x;
+#}
+
+#{: block statement
+if (xyz)
+  aaa
+  bbb
+  ccc
+#=
+if (xyz){
+  aaa;
+  bbb;
+  ccc;
+}
+#}
+
+#{: block statement 2
+do # while (xyz)
+  aaa
+  bbb
+  ccc
+#=
+do {
+  aaa;
+  bbb;
+  ccc;
+} while (xyz);
+#}
+
+#{: block statement with comment
+if (test)
+  // comment.
+  method(param)
+#=
+if (test){
+  // comment.
+  method(param);
+}
+#}
+
+#{: if / else
+if (test)
+  aaa
+else
+  bbb
+#=
+if (test){
+  aaa;
+}
+else{
+  bbb;
+}
+#}
+
+#{: multi-level
+if (xyz)
+  aaa
+  a := func(#) + x
+    line1
+    line2
+    line3
+#=
+if (xyz){
+  aaa;
+  var a = func(
+    line1,
+    line2,
+    line3
+  ) + x;
+}
+#}
+
+#{: anon-function
+func(##, this)
+  p0\n\$
+  p1\n\$
+  p2\n\$
+  statement0
+  statement1
+#=
+func(
+/**
+ * @param {number} p0
+ * @param {number} p1
+ * @param {number} p2
+ */
+function(p0, p1, p2){
+  statement0;
+  statement1;
+}, this);
+#}
+
+#{: multi-block line
+a := [#] + {#} + ##
+  arr0
+  arr1
+  --
+  abc: def
+  ghi: jkl
+  --
+  param0\b\$
+  param1\b\$
+  statement0
+  statement1
+#=
+var a = [
+  arr0,
+  arr1
+] + {
+  abc: def,
+  ghi: jkl
+} +
+/**
+ * @param {boolean} param0
+ * @param {boolean} param1
+ */
+function(param0, param1){
+  statement0;
+  statement1;
+};
+#}
+
+#{: hash in a string
+a := '#fff'
+#=
+var a =  '#fff';
+#}
+
+#{: line continuation
+aaa
+|  bbb
+|  ccc
+#=
+aaa
+    bbb
+    ccc;
+#}
+
+#{: line continuation with block
+aaa [#]
+  bbb
+|  ccc
+#=
+aaa [
+  bbb
+]
+    ccc;
+#}

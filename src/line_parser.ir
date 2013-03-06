@@ -1,0 +1,103 @@
+parse a line string.
+::LineParser
+  @input\InputLine\$
+  @str\s\ @input.line
+  @code+\A.<s>\ []
+  @indent+\n\ 0
+  @is_separator+\b\ false
+  @is_continuation+\b\ false
+  @is_valid+\b\ false
+  @tail_comment+\s\ ''
+  @process()
+
+:@process
+  if (~/^\s*$/.test(@str) || ~/^\s*\/\//.test(@str))
+    // blank or comment line. Nothing to be done.
+    =>
+  @is_valid = true
+
+  @code= @code_segments(@check_continuation(@space_stripped_str(@str)))
+  @check_separator()
+
+:@space_stripped_str\s\
+  str\s\$
+  spaces_re := ~/^(\s*)(.*[\S])(\s*)$/.exec(str)
+
+  indentation := spaces_re[1].length
+  if (indentation % INDENTATION_WIDTH == 1)
+    warn(@input, 'wrong number of whitespaces for indentation')
+  @indent = indentation
+
+  if (!/ */.test(spaces_re[1]))
+    warn(@input, 'non-ascii 0x20 space for indentation')
+
+  if (spaces_re[3] != '')
+    warn(@input, 'trailing space')
+
+  => spaces_re[2]
+
+:@check_continuation\s\
+  str\s\$
+  cont_re := ~/^\|(.*)/.exec(str)
+  @is_continuation = !!cont_re
+  => cont_re ? '  ' + cont_re[1] : str
+
+find segments:
+- strings (both single an double quoted).
+- regular expressions ~/.../.
+- end of line comment.
+:@code_segments\A.<s>\
+  str\s\$
+  re := ~/(')|(")|(~\/)|(\/\/)/g
+  result := re.exec(str)
+  if (!result)
+    // all the rest is non-quoted code segment.
+    => [str]
+
+  before := str.substr(0, result.index)
+  match := result[0]
+  rest := str.substr(re.lastIndex)
+  //console.log('--- [' + str + '] ' + re.lastIndex)
+  if (result[1])
+    // single quote string.
+    => [before].concat(@find_end_segment(match, rest, '\''))
+  if (result[2])
+    // double quote string.
+    => [before].concat(@find_end_segment(match, rest, '"'))
+  if (result[3])
+    // regular expression.
+    => [before].concat(@find_end_segment(match, rest, '/'))
+  if (result[4])
+    // end of line comment.
+    before_re := ~/\s*$/.exec(before)
+    @tail_comment = before_re[0] + match + rest
+    => [before.substr(0, before_re.index)]
+  // shouldn't happen.
+  => [str]
+
+:@find_end_segment\A.<s>\
+  // part of the quoted string or re found so far.
+  prefix\s\$ ''
+  // rest of the string fo parse.
+  str\s\$
+  // expected end of sequence.
+  terminator\s\$
+  re := new RegExp('(\\\\.)|(' + terminator + ')', 'g')
+  result := re.exec(str)
+  if (!result)
+    warn(@input, 'unterminated code segment')
+    => [str]
+
+  quoted := prefix + str.substr(0, re.lastIndex)
+  rest := str.substr(re.lastIndex)
+  //console.log('=== [' + prefix + '][' + str + '][' + terminator + '] ' + re.lastIndex)
+  if (result[1])
+    // we need to skip the escaped back slash.
+    => @find_end_segment(quoted, rest, terminator)
+  if (result[2])
+    => [quoted].concat(@code_segments(rest))
+  // shouldn't happen.
+  => [str]
+
+:@check_separator
+  @is_separator = @code.length == 1 && /^--\s*$/.test(@code[0])

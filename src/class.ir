@@ -1,0 +1,34 @@
+::Class
+  @ctor&\Constructor\
+  @members\!O.<s, Member>\ {}
+
+:name\!Name\
+  => @ctor.context.name
+
+:member
+  name\s\$
+  => @members[name]
+
+:set_member
+  name\s\$
+  member\Member\$
+  @members[name] = member
+
+:method_name\!Name\
+  method_name\s\$
+  => @.name().property(method_name)
+
+:add_member\Member\
+  name\s\$
+  type\TypeDecoder\$
+  access_type\s\$
+  is_pseudo\b\? false
+  m := new Member(name, type, access_type, is_pseudo)
+  @members[name] = m
+  => m
+
+:output_accessors\A\
+  class_name := @.name()
+  => Object.keys(@members).map(##)
+    name\s\$
+    => @members[name].output_accessors(class_name)

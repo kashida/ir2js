@@ -1,0 +1,30 @@
+::CallableType
+  @name\s\$
+  @parent\s\ ''
+  @methods\A.<CallableType>\ []
+  @args\A.<s|null>\ []
+
+TODO: use setter.
+:set_parent
+  parent_name\s\$
+  @parent = parent_name
+
+:add_method
+  name\s\$
+  m := new CallableType(name)
+  @methods.push(m)
+  => m
+
+:add_arg
+  arg\s|null\$
+  @args.push(arg)
+
+:extract\O\
+  obj := {name: @name, args: @args}
+  if (@parent)
+    obj['parent'] = @parent
+  if (@methods)
+    obj['methods'] = @methods.map(##)
+      m\CallableType\$
+      => m.extract()
+  => obj

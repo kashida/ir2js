@@ -1,0 +1,83 @@
+TODO: change marker's type to BlockType when it's enum.
+::IndentBlock
+  @line_no+\n\$
+  @indent+\n\$
+  @head\SectionHead\$
+  @lines\A.<SectionLine>\ []
+  @marker\n\ BlockType.BLOCK
+
+:
+  // TODO: enum
+  BlockType := {#}
+    BLOCK: 0
+    OBJ: 1
+    ARRAY: 2
+    PARAMS: 3
+
+  _BLOCK_OPEN := ['{', '{', '[', '(']
+  _LINE_SUFFIX := [';', ',', ',', ',']
+  _END_SUFFIX := [';', '', '', '']
+  _BLOCK_CLOSE := ['}', '}', ']', ')']
+
+:add
+  line\SectionLine\$
+  @lines.push(line)
+
+:last_line
+  => @lines[@lines.length - 1]
+
+:each_line
+  cb\function(SectionLine, n)\$
+  ctxt\O\$
+  @lines.forEach(cb, ctxt)
+
+:head
+  => @head
+
+TODO: change marker's type to BlockType when it's enum.
+:transform
+  marker\n\?
+  if (marker !== undefined)
+    @marker = marker
+  @lines.forEach(##)
+    line\SectionLine\$
+    if (!(line instanceof InvalidLine))
+      line.transform()
+
+:start_str\s\
+  // string to open the block.
+  => _BLOCK_OPEN[@marker]
+
+:end_str\s\
+  => _BLOCK_CLOSE[@marker]
+
+:output\BlockOutput\
+  // find the last valid line.
+  last_index := -1
+  @lines.forEach(##)
+    line\SectionLine\$
+    i\n\$
+    if (!(line instanceof InvalidLine) && !line.param)
+      last_index = i
+  assert(#)
+    last_index >= 0 || @marker == BlockType.BLOCK
+    @lines.length ? @lines[0].input : UnknownInputLine
+    'block with no valid lines: ' + @
+
+  out := new BlockOutput()
+  accum_suffix := ''
+  @lines.forEach(##)
+    line\SectionLine\$
+    i\n\$
+    out_line := line.output()
+    if (!line.is_end)
+      accum_suffix += out_line.line_suffix
+      out_line.line_suffix = ''
+    else
+      line_terminator := i == last_index ? _END_SUFFIX[@marker] : _LINE_SUFFIX[@marker]
+      out_line.line_suffix = accum_suffix + out_line.line_suffix
+      if (!line.is_block_statement)
+        out_line.line_suffix += line_terminator
+      accum_suffix = ''
+    out.append_line(out_line)
+  => out

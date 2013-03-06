@@ -1,0 +1,84 @@
+#{: comment
+// should not be modified.
+#=
+// should not be modified.
+#}
+
+#{: comment looks like decl-assign
+// a := b
+#=
+// a := b
+#}
+
+#{ global comment
+abc
+  def
+:
+  statement1
+  statement2
+ghi
+#=
+/*
+abc
+  def
+*/
+  statement1;
+  statement2;
+/*
+ghi
+*/
+#}
+
+#{ blank lines in global
+abc
+
+def
+
+:
+  statement
+
+ghi
+#=
+/*
+abc
+
+def
+*/
+
+  statement;
+
+/*
+ghi
+*/
+#}
+
+#{ two blank lines
+abc
+
+
+def
+
+
+:
+  statement
+
+
+ghi
+#=
+/*
+abc
+*/
+
+
+/*
+def
+*/
+
+
+  statement;
+
+
+/*
+ghi
+*/
+#}

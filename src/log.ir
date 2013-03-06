@@ -1,0 +1,12 @@
+:=warn ##
+  line\InputLine\$
+  msg\s\? '*warning*'
+  console.warn(msg + ' (line ' + line.line_no + '): ' + line.line)
+
+:=assert ##
+  check\*\$
+  line\InputLine\? UnknownInputLine
+  msg\s\? '*assertion*'
+  console.assert(#)
+    check
+    msg + (line ? ' (line ' + line.line_no + '): ' + line.line : '')

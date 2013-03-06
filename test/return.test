@@ -1,0 +1,8 @@
+#{: short for return
+=>
+=> value
+#=
+return ;
+return value;
+#}
+

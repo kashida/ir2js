@@ -1,0 +1,91 @@
+#{ inheritance
+::classname <parent
+  @param_a\s\$
+  @param_b\s\? init_val
+  do_something()
+  %(param_b, something_else())
+#=
+/**
+ * @param {string} param_a
+ * @param {string=} opt_param_b
+ * @constructor
+ * @extends {parent}
+ */
+var classname = function(param_a, opt_param_b){
+var _self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param_a = param_a;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
+  do_something();
+  parent.call(this, param_b, something_else());
+};
+goog.inherits(classname, parent);
+classname.prototype._classname = 'classname';
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        String
+        String
+      ]
+      parent:parent
+    }
+  ]
+}
+
+#}
+
+#{ method call parent
+::classname <parent
+  do_something()
+  %(something_else())
+
+:method
+  param\s\$
+  do_something()
+  %(param, '')
+#=
+/**
+ * @constructor
+ * @extends {parent}
+ */
+var classname = function(){
+var _self = this;
+  do_something();
+  parent.call(this, something_else());
+};
+goog.inherits(classname, parent);
+classname.prototype._classname = 'classname';
+
+/** @param {string} param */
+classname.prototype.method = function(param){
+var _self = this;
+  do_something();
+  goog.base(this, 'method', param, '');
+};
+{
+  cls:[
+    {
+      name:classname
+      parent:parent
+      methods:[
+        {
+          name:method
+          args:[
+            String
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+#}

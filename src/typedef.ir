@@ -1,0 +1,12 @@
+::Typedef <MultiLineStr
+  context\!Context\$
+  %(context)
+
+:output\A.<LineOutput>\
+  decoder := new TypeDecoder(@.context.pkg, @.strlines().join(''))
+  out := new LineOutput(@.lines[0])
+  out.indent = 0
+  out.append_lines([#])
+    doc_lines(['@typedef {' + decoder.output() + '}'])
+    @.context.name.decl() + ';'
+  => [out]

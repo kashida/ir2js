@@ -1,0 +1,102 @@
+:
+  INDENTATION_WIDTH := 2
+
+::CodeLine <SectionHead
+  @context\!Context\$
+  @input+\InputLine\$
+  @parser\LineParser\? new LineParser(input)
+  @is_end&\b\ true
+  @param&\Param|b\
+  @decoder\LineDecoder\
+  %()
+
+:+str\s\
+  => @input.line
+
+:+indent\n\
+  => @parser.indent
+
+:+is_continuation\b\
+  => @parser.is_continuation
+
+:+is_block_statement\b\
+  => @decoder.is_block_statement
+
+:transform
+  p := (@param && @param !== true && @param.value_line) || @parser
+  code := p.code.map(##)
+    seg\s\$
+    => @transform_segment(seg)
+  @decoder = new LineDecoder(@context, code, @input)
+  @decoder.transform(@.blocks)
+
+:@transform_segment\s\
+  seg\s\$
+  if (!seg)
+    => ''
+  first_char := seg.charAt(0)
+  if ('\'"'.indexOf(first_char) >= 0)
+    // return string as is.
+    => seg
+  if (first_char == '~')
+    // regular expression. just strip the first character.
+    => seg.substr(1)
+
+  segment := seg
+  assign_re := ~/^(.*\w)\s*:=\s*([^\=].*)$/.exec(segment)
+  if (assign_re)
+    // def-assign.
+    segment = 'var ' + assign_re[1] + ' = ' + assign_re[2]
+
+  // self method or member reference.
+  segment = segment.replace(~/@([a-zA-Z]\w*)/g, ##)
+    _\s\$
+    name\s\$
+    => '_self._' + name
+
+  // otherwise @ is simply converted to self.
+  segment = segment.replace(~/@/g, '_self')
+
+  // relative package reference.
+  segment = @context.pkg.replace_str(segment)
+
+  // type cast. we shouldn't be looking at strings at this point, so we can
+  // safely convert all backslash pairs.
+  segment = segment.replace(~/\\([^\\]+)\\/g, ##)
+    _\s\$
+    type\s\$
+    t := new TypeDecoder(@context.pkg, type)
+    => '/** @type {' + t.output() + '} */'
+
+  // parent call.
+  segment = segment.replace(~/\%\((\s*\))?/g, ##)
+    match\s\$
+    end\s\$
+    end_str := end ? ')' : ', '
+    if (@context.is_ctor)
+      => @context.cls.ctor.parent_name() + '.call(this' + end_str
+    else if (@context.is_method)
+      => "goog.base(this, '" + @context.name.id + "'" + end_str
+    else
+      warn(@input, 'parent call appeared in non-ctor / non-method.')
+      => match
+  
+  // => -> return.
+  segment = segment.replace(~/=>\s*/g, 'return ')
+  => segment
+
+:output\LineOutput\
+  out := new LineOutput(@input)
+  if (@param === true)
+    => out
+
+  out.append_lines(@decoder.first_line())
+  @decoder.each_fragment(##)
+    block\IndentBlock\$
+    tail_code\A.<s>\$
+    out.append_block(block.output())
+    out.append_lines(tail_code)
+  if (@param)
+    @param.output_init(out)
+  out.tail_comment = @parser.tail_comment
+  => out

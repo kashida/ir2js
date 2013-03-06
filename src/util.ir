@@ -1,0 +1,77 @@
+:=arr_flatten ##
+  lines\s|A\$
+  if (typeof(lines) == 'string')
+    => [lines]
+  if (lines instanceof LineOutput || lines instanceof BlockOutput)
+    lines = lines.output
+  console.assert(#)
+    lines instanceof Array
+    'input to arr_flatten should be a string or an array'
+  => lines.reduce(##, [])
+    arr\A\$
+    line\s|A\$
+    => arr.concat(arr_flatten(line))
+
+:=check ##
+  obj\O\$
+  console.log(_util.inspect(obj, false, null))
+
+:=whitespaces ##\s\
+  num\n\$
+  s := ''
+  i := 0
+  for (; i < num; i++)
+    s += ' '
+  => s
+
+:=obj_stringify ##\s\
+  obj\O\$
+  compact\b\?
+  name\s\?
+  level\n\? 0
+  start_str := whitespaces(level * 2)
+  if (name)
+    start_str += name + ':'
+
+  if (obj instanceof Array)
+    children := obj.map(##).filter(##)
+      c\O\$
+      => obj_stringify(c, compact, undefined, level + 1)
+      --
+      c\s\$
+      => !!c
+    if (children.length)
+      => start_str + '[\n' + children.join('') + whitespaces(level * 2) + ']\n'
+    else
+      => compact ? '' : start_str + '[]\n'
+  else if (obj instanceof Object)
+    keys := []
+    key := null
+    for (key in obj)
+      keys.push(key)
+    children := keys.map(##).filter(##)
+      k\s\$
+      => obj_stringify(obj[k], compact, k, level + 1)
+      --
+      c\s\$
+      => !!c
+    if (children.length)
+      => start_str + '{\n' + children.join('') + whitespaces(level * 2) + '}\n'
+    else
+      => compact ? '' : start_str + '{}\n'
+  else
+    => start_str + obj + '\n'
+
+:=doc_lines ##
+  annotations\A.<s>\$
+  alist := arr_flatten(annotations)
+  if (alist.length == 0)
+    => []
+  if (alist.length == 1)
+    => ['/** ' + alist[0] + ' */']
+  =>[#]
+    '/**'
+    alist.map(##)
+      annotation\s\$
+      => ' * ' + annotation
+    ' */'

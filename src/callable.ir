@@ -1,0 +1,26 @@
+::Callable <Runnable
+  @context+\!Context\$
+  @return_type+\s\$
+  @params&\ParamSet\
+  %()
+
+:name\s\
+  => @context.name.ref()
+
+:<close
+  pkg\!Package\?
+  c := new CodeScope(@context, @)
+  c.process(@.lines)
+
+:<transform
+  assert(#)
+    @.num_blocks() == 1
+    @.lines[0]
+    'callable takes 1 block -- found ' + @.num_blocks()
+  @params = new ParamSet(@context, @.block(0))
+  @params.transform()
+  @params.set_return_type(@return_type)
+  @.block(0).transform()
+
+:output_func\s\
+  => @context.name.decl() + ' = function(' + @params.output_params() + '){'

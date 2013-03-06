@@ -1,0 +1,27 @@
+::OverridingAccessor <Callable
+  context\!Context\$
+  @name\s\$
+  return_type\s\$
+  @is_getter\b\$
+  context.is_method = true
+  %(context, return_type)
+
+:output\A\
+  member := @.context.cls.member(@name)
+  // TODO: error if there is member and we have param or return type specified to the
+  // accessor.
+  // TODO: error if there is no member, but there are both getter and setter, and their param
+  // and return type do not match. also error if the setter takes more than one param.
+  if (!member)
+    // accessor with no corresponding member. use the given param and return types.
+    member = @.context.cls.add_member(#)
+      @name
+      new TypeDecoder(@.context.pkg, @.return_type)
+      '&'
+      true
+  class_name := @.context.cls.name()
+  => [#]
+    member.output_decl(class_name)
+    member.output_accessor(class_name, @is_getter, [#], @.params)
+      'var _self = this;'
+      @.output_body('')

@@ -1,0 +1,10 @@
+::SeparatorLine
+  @input+\InputLine\$
+  parser\LineParser\$
+  @indent+\n\ parser.indent
+
+:is_continuation
+  => false
+
+:output\A.<LineOutput>\
+  => []

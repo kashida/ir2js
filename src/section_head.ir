@@ -1,0 +1,19 @@
+::SectionHead
+  @blocks+\A.<IndentBlock>}\ []
+
+:add_block
+  block\IndentBlock\$
+  @blocks.push(block)
+
+:num_blocks\number\
+  => @blocks.length
+
+:block\IndentBlock\
+  index\number\$
+  => @blocks[index]
+
+:last_block\IndentBlock\
+  => @blocks[@blocks.length - 1]
+
+do all the work necessary to produce code output.
+:transform

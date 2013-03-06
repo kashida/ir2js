@@ -1,0 +1,17 @@
+name in file scope.
+::Name
+  @pkg+\!Package\$
+  @id+\s\$
+
+:decl\s\
+  => (@pkg.empty() ? 'var ' : '') + @pkg.fullname(@id)
+
+:ref\s\
+  => @pkg.fullname(@id)
+
+:property\!Name\
+  id\s\$
+  => new Name(new Package(@.ref() + '.prototype'), id)
+
+:oString\s\
+  => '[' + @pkg + ':' + @id + ']'

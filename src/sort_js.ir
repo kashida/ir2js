@@ -1,0 +1,105 @@
+::StringSet
+  @list\A.<s>\ []
+  @map\O.<s, b>\ {}
+
+:toString\s\
+  => @list.join('|')
+
+:list\A.<s>\
+  => @list
+
+:size\n\
+  => @list.length
+
+:has\b\
+  str\s\$
+  => @map[str]
+
+:add_all
+  strs\A.<s>\$
+  strs.forEach(##)
+    str\s\$
+    @.add(str)
+
+:add
+  str\s\$
+  @list.push(str)
+  @map[str] = true
+
+:filter_out\A.<s>\
+  strs\A.<s>\$
+  // remove the strings that are in this set.
+  => strs.filter(##)
+    f\s\$
+    => !@map[f]
+
+
+where -- maps class name to file name where its defined.
+depends -- maps file name to array of required class names.
+::ClassDeps
+  @where\O.<s, s>\ {}
+  @depends\O.<s, A.<s>>\ {}
+
+:toString\s\
+  => Object.keys(\!Object\(@depends)).map(##).join('')
+    k\s\$
+    => '[' + k + ':' + @depends[k].join('|') + ']'
+
+:load
+  files\A.<s>\$
+  files.forEach(##)
+    file\s\$
+    @depends[file] = []
+    tk := JSON.parse(_fs.readFileSync(file.replace(/\.js/, '.tk'), 'utf-8'))
+    tk['cls'].forEach(##)
+      cls\*\$
+      @where[cls.name] = file
+      if (cls['parent'])
+        @depends[file].push(cls['parent'])
+    // remove self dependencies.
+    @depends[file] = @depends[file].filter(##)
+      dep\s\$
+      => @where[dep] != file
+
+:has_deps\b\
+  file\s\$
+  dep := @depends[file]
+  => !!dep && !!dep.length
+
+:remove_deps
+  file\s\$
+  provided_files\StringSet\$
+  @depends[file] = @depends[file].filter(##)
+    dep\s\$
+    i\n\$
+    => !provided_files.has(@where[dep])
+
+
+:=create_sorted_list ##\A.<s>\
+  files\A.<s>\$
+  deps := new ClassDeps()
+  deps.load(files)
+
+  // sort the files in inheritance order.
+  all := files.concat()
+  sorted := new StringSet()
+  while (all.length)
+    found := new StringSet()
+    all.forEach(##)
+      f\s\$
+      // remove the dependencies already satisfied.
+      deps.remove_deps(f, sorted)
+
+      if (!deps.has_deps(f))
+        found.add(f)
+
+    if (!found.size())
+      // no progress. something's wrong.
+      console.log('remaining deps: ' + deps)
+      throw 'circular inheritance dependencies'
+
+    sorted.add_all(found.list())
+
+    // remove all the found files.
+    all = found.filter_out(all)
+  => sorted.list()

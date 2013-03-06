@@ -1,0 +1,48 @@
+#{: string should not interfere
+if ('')
+  xyz
+#=
+if (''){
+  xyz;
+}
+#}
+
+#{: string with escape
+if (!new RegExp('^[\\\'\\"]').test(seg))
+  =>
+#=
+if (!new RegExp('^[\\\'\\"]').test(seg)){
+  return ;
+}
+#}
+
+#{: single and double quotes
+'abc"' + "def'" + '//'
+#=
+'abc"' + "def'" + '//';
+#}
+
+#{: regular expression
+@ ~/\/ '' " [abc] # \// @
+#=
+_self /\/ '' " [abc] # \// _self;
+#}
+
+#{: cast should not happen in re
+~/ \a Array.<Object> \b /
+#=
+/ \a Array.<Object> \b /;
+#}
+
+#{: end of line comment
+abc // some comment @.
+def(##)
+  a\n\$ // param comment.
+#=
+abc; // some comment @.
+def(
+/** @param {number} opt_a */
+function(opt_a){
+  var a = opt_a === undefined ? () : opt_a; // param comment.
+});
+#}

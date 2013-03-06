@@ -1,0 +1,29 @@
+a line of input file. keeps track of the row index.
+::InputLine
+  @line+\s\$
+  @row_index+\n\$
+
+:+line_no\n\
+  => @row_index + 1
+
+the line contents with indentation stripped off.
+trailing whitespace should have been stripped already.
+:+trim\s\
+  re := /\S.*/.exec(@line)
+  => re ? re[0] : ''
+
+:+starts_with_colon\b\
+  => @line.substr(0, 1) == ':'
+
+:+is_blank\b\
+  => ~/^\s*$/.test(@line)
+  
+:+is_indented\b\
+  => ~/^\s/.test(@line)
+
+:+indent\n\
+  re := /\S/.exec(@line)
+  => re ? re.index : 0
+
+:
+  UnknownInputLine := new InputLine('', -1)

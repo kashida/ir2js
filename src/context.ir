@@ -1,0 +1,15 @@
+::Context
+  @pkg&\!Package\$
+  @name&\!Name\ new Name(@pkg, '')
+  @cls&\Class\
+  @is_ctor&\b\ false
+  @is_method&\b\ false
+  @is_file_scope&\b\ false
+
+:clone\!Context\
+  c := new Context(@pkg)
+  p := null
+  for (p in @)
+    if (@.hasOwnProperty(p))
+      c[p] = @[p]
+  => c

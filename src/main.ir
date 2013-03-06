@@ -1,0 +1,63 @@
+:
+  // TODO: @enum
+  ExecModes := {#}
+    COMPILE: 0
+    SORT: 1
+    ARGTYPE: 2
+
+  // TODO: @type {ExecModes}
+  mode := ExecModes.COMPILE
+
+  ReplyModes := {#}
+    MSG: 0
+    STDOUT: 1
+
+  reply := ReplyModes.MSG
+
+
+  // extract only the input / output file names.
+  basedir := ''
+  inout_filenames := process.argv.filter(##)
+    arg\s\$
+    i\n\$
+    // argv[0] is node binary and argv[1] is the executing js.
+    if (i < 2)
+      => false
+    option_re := /--(\w+)(=(.*))?/.exec(arg)
+    if (!option_re)
+      => true
+    opt_name := option_re[1]
+    opt_param := option_re[3]
+    if (opt_name == 'basedir')
+      basedir = opt_param
+    else if (opt_name == 'sort')
+      mode = ExecModes.SORT
+    else if (opt_name == 'argtypes')
+      mode = ExecModes.ARGTYPE
+    else if (opt_name == 'stdout')
+      reply = ReplyModes.STDOUT
+    else
+      throw 'unknown command option: ' + opt_name
+    => false
+
+  switch (mode)
+    case ExecModes.COMPILE:
+    compile_files(basedir, inout_filenames)
+    break
+
+    case ExecModes.SORT:
+    list := create_sorted_list(inout_filenames)
+    switch (reply)
+      case ReplyModes.MSG:
+      process.send(list)
+      break
+
+      case ReplyModes.STDOUT:
+      console.log(list.join(' '))
+      break
+    break
+
+    case ExecModes.ARGTYPE:
+    create_argtypes(basedir, inout_filenames)
+    break
+  process.exit(0)

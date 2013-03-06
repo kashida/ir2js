@@ -1,0 +1,21 @@
+last_valid_line and invalid_lines are only used for line parsing.
+::CodeScope
+  @context\!Context\$
+  @head\SectionHead\? new GlobalCode()
+
+:process_lines
+  lines\A.<s>\$
+  i := 0
+  @.process(lines.map(##))
+    line\s\$
+    => new InputLine(line, i++)
+
+:process
+  input_lines\A.<InputLine>\$
+  new CodeParser(@context, @head).parse(input_lines)
+  @head.transform()
+
+:output
+  => arr_flatten(@head.output()).map(##)
+    line\s\$
+    => line.replace(/\s*$/, '')

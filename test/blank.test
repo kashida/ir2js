@@ -1,0 +1,36 @@
+#{: no blank lines
+#=
+#}
+
+#{: one blank lines
+
+#=
+
+#}
+
+#{: two blank lines
+
+
+#=
+
+
+#}
+
+#{ empty file
+#=
+#}
+
+#{: blank line as a first line of block
+if (something)
+
+  do_something
+
+  do_more
+#=
+if (something){
+
+  do_something;
+
+  do_more;
+}
+#}

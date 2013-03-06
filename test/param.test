@@ -1,0 +1,150 @@
+#{ comment lines
+::classname
+  // first comment.
+  param\b\$
+  // second comment.
+  @member\b\? true
+  // last comment.
+#=
+/**
+ * @param {boolean} param
+ * @param {boolean=} opt_member
+ * @constructor
+ */
+var classname = function(param, opt_member){
+var _self = this;
+  // first comment.
+  // second comment.
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._member = opt_member === undefined ? (true) : opt_member;
+  // last comment.
+};
+classname.prototype._classname = 'classname';
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        Boolean
+        Boolean
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ blank lines
+::classname
+
+  param\b\$
+
+  @member\b\? true
+#=
+/**
+ * @param {boolean} param
+ * @param {boolean=} opt_member
+ * @constructor
+ */
+var classname = function(param, opt_member){
+var _self = this;
+
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._member = opt_member === undefined ? (true) : opt_member;
+};
+classname.prototype._classname = 'classname';
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        Boolean
+        Boolean
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ multi-line init
+::classname
+  param\n\? a + b
+  | + c + d
+  @member\n\? func(#)
+    a
+    b
+    c
+#=
+/**
+ * @param {number=} opt_param
+ * @param {number=} opt_member
+ * @constructor
+ */
+var classname = function(opt_param, opt_member){
+var _self = this;
+  var param = opt_param === undefined ? (a + b
+     + c + d) : opt_param;
+  /**
+   * @type {number}
+   * @private
+   */
+  this._member = opt_member === undefined ? (func(
+    a,
+    b,
+    c
+  )) : opt_member;
+};
+classname.prototype._classname = 'classname';
+{
+  cls:[
+    {
+      name:classname
+      args:[
+        Number
+        Number
+      ]
+    }
+  ]
+}
+
+#}
+
+#{ re with param format in it
+::Class
+:method
+  if (~/^\s*\/\//.test(@str))
+    =>
+#=
+/** @constructor */
+var Class = function(){
+var _self = this;
+};
+Class.prototype._classname = 'Class';
+Class.prototype.method = function(){
+var _self = this;
+  if (/^\s*\/\//.test(_self._str)){
+    return ;
+  }
+};
+{
+  cls:[
+    {
+      name:Class
+      methods:[
+        {
+          name:method
+        }
+      ]
+    }
+  ]
+}
+
+#}

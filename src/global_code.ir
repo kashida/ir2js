@@ -1,0 +1,5 @@
+::GlobalCode <Runnable
+  %()
+
+:output\A\
+  => @.output_body('')

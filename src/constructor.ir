@@ -1,0 +1,39 @@
+::Constructor <Callable
+  context\!Context\$
+  @parent\s?\?
+  context.is_ctor = true
+  %(context, '')
+  @parent = @parent ? @.context.pkg.replace(@parent) : ''
+
+:parent_name\s\
+  => \s\(@parent)
+
+:<transform
+  assert(@.num_blocks() == 1, @.lines[0])
+  @.params = new ParamSet(@.context, @.block(0), true)
+  @.params.transform()
+  @.block(0).transform()
+
+:output\A\
+  decl := @.params.output_decls()
+  decl.push('@constructor')
+  inherit := []
+  if (@parent)
+    decl.push('@extends {' + @parent + '}')
+    inherit.push('goog.inherits(' + @.context.name.ref() + ', ' + @parent + ');')
+  => [#]
+    doc_lines(decl)
+    @.output_func()
+    'var _self = this;'
+    @.output_body('};')
+    inherit
+    [#].join('')
+      @.context.name.property('_classname').decl()
+      " = '"
+      @.context.name.ref()
+      "';"
+    @.context.cls.output_accessors()
+
+:<set_type
+  types\s\$
+  @.params.set_argtypes(types.get_current_ctor())

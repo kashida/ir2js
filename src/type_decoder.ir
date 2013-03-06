@@ -1,0 +1,22 @@
+::TypeDecoder
+  @pkg\!Package\$
+  @type\s\$
+  @decoded\s\''
+  @process()
+
+:@process
+  @decoded = @pkg.replace_str(@type)
+  [#].forEach(##)
+    ['\\bb\\b', 'boolean']
+    ['\\bf\\b', 'function']
+    ['\\bn\\b', 'number']
+    ['\\bs\\b', 'string']
+    ['\\bA\\b', 'Array']
+    ['\\bF\\b', 'Function']
+    ['\\bO\\b', 'Object']
+    --
+    re_type\s\$
+    @decoded = @decoded.replace(new RegExp(re_type[0], 'g'), re_type[1])
+
+:output\s\
+  => @decoded
