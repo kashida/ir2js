@@ -1,0 +1,17 @@
+:TypeLiteral
+\abc\
+
+:!
+\ab\cde\
+
+:Expression
+\boolean\ ( 0 )
+  \boolean\(0)
+
+:ParamLine
+ab\number\$
+@ab+\number\?
+@indent\n\ -1
+
+:!
+@\ab\

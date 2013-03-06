@@ -1,0 +1,75 @@
+:AdditiveExpression
+0 + 1 - // this is comment /|/ abc
+  0 + 1 - abc
+  // this is comment
+
+:Statement
+do
+while   (expr)
+  while (expr)
+for(;;)
+  for (;;)
+for(a := new iter(), b := expr; a.has_more(); a.next())
+  var a
+  var b
+  a = new iter(), b = expr
+  for (; a.has_more(); a.next())
+for ( abc in [0, 1, 2])
+  var abc
+  for (abc in [0, 1, 2])
+for ('a' in obj; true;)
+  'a' in obj
+  for (; true;)
+if (expr)
+else if (expr)
+else
+continue
+break
+=> 0x10
+  return 0x10
+=>
+  return
+switch (expr)
+case   'a'
+  case 'a':
+default
+  default:
+throw expr
+try
+catch ( abc)
+  catch (abc)
+finally
+debugger
+abc()
+if (0 + 0 - /|/ abc)
+  if (0 + 0 - abc)
+if (0 + 0 - /|/ abc) // another comment
+  if (0 + 0 - abc)
+  // another comment
+if (0 + 0 - // this is comment /|/ abc)
+  if (0 + 0 - abc)
+  // this is comment
+if (0 + 0 - // this is comment /|/ abc) // another comment
+  if (0 + 0 - abc)
+  // this is comment
+  // another comment
+
+:!
+do;
+while
+for(a = expr; expr; expr)
+for(var a = expr; expr; expr)
+for ( abc ; expr)
+if ()
+else if
+else (expr)
+continue abc
+break;
+return
+debugger;
+switch()
+case
+default:
+throw
+catch()
+finally { }

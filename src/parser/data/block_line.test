@@ -1,0 +1,8 @@
+:BlockLine
+annotation\s\$
+@indent\n\ -1
+--
+// abcd.
+abc: def
+'abc' : x = 0 + 3
+  'abc': x = 0 + 3

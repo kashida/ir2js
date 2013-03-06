@@ -1,0 +1,50 @@
+:Literal
+null
+true
+false
+
+:!
+NULL
+True
+False
+
+:NumericLiteral
+0
+0.1
+.240
+0x00
+0xa0
+0.001e-3
+
+:!
+001
+0xhh
+0.001e -3
+
+:StringLiteral
+'abc'
+' d ef" '
+"aa"
+"\b\r"
+"\0a"
+"\y\i"
+'\x0b'
+
+:!
+"aa\"
+"a""b"
+'\xqq'
+
+:RegularExpressionLiteral
+/abc/ig
+/[\wa-z]abc/ig
+/ 0 /
+~/ 0 /
+ / 0 /
+--- need to escape the first star in re.
+/* abc/
+  /\* abc/
+//
+
+:!
+///

@@ -73,12 +73,21 @@ compiled/_ir2js: dir $(JS_SRCS) $(CNVT_JS_SRC)
 	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS))) \
 	--js $(CNVT_JS_SRC)
 
+test_parse: src/parser/test.js compiled/parser/syntax.js
+	@NODE_PATH=compiled/parser nodejs src/parser/test.js -p src/*.ir | grep '^X|'
+
+parser_test: src/parser/test.js compiled/parser/syntax.js
+	@NODE_PATH=compiled/parser nodejs src/parser/test.js -t src/parser/data/*
+
+compiled/parser/syntax.js: dir src/parser/syntax.pegjs
+	pegjs src/parser/syntax.pegjs $@
 
 compiled/%.js: src/%.ir
 	nodejs saved/ir2js.js --basedir=src $^ $@
 
 dir:
 	mkdir -p compiled
+	mkdir -p compiled/parser
 
 
 update:
