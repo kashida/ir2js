@@ -19,7 +19,7 @@ CLOSURE_ARGS+=--warning_level VERBOSE
 CLOSURE_ARGS+=--jscomp_error=accessControls
 CLOSURE_ARGS+=--jscomp_error=ambiguousFunctionDecl
 CLOSURE_ARGS+=--jscomp_error=checkRegExp
-CLOSURE_ARGS+=--jscomp_error=checkTypes
+#CLOSURE_ARGS+=--jscomp_error=checkTypes
 CLOSURE_ARGS+=--jscomp_error=checkVars
 CLOSURE_ARGS+=--jscomp_error=const
 CLOSURE_ARGS+=--jscomp_error=constantProperty
