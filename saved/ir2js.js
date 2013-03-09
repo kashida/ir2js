@@ -2045,7 +2045,7 @@ var transform_to_js = function(basedir, infile, outfile){
     // strip off the basedir.
     pkg_name = pkg_name.substr(basedir.length);
   }
-  pkg_name = pkg_name.replace(/[\/\\]/, '.');
+  pkg_name = pkg_name.replace(/^[\/\\]*/, '').replace(/[\/\\]/, '.');
 
   var c = new FileScope(pkg_name);
   var input = _fs.readFileSync(infile, 'utf-8');

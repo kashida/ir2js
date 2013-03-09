@@ -6,7 +6,7 @@
   if (basedir && pkg_name.indexOf(basedir) == 0)
     // strip off the basedir.
     pkg_name = pkg_name.substr(basedir.length)
-  pkg_name = pkg_name.replace(~/[\/\\]/, '.')
+  pkg_name = pkg_name.replace(/~/^[\/\\]*/, '').replace(~/[\/\\]/, '.')
 
   c := new FileScope(pkg_name)
   input := _fs.readFileSync(infile, 'utf-8')

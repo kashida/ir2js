@@ -1,0 +1,169 @@
+:
+  parser := parser || {}
+
+::BlockMarker
+  // one character string.
+  // a: array.
+  // o: object.
+  // p: param list.
+  // f: anonymous function.
+  @type\s\$
+
+:toString\s\
+  => '|#' + @type + '|'
+
+
+::TokenList
+  orig\%.TokenList\?
+  @list+\A.<%.BlockMarker|s>\ orig ? orig.list : []
+  @prev_lines+\A.<s>\ []
+  @next_lines+\A.<s>\ []
+
+:add\%.TokenList\
+  i := 0
+  for (; i < arguments.length; i++)
+    arg := arguments[i]
+
+    // Recursive cases.
+    if (arg instanceof %.TokenList)
+      arg.list.forEach(##)
+        token\s\$
+        @.add(token)
+      arg.prev_lines.forEach(##)
+        l\s\$
+        @prev_lines.push(l)
+      arg.next_lines.forEach(##)
+        l\s\$
+        @next_lines.push(l)
+      continue
+    if (arg instanceof Array)
+      arg.forEach(##)
+        token\A\$
+        @.add(token)
+      continue
+
+    // Always append a marker.
+    if (arg instanceof %.BlockMarker)
+      @list.push(arg)
+      continue
+
+    // Should be a string. Append only if we can't add to the last element.
+    last := @list.length - 1
+    if (!@list.length || @list[last] instanceof %.BlockMarker)
+      @list.push(arg)
+      continue
+    @list[last] += arg
+  => @
+
+:prepend\%.TokenList\
+  line\%.TokenList|s\$
+  if (line instanceof %.TokenList)
+    @prev_lines = @prev_lines.concat(line.prev_lines)
+    @next_lines = @next_lines.concat(line.next_lines)
+  @prev_lines.push(line.toString())
+  => @
+
+:append
+  line\%.TokenList|s\$
+  if (line instanceof %.TokenList)
+    @prev_lines = @prev_lines.concat(line.prev_lines)
+    @next_lines = @next_lines.concat(line.next_lines)
+  @next_lines.push(line.toString())
+  => @
+
+:toString\s\
+  => @list.join('')
+
+
+::TypedTokenList <%.TokenList
+  @type+\s\$
+  src\%.TokenList\$
+  %(src)
+
+::ParamLine <%.TokenList
+  @name\s\$
+  @is_member\b\$
+  @access\s\$
+  @type\s\$
+  @marker\s\$
+  @init\%.TokenList\$
+  %()
+
+:toString\s\
+  list := [#]
+    @is_member ? '@' : ''
+    @name
+    @access
+    '\\'
+    @type
+    '\\'
+    @marker
+  init_str := @init.toString()
+  if (init_str)
+    list.push(' ' + init_str)
+  => list.join('')
+
+::SeparatorLine <%.TokenList
+  %()
+
+:toString\s\
+  => '--'
+
+::LineParser
+  @result\%.TokenList\
+
+:parse
+  line\s\$
+  rule\s\$
+  @result = _parser.parse(line, rule)
+  if (!(@result instanceof %.TokenList))
+    @result = @.make_token(@result)
+
+:rendered
+  lines := []
+  @result.prev_lines.map(##)
+    line\%.TokenList\$
+    lines.push(line.toString())
+  code_line := @result.toString()
+  if (code_line)
+    lines.push(code_line)
+  @result.next_lines.map(##)
+    line\%.TokenList\$
+    lines.push(line.toString())
+  => lines
+
+:make_token
+  token\s\$
+  tl := new %.TokenList()
+  tl.add(token)
+  => tl
+
+:make_typed_token
+  type\s\$
+  token\s\$
+  => new %.TypedTokenList(type, token)
+
+:make_marker
+  type\s\$
+  tl := new %.TokenList()
+  tl.add(new %.BlockMarker(type))
+  => tl
+
+:make_param_line
+  name\s\$
+  is_member\b\$
+  access\s\$
+  type\s\$
+  marker\s\$
+  init\%.TokenList\$
+  => new %.ParamLine(name, is_member, access, type, marker, init)
+
+:make_separator_line
+  => new %.SeparatorLine()
+
+:combine_tokens
+  tl := new %.TokenList()
+  i := 0
+  for(; i < arguments.length; i++)
+    tl.add(arguments[i])
+  => tl

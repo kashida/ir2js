@@ -42,6 +42,9 @@ CLOSURE_ARGS+=--jscomp_error=uselessCode
 CLOSURE_ARGS+=--jscomp_error=visibility
 
 
+############################################################
+# Converter targets.
+
 test: compiled/ir2js_test.js
 	@echo '===== TEST'
 	nodejs compiled/ir2js_test.js $(TESTS)
@@ -73,14 +76,26 @@ compiled/_ir2js: dir $(JS_SRCS) $(CNVT_JS_SRC)
 	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS))) \
 	--js $(CNVT_JS_SRC)
 
-test_parse: src/parser/test.js compiled/parser/syntax.js
-	@NODE_PATH=compiled/parser nodejs src/parser/test.js -p src/*.ir | grep '^X|'
 
-parser_test: src/parser/test.js compiled/parser/syntax.js
-	@NODE_PATH=compiled/parser nodejs src/parser/test.js -t src/parser/data/*
+############################################################
+# Parser targets.
+
+test_parse: compiled/parser/syntax.js compiled/parser_main.js
+	@NODE_PATH=compiled/parser nodejs compiled/parser_main.js -p src/*.ir | grep '^X|'
+
+parser_test: compiled/parser/syntax.js compiled/parser_main.js
+	@NODE_PATH=compiled/parser nodejs compiled/parser_main.js -t src/parser/data/*
+
+compiled/parser_main.js: compiled/parser/line_parser.js src/parser/test.js
+	@echo '===== CAT parser_main'
+	cat $(BASE_SRC) $^ > $@
 
 compiled/parser/syntax.js: dir src/parser/syntax.pegjs
 	pegjs src/parser/syntax.pegjs $@
+
+
+############################################################
+# Basic rules.
 
 compiled/%.js: src/%.ir
 	nodejs saved/ir2js.js --basedir=src $^ $@
@@ -89,6 +104,9 @@ dir:
 	mkdir -p compiled
 	mkdir -p compiled/parser
 
+
+############################################################
+# Non-build commands.
 
 update:
 	make clean
