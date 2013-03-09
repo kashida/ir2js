@@ -2,13 +2,13 @@
 // Initializer.
 
 {
-  var lp = global.line_parser;
-  var T = lp.make_token.bind(lp);
-  var TT = lp.make_typed_token.bind(lp);
-  var M = lp.make_marker.bind(lp);
-  var S = lp.make_separator_line.bind(lp);
-  var P = lp.make_param_line.bind(lp);
-  var C = lp.combine_tokens.bind(lp);
+  var tf = global.token_factory;
+  var T = tf.make_token.bind(tf);
+  var TT = tf.make_typed_token.bind(tf);
+  var M = tf.make_marker.bind(tf);
+  var S = tf.make_separator_line.bind(tf);
+  var P = tf.make_param_line.bind(tf);
+  var C = tf.combine_tokens.bind(tf);
 
   var opList = function(head, tail, opt_right_space_only) {
     var ret = T(head);

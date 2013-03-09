@@ -86,7 +86,7 @@ test_parse: compiled/parser/syntax.js compiled/parser_main.js
 parser_test: compiled/parser/syntax.js compiled/parser_main.js
 	@NODE_PATH=compiled/parser nodejs compiled/parser_main.js -t src/parser/data/*
 
-compiled/parser_main.js: compiled/parser/line_parser.js src/parser/test.js
+compiled/parser_main.js: compiled/parser/token_factory.js src/parser/test.js
 	@echo '===== CAT parser_main'
 	cat $(BASE_SRC) $^ > $@
 

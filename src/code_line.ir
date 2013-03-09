@@ -1,7 +1,7 @@
 ::CodeLine <SectionHead
   @context\!Context\$
   @input+\InputLine\$
-  @parser\LineParser\? new LineParser(input)
+  @parsed\parser.Result\? new parser.Result(input)
   @is_end&\b\ true
   @param&\Param|b\
   @decoder\LineDecoder\
@@ -11,16 +11,16 @@
   => @input.line
 
 :+indent\n\
-  => @parser.indent
+  => @parsed.indent
 
 :+is_continuation\b\
-  => @parser.is_continuation
+  => @parsed.is_continuation
 
 :+is_block_statement\b\
   => @decoder.is_block_statement
 
 :transform
-  p := (@param && @param !== true && @param.value_line) || @parser
+  p := (@param && @param !== true && @param.value_line) || @parsed
   code := p.code.map(##)
     seg\s\$
     => @transform_segment(seg)
@@ -95,5 +95,5 @@
     out.append_lines(tail_code)
   if (@param)
     @param.output_init(out)
-  out.tail_comment = @parser.tail_comment
+  out.tail_comment = @parsed.tail_comment
   => out

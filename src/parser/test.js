@@ -57,24 +57,24 @@ TestFile.prototype.run_if_ready = function() {
   this.expected = [];
 };
 
-global.line_parser;
+global.token_factory;
 TestFile.prototype.run_test = function(line, expected) {
   try {
-    line_parser = new parser.LineParser();
-    line_parser.parse(line.replace(/\s*\/\|\/\s*/, '\n'), this.rule_name);
-    var result_str = line_parser.rendered().join(' /|/ ');
+    token_factory = new parser.TokenFactory();
+    token_factory.parse(line.replace(/\s*\/\|\/\s*/, '\n'), this.rule_name);
+    var result_str = token_factory.rendered().join(' /|/ ');
     if (this.expect_error) {
       console.error('[FAIL] error expected');
       console.error('I: ' + line);
       console.error('O: ' + result_str);
-      console.error(line_parser);
+      console.error(token_factory);
       process.exit(-1);
     } else if (result_str != expected) {
       console.error('[FAIL]');
       console.error('I: ' + line);
       console.error('T: ' + expected);
       console.error('O: ' + result_str);
-      console.error(line_parser);
+      console.error(token_factory);
       process.exit(-1);
     }
   } catch (e) {
@@ -111,9 +111,9 @@ ConvertFile.prototype.run = function() {
 
 ConvertFile.prototype.parse = function(line) {
   try {
-    line_parser = new LineParser();
-    line_parser.parse(line, 'BlockLine');
-    console.log('O|  ' + line_parser.rendered().join(' /|/ '));
+    token_factory = new parser.TokenFactory();
+    token_factory.parse(line, 'BlockLine');
+    console.log('O|  ' + token_factory.rendered().join(' /|/ '));
   } catch (e) {
     console.log('X|  ' + line);
     var sp = '   ';
