@@ -1,6 +1,3 @@
-:
-  INDENTATION_WIDTH := 2
-
 ::CodeLine <SectionHead
   @context\!Context\$
   @input+\InputLine\$

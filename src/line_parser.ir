@@ -24,8 +24,6 @@ parse a line string.
   spaces_re := ~/^(\s*)(.*[\S])(\s*)$/.exec(str)
 
   indentation := spaces_re[1].length
-  if (indentation % INDENTATION_WIDTH == 1)
-    warn(@input, 'wrong number of whitespaces for indentation')
   @indent = indentation
 
   if (!/ */.test(spaces_re[1]))
