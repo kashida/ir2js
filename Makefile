@@ -80,13 +80,17 @@ compiled/_ir2js: dir $(JS_SRCS) $(CNVT_JS_SRC)
 ############################################################
 # Parser targets.
 
+PARSER_TEST_SRCS=\
+$(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
+PARSER_TEST_SRCS+=compiled/input_line.js
+
 test_parse: compiled/parser/syntax.js compiled/parser_main.js
 	@NODE_PATH=compiled/parser nodejs compiled/parser_main.js -p src/*.ir | grep '^X|'
 
 parser_test: compiled/parser/syntax.js compiled/parser_main.js
 	@NODE_PATH=compiled/parser nodejs compiled/parser_main.js -t src/parser/data/*
 
-compiled/parser_main.js: compiled/parser/token_factory.js src/parser/test.js
+compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js
 	@echo '===== CAT parser_main'
 	cat $(BASE_SRC) $^ > $@
 

@@ -1,0 +1,19 @@
+Use PEGJS syntax to create a TokenList.
+Container and interface of the TokenList to the rest of the converter.
+
+::Result
+  @tokens\%.TokenList\$
+  @input\InputLine\$
+
+:rendered
+  lines := []
+  @tokens.prev_lines.map(##)
+    line\%.TokenList\$
+    lines.push(line.toString())
+  code_line := @tokens.toString()
+  if (code_line)
+    lines.push(code_line)
+  @tokens.next_lines.map(##)
+    line\%.TokenList\$
+    lines.push(line.toString())
+  => lines

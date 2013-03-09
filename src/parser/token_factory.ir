@@ -110,27 +110,6 @@
   => '--'
 
 ::TokenFactory
-  @result\%.TokenList\
-
-:parse
-  line\s\$
-  rule\s\$
-  @result = _parser.parse(line, rule)
-  if (!(@result instanceof %.TokenList))
-    @result = @.make_token(@result)
-
-:rendered
-  lines := []
-  @result.prev_lines.map(##)
-    line\%.TokenList\$
-    lines.push(line.toString())
-  code_line := @result.toString()
-  if (code_line)
-    lines.push(code_line)
-  @result.next_lines.map(##)
-    line\%.TokenList\$
-    lines.push(line.toString())
-  => lines
 
 :make_token
   token\s\$

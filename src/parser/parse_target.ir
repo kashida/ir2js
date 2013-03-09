@@ -1,0 +1,19 @@
+Wrapper for the PEGJS's parse method.
+Specific for a particular target (i.e. rule).
+
+:
+  parser := parser || {}
+  global.token_factory = null;
+
+::ParseTarget
+  @rule\s\$
+
+:run
+  input\InputLine|s\$
+  if (!(input instanceof InputLine))
+    input = new InputLine(input, 0);
+  token_factory = token_factory || new parser.TokenFactory();
+  result := _parser.parse(input.line, @rule)
+  if (!(result instanceof %.TokenList))
+    result = token_factory.make_token(result)
+  => new %.Result(result, input)
