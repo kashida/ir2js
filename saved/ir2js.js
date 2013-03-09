@@ -3201,6 +3201,11 @@ var _self = this;
    * @private
    */
   this._line_suffix = ('');
+  /**
+   * @type {string}
+   * @private
+   */
+  this._tail_comment = ('');
 };
 LineOutput.prototype._classname = 'LineOutput';
 /** @type {number} */
@@ -3226,6 +3231,14 @@ return this._line_suffix;
 });
 LineOutput.prototype.__defineSetter__('line_suffix', function(value) {
 this._line_suffix = value;
+});
+/** @type {string} */
+LineOutput.prototype.tail_comment;
+LineOutput.prototype.__defineGetter__('tail_comment', function() {
+return this._tail_comment;
+});
+LineOutput.prototype.__defineSetter__('tail_comment', function(value) {
+this._tail_comment = value;
 });
 
 /** @param {string} line */
@@ -3292,6 +3305,9 @@ var _self = this;
       if (i == _self._lines.length - 1 && _self._line_suffix){
         to_add += _self._line_suffix;
       }
+      if (i == _self._lines.length - 1){
+        to_add += _self._tail_comment;
+      }
       if (to_add){
         to_add = whitespaces(_self._indent) + to_add;
       }
@@ -3346,6 +3362,11 @@ var _self = this;
    * @private
    */
   this._is_valid = (false);
+  /**
+   * @type {string}
+   * @private
+   */
+  this._tail_comment = ('');
   _self._process();
 };
 LineParser.prototype._classname = 'LineParser';
@@ -3374,12 +3395,16 @@ LineParser.prototype.is_valid;
 LineParser.prototype.__defineGetter__('is_valid', function() {
 return this._is_valid;
 });
+/** @type {string} */
+LineParser.prototype.tail_comment;
+LineParser.prototype.__defineGetter__('tail_comment', function() {
+return this._tail_comment;
+});
 
 /** @private */
 LineParser.prototype._process = function(){
 var _self = this;
-  //if (~/^\s*$/.test(@str) || ~/^\s*\/\//.test(@str))
-  if (/^\s*$/.test(_self._str) || new RegExp('^\\s*\\/\\/').test(_self._str)){
+  if (/^\s*$/.test(_self._str) || /^\s*\/\//.test(_self._str)){
     // blank or comment line. Nothing to be done.
     return ;
   }
@@ -3399,9 +3424,6 @@ var _self = this;
   var spaces_re =  /^(\s*)(.*[\S])(\s*)$/.exec(str);
 
   var indentation = spaces_re[1].length;
-  if (indentation % INDENTATION_WIDTH == 1){
-    warn(_self._input, 'wrong number of whitespaces for indentation');
-  }
   _self._indent = indentation;
 
   if (!/ */.test(spaces_re[1])){
@@ -3465,7 +3487,9 @@ var _self = this;
   }
   if (result[4]){
     // end of line comment.
-    return [before, match + rest];
+    var before_re =  /\s*$/.exec(before);
+    _self._tail_comment = before_re[0] + match + rest;
+    return [before.substr(0, before_re.index)];
   }
   // shouldn't happen.
   return [str];
@@ -4954,8 +4978,6 @@ var doc_lines = function(annotations){
 };
 goog.provide('CodeLine');
 
-  var INDENTATION_WIDTH = 2;
-
 /**
  * @param {!Context} context
  * @param {InputLine} input
@@ -5162,6 +5184,7 @@ var _self = this;
   if (_self._param){
     _self._param.output_init(out);
   }
+  out.tail_comment = _self._parser.tail_comment;
   return out;
 };
 goog.provide('CodeSection');
