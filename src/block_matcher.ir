@@ -1,0 +1,99 @@
+Match markers and blocks.
+
+::BlockMatcher
+  @context\!Context\$
+  @input_line\InputLine\$
+  @code\A.<parser.BlockMarker|s>\$
+  @blocks\A.<IndentBlock>\$
+  @marker_indexes\A.<n>\ []
+  @params\A.<ParamSet>\ []
+  // whether this line is a statement that comes with a block, like 'if'.
+  @is_block_statement+\b\ false
+  @starts_with_marker\b\ false
+
+:transform
+  if (@match_blocks())
+    @transform_blocks()
+
+Returns true only if matching succeeds and leaving valid set of indexes in
+@marker_indexes and @params.
+:@match_blocks\b\
+  code := @code
+  idx := 1
+  if (@code[0] instanceof parser.BlockMarker)
+    idx = 0
+    @starts_with_marker = true
+
+  while (idx < code.length)
+    param := null
+    elem := @code[idx]
+    if (elem instanceof parser.BlockMarker && elem.type == 'f')
+      sub_context := @context.clone()
+      sub_context.is_file_scope = false
+      param = new ParamSet(sub_context, @blocks[@marker_indexes.length])
+
+    @marker_indexes.push(idx)
+    @params.push(param)
+
+    idx += 2
+
+  if (@marker_indexes.length < @blocks.length)
+    // One extra block is allowed.
+    @marker_indexes.push(-1)
+    @is_block_statement = true
+
+  if (@marker_indexes.length != @blocks.length)
+    warn(@input_line, '# blocks does not match #markers.')
+    => false
+  => true
+
+:@transform_blocks
+  @blocks.forEach(##)
+    b\IndentBlock\$
+    i\n\$
+    // transform the blocks.
+    if (@params[i])
+      @params[i].transform()
+    if (b.block)
+      mi := @marker_indexes[i]
+      b.block.transform(mi < 0 ? BlockType.BLOCK : {#}[mi.type])
+        f: BlockType.BLOCK
+        o: BlockType.OBJ
+        a: BlockType.ARRAY
+        p: BlockType.PARAMS
+
+:first_line\A.<s>\
+  // there should be at least one fragment.
+  => @compose_line(@starts_with_marker ? '' : (#), 0)
+    \s\ (@code[0])
+
+:each_fragment
+  cb\function(IndentBlock, A.<s>)\$
+  code := @code
+  @blocks.forEach(##)
+    b\IndentBlock\$
+    i\n\$
+    mi := @marker_indexes[i]
+    cb(b, @compose_line(#))
+      b.end_str() + (mi < 0 || mi >= code.length ? '' : code[mi])
+      i + 1
+
+:@compose_line
+  prefix\s\$
+  i\n\$
+  if (@blocks.length <= i)
+    => [prefix]
+
+  b := @blocks[i]
+  p := @params[i]
+  bstart := [b.start_str()]
+  if (p)
+    => [prefix + bstart]
+  if (p.is_decl_empty())
+    => [prefix + 'function(' + p.output_params() + ')' + bstart]
+
+  // we don't try to merge the prefix into first line.
+  => arr_flatten([#])
+    prefix
+    doc_lines(p.output_decls())
+    'function(' + p.output_params() + ')' + bstart

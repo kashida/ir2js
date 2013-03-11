@@ -3,7 +3,7 @@
   @head\SectionHead\$
   @blocks\A.<IndentBlock>\ []
   @last_valid_line\CodeLine\
-  @invalid_lines\A.<s>\ []
+  @invalid_lines\A.<SectionLine>\ []
 
 :parse
   input_lines\A.<InputLine>\$

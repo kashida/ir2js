@@ -1,10 +1,10 @@
 ::CodeLine <SectionHead
   @context\!Context\$
   @input+\InputLine\$
-  @parsed\parser.Result\? new parser.Result(input)
+  @parsed+\parser.Result\$
   @is_end&\b\ true
   @param&\Param|b\
-  @decoder\LineDecoder\
+  @matcher\BlockMatcher\
   %()
 
 :+str\s\
@@ -17,16 +17,20 @@
   => @parsed.is_continuation
 
 :+is_block_statement\b\
-  => @decoder.is_block_statement
+  => @matcher.is_block_statement
 
 :transform
-  p := (@param && @param !== true && @param.value_line) || @parsed
-  code := p.code.map(##)
-    seg\s\$
-    => @transform_segment(seg)
-  @decoder = new LineDecoder(@context, code, @input)
-  @decoder.transform(@.blocks)
+  code := (@param && @param !== true && @param.value_line) || @parsed.code
 
+  // TODO: delete.
+  //code := p.code.map(##)
+  //  seg\s\$
+  //  => @transform_segment(seg)
+
+  @matcher = new BlockMatcher(@context, @input, code, @.blocks)
+  @matcher.transform()
+
+TODO: delete.
 :@transform_segment\s\
   seg\s\$
   if (!seg)
@@ -87,13 +91,15 @@
   if (@param === true)
     => out
 
-  out.append_lines(@decoder.first_line())
-  @decoder.each_fragment(##)
+  out.append_lines(@matcher.first_line())
+  @matcher.each_fragment(##)
     block\IndentBlock\$
     tail_code\A.<s>\$
     out.append_block(block.output())
     out.append_lines(tail_code)
   if (@param)
     @param.output_init(out)
-  out.tail_comment = @parsed.tail_comment
+  @parsed.tail_comment.forEach(##)
+    comment\s\$
+    out.tail_comment.push(comment)
   => out

@@ -6,5 +6,5 @@
 :is_continuation
   => false
 
-:output\A.<LineOutput>\
-  => []
+:output\LineOutput\
+  => null

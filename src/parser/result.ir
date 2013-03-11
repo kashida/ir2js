@@ -2,18 +2,39 @@ Use PEGJS syntax to create a TokenList.
 Container and interface of the TokenList to the rest of the converter.
 
 ::Result
-  @tokens\%.TokenList\$
+  @tokens+\%.TokenList\$
   @input\InputLine\$
 
-:rendered
+:+code\A.<%.BlockMarker|s>\
+  => @tokens.list
+
+:+indent\n\
+  console.log('--- indent')
+  console.log(@tokens)
+
+:+is_separator\b\
+  console.log('--- is_sep')
+  console.log(@tokens)
+
+:+is_continuation\b\
+  console.log('--- is_cont')
+  console.log(@tokens)
+
+:+is_valid\b\
+  => @tokens instanceof %.TokenList
+
+:+tail_comment\A.<s>\
+  => @tokens.next_lines
+
+:rendered\A.<s>\
   lines := []
   @tokens.prev_lines.map(##)
-    line\%.TokenList\$
+    line\%.TokenList|s\$
     lines.push(line.toString())
   code_line := @tokens.toString()
   if (code_line)
     lines.push(code_line)
   @tokens.next_lines.map(##)
-    line\%.TokenList\$
+    line\%.TokenList|s\$
     lines.push(line.toString())
   => lines

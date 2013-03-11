@@ -33,7 +33,7 @@ SourceCharacter = .
 WhiteSpace 'whitespace'
   = ([\t\v\f \u00A0\uFEFF] / Zs) { return ''; }
 
-LineTerminator
+LineTerminator 'end_of_line'
   = [\n\r\u2028\u2029] { return ''; }
 
 
@@ -380,7 +380,7 @@ RegularExpressionLiteral 'regular expression'
       return T('/' + body.replace(/^\*/, '\\*') + '/' + flags);
     }
 
-Self = '@' name:Identifier? { return T(name ? 'self._' + name : 'self'); }
+Self = '@' name:Identifier? { return T(name ? '_self._' + name : '_self'); }
 
 ArrayBlockMarker = '[' w0:_ '#' w1:_ ']' { return C(w0, M('a'), w1); }
 
@@ -578,7 +578,7 @@ Expression
 // Statements
 
 Statement
-  = _ statement:StatementLine _
+  = _ statement:StatementLine _ { return statement; }
 
 StatementLine
   = ExpressionStatement
@@ -732,6 +732,8 @@ ParamInitializer
 
 BlockSeparator
   = '--' { return S(); }
+
+ParseLine = _ line:BlockLine _ { return line; }
 
 // This is for testing.
 BlockLine

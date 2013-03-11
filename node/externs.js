@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////
 // JavaScript
 
-var JSON = {};
+var JSON;
+var global = {};
 
 /**
  * @param {*} value

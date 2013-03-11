@@ -1,6 +1,7 @@
 var _fs = require('fs');
-var _parser = require('syntax');
 
+
+goog.global = global
 
 var TestFile = function(filename) {
   console.log('=== ' + filename);
@@ -60,7 +61,7 @@ TestFile.prototype.run_if_ready = function() {
 TestFile.prototype.run_test = function(line, expected) {
   try {
     var target = new parser.ParseTarget(this.rule_name);
-    var result = target.run(line.replace(/\s*\/\|\/\s*/, '\n'));
+    var result = target.run(line.replace(/\s*\/\|\/\s*/, '\n'), !this.expect_error);
     var result_str = result.rendered().join(' /|/ ');
     if (this.expect_error) {
       console.error('[FAIL] error expected');
@@ -78,14 +79,6 @@ TestFile.prototype.run_test = function(line, expected) {
     }
   } catch (e) {
     if (!this.expect_error) {
-      console.error('[FAIL] error');
-      console.error('I: ' + line);
-      var sp = '   ';
-      for (var i = 0; i < e.offset; i++) {
-        sp += ' ';
-      }
-      console.error(sp + '^');
-      console.error('E: ' + e);
       process.exit(-1);
     }
   }

@@ -5,7 +5,7 @@ parse file scope and separate code sections from comments.
 ::FileScope
   pkg_name\s\$
   @context+\!Context\ new Context(new Package(pkg_name))
-  @provides\A.<s>\ []
+  @provides\A.<!Name>\ []
   @types+\TypeSet\ new TypeSet()
   @list\A.<OutputSection>\
 

@@ -5,5 +5,5 @@ input code section.
   @code&\CodeSection\
 
 :push
-  line\s\$
+  line\InputLine\$
   @lines.push(line)

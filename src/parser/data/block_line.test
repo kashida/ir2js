@@ -6,3 +6,6 @@ annotation\s\$
 abc: def
 'abc' : x = 0 + 3
   'abc': x = 0 + 3
+
+:FunctionBlockLine
+@param\s\

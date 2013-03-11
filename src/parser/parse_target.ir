@@ -2,18 +2,31 @@ Wrapper for the PEGJS's parse method.
 Specific for a particular target (i.e. rule).
 
 :
-  parser := parser || {}
-  global.token_factory = null;
+  _parser := require('syntax');
 
 ::ParseTarget
   @rule\s\$
 
 :run
-  input\InputLine|s\$
+  input\!InputLine|s\$
+  show_error_line\b\?
   if (!(input instanceof InputLine))
     input = new InputLine(input, 0);
-  token_factory = token_factory || new parser.TokenFactory();
-  result := _parser.parse(input.line, @rule)
+  global.token_factory = global.token_factory || new parser.TokenFactory();
+
+  try
+    result := _parser.parse(input.line, @rule)
+  catch (e)
+    if (show_error_line)
+      console.error('[FAIL] error for ' + @rule);
+      console.error('I: ' + input.line);
+      var sp = '   ';
+      for (var i = 0; i < e.offset; i++) {
+        sp += ' ';
+      }
+      console.error(sp + '^');
+      console.error('E: ' + e);
+    throw e
   if (!(result instanceof %.TokenList))
-    result = token_factory.make_token(result)
+    result = global.token_factory.make_token(result)
   => new %.Result(result, input)

@@ -199,12 +199,12 @@ var _self = this;
 #{: no method change
 @method()
 obj.method()
-'2d' @pixels()
+'2d' - @pixels()
 '2d @pixels()'
 #=
 _self._method();
 obj.method();
-'2d' _self._pixels();
+'2d' - _self._pixels();
 '2d @pixels()';
 #}
 

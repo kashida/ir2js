@@ -12,7 +12,7 @@
   @context\!Context\$
   @block\IndentBlock\$
   @is_ctor\b\? false
-  @params\A.<O>\ []
+  @params\A.<!Param>\ []
   @return_type\TypeDecoder\
 
 :transform
@@ -36,8 +36,7 @@
 :@add_line\Param|b\
   line\CodeLine\$
   index\n\$
-  p := new Param(@context, @is_ctor)
-  p.parse(line)
+  p := new Param(@context, @is_ctor, line.input, line.parsed)
   if (!p.success)
     if (index != 0 || @context.is_file_scope)
       => null
@@ -103,5 +102,5 @@
 :set_argtypes
   types\CallableType\$
   @params.forEach(##)
-    p\Param\$
+    p\!Param\$
     types.add_arg(p.argtype())

@@ -1,13 +1,10 @@
-:
-  parser := parser || {}
-
 ::BlockMarker
   // one character string.
   // a: array.
   // o: object.
   // p: param list.
   // f: anonymous function.
-  @type\s\$
+  @type+\s\$
 
 :toString\s\
   => '|#' + @type + '|'
@@ -19,7 +16,17 @@
   @prev_lines+\A.<s>\ []
   @next_lines+\A.<s>\ []
 
+:+is_empty\b\
+  if (@prev_lines.length || @next_lines.length)
+    => false
+  if (!@list.length)
+    => true
+  if (@list.length >= 2)
+    => false
+  => !(@list[0] instanceof %.BlockMarker) && @list[0] == ''
+
 :add\%.TokenList\
+  args\...*\$
   i := 0
   for (; i < arguments.length; i++)
     arg := arguments[i]
@@ -27,7 +34,7 @@
     // Recursive cases.
     if (arg instanceof %.TokenList)
       arg.list.forEach(##)
-        token\s\$
+        token\%.BlockMarker|s\$
         @.add(token)
       arg.prev_lines.forEach(##)
         l\s\$
@@ -81,12 +88,12 @@
   %(src)
 
 ::ParamLine <%.TokenList
-  @name\s\$
-  @is_member\b\$
-  @access\s\$
-  @type\s\$
-  @marker\s\$
-  @init\%.TokenList\$
+  @name+\s\$
+  @is_member+\b\$
+  @access+\s\$
+  @type+\s\$
+  @marker+\s\$
+  @init+\%.TokenList\$
   %()
 
 :toString\s\
@@ -119,7 +126,7 @@
 
 :make_typed_token
   type\s\$
-  token\s\$
+  token\%.TokenList\$
   => new %.TypedTokenList(type, token)
 
 :make_marker
