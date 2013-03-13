@@ -1,4 +1,3 @@
-last_valid_line and invalid_lines are only used for line parsing.
 ::CodeScope
   @context\!Context\$
   @head\SectionHead\? new GlobalCode()

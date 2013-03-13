@@ -19,7 +19,7 @@ function(){
    */
   function(a, b, opt_c){
     var c = opt_c === undefined ? (x) : opt_c;
-    return ;
+    return;
   };
 };
 #}

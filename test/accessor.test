@@ -251,9 +251,9 @@ str.length
   =>
 #=
 str.length{
-  return ;
+  return;
 }
 str.length{
-  return ;
+  return;
 }
 #}

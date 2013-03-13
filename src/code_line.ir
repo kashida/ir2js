@@ -1,8 +1,12 @@
+:
+  CODE_PARSER := null
+
 ::CodeLine <SectionHead
   @context\!Context\$
   @input+\InputLine\$
-  @parsed+\parser.Result\$
-  @is_end&\b\ true
+  @line_parsed\LineParser\$
+  @parsed\parser.Result\
+  @continue_lines&\!A.<!CodeLine>\ []
   @param&\Param|b\
   @matcher\BlockMatcher\
   %()
@@ -11,16 +15,25 @@
   => @input.line
 
 :+indent\n\
-  => @parsed.indent
+  => @line_parsed.indent
 
 :+is_continuation\b\
-  => @parsed.is_continuation
+  => @line_parsed.is_continuation
 
 :+is_block_statement\b\
   => @matcher.is_block_statement
 
+:+is_end\b\
+  => !@continue_lines.length
+
+:+parsed\parser.Result\
+  if (!@parsed)
+    CODE_PARSER = CODE_PARSER || new parser.ParseTarget('ParseLine')
+    @parsed = CODE_PARSER.run([@input].concat(@continue_lines), true)
+  => @parsed
+
 :transform
-  code := (@param && @param !== true && @param.value_line) || @parsed.code
+  code := (@param && @param !== true && @param.value_line) || @.parsed.code
 
   // TODO: delete.
   //code := p.code.map(##)
@@ -99,7 +112,7 @@ TODO: delete.
     out.append_lines(tail_code)
   if (@param)
     @param.output_init(out)
-  @parsed.tail_comment.forEach(##)
+  @.parsed.tail_comment.forEach(##)
     comment\s\$
     out.tail_comment.push(comment)
   => out

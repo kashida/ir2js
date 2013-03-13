@@ -62,8 +62,6 @@
   cat := new LineCategorizer(@context)
   => input_lines.map(##)
     line\InputLine\$
-    i\n\$
-    // convert string lines into line objects.
     => cat.create_line(line)
 
 :@deeper_indent

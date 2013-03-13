@@ -8,18 +8,22 @@ Specific for a particular target (i.e. rule).
   @rule\s\$
 
 :run
-  input\!InputLine|s\$
+  input\!A.<InputLine>|s\$
   show_error_line\b\?
-  if (!(input instanceof InputLine))
-    input = new InputLine(input, 0);
+  if (!(input instanceof Array))
+    input = [new InputLine(input, 0)];
   global.token_factory = global.token_factory || new parser.TokenFactory();
 
+  lines := input.map(##).join('\n')
+    input\InputLine\$
+    => input.line
   try
-    result := _parser.parse(input.line, @rule)
+    result := _parser.parse(lines, @rule)
   catch (e)
     if (show_error_line)
+      // TODO: make this display multi-line right.
       console.error('[FAIL] error for ' + @rule);
-      console.error('I: ' + input.line);
+      console.error('I: ' + lines);
       var sp = '   ';
       for (var i = 0; i < e.offset; i++) {
         sp += ' ';

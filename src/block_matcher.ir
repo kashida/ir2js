@@ -2,7 +2,7 @@ Match markers and blocks.
 
 ::BlockMatcher
   @context\!Context\$
-  @input_line\InputLine\$
+  @input\InputLine\$
   @code\A.<parser.BlockMarker|s>\$
   @blocks\A.<IndentBlock>\$
   @marker_indexes\A.<n>\ []
@@ -43,39 +43,37 @@ Returns true only if matching succeeds and leaving valid set of indexes in
     @is_block_statement = true
 
   if (@marker_indexes.length != @blocks.length)
-    warn(@input_line, '# blocks does not match #markers.')
+    warn(@input, '# blocks does not match #markers.')
     => false
   => true
 
 :@transform_blocks
   @blocks.forEach(##)
-    b\IndentBlock\$
+    block\IndentBlock\$
     i\n\$
     // transform the blocks.
     if (@params[i])
       @params[i].transform()
-    if (b.block)
-      mi := @marker_indexes[i]
-      b.block.transform(mi < 0 ? BlockType.BLOCK : {#}[mi.type])
-        f: BlockType.BLOCK
-        o: BlockType.OBJ
-        a: BlockType.ARRAY
-        p: BlockType.PARAMS
+    mi := @marker_indexes[i]
+    block.transform(mi < 0 ? BlockType.BLOCK : {#}[mi.type])
+      f: BlockType.BLOCK
+      o: BlockType.OBJ
+      a: BlockType.ARRAY
+      p: BlockType.PARAMS
 
 :first_line\A.<s>\
   // there should be at least one fragment.
   => @compose_line(@starts_with_marker ? '' : (#), 0)
-    \s\ (@code[0])
+    \s\ (@code.length ? @code[0] : '')
 
 :each_fragment
   cb\function(IndentBlock, A.<s>)\$
-  code := @code
   @blocks.forEach(##)
-    b\IndentBlock\$
+    block\IndentBlock\$
     i\n\$
     mi := @marker_indexes[i]
-    cb(b, @compose_line(#))
-      b.end_str() + (mi < 0 || mi >= code.length ? '' : code[mi])
+    cb(block, @compose_line(#))
+      block.end_str() + (mi < 0 || mi + 1 >= @code.length ? '' : @code[mi + 1])
       i + 1
 
 :@compose_line
@@ -87,7 +85,7 @@ Returns true only if matching succeeds and leaving valid set of indexes in
   b := @blocks[i]
   p := @params[i]
   bstart := [b.start_str()]
-  if (p)
+  if (!p)
     => [prefix + bstart]
   if (p.is_decl_empty())
     => [prefix + 'function(' + p.output_params() + ')' + bstart]
