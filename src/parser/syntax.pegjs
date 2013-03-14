@@ -36,7 +36,6 @@ WhiteSpace 'whitespace'
 LineTerminator 'end_of_line'
   = [\n\r\u2028\u2029] { return ''; }
 
-
 Comment 'comment'
   = '//' rest:(!LineTerminator SourceCharacter)* {
       var c = T('//');
@@ -45,6 +44,20 @@ Comment 'comment'
       });
       return T('').append(c);
     }
+
+_
+  = (
+      WhiteSpace { return ''; }
+    / LineTerminator { return ''; }
+    / Comment
+    )*
+
+__
+  = (
+      WhiteSpace { return ' '; }
+    / LineTerminator { return ' '; }
+    / Comment
+    )*
 
 IdentifierStart
   = UnicodeLetter
@@ -284,14 +297,6 @@ Pc = [\u005F\u203F\u2040\u2054\uFE33\uFE34\uFE4D\uFE4E\uFE4F\uFF3F]
 // Separator, Space
 Zs = [\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000]
 
-
-// Whitespace
-
-_
-  = (WhiteSpace / LineTerminator / Comment)* { return '' }
-
-__
-  = (WhiteSpace / LineTerminator / Comment)* { return ' ' }
 
 PostfixOperator
   = '++'
@@ -581,7 +586,7 @@ Expression
 // Statements
 
 Statement
-  = _ statement:StatementLine _ { return statement; }
+  = _ StatementLine _
 
 StatementLine
   = ExpressionStatement
@@ -745,22 +750,22 @@ BlockLine
   / ParamLine
   / Statement
   / BlockSeparator
-  / Comment
+  / _
 
 FunctionBlockLine
   = TypeLiteral
   / ParamLine
   / Statement
   / BlockSeparator
-  / Comment
+  / _
 
 ParamBodyBlockLine
   = ParamLine
   / Statement
   / BlockSeparator
-  / Comment
+  / _
 
 BodyBlockLine
   = Statement
   / BlockSeparator
-  / Comment
+  / _
