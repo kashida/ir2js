@@ -33,4 +33,4 @@ Specific for a particular target (i.e. rule).
     => null
   //console.log('***')
   //console.log(result)
-  => new %.TokenListBuilder(result, input).build()
+  => new %.TokenListBuilder(result).result(input)

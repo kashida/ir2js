@@ -1,11 +1,15 @@
 ::TokenListBuilder
   @parsed\%.TokenList|Array|s\$
-  @input\!A.<InputLine>\$
   @tokens\%.TokenList\ new %.TokenList()
 
-:build\%.Result\
+:build\%.TokenList\
   @build_rec(@parsed)
-  => new %.Result(@tokens, @input)
+  => @tokens
+
+:result\%.Result\
+  input\!A.<InputLine>\$
+  @.build()
+  => new %.Result(@tokens, input)
 
 :@build_rec
   data\%.TokenList|Array|s\$
@@ -30,7 +34,7 @@
       data.access
       data.type
       data.marker
-      data.init
+      new %.TokenListBuilder(data.init).build()
     @tokens.add(t)
   else if (data instanceof %.SeparatorLine)
     t := @tokens

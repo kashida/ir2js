@@ -45,6 +45,7 @@ Comment 'comment'
       return T('').append(c);
     }
 
+// TODO: Simplify like __?
 _
   = (
       WhiteSpace { return ''; }
@@ -53,11 +54,8 @@ _
     )*
 
 __
-  = (
-      WhiteSpace { return ' '; }
-    / LineTerminator { return ' '; }
-    / Comment
-    )*
+  = (WhiteSpace / LineTerminator)+ { return ' '; }
+    / Comment*
 
 IdentifierStart
   = UnicodeLetter
@@ -612,134 +610,78 @@ StatementLine
 ExpressionStatement = Expression
 
 IfStatement
-  = 'if' w0:_ '(' w1:_ cond:Expression w2:_ ')' {
-      return C('if (', w0, w1, cond, w2, ')');
-    }
+  = 'if' _ '(' _ cond:Expression _ ')' { return ['if (', cond, ')']; }
 
 ElseIfStatement
-  = 'else' w0:_ 'if' w1:_ '(' w2:_ cond:Expression w3:_ ')' {
-      return C('else if (', w0, w1, w2, cond, w3, ')');
-    }
+  = 'else' _ 'if' _ '(' _ cond:Expression _ ')' { return ['else if (', cond, ')']; }
 
-ElseStatement
-  = 'else' { return T('else'); }
-
-DoStatement
-  = 'do' { return T('do'); }
-
-WhileStatement
-  = 'while' w0:_ '(' w1:_ cond:Expression w2:_ ')' {
-      return C('while (', w0, w1, cond, w2, ')');
-    }
+ElseStatement = 'else'
+DoStatement = 'do'
+WhileStatement = 'while' __ '(' _ cond:Expression _ ')'
 
 VariableDeclarationList
   = head:VariableDeclaration tail:(_ ',' _ VariableDeclaration)* {
       return opList(head, tail, true);
     }
 
-VariableDeclaration
-  = DeclareAssignmentExpression
-  / Identifier
+VariableDeclaration = DeclareAssignmentExpression / Identifier
 
 ForStatement
-  = 'for' w0:_ '(' w1:_
-    initializer:(VariableDeclarationList / Expression?) w2:_ ';' w3:_
-    test:Expression? w4:_ ';' w5:_
-    counter:Expression? w6:_ ')' {
-      var ret = C('for (;', w0, w1);
-      if (initializer) {
-        ret.prepend(initializer);
-      }
-      ret.add(w2, w3);
-      if (test) {
-        ret.add(' ', test);
-      }
-      ret.add(w4, w5);
+  = 'for' _ '(' _
+    initializer:(VariableDeclarationList / Expression?) _ ';' _
+    test:Expression? _ ';' _
+    counter:Expression? _ ')' {
+      var ret = C('for (;');
+      if (initializer) { ret.prepend(initializer); }
+      if (test) { ret.add(' ', test); }
       ret.add(';');
-      if (counter) {
-        ret.add(' ', counter);
-      }
-      ret.add(w6);
+      if (counter) { ret.add(' ', counter); }
       return ret.add(')');
     }
 
 ForInStatement
-  = 'for' w0:_ '(' w1:_
-    iter:Identifier w2:_ 'in' w3:_
-    collection:Expression w4:_ ')' {
-      return C('for (', w0, w1, iter, w2, ' in ', w3, collection, w4, ')').
-          prepend( C('var ', iter));
+  = 'for' _ '(' _ iter:Identifier _ 'in' _ collection:Expression _ ')' {
+      return C('for (', iter, ' in ', collection, ')').prepend( C('var ', iter));
     }
 
-ContinueStatement
-  = 'continue' { return T('continue'); }
-
-BreakStatement
-  = 'break' { return T('break'); }
+ContinueStatement = 'continue'
+BreakStatement = 'break'
 
 ReturnStatement
-  = '=>' w:_ value:Expression? {
-      return value ? C('return ', w, value) : C('return', w);
-    }
+  = '=>' _ value:Expression? { return value ? ['return ', value] : 'return'; }
 
 SwitchStatement
-  = 'switch' w0:_ '(' w1:_ expr:Expression w2:_ ')' {
-      return C('switch (', w0, w1, expr, w2, ')');
-    }
+  = 'switch' _ '(' _ expr:Expression _ ')' { return ['switch (', expr, ')']; }
 
 CaseStatement
-  = 'case' w0:_ selector:Expression w1:_ ':'? {
-      return C('case ', w0, selector, w1, ':');
-    }
+  = 'case' _ selector:Expression _ ':'? { return ['case ', selector, ':']; }
 
-DefaultStatement
-  = 'default' w:_ { return T('default:', w); }
-
-ThrowStatement
-  = 'throw' w:_ exception:Expression { return C('throw ', w, exception); }
-
-TryStatement
-  = 'try' { return T('try'); }
+DefaultStatement = 'default' { return 'default:'; }
+ThrowStatement = 'throw' __ Expression
+TryStatement = 'try'
 
 CatchStatement
-  = 'catch' w0:_ '(' w1:_ identifier:Identifier w2:_ ')' {
-      return C('catch (', w0, w1, identifier, w2, ')');
+  = 'catch' _ '(' _ identifier:Identifier _ ')' {
+      return ['catch (', identifier, ')'];
     }
 
-FinallyStatement
-  = 'finally' { return T('finally'); }
-
-DebuggerStatement
-  = 'debugger' { return T('debugger'); }
-
-
-////////////////////////////////////////////////////////////
-// Parameters
-
-ParamLine
-  = name:ParamName w:_ type:TypeLiteral marker:[$\?]? init:ParamInitializer? {
-    return P(C(name.name, w), name.is_member, name.access,
-        type.type, marker, init);
-  }
-
-ParamName
-  = member:'@'? w0:_ name:Identifier w1:_ access:[+*&]? {
-    return {
-      name: C(w0, name, w1),
-      is_member: !!member,
-      access: access,
-    };
-  }
-
-ParamInitializer
-  = w:_ init:ConditionalExpression { return C(w, init); }
+FinallyStatement = 'finally'
+DebuggerStatement = 'debugger'
 
 
 ////////////////////////////////////////////////////////////
 // Entry points
 
+ParamLine
+  = member:'@'? _ name:Identifier _ access:[+*&]?  _
+    type:TypeLiteral marker:[$\?]?
+    init:(_ ConditionalExpression)? {
+      return P(name, !!member, access, type.type, marker, init);
+    }
+
 BlockSeparator
   = '--' { return S(); }
+
 
 ParseLine = _ BlockLine _
 
