@@ -288,7 +288,10 @@ Zs = [\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u
 // Whitespace
 
 _
-  = (WhiteSpace / LineTerminator / Comment)*
+  = (WhiteSpace / LineTerminator / Comment)* { return '' }
+
+__
+  = (WhiteSpace / LineTerminator / Comment)* { return ' ' }
 
 PostfixOperator
   = '++'
@@ -488,9 +491,7 @@ ArgumentList
     }
 
 CastExpression
-  = type:TypeLiteral _ '(' _ expr:AssignmentExpression _ ')' {
-      return C(type.cast_str() + '(', expr, ')');
-    }
+  = type:TypeLiteral _ '(' _ expr:AssignmentExpression _ ')'
 
 TypeLiteral
   = '\\' type:TypeExpression '\\' {
@@ -735,7 +736,7 @@ ParamInitializer
 BlockSeparator
   = '--' { return S(); }
 
-ParseLine = _ line:BlockLine _ { return line; }
+ParseLine = _ BlockLine _
 
 // This is for testing.
 BlockLine

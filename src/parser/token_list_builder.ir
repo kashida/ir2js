@@ -1,20 +1,47 @@
 ::TokenListBuilder
   @parsed\%.TokenList|Array|s\$
-  @input\!A.<InputLine>|s\$
+  @input\!A.<InputLine>\$
+  @tokens\%.TokenList\ new %.TokenList()
 
 :build\%.Result\
-  => new %.Result(@build_rec(@parsed), @input)
+  @build_rec(@parsed)
+  => new %.Result(@tokens, @input)
 
 :@build_rec
   data\%.TokenList|Array|s\$
   if (data instanceof %.TokenList)
-    => data
+    @add_tokens(data)
+    =>
 
-  t := new %.TokenList()
   if (data instanceof Array)
-    t.add(data)
-    => t
+    @add_array(data)
+    =>
 
   // Must be a string.
-  t.add(data)
-  => t
+  @tokens.add(data)
+
+:@add_tokens
+  data\%.TokenList\$
+  if (data instanceof %.ParamLine)
+    t := @tokens
+    @tokens = new %.ParamLine(#)
+      data.name
+      data.is_member
+      data.access
+      data.type
+      data.marker
+      data.init
+    @tokens.add(t)
+  else if (data instanceof %.SeparatorLine)
+    t := @tokens
+    @tokens = new %.SeparatorLine()
+    t.add(t)
+    t.add(data)
+  else
+    @tokens.add(data)
+
+:@add_array
+  data\Array\$
+  data.forEach(##)
+    elem\%.TokenList|Array|s\$
+    @build_rec(elem)

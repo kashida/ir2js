@@ -87,9 +87,6 @@
   src\%.TokenList\$
   %(src)
 
-:cast_str\s\
-  => '/** @type {' + new TypeDecoder(@type).output() + '} */'
-
 ::ParamLine <%.TokenList
   @name+\s\$
   @is_member+\b\$
