@@ -59,9 +59,9 @@ TestFile.prototype.run_if_ready = function() {
 };
 
 TestFile.prototype.run_test = function(line, expected) {
-  try {
-    var target = new parser.ParseTarget(this.rule_name);
-    var result = target.run(line.replace(/\s*\/\|\/\s*/, '\n'), !this.expect_error);
+  var target = new parser.ParseTarget(this.rule_name);
+  var result = target.run(line.replace(/\s*\/\|\/\s*/, '\n'), !this.expect_error);
+  if (result) {
     var result_str = result.rendered().join(' /|/ ');
     if (this.expect_error) {
       console.error('[FAIL] error expected');
@@ -77,10 +77,8 @@ TestFile.prototype.run_test = function(line, expected) {
       console.error(result);
       process.exit(-1);
     }
-  } catch (e) {
-    if (!this.expect_error) {
-      process.exit(-1);
-    }
+  } else {
+    if (!this.expect_error) { process.exit(-1); }
   }
 };
 

@@ -7,7 +7,7 @@ Specific for a particular target (i.e. rule).
 ::ParseTarget
   @rule\s\$
 
-:run
+:run\?%.Result\
   input\!A.<InputLine>|s\$
   show_error_line\b\?
   if (!(input instanceof Array))
@@ -30,7 +30,5 @@ Specific for a particular target (i.e. rule).
       }
       console.error(sp + '^');
       console.error('E: ' + e);
-    throw e
-  if (!(result instanceof %.TokenList))
-    result = global.token_factory.make_token(result)
-  => new %.Result(result, input)
+    => null
+  => new %.TokenListBuilder(result, input).build()

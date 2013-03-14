@@ -12,7 +12,7 @@ a := b := 0
   a = b = 0
 abc() && def
 a *= 0 ? 'abc' && @() || true : "def"
-  a *= 0 ? 'abc' && self() || true : "def"
+  a *= 0 ? 'abc' && _self() || true : "def"
 aa == bb && cc === dd
 0 <= a || 1 instanceof true
 0 + -0
@@ -32,9 +32,9 @@ a.%('abc')
 
 :PrimaryExpression
 @
-  self
+  _self
 @member
-  self._member
+  _self._member
 null
 102.3
 [expr, expr, expr]
@@ -48,7 +48,7 @@ new expr
 new new expr
 new self.abc[expr]
 new @[expr][expr].abc
-  new self[expr][expr].abc
+  new _self[expr][expr].abc
 new abc(0, 1, -3).bb.c
 
 :!
@@ -57,7 +57,7 @@ new self.[expr]
 
 :CallExpression
 @.abc()
-  self.abc()
+  _self.abc()
 
 :!
 @.abc[()]
@@ -65,4 +65,4 @@ new self.[expr]
 :MemberExpression
 a.b.c
 @.b
-  self.b
+  _self.b

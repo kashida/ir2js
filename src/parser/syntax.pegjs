@@ -488,7 +488,9 @@ ArgumentList
     }
 
 CastExpression
-  = TypeLiteral _ '(' _ AssignmentExpression _ ')'
+  = type:TypeLiteral _ '(' _ expr:AssignmentExpression _ ')' {
+      return C(type.cast_str() + '(', expr, ')');
+    }
 
 TypeLiteral
   = '\\' type:TypeExpression '\\' {

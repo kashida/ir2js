@@ -1,0 +1,20 @@
+::TokenListBuilder
+  @parsed\%.TokenList|Array|s\$
+  @input\!A.<InputLine>|s\$
+
+:build\%.Result\
+  => new %.Result(@build_rec(@parsed), @input)
+
+:@build_rec
+  data\%.TokenList|Array|s\$
+  if (data instanceof %.TokenList)
+    => data
+
+  t := new %.TokenList()
+  if (data instanceof Array)
+    t.add(data)
+    => t
+
+  // Must be a string.
+  t.add(data)
+  => t
