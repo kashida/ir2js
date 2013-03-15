@@ -1,5 +1,5 @@
 ::TokenListBuilder
-  @parsed\%.TokenList|Array|s\$
+  @parsed\%.TokenList|A|O|s\$
   @tokens\%.TokenList\ new %.TokenList()
 
 :build\%.TokenList\
@@ -12,7 +12,7 @@
   => new %.Result(@tokens, input)
 
 :@build_rec
-  data\%.TokenList|Array|s\$
+  data\%.TokenList|A|O|s\$
   if (data instanceof %.TokenList)
     @add_tokens(data)
     =>
@@ -21,8 +21,13 @@
     @add_array(data)
     =>
 
+  if (data instanceof Object)
+    @add_object(data)
+    =>
+
   // Must be a string.
-  @tokens.add(data)
+  if (data)
+    @tokens.add(data)
 
 :@add_tokens
   data\%.TokenList\$
@@ -45,7 +50,14 @@
     @tokens.add(data)
 
 :@add_array
-  data\Array\$
+  data\A\$
   data.forEach(##)
-    elem\%.TokenList|Array|s\$
+    elem\%.TokenList|A|O|s\$
     @build_rec(elem)
+
+:@add_object
+  data\O\$
+  if (data.t)
+    @tokens.add(new %.TokenListBuilder(data.t).build())
+  if (data.p)
+    @tokens.prepend(new %.TokenListBuilder(data.p).build())

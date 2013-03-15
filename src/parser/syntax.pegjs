@@ -21,6 +21,15 @@
     });
     return ret;
   };
+
+  var opArray = function(head, tail, opt_right_space_only) {
+    var ret = [head];
+    tail.forEach(function(t) {
+      if (!opt_right_space_only) { ret.push(' '); }
+      ret.push([t[1], ' ', t[3]]);
+    });
+    return ret;
+  };
 }
 
 
@@ -621,7 +630,7 @@ WhileStatement = 'while' __ '(' _ cond:Expression _ ')'
 
 VariableDeclarationList
   = head:VariableDeclaration tail:(_ ',' _ VariableDeclaration)* {
-      return opList(head, tail, true);
+      return opArray(head, tail, true);
     }
 
 VariableDeclaration = DeclareAssignmentExpression / Identifier
@@ -631,17 +640,24 @@ ForStatement
     initializer:(VariableDeclarationList / Expression?) _ ';' _
     test:Expression? _ ';' _
     counter:Expression? _ ')' {
-      var ret = C('for (;');
-      if (initializer) { ret.prepend(initializer); }
-      if (test) { ret.add(' ', test); }
-      ret.add(';');
-      if (counter) { ret.add(' ', counter); }
-      return ret.add(')');
+      return {
+        t: [
+          'for (;',
+          test ? [' ', test] : null,
+          ';',
+          counter ? [' ', counter] : null,
+          ')',
+        ],
+        p: initializer,
+      };
     }
 
 ForInStatement
   = 'for' _ '(' _ iter:Identifier _ 'in' _ collection:Expression _ ')' {
-      return C('for (', iter, ' in ', collection, ')').prepend( C('var ', iter));
+      return {
+        t: ['for (', iter, ' in ', collection, ')'],
+        p: ['var ', iter],
+      };
     }
 
 ContinueStatement = 'continue'
