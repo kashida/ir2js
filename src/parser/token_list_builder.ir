@@ -61,3 +61,5 @@
     @tokens.add(new %.TokenListBuilder(data.t).build())
   if (data.p)
     @tokens.prepend(new %.TokenListBuilder(data.p).build())
+  if (data.a)
+    @tokens.append(new %.TokenListBuilder(data.p).build())
