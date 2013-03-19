@@ -15,6 +15,13 @@
   @list+\A.<%.BlockMarker|s>\ orig ? orig.list : []
   @prev_lines+\A.<s>\ []
   @next_lines+\A.<s>\ []
+  // '' for unknown (or statement).
+  // 'p' for param line.
+  // 's' for separator.
+  // 't' for type.
+  // 'm' for marker.
+  @grammar\s\ ''
+  @params\A\
 
 :+is_empty\b\
   if (@prev_lines.length || @next_lines.length)
@@ -134,15 +141,6 @@
   tl := new %.TokenList()
   tl.add(new %.BlockMarker(type))
   => tl
-
-:make_param_line
-  name\s\$
-  is_member\b\$
-  access\s\$
-  type\s\$
-  marker\s\$
-  init\%.TokenList\$
-  => new %.ParamLine(name, is_member, access, type, marker, init)
 
 :make_separator_line
   => new %.SeparatorLine()

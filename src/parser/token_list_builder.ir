@@ -31,23 +31,7 @@
 
 :@add_tokens
   data\%.TokenList\$
-  if (data instanceof %.ParamLine)
-    t := @tokens
-    @tokens = new %.ParamLine(#)
-      data.name
-      data.is_member
-      data.access
-      data.type
-      data.marker
-      new %.TokenListBuilder(data.init).build()
-    @tokens.add(t)
-  else if (data instanceof %.SeparatorLine)
-    t := @tokens
-    @tokens = new %.SeparatorLine()
-    t.add(t)
-    t.add(data)
-  else
-    @tokens.add(data)
+  @tokens.add(data)
 
 :@add_array
   data\A\$
@@ -57,9 +41,53 @@
 
 :@add_object
   data\O\$
+  if (data.g)
+    switch(data.g)
+      case 'p':
+      t := @tokens
+      p := data.params
+      @tokens = new %.ParamLine(#)
+        p.name
+        p.member
+        p.access
+        new %.ParamLineBuilder(p.type).build()
+        p.marker
+        new %.TokenListBuilder(p.init).build()
+      @tokens.add(t)
+      break
+
+      case 't':
+      @.add_type_object(data.params)
+      break
+
+      case 's':
+      t := @tokens
+      @tokens = new %.SeparatorLine()
+      t.add(t)
+      t.add(data)
+      break;
+
+      case 'm':
+      @tokens.add(new %.BlockMarker(data.params.type))
+      break;
   if (data.t)
     @tokens.add(new %.TokenListBuilder(data.t).build())
   if (data.p)
     @tokens.prepend(new %.TokenListBuilder(data.p).build())
   if (data.a)
-    @tokens.append(new %.TokenListBuilder(data.p).build())
+    @tokens.append(new %.TokenListBuilder(data.a).build())
+
+:add_type_object
+  params\O\$
+  @tokens.add(new %.TokenListBuilder(params.tokens).build())
+
+
+::ParamLineBuilder <%.TokenListBuilder
+  parsed\%.TokenList|A|O|s\$
+  tokens\%.TokenList\$
+  %(parsed, tokens)
+
+:add_type_object
+  params\O\$
+  @tokens.add(params.type)
+

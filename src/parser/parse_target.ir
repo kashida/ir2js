@@ -31,6 +31,4 @@ Specific for a particular target (i.e. rule).
       console.error(sp + '^');
       console.error('E: ' + e);
     => null
-  //console.log('***')
-  //console.log(result)
   => new %.TokenListBuilder(result).result(input)
