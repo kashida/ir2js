@@ -20,8 +20,8 @@
   // 's' for separator.
   // 't' for type.
   // 'm' for marker.
-  @grammar\s\ ''
-  @params\A\
+  @grammar&\s\ ''
+  @params&\A\
 
 :+is_empty\b\
   if (@prev_lines.length || @next_lines.length)
@@ -116,9 +116,3 @@
   if (init_str)
     list.push(' ' + init_str)
   => list.join('')
-
-::SeparatorLine <%.TokenList
-  %()
-
-:toString\s\
-  => '--'

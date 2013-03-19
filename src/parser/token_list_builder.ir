@@ -61,10 +61,7 @@
       break
 
       case 's':
-      t := @tokens
-      @tokens = new %.SeparatorLine()
-      t.add(t)
-      t.add(data)
+      @tokens.grammar = 's'
       break;
 
       case 'm':

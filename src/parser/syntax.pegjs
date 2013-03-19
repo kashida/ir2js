@@ -610,7 +610,7 @@ ParamLine
     }
 
 BlockSeparator
-  = '--' { return {g: 's'}; }
+  = '--' { return {g: 's', t: '--'}; }
 
 
 ParseLine = _ BlockLine _
