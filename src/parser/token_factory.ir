@@ -89,11 +89,6 @@
   => @list.join('')
 
 
-::TypedTokenList <%.TokenList
-  @type+\s\$
-  src\%.TokenList\$
-  %(src)
-
 ::ParamLine <%.TokenList
   @name+\s\$
   @is_member+\b\$
