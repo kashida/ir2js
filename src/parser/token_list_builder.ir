@@ -50,7 +50,7 @@
         p.name
         p.member
         p.access
-        new %.ParamLineBuilder(p.type).build()
+        new %.ParamLineBuilder(p.type).build().toString()
         p.marker
         new %.TokenListBuilder(p.init).build()
       @tokens.add(t)
@@ -84,8 +84,7 @@
 
 ::ParamLineBuilder <%.TokenListBuilder
   parsed\%.TokenList|A|O|s\$
-  tokens\%.TokenList\$
-  %(parsed, tokens)
+  %(parsed)
 
 :add_type_object
   params\O\$

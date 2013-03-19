@@ -122,32 +122,3 @@
 
 :toString\s\
   => '--'
-
-::TokenFactory
-
-:make_token
-  token\s\$
-  tl := new %.TokenList()
-  tl.add(token)
-  => tl
-
-:make_typed_token
-  type\s\$
-  token\%.TokenList\$
-  => new %.TypedTokenList(type, token)
-
-:make_marker
-  type\s\$
-  tl := new %.TokenList()
-  tl.add(new %.BlockMarker(type))
-  => tl
-
-:make_separator_line
-  => new %.SeparatorLine()
-
-:combine_tokens
-  tl := new %.TokenList()
-  i := 0
-  for(; i < arguments.length; i++)
-    tl.add(arguments[i])
-  => tl

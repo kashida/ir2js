@@ -12,7 +12,6 @@ Specific for a particular target (i.e. rule).
   show_error_line\b\?
   if (!(input instanceof Array))
     input = [new InputLine(input, 0)];
-  global.token_factory = global.token_factory || new parser.TokenFactory();
 
   lines := input.map(##).join('\n')
     input\InputLine\$
