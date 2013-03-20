@@ -19,9 +19,11 @@
   c := d
 #=
 (function() {
-  var a = b;
+  var a;
+  a = b;
 
-  var c = d;
+  var c;
+  c = d;
 })();
 #}
 
@@ -39,8 +41,10 @@
  */
 var func_name = function(param0, opt_param1){
   var param1 = opt_param1 === undefined ? (value) : opt_param1;
-  var a = param0;
-  var c = param1;
+  var a;
+  a = param0;
+  var c;
+  c = param1;
 };
 {
   fns:[
@@ -84,9 +88,11 @@ var func_name = function(param0, opt_param1){
   function(param2, opt_param3){
     var param3 = opt_param3 === undefined ? ([]) : opt_param3;
     do_something();
-    var a = param0;
+    var a;
+    a = param0;
   });
-  var c = param1;
+  var c;
+  c = param1;
 };
 {
   fns:[

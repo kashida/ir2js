@@ -28,7 +28,7 @@
 
 :+parsed\parser.Result\
   if (!@parsed)
-    CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine')
+    CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine', @context.pkg)
     @parsed = CODE_PARSER.run([@input].concat(@continue_lines), true)
   => @parsed
 
@@ -104,6 +104,9 @@ TODO: delete.
   if (@param === true)
     => out
 
+  out.append_lines(@parsed.prev_lines.map(##))
+    line\s\$
+    => line + ';'
   out.append_lines(@matcher.first_line())
   @matcher.each_fragment(##)
     block\IndentBlock\$
@@ -115,4 +118,5 @@ TODO: delete.
   @.parsed.tail_comment.forEach(##)
     comment\s\$
     out.tail_comment.push(comment)
+  out.append_lines(@parsed.next_lines)
   => out

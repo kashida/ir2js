@@ -6,6 +6,7 @@ Specific for a particular target (i.e. rule).
 
 ::Target
   @rule\s\$
+  @pkg\Package\?
 
 :run\?%.Result\
   input\!A.<InputLine>|s\$
@@ -30,4 +31,7 @@ Specific for a particular target (i.e. rule).
       console.error(sp + '^');
       console.error('E: ' + e);
     => null
-  => new %.TokenListBuilder(result).result(input)
+  b := new %.TokenListBuilder(result)
+  if (@pkg)
+    b.pkg = @pkg
+  => b.result(input)

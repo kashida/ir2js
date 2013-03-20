@@ -8,6 +8,12 @@ Container and interface of the TokenList to the rest of the converter.
 :+code\A.<%.BlockMarker|s>\
   => @tokens.list
 
+:+prev_lines\A.<s>\
+  => @tokens.prev_lines
+
+:+next_lines\A.<s>\
+  => @tokens.next_lines
+
 :+tail_comment\A.<s>\
   => @tokens.next_lines
 

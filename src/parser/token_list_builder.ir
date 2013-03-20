@@ -1,9 +1,12 @@
 ::TokenListBuilder
   @parsed\%.TokenList|A|O|s\$
-  @tokens\%.TokenList\ new %.TokenList()
+  @pkg&\Package\?
+  @tokens\%.TokenList\
 
 :build\%.TokenList\
-  @build_rec(@parsed)
+  if (!@tokens)
+    @tokens = new %.TokenList()
+    @build_rec(@parsed)
   => @tokens
 
 :result\%.Result\
@@ -52,7 +55,7 @@
         p.access
         new %.ParamLineBuilder(p.type).build().toString()
         p.marker
-        new %.TokenListBuilder(p.init).build()
+        new %.TokenListBuilder(p.init, @pkg).build()
       @tokens.add(t)
       break
 
@@ -68,22 +71,29 @@
       @tokens.add(new %.BlockMarker(data.params.type))
       break;
   if (data.t)
-    @tokens.add(new %.TokenListBuilder(data.t).build())
+    @tokens.add(new %.TokenListBuilder(data.t, @pkg).build())
   if (data.p)
-    @tokens.prepend(new %.TokenListBuilder(data.p).build())
+    @tokens.prepend(new %.TokenListBuilder(data.p, @pkg).build())
   if (data.a)
-    @tokens.append(new %.TokenListBuilder(data.a).build())
+    @tokens.append(new %.TokenListBuilder(data.a, @pkg).build())
 
 :add_type_object
   params\O\$
-  @tokens.add(new %.TokenListBuilder(params.tokens).build())
+  t := params.type
+  if (@.pkg)
+    t = new TypeDecoder(@.pkg, t).output()
+  @tokens.add('/** @type {' + t + '} */')
 
 
 ::ParamLineBuilder <%.TokenListBuilder
   parsed\%.TokenList|A|O|s\$
-  %(parsed)
+  pkg&\Package\?
+  %(parsed, pkg)
 
 :add_type_object
   params\O\$
-  @tokens.add(params.type)
+  t := params.type
+  if (@.pkg)
+    t = new TypeDecoder(@.pkg, t).output()
+  @tokens.add(t)
 
