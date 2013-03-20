@@ -59,7 +59,7 @@ TestFile.prototype.run_if_ready = function() {
 };
 
 TestFile.prototype.run_test = function(line, expected) {
-  var target = new parser.ParseTarget(this.rule_name);
+  var target = new parser.Target(this.rule_name);
   var result = target.run(line.replace(/\s*\/\|\/\s*/, '\n'), !this.expect_error);
   if (result) {
     var result_str = result.rendered().join(' /|/ ');
@@ -101,7 +101,7 @@ ConvertFile.prototype.run = function() {
 
 ConvertFile.prototype.parse = function(line) {
   try {
-    var target = new parser.ParseTarget('BlockLine');
+    var target = new parser.Target('BlockLine');
     console.log('O|  ' + target.run(line).rendered().join(' /|/ '));
   } catch (e) {
     console.log('X|  ' + line);

@@ -28,7 +28,7 @@
 
 :+parsed\parser.Result\
   if (!@parsed)
-    CODE_PARSER = CODE_PARSER || new parser.ParseTarget('ParseLine')
+    CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine')
     @parsed = CODE_PARSER.run([@input].concat(@continue_lines), true)
   => @parsed
 

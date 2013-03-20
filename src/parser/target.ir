@@ -4,7 +4,7 @@ Specific for a particular target (i.e. rule).
 :
   _parser := require('syntax');
 
-::ParseTarget
+::Target
   @rule\s\$
 
 :run\?%.Result\
