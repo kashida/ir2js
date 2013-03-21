@@ -6,10 +6,10 @@ Specific for a particular target (i.e. rule).
 
 ::Target
   @rule\s\$
-  @pkg\Package\?
 
 :run\?%.Result\
   input\!A.<InputLine>|s\$
+  @xformer\LineTransformer\?
   show_error_line\b\?
   if (!(input instanceof Array))
     input = [new InputLine(input, 0)];
@@ -32,6 +32,5 @@ Specific for a particular target (i.e. rule).
       console.error('E: ' + e);
     => null
   b := new %.TokenListBuilder(result)
-  if (@pkg)
-    b.pkg = @pkg
+  b.xformer = @xformer
   => b.result(input)

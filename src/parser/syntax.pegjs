@@ -298,12 +298,6 @@ AssignmentOperator
   / '%='
   / '+='
   / '-='
-  / '<<='
-  / '>>='
-  / '>>>='
-  / '&='
-  / '^='
-  / '|='
 
 IdentifierName 'identifier'
   = start:IdentifierStart part:IdentifierPart* {
@@ -409,8 +403,19 @@ CallTarget
   = MemberExpression
   / '%' { return 'goog.base'; }
 
+// TODO: allow % to take ParameterBlockMarker as an argument
+// too (like Arguments does).
+CallInvocation
+  = MemberExpression _ Arguments
+  / '%' _ '(' _ args:ArgumentList? _ ')' {
+      return {
+        g: 'e',
+        params: {args: args},
+      };
+    }
+
 CallExpression
-  = CallTarget _ Arguments (
+  = CallInvocation (
         _ Arguments
       / _ '[' _ Expression _ ']'
       / _ '.' _ IdentifierName

@@ -1,6 +1,6 @@
 ::TokenListBuilder
   @parsed\%.TokenList|A|O|s\$
-  @pkg&\Package\?
+  @xformer&\LineTransformer\?
   @tokens\%.TokenList\
 
 :build\%.TokenList\
@@ -45,55 +45,54 @@
 :@add_object
   data\O\$
   if (data.g)
+    p := data.params
     switch(data.g)
-      case 'p':
+      case 'e': // Parent call.
+      @tokens.add(@.xformer ? @.xformer.parent_call(#) : ['%(', p.args, ')'])
+        new %.TokenListBuilder(p.args, @.xformer).build().toString()
+      break;
+
+      case 'm': // Marker.
+      @tokens.add(new %.BlockMarker(p.type))
+      break;
+
+      case 'p': // Param line.
       t := @tokens
-      p := data.params
       @tokens = new %.ParamLine(#)
         p.name
         p.member
         p.access
-        new %.ParamLineBuilder(p.type).build().toString()
+        new %.ParamLineBuilder(p.type, @.xformer).build().toString()
         p.marker
-        new %.TokenListBuilder(p.init, @pkg).build()
+        new %.TokenListBuilder(p.init, @.xformer).build()
       @tokens.add(t)
       break
 
-      case 't':
-      @.add_type_object(data.params)
-      break
-
-      case 's':
+      case 's': // Separator line.
       @tokens.grammar = 's'
       break;
 
-      case 'm':
-      @tokens.add(new %.BlockMarker(data.params.type))
-      break;
+      case 't': // Type literal.
+      @.add_type_object(p)
+      break
+
   if (data.t)
-    @tokens.add(new %.TokenListBuilder(data.t, @pkg).build())
+    @tokens.add(new %.TokenListBuilder(data.t, @.xformer).build())
   if (data.p)
-    @tokens.prepend(new %.TokenListBuilder(data.p, @pkg).build())
+    @tokens.prepend(new %.TokenListBuilder(data.p, @.xformer).build())
   if (data.a)
-    @tokens.append(new %.TokenListBuilder(data.a, @pkg).build())
+    @tokens.append(new %.TokenListBuilder(data.a, @.xformer).build())
 
 :add_type_object
   params\O\$
-  t := params.type
-  if (@.pkg)
-    t = new TypeDecoder(@.pkg, t).output()
-  @tokens.add('/** @type {' + t + '} */')
+  @tokens.add(@.xformer ? @.xformer.cast(params.type) : params.tokens)
 
 
 ::ParamLineBuilder <%.TokenListBuilder
   parsed\%.TokenList|A|O|s\$
-  pkg&\Package\?
-  %(parsed, pkg)
+  xformer&\LineTransformer\?
+  %(parsed, xformer)
 
 :add_type_object
   params\O\$
-  t := params.type
-  if (@.pkg)
-    t = new TypeDecoder(@.pkg, t).output()
-  @tokens.add(t)
-
+  @tokens.add(@.xformer ? @.xformer.type(params.type) : params.tokens)

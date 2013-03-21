@@ -60,7 +60,8 @@ TestFile.prototype.run_if_ready = function() {
 
 TestFile.prototype.run_test = function(line, expected) {
   var target = new parser.Target(this.rule_name);
-  var result = target.run(line.replace(/\s*\/\|\/\s*/, '\n'), !this.expect_error);
+  var result = target.run(
+      line.replace(/\s*\/\|\/\s*/, '\n'), undefined, !this.expect_error);
   if (result) {
     var result_str = result.rendered().join(' /|/ ');
     if (this.expect_error) {

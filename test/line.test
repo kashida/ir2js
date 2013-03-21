@@ -1,7 +1,7 @@
 #{: semicolon
-abc def
+abc - def
 #=
-abc def;
+abc - def;
 #}
 
 #{: multiline object
@@ -10,7 +10,8 @@ a := {#}
   y: line2
   z: line3
 #=
-var a = {
+var a;
+a = {
   x: line1,
   y: line2,
   z: line3
@@ -23,7 +24,8 @@ a := {#} + x
   y: line2
   z: line3
 #=
-var a = {
+var a;
+a = {
   x: line1,
   y: line2,
   z: line3
@@ -36,7 +38,8 @@ a := [#]
   line2
   line3
 #=
-var a = [
+var a;
+a = [
   line1,
   line2,
   line3
@@ -49,7 +52,8 @@ a := [#] + x
   line2
   line3
 #=
-var a = [
+var a;
+a = [
   line1,
   line2,
   line3
@@ -62,7 +66,8 @@ a := (#)
   line2
   line3
 #=
-var a = (
+var a;
+a = (
   line1,
   line2,
   line3
@@ -75,7 +80,8 @@ a := (#) + x
   line2
   line3
 #=
-var a = (
+var a;
+a = (
   line1,
   line2,
   line3
@@ -143,7 +149,8 @@ if (xyz)
 #=
 if (xyz){
   aaa;
-  var a = func(
+  var a;
+  a = func(
     line1,
     line2,
     line3
@@ -184,7 +191,8 @@ a := [#] + {#} + ##
   statement0
   statement1
 #=
-var a = [
+var a;
+a = [
   arr0,
   arr1
 ] + {
@@ -204,7 +212,8 @@ function(param0, param1){
 #{: hash in a string
 a := '#fff'
 #=
-var a =  '#fff';
+var a;
+a =  '#fff';
 #}
 
 #{: line continuation

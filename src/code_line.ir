@@ -28,76 +28,18 @@
 
 :+parsed\parser.Result\
   if (!@parsed)
-    CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine', @context.pkg)
-    @parsed = CODE_PARSER.run([@input].concat(@continue_lines), true)
+    CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine')
+    @parsed = CODE_PARSER.run(#)
+      [@input].concat(@continue_lines)
+      new LineTransformer(@context, @input)
+      true
   => @parsed
 
 :transform
   code := (@param && @param !== true && @param.value_line) || @.parsed.code
 
-  // TODO: delete.
-  //code := p.code.map(##)
-  //  seg\s\$
-  //  => @transform_segment(seg)
-
   @matcher = new BlockMatcher(@context, @input, code, @.blocks)
   @matcher.transform()
-
-TODO: delete.
-:@transform_segment\s\
-  seg\s\$
-  if (!seg)
-    => ''
-  first_char := seg.charAt(0)
-  if ('\'"'.indexOf(first_char) >= 0)
-    // return string as is.
-    => seg
-  if (first_char == '~')
-    // regular expression. just strip the first character.
-    => seg.substr(1)
-
-  segment := seg
-  assign_re := ~/^(.*\w)\s*:=\s*([^\=].*)$/.exec(segment)
-  if (assign_re)
-    // def-assign.
-    segment = 'var ' + assign_re[1] + ' = ' + assign_re[2]
-
-  // self method or member reference.
-  segment = segment.replace(~/@([a-zA-Z]\w*)/g, ##)
-    _\s\$
-    name\s\$
-    => '_self._' + name
-
-  // otherwise @ is simply converted to self.
-  segment = segment.replace(~/@/g, '_self')
-
-  // relative package reference.
-  segment = @context.pkg.replace_str(segment)
-
-  // type cast. we shouldn't be looking at strings at this point, so we can
-  // safely convert all backslash pairs.
-  segment = segment.replace(~/\\([^\\]+)\\/g, ##)
-    _\s\$
-    type\s\$
-    t := new TypeDecoder(@context.pkg, type)
-    => '/** @type {' + t.output() + '} */'
-
-  // parent call.
-  segment = segment.replace(~/\%\((\s*\))?/g, ##)
-    match\s\$
-    end\s\$
-    end_str := end ? ')' : ', '
-    if (@context.is_ctor)
-      => @context.cls.ctor.parent_name() + '.call(this' + end_str
-    else if (@context.is_method)
-      => "goog.base(this, '" + @context.name.id + "'" + end_str
-    else
-      warn(@input, 'parent call appeared in non-ctor / non-method.')
-      => match
-  
-  // => -> return.
-  segment = segment.replace(~/=>\s*/g, 'return ')
-  => segment
 
 :output\LineOutput\
   out := new LineOutput(@input)

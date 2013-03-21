@@ -1,13 +1,12 @@
 :TypeLiteral
 \abc\
-  /** @type {abc} */
 
 :!
 \ab\cde\
 
 :Expression
 \boolean\ ( 0 )
-  /** @type {boolean} */(0)
+  \boolean\(0)
 
 :ParamLine
 ab\number\$

@@ -22,7 +22,6 @@ abc(#)
 new abc(#)
   new abc|#p|
 %('abc')
-  goog.base('abc')
 
 :!
 a =: b

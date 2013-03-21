@@ -16,6 +16,7 @@
   @prev_lines+\A.<s>\ []
   @next_lines+\A.<s>\ []
   // '' for unknown (or statement).
+  // 'e' for parent call.
   // 'p' for param line.
   // 's' for separator.
   // 't' for type.
@@ -103,9 +104,7 @@
     @is_member ? '@' : ''
     @name
     @access
-    '\\'
     @type
-    '\\'
     @marker
   init_str := @init.toString()
   if (init_str)

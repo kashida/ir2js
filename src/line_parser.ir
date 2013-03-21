@@ -30,7 +30,7 @@ First pass line parsing for constructing the block structure.
   if (spaces_re[3] != '')
     warn(@input, 'trailing space')
 
-:@check_continuation\s\
+:@check_continuation
   cont_re := ~/^\s*\|/.exec(@input.line)
   @is_continuation = !!cont_re
 
