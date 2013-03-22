@@ -35,4 +35,4 @@ First pass line parsing for constructing the block structure.
   @is_continuation = !!cont_re
 
 :@check_separator
-  @is_separator = /^--\s*$/.test(@input.line)
+  @is_separator = ~/^\s*--\s*$/.test(@input.line)

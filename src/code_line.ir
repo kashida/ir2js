@@ -46,7 +46,7 @@
   if (@param === true)
     => out
 
-  out.append_lines(@parsed.prev_lines.map(##))
+  out.append_lines(@.parsed.prev_lines.map(##))
     line\s\$
     => line + ';'
   out.append_lines(@matcher.first_line())
