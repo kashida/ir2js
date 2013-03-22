@@ -102,16 +102,18 @@ if (xyz){
 #}
 
 #{: block statement 2
-do # while (xyz)
+do
   aaa
   bbb
   ccc
+while (xyz)
 #=
-do {
+do{
   aaa;
   bbb;
   ccc;
-} while (xyz);
+}
+while (xyz);
 #}
 
 #{: block statement with comment
@@ -158,7 +160,7 @@ if (xyz){
 }
 #}
 
-#{: anon-function
+#{: anonym-function
 func(##, this)
   p0\n\$
   p1\n\$
