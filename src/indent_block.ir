@@ -70,7 +70,7 @@ TODO: change marker's type to BlockType when it's enum.
     line\SectionLine\$
     i\n\$
     out_line := line.output()
-    if (!line.is_end)
+    if (line instanceof InvalidLine)
       accum_suffix += out_line.line_suffix
       out_line.line_suffix = ''
     else

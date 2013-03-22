@@ -3,7 +3,7 @@
   parser\LineParser\$
   @indent+\n\ parser.indent
 
-:is_continuation
+:+is_continuation\b\
   => false
 
 :output\LineOutput\

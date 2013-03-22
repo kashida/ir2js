@@ -23,10 +23,9 @@
 :+is_block_statement\b\
   => @matcher.is_block_statement
 
-:+is_end\b\
-  => !@continue_lines.length
-
 :+parsed\parser.Result\
+  if (@.is_continuation)
+    warn(@input, 'parse requested for cont. line')
   if (!@parsed)
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine')
     @parsed = CODE_PARSER.run(#)

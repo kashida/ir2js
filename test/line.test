@@ -215,17 +215,15 @@ function(param0, param1){
 a := '#fff'
 #=
 var a;
-a =  '#fff';
+a = '#fff';
 #}
 
 #{: line continuation
-aaa
-|  bbb
+aaa -
+|  bbb +
 |  ccc
 #=
-aaa
-    bbb
-    ccc;
+aaa - bbb + ccc;
 #}
 
 #{: line continuation with block

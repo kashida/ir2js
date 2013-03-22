@@ -34,26 +34,26 @@
     line\SectionLine\$
     i\n\$
     // create blocks and assign lines to them.
-    if (!(line instanceof InvalidLine))
-      prev_indent := @top_block().indent
-      indent := line.indent
-
-      if (indent > prev_indent)
-        @deeper_indent(i, indent)
-      else if (indent < prev_indent)
-        @shallower_indent(line, i)
-
-      if (line.is_continuation)
-        @continuation(line, i)
-
-      @add_invalid_lines()
-      if (line instanceof SeparatorLine)
-        @separator(line, indent, i)
-      else
-        @last_valid_line = \CodeLine\(line)
-        @top_block().add(line)
-    else
+    if (line instanceof InvalidLine)
       @invalid_lines.push(line)
+      =>
+
+    prev_indent := @top_block().indent
+    indent := line.indent
+
+    if (indent > prev_indent)
+      @deeper_indent(i, indent)
+    else if (indent < prev_indent)
+      @shallower_indent(line, i)
+
+    @add_invalid_lines()
+    if (line.is_continuation)
+      @continuation(line, i)
+    else if (line instanceof SeparatorLine)
+      @separator(line, indent, i)
+    else
+      @last_valid_line = \CodeLine\(line)
+      @top_block().add(line)
   @add_invalid_lines()
   @pop_rest()
 
@@ -101,7 +101,9 @@
   if (!last_line)
     warn(line.input, 'continuation as a first line of block')
   else
-    last_line.is_end = false
+    last_line.continue_lines.push(new InputLine(#))
+      line.input.line.replace(/\|/, ' ')
+      line.input.row_index
   @last_valid_line = \CodeLine\(line)
 
 :@add_invalid_lines
