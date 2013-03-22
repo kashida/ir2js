@@ -22,12 +22,17 @@ abc(#)
 new abc(#)
   new abc|#p|
 %('abc')
+1 % %.abc % 3
+%% . a
+  %%.a
 
 :!
 a =: b
 0 + 'a' := true
 a := 0 := b
 a.%('abc')
+% % a
+% %.a
 
 :PrimaryExpression
 @

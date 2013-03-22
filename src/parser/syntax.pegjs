@@ -330,7 +330,12 @@ RegularExpressionLiteral 'regular expression'
       return '/' + body.replace(/^\*/, '\\*') + '/' + flags;
     }
 
-Self = '@' name:Identifier? { return name ? '_self._' + name : '_self'; }
+Self = '@' _ name:Identifier? { return name ? '_self._' + name : '_self'; }
+
+CurrentPackage
+  = percents:('%'+) _ '.' _ name:Identifier {
+      return {g: 'c', params: {name: name, percents: percents.join('')}};
+    }
 
 ArrayBlockMarker = '[' _ '#' _ ']' { return {g: 'm', params: {type: 'a'}}; }
 ObjectBlockMarker = '{' _ '#' _ '}' { return {g: 'm', params: {type: 'o'}}; }
@@ -356,6 +361,7 @@ Literal
 
 PrimaryExpression
   = Self
+  / CurrentPackage
   / BlockMarker
   / Identifier
   / Literal
@@ -398,10 +404,6 @@ MemberExpression
 NewExpression
   = MemberExpression
   / 'new' __ NewExpression
-
-CallTarget
-  = MemberExpression
-  / '%' { return 'goog.base'; }
 
 // TODO: allow % to take ParameterBlockMarker as an argument
 // too (like Arguments does).

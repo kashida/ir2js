@@ -16,6 +16,7 @@
   @prev_lines+\A.<s>\ []
   @next_lines+\A.<s>\ []
   // '' for unknown (or statement).
+  // 'c' for current package ref.
   // 'e' for parent call.
   // 'p' for param line.
   // 's' for separator.

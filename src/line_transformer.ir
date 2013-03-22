@@ -5,7 +5,7 @@
 :pkg_ref\s\
   name\s\$
   // relative package reference.
-  => @context.pkg.replace_str(name)
+  => @context.pkg.replace(name)
 
 :cast\s\
   type\s\$
