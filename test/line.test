@@ -227,12 +227,11 @@ aaa - bbb + ccc;
 #}
 
 #{: line continuation with block
-aaa [#]
+aaa + [#]
   bbb
-|  ccc
+|  * ccc
 #=
-aaa [
+aaa + [
   bbb
-]
-    ccc;
+] * ccc;
 #}
