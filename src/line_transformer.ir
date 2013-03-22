@@ -1,0 +1,27 @@
+::LineTransformer
+  @context\!Context\$
+  @input\InputLine\$
+
+:pkg_ref\s\
+  name\s\$
+  // relative package reference.
+  => @context.pkg.replace_str(name)
+
+:cast\s\
+  type\s\$
+  => '/** @type {' + new TypeDecoder(@context.pkg, type).output() + '} */'
+
+:type\s\
+  type\s\$
+  => new TypeDecoder(@context.pkg, type).output()
+
+:parent_call\s\
+  args\s\$
+  end_str := args ? ', ' + args + ')' : ')'
+  if (@context.is_ctor)
+    => @context.cls.ctor.parent_name() + '.call(this' + end_str
+  else if (@context.is_method)
+    => "goog.base(this, '" + @context.name.id + "'" + end_str
+  else
+    warn(@input, 'parent call appeared in non-ctor / non-method.')
+    => '%(' + args + ')'
