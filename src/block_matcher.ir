@@ -55,7 +55,7 @@ Returns true only if matching succeeds and leaving valid set of indexes in
     if (@params[i])
       @params[i].transform()
     mi := @marker_indexes[i]
-    block.transform(mi < 0 ? BlockType.BLOCK : {#}[mi.type])
+    block.transform(mi < 0 ? BlockType.BLOCK : {#}[@code[mi].type])
       f: BlockType.BLOCK
       o: BlockType.OBJ
       a: BlockType.ARRAY
