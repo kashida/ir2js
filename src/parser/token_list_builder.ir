@@ -50,16 +50,16 @@
       case 'c': // Current package ref.
       str := p['percents'] + '.' + p.name
       @tokens.add(@.xformer ? @.xformer.pkg_ref(str) : str)
-      break;
+      break
 
       case 'e': // Parent call.
       @tokens.add(@.xformer ? @.xformer.parent_call(#) : ['%(', p.args, ')'])
         new %.TokenListBuilder(p.args, @.xformer).build().toString()
-      break;
+      break
 
       case 'm': // Marker.
       @tokens.add(new %.BlockMarker(p.type))
-      break;
+      break
 
       case 'p': // Param line.
       t := @tokens
@@ -75,7 +75,7 @@
 
       case 's': // Separator line.
       @tokens.grammar = 's'
-      break;
+      break
 
       case 't': // Type literal.
       @.add_type_object(p)

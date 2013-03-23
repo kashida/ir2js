@@ -2,7 +2,7 @@ Wrapper for the PEGJS's parse method.
 Specific for a particular target (i.e. rule).
 
 :
-  _parser := require('syntax');
+  _parser := require('syntax')
 
 ::Target
   @rule\s\$
@@ -12,7 +12,7 @@ Specific for a particular target (i.e. rule).
   @xformer\LineTransformer\?
   show_error_line\b\?
   if (!(input instanceof Array))
-    input = [new InputLine(input, 0)];
+    input = [new InputLine(input, 0)]
 
   lines := input.map(##).join('\n')
     input\InputLine\$
@@ -22,14 +22,14 @@ Specific for a particular target (i.e. rule).
   catch (e)
     if (show_error_line)
       // TODO: make this display multi-line right.
-      console.error('[FAIL] error for ' + @rule);
-      console.error('I: ' + lines);
-      var sp = '   ';
-      for (var i = 0; i < e.offset; i++) {
-        sp += ' ';
-      }
-      console.error(sp + '^');
-      console.error('E: ' + e);
+      console.error('[FAIL] error for ' + @rule)
+      console.error('I: ' + lines)
+      sp := '   '
+      i := 0
+      for (; i < e.offset; i++)
+        sp += ' '
+      console.error(sp + '^')
+      console.error('E: ' + e)
     => null
   b := new %.TokenListBuilder(result)
   b.xformer = @xformer

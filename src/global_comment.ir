@@ -1,8 +1,6 @@
 comment section in a file.
 ::GlobalComment
   @lines\A.<InputLine>\$
-    line\InputLine\$
-    => line.line
 
 :output
   result := []
