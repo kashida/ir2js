@@ -25,7 +25,7 @@ Blank
       return ret;
     }
 
-_ = Blank / ''
+_ = Blank?
 
 __ = blank:Blank* { return [' ', blank]; }
 
