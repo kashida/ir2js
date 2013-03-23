@@ -51,8 +51,7 @@ output lines corresponds to one input line.
       if (to_add)
         to_add = indent + to_add
       result.push(to_add)
-      if (i == @lines.length - 1)
-        @tail_comment.forEach(##)
-          c\s\$
-          result.push(indent + c)
+  @tail_comment.forEach(##)
+    c\s\$
+    result.push(indent + c)
   => result

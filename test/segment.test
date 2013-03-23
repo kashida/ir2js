@@ -44,12 +44,15 @@ def(##)
 abc;
 // some comment @.
 def(
-/** @param {number} opt_a */
-function(a, opt_b, opt_c){
+/**
+ * @param {number} a
+ * @param {number=} opt_b
+ * @param {number=} c
+ */
+function(a, opt_b, c){
   // comment for a.
   var b = opt_b === undefined ? (0) : opt_b;
   // comment for b.
-  var c = opt_c === undefined ? (null) : opt_c;
   // comment for c.
 });
 #}
