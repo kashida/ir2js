@@ -57,8 +57,10 @@ function(param0, param1, param2, param3){
  */
 var func_name = function(param0, opt_param1, param2){
   var param1 = opt_param1 === undefined ? (value) : opt_param1;
-  var a = param0;
-  var c = param1;
+  var a;
+  a = param0;
+  var c;
+  c = param1;
 };
 {
   fns:[

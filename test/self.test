@@ -12,10 +12,10 @@ _self.jkl();
 
 #{: multi-self reference
 @abc(@def())
-ghi jkl @mno()
+ghi + jkl * @mno()
 #=
 _self._abc(_self._def());
-ghi jkl _self._mno();
+ghi + jkl * _self._mno();
 #}
 
 #{: non-member / non-method self reference
