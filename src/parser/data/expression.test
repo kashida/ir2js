@@ -25,6 +25,8 @@ new abc(#)
 1 % %.abc % 3
 %% . a
   %%.a
+pkg?pkg+connector:''
+  pkg ? pkg + connector : ''
 
 :!
 a =: b

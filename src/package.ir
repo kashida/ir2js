@@ -23,7 +23,7 @@ package name.
   => str.replace(~/^\%(\:\:|\.)/, ##)
     _\A.<s>\$
     connector\s\$
-    => pkg ? pkg + connector: ''
+    => pkg ? pkg + connector : ''
 
 :replace_str
   str\s\$

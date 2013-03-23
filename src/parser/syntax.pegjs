@@ -27,7 +27,7 @@ Blank
 
 _ = Blank / ''
 
-__ = blank:Blank+ { return [' ', blank]; }
+__ = blank:Blank* { return [' ', blank]; }
 
 IdentifierStart
   = UnicodeLetter
@@ -441,6 +441,9 @@ TypeLiteral
       };
     }
 
+TypeLiteralLine
+  = TypeLiteral _ !.
+
 TypeExpression
   = chr:(!'\\' SourceCharacter)* {
       return chr.map(function(c) { return c[1]; }).join('');
@@ -625,14 +628,14 @@ ParseLine = _ BlockLine _
 // This is for testing.
 BlockLine
   = PropertyAssignment
-  / TypeLiteral
+  / TypeLiteralLine
   / ParamLine
   / Statement
   / BlockSeparator
   / _
 
 FunctionBlockLine
-  = TypeLiteral
+  = TypeLiteralLine
   / ParamLine
   / Statement
   / BlockSeparator

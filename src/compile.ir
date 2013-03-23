@@ -33,7 +33,7 @@
   basedir\s\$
   inout_filenames\A.<s>\$
   i := 0
-  while(i < inout_filenames.length)
+  while (i < inout_filenames.length)
     infile := inout_filenames[i++]
     outfile := inout_filenames[i++]
 
