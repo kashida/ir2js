@@ -20,7 +20,7 @@ decodes blockc markers.
   @line.forEach(##)
     seg\s\$
     i\n\$
-    if (~/^['"\/]/.test(seg))
+    if (/^['"\/]/.test(seg))
       // string, regular expression, and comment don't need to be split.
       @fragments.add_str(seg)
     else
@@ -30,7 +30,7 @@ decodes blockc markers.
   seg\s\$
   last_seg\b\$
   blocks\A.<IndentBlock>\$
-  re := ~/(\{#\}|\[#\]|\(#\)|##?)/g
+  re := /(\{#\}|\[#\]|\(#\)|##?)/g
   last_index := 0
   match := re.exec(seg)
   sub_context := null

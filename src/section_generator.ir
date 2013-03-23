@@ -33,7 +33,7 @@
 
 :@create_ctor\Constructor\
   line\s\$
-  re := ~/^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line)
+  re := /^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line)
   if (!re)
     => null
 
@@ -49,7 +49,7 @@
 :@create_method\Method\
   line\s\$
   header\InputLine\$
-  re := ~/^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
+  re := /^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
   if (!re)
     => null
 
@@ -65,7 +65,7 @@
 :@create_accessor\OverridingAccessor\
   line\s\$
   header\InputLine\$
-  re := ~/^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
+  re := /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
   if (!re)
     => null
 
@@ -81,14 +81,14 @@
 
 :@create_global_function\GlobalFunction\
   line\s\$
-  re := ~/^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line)
+  re := /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line)
   if (!re)
     => null
   => new GlobalFunction(@scope.copy_context_with_name(re[1]), re[3])
 
 :@create_multi_line_str\MultiLineStr\
   line\s\$
-  re := ~/^'\s*(\w+)$/.exec(line)
+  re := /^'\s*(\w+)$/.exec(line)
   if (!re)
     => null
   => new MultiLineStr(@scope.copy_context_with_name(re[1]))
@@ -107,7 +107,7 @@
 
 :@create_typedef\Typedef\
   line\s\$
-  re := ~/^\!\s*(\w+)$/.exec(line)
+  re := /^\!\s*(\w+)$/.exec(line)
   if (!re)
     => null
   => new Typedef(@scope.copy_context_with_name(re[1]))

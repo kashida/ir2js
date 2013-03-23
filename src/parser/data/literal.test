@@ -39,8 +39,6 @@ False
 /abc/ig
 /[\wa-z]abc/ig
 / 0 /
-~/ 0 /
- / 0 /
 --- need to escape the first star in re.
 /* abc/
   /\* abc/

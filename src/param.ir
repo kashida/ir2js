@@ -87,7 +87,7 @@ Variable initialization output as first statements of function body.
 
 :output_argtype\s\
   type := @type.output()
-  re := ~/^\!?([a-zA-Z][\w\.]*)$/.exec(type)
+  re := /^\!?([a-zA-Z][\w\.]*)$/.exec(type)
   if (!re)
     => 'null'
   type_name := re[1]
@@ -95,7 +95,7 @@ Variable initialization output as first statements of function body.
 
 :argtype\?s\
   type := @type.output()
-  re := ~/^\!?([a-zA-Z][\w\.]*)$/.exec(type)
+  re := /^\!?([a-zA-Z][\w\.]*)$/.exec(type)
   if (!re)
     => null
   type_name := re[1]

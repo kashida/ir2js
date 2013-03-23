@@ -119,7 +119,7 @@ classname.prototype._classname = 'classname';
 #{ re with param format in it
 ::Class
 :method
-  if (~/^\s*\/\//.test(@str))
+  if (/^\s*\/\//.test(@str))
     =>
 #=
 /** @constructor */

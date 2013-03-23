@@ -45,7 +45,7 @@ or
 :@check_line
   line\s\$
   index\n\$
-  input_re := ~/^#\{((:)|\[(.*)\])?\s*(.*\S)\s*$/.exec(line)
+  input_re := /^#\{((:)|\[(.*)\])?\s*(.*\S)\s*$/.exec(line)
   if (input_re)
     @state = 'i'
     @name = input_re[4]
@@ -53,11 +53,11 @@ or
     @is_global = !input_re[2]
     =>
     
-  if (~/^#\=\s*$/.test(line))
+  if (/^#\=\s*$/.test(line))
     @state = 'o'
     =>
 
-  if (~/^#\}\s*$/.test(line))
+  if (/^#\}\s*$/.test(line))
     @state = ''
     @tests.push(new Test(@name, @package_name, @input, @output, @is_global))
     @name = ''
@@ -76,7 +76,7 @@ or
     break
 
     case '':
-    if (!~/^\s*$/.test(line))
+    if (!/^\s*$/.test(line))
       console.warn(@filename + ' (line ' + index + ')? ' + line)
     break
 

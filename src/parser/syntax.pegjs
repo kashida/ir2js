@@ -323,9 +323,8 @@ StringLiteral 'string'
       return str.join('');
     }
 
-// TODO: Remove '~' optional prefix after modifying the ir2js source code.
 RegularExpressionLiteral 'regular expression'
-  = '~'? '/' body:RegularExpressionBody '/' flags:RegularExpressionFlags {
+  = '/' body:RegularExpressionBody '/' flags:RegularExpressionFlags {
       // Escape the first '*' to avoid '/*' (start of multi-line comment).
       return '/' + body.replace(/^\*/, '\\*') + '/' + flags;
     }

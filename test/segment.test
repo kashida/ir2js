@@ -23,13 +23,13 @@ if (!new RegExp('^[\\\'\\"]').test(seg)){
 #}
 
 #{: regular expression
-@a * ~/\/ '' " [abc] # \// + @.b
+@a * /\/ '' " [abc] # \// + @.b
 #=
 _self._a * /\/ '' " [abc] # \// + _self.b;
 #}
 
 #{: cast should not happen in re
-~/ \a Array.<Object> \b /
+/ \a Array.<Object> \b /
 #=
 / \a Array.<Object> \b /;
 #}

@@ -50,7 +50,7 @@
 
 :@try_return_type\b\
   line\s\$
-  re := ~/^\s*\\(.*)\\\s*$/.exec(line)
+  re := /^\s*\\(.*)\\\s*$/.exec(line)
   if (!re)
     => false
   @return_type = new TypeDecoder(@context.pkg, re[1])

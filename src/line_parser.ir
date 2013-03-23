@@ -11,7 +11,7 @@ First pass line parsing for constructing the block structure.
   @process()
 
 :@process
-  if (~/^\s*$/.test(@input.line) || ~/^\s*\/\//.test(@input.line))
+  if (/^\s*$/.test(@input.line) || /^\s*\/\//.test(@input.line))
     // blank or comment line. Nothing to be done.
     =>
   @is_valid = true
@@ -21,7 +21,7 @@ First pass line parsing for constructing the block structure.
   @check_separator()
 
 :@check_spaces
-  spaces_re := ~/^(\s*)(.*[\S])(\s*)$/.exec(@input.line)
+  spaces_re := /^(\s*)(.*[\S])(\s*)$/.exec(@input.line)
 
   @indent = spaces_re[1].length
   if (!/ */.test(spaces_re[1]))
@@ -31,8 +31,8 @@ First pass line parsing for constructing the block structure.
     warn(@input, 'trailing space')
 
 :@check_continuation
-  cont_re := ~/^\s*\|/.exec(@input.line)
+  cont_re := /^\s*\|/.exec(@input.line)
   @is_continuation = !!cont_re
 
 :@check_separator
-  @is_separator = ~/^\s*--\s*$/.test(@input.line)
+  @is_separator = /^\s*--\s*$/.test(@input.line)

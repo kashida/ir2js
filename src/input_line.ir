@@ -16,10 +16,10 @@ trailing whitespace should have been stripped already.
   => @line.substr(0, 1) == ':'
 
 :+is_blank\b\
-  => ~/^\s*$/.test(@line)
+  => /^\s*$/.test(@line)
   
 :+is_indented\b\
-  => ~/^\s/.test(@line)
+  => /^\s/.test(@line)
 
 :+indent\n\
   re := /\S/.exec(@line)
