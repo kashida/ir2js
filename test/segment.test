@@ -12,7 +12,7 @@ if (!new RegExp('^[\\\'\\"]').test(seg))
   =>
 #=
 if (!new RegExp('^[\\\'\\"]').test(seg)){
-  return ;
+  return;
 }
 #}
 
@@ -23,9 +23,9 @@ if (!new RegExp('^[\\\'\\"]').test(seg)){
 #}
 
 #{: regular expression
-@ ~/\/ '' " [abc] # \// @
+@a * ~/\/ '' " [abc] # \// + @.b
 #=
-_self /\/ '' " [abc] # \// _self;
+_self._a * /\/ '' " [abc] # \// + _self.b;
 #}
 
 #{: cast should not happen in re
@@ -37,12 +37,19 @@ _self /\/ '' " [abc] # \// _self;
 #{: end of line comment
 abc // some comment @.
 def(##)
-  a\n\$ // param comment.
+  a\n\$   // comment for a.
+  b\n\? 0 // comment for b.
+  c\n\?   // comment for c.
 #=
-abc; // some comment @.
+abc;
+// some comment @.
 def(
 /** @param {number} opt_a */
-function(opt_a){
-  var a = opt_a === undefined ? () : opt_a; // param comment.
+function(a, opt_b, opt_c){
+  // comment for a.
+  var b = opt_b === undefined ? (0) : opt_b;
+  // comment for b.
+  var c = opt_c === undefined ? (null) : opt_c;
+  // comment for c.
 });
 #}

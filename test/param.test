@@ -90,8 +90,7 @@ classname.prototype._classname = 'classname';
  */
 var classname = function(opt_param, opt_member){
 var _self = this;
-  var param = opt_param === undefined ? (a + b
-     + c + d) : opt_param;
+  var param = opt_param === undefined ? (a + b + c + d) : opt_param;
   /**
    * @type {number}
    * @private
@@ -131,7 +130,7 @@ Class.prototype._classname = 'Class';
 Class.prototype.method = function(){
 var _self = this;
   if (/^\s*\/\//.test(_self._str)){
-    return ;
+    return;
   }
 };
 {

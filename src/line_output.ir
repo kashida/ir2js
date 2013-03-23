@@ -33,9 +33,10 @@ output lines corresponds to one input line.
 
 :+output\A.<s>\
   result := []
+  indent := whitespaces(@indent)
   @prefix_lines.forEach(##)
     line\s\$
-    result.push(line ? whitespaces(@indent) + line : '')
+    result.push(line ? indent + line : '')
   @lines.forEach(##)
     line\s|BlockOutput\$
     i\n\$
@@ -47,9 +48,11 @@ output lines corresponds to one input line.
         to_add = @line_prefix + to_add
       if (i == @lines.length - 1 && @line_suffix)
         to_add += @line_suffix
-      if (i == @lines.length - 1 && @tail_comment.length)
-        to_add += '\n' + @tail_comment.join('\n')
       if (to_add)
-        to_add = whitespaces(@indent) + to_add
+        to_add = indent + to_add
       result.push(to_add)
+      if (i == @lines.length - 1)
+        @tail_comment.forEach(##)
+          c\s\$
+          result.push(indent + c)
   => result

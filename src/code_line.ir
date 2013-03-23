@@ -59,5 +59,4 @@
   @.parsed.tail_comment.forEach(##)
     comment\s\$
     out.tail_comment.push(comment)
-  out.append_lines(@parsed.next_lines)
   => out
