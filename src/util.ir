@@ -46,7 +46,7 @@
       => compact ? '' : start_str + '[]\n'
   else if (obj instanceof Object)
     keys := []
-    for (key in obj)
+    each (key in obj)
       keys.push(key)
     children := keys.map(##).filter(##)
       k\s\$

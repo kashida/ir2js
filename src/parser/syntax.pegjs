@@ -67,6 +67,7 @@ Keyword
       / 'else'
       / 'finally'
       / 'for'
+      / 'each'
       / 'if'
       / 'instanceof'
       / 'in'
@@ -550,7 +551,8 @@ VariableDeclaration = DeclareAssignmentExpression / Identifier
 
 ForStatement
   = 'for' _ '(' _
-    initializer:(VariableDeclarationList / Expression?) _ ';' _
+    //initializer:(VariableDeclarationList / Expression?) _ ';' _
+    initializer:(Expression?) _ ';' _
     test:Expression? _ ';' _
     counter:Expression? _ ')' {
       return {
@@ -566,7 +568,7 @@ ForStatement
     }
 
 ForInStatement
-  = 'for' _ '(' _ iter:Identifier _ 'in' _ collection:Expression _ ')' {
+  = 'each' _ '(' _ iter:Identifier _ 'in' _ collection:Expression _ ')' {
       return {
         t: ['for (', iter, ' in ', collection, ')'],
         p: ['var ', iter],
