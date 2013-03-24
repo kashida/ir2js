@@ -2,8 +2,6 @@ var parser = {};
 var _fs = require('fs');
 var _path = require('path');
 var _util = require('util');
-
-
 /**
  * @param {string} basedir
  * @param {Array.<string>} files
@@ -34,8 +32,6 @@ var create_argtypes = function(basedir, files) {
   });
   _fs.writeFileSync(basedir + '/_argtypes.js', output.join('\n'), 'utf-8');
 };
-
-
 /*
 Match markers and blocks.
 */
@@ -237,8 +233,6 @@ BlockMatcher.prototype._compose_line = function(prefix, i) {
     'function(' + p.output_params() + ')' + bstart
   ]);
 };
-
-
 /** @constructor */
 var BlockOutput = function() {
   var self = this;
@@ -326,8 +320,6 @@ BlockOutput.prototype.__defineGetter__('output', function() {
   }
   return lines;
 });
-
-
 /**
  * @param {string} name
  * @constructor
@@ -398,8 +390,6 @@ CallableType.prototype.extract = function() {
   }
   return obj;
 };
-
-
 /** @constructor */
 var Class = function() {
   var self = this;
@@ -481,8 +471,6 @@ Class.prototype.output_accessors = function() {
     return self._members[name].output_accessors(class_name);
   });
 };
-
-
 /**
  * @param {!Context} context
  * @param {SectionHead} head
@@ -712,8 +700,6 @@ CodeParser.prototype._top_block = function() {
   // there should be at least the root block.
   return self._blocks[self._blocks.length - 1];
 };
-
-
 /**
  * @param {!Context} context
  * @param {SectionHead=} opt_head
@@ -761,8 +747,6 @@ CodeScope.prototype.output = function() {
     return line.replace(/\s*$/, '');
   });
 };
-
-
 /**
  * @param {string} basedir
  * @param {string} infile
@@ -836,8 +820,6 @@ var compile_files = function(basedir, inout_filenames) {
     }
   }
 };
-
-
 /**
  * @param {!Package} pkg
  * @constructor
@@ -938,8 +920,6 @@ Context.prototype.clone = function() {
   }
   return c;
 };
-
-
 /*
 parse file scope and separate code sections from comments.
 */
@@ -1040,8 +1020,6 @@ FileScope.prototype.output = function() {
     return elem.output();
   }));
 };
-
-
 /*
 comment section in a file.
 */
@@ -1138,8 +1116,6 @@ GlobalComment.prototype.output = function() {
 
   return result;
 };
-
-
 /*
 TODO: change marker's type to BlockType when it's enum.
 */
@@ -1314,8 +1290,6 @@ IndentBlock.prototype.output = function() {
   });
   return out;
 };
-
-
 /*
 a line of input file. keeps track of the row index.
 */
@@ -1401,8 +1375,6 @@ InputLine.prototype.__defineGetter__('indent', function() {
 
   var UnknownInputLine;
   UnknownInputLine = new InputLine('', -1);
-
-
 /*
 parses input lines into lines and sections.
 'line' is used only during processing.
@@ -1517,8 +1489,6 @@ InputParser.prototype._flush_buffer = function() {
     self._buffer = next_buffer;
   }
 };
-
-
 /*
 input code section.
 */
@@ -1569,8 +1539,6 @@ InputSection.prototype.push = function(line) {
   var self = this;
   self._lines.push(line);
 };
-
-
 /*
 fragments of string interlaced by block references.
 maintains:
@@ -1634,8 +1602,6 @@ InterlacedLine.prototype.each = function(cb, ctxt) {
     cb.call(ctxt, block, self._fragments[i + 1], i);
   });
 };
-
-
 /*
 either blank line or comment only line.
 */
@@ -1673,8 +1639,6 @@ InvalidLine.prototype.output = function() {
   out.append_line(self._input.trim);
   return out;
 };
-
-
 /** @typedef {CodeLine|SeparatorLine|InvalidLine} */
 var SectionLine;
 
@@ -1708,8 +1672,6 @@ LineCategorizer.prototype.create_line = function(input) {
   }
   return new CodeLine(self._context, input, parsed);
 };
-
-
 /*
 decodes blockc markers.
 */
@@ -1915,8 +1877,6 @@ LineDecoder.prototype._compose_line = function(prefix, i) {
     'function(' + b.params.output_params() + ')' + bstart
   ]);
 };
-
-
 /*
 output lines corresponds to one input line.
 */
@@ -2077,8 +2037,6 @@ LineOutput.prototype.__defineGetter__('output', function() {
   });
   return result;
 });
-
-
 /*
 First pass line parsing for constructing the block structure.
 */
@@ -2183,8 +2141,6 @@ LineParser.prototype._check_separator = function() {
   var self = this;
   self._is_separator = /^\s*--\s*$/.test(self._input.line);
 };
-
-
 /**
  * @param {!Context} context
  * @param {InputLine} input
@@ -2258,8 +2214,6 @@ LineTransformer.prototype.parent_call = function(args) {
     return '%(' + args + ')';
   }
 };
-
-
 /**
  * @param {InputLine} line
  * @param {string=} opt_msg
@@ -2282,8 +2236,6 @@ var assert = function(check, opt_line, opt_msg) {
     msg + (line ? ' (line ' + line.line_no + '): ' + line.line : '')
   );
 };
-
-
 /*
 pseudo member is a place holder for class members that don't exist, but there are accessors for.
 */
@@ -2393,8 +2345,6 @@ Member.prototype.output_accessors = function(class_name) {
   }
   return result;
 };
-
-
 /*
 name in file scope.
 */
@@ -2454,8 +2404,6 @@ Name.prototype.oString = function() {
   var self = this;
   return '[' + self._pkg + ':' + self._id + ']';
 };
-
-
 /*
 package name.
 */
@@ -2534,8 +2482,6 @@ Package.prototype.toString = function() {
   var self = this;
   return self._pkg;
 };
-
-
 /*
 Function parameter and / or member declarion.
 */
@@ -2746,8 +2692,6 @@ Param.prototype.argtype = function() {
   type_name = re[1];
   return ARG_TYPE_REPLACE_MAP[type_name] || type_name;
 };
-
-
   var ARG_TYPE_REPLACE_MAP;
   ARG_TYPE_REPLACE_MAP = {
     'boolean': 'Boolean',
@@ -2954,8 +2898,6 @@ ParamSet.prototype.set_argtypes = function(types) {
     types.add_arg(p.argtype());
   });
 };
-
-
 /**
  * @param {FileScope} scope
  * @constructor
@@ -3165,8 +3107,6 @@ SectionGenerator.prototype._create_typedef = function(line) {
   }
   return new Typedef(self._scope.copy_context_with_name(re[1]));
 };
-
-
 /** @constructor */
 var SectionHead = function() {
   var self = this;
@@ -3216,8 +3156,6 @@ do all the work necessary to produce code output.
 SectionHead.prototype.transform = function() {
 var self = this;
 };
-
-
 /**
  * @param {InputLine} input
  * @param {LineParser} parser
@@ -3260,8 +3198,6 @@ SeparatorLine.prototype.output = function() {
   var self = this;
   return null;
 };
-
-
 /** @constructor */
 var StringSet = function() {
   var self = this;
@@ -3462,8 +3398,6 @@ var create_sorted_list = function(files) {
   }
   return sorted.list();
 };
-
-
 /**
  * @param {!Package} pkg
  * @param {string} type
@@ -3514,8 +3448,6 @@ TypeDecoder.prototype.output = function() {
   var self = this;
   return self._decoded;
 };
-
-
 /** @constructor */
 var TypeSet = function() {
   var self = this;
@@ -3596,8 +3528,6 @@ TypeSet.prototype.extract = function() {
   }
   return obj;
 };
-
-
 /** @param {string|Array} lines */
 var arr_flatten = function(lines) {
   if (typeof(lines) == 'string') {
@@ -3722,8 +3652,6 @@ var doc_lines = function(annotations) {
     ' */'
   ];
 };
-parser = parser || {};
-
 /*
 Use PEGJS syntax to create a TokenList.
 Container and interface of the TokenList to the rest of the converter.
@@ -3804,8 +3732,6 @@ parser.Result.prototype.rendered = function() {
   });
   return lines;
 };
-parser = parser || {};
-
 /*
 Wrapper for the PEGJS's parse method.
 Specific for a particular target (i.e. rule).
@@ -3877,8 +3803,6 @@ parser.Target.prototype.run = function(input, opt_xformer, show_error_line) {
   b.xformer = self._xformer;
   return b.result(input);
 };
-parser = parser || {};
-
 /**
  * @param {string} type
  * @constructor
@@ -4183,8 +4107,6 @@ parser.ParamLine.prototype.toString = function() {
   }
   return list.join('');
 };
-parser = parser || {};
-
 /**
  * @param {parser.TokenList|Array|Object|string} parsed
  * @param {LineTransformer=} opt_xformer
@@ -4379,8 +4301,6 @@ parser.ParamLineBuilder.prototype.add_type_object = function(params) {
   var self = this;
   self._tokens.add(self.xformer ? self.xformer.type(params.type) : params.tokens);
 };
-
-
   var CODE_PARSER;
   CODE_PARSER = null;
 
@@ -4543,8 +4463,6 @@ CodeLine.prototype.output = function() {
   });
   return out;
 };
-
-
 /**
  * @constructor
  * @extends {SectionHead}
@@ -4581,8 +4499,6 @@ CodeSection.prototype.close = function(pkg) {
 CodeSection.prototype.set_type = function(types) {
   var self = this;
 };
-
-
 /**
  * @param {!Context} context
  * @constructor
@@ -4659,8 +4575,6 @@ MultiLineStr.prototype.output = function() {
     })
   ];
 };
-
-
 /**
  * @constructor
  * @extends {CodeSection}
@@ -4684,8 +4598,6 @@ NativeCode.prototype.output = function() {
     return out;
   });
 };
-
-
 /**
  * @constructor
  * @extends {CodeSection}
@@ -4734,8 +4646,6 @@ Runnable.prototype.output_body = function(block_suffix) {
   }
   return lines;
 };
-
-
 /**
  * @constructor
  * @extends {Runnable}
@@ -4752,8 +4662,6 @@ AnonymousScope.prototype.output = function() {
   var self = this;
   return ['(function() {', self.output_body('})();')];
 };
-
-
 /**
  * @param {!Context} context
  * @param {string} return_type
@@ -4833,8 +4741,6 @@ Callable.prototype.output_func = function() {
   var self = this;
   return self._context.name.decl() + ' = function(' + self._params.output_params() + ') {';
 };
-
-
 /**
  * @constructor
  * @extends {Runnable}
@@ -4851,8 +4757,6 @@ GlobalCode.prototype.output = function() {
   var self = this;
   return self.output_body('');
 };
-
-
 /**
  * @param {!Context} context
  * @constructor
@@ -4879,8 +4783,6 @@ Typedef.prototype.output = function() {
   ]);
   return [out];
 };
-
-
 /**
  * @param {!Context} context
  * @param {string?=} opt_parent
@@ -4954,8 +4856,6 @@ Constructor.prototype.set_type = function(types) {
   var self = this;
   self.params.set_argtypes(types.get_current_ctor());
 };
-
-
 /**
  * @param {!Context} context
  * @param {string} return_type
@@ -4984,8 +4884,6 @@ GlobalFunction.prototype.set_type = function(types) {
   var self = this;
   self.params.set_argtypes(types.add_funct(self.context.name.ref()));
 };
-
-
 /**
  * @param {!Context} context
  * @param {string} return_type
@@ -5035,8 +4933,6 @@ Method.prototype.set_type = function(types) {
     types.get_current_ctor().add_method(self.context.name.id)
   );
 };
-
-
 /**
  * @param {!Context} context
  * @param {string} name
@@ -5091,8 +4987,6 @@ OverridingAccessor.prototype.output = function() {
     ], self.params)
   ];
 };
-
-
   // TODO: @enum
   var ExecModes;
   ExecModes = {
