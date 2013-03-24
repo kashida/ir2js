@@ -1,4 +1,5 @@
-BASE_SRC=lib/closure_base.js
+#BASE_SRC=lib/closure_base.js
+BASE_SRC=packages.js
 
 NODE=NODE_PATH=compiled/parser nodejs
 

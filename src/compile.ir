@@ -13,7 +13,7 @@
   c.process_lines(input.split('\n'))
   _fs.writeFileSync(#)
     outfile
-    c.provides().join('\n') + '\n\n' + c.output().join('\n')
+    c.output().join('\n')
     'utf-8'
   _fs.writeFileSync(#)
     outfile.replace(/\.js$/, '.tk')

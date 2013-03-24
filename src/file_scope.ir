@@ -5,7 +5,6 @@ parse file scope and separate code sections from comments.
 ::FileScope
   pkg_name\s\$
   @context+\!Context\ new Context(new Package(pkg_name))
-  @provides\A.<!Name>\ []
   @types+\TypeSet\ new TypeSet()
   @list\A.<OutputSection>\
 
@@ -35,15 +34,9 @@ parse file scope and separate code sections from comments.
 :copy_context_with_name\!Context\
   name\string\$
   fullname := new Name(@context.pkg, name)
-  @provides.push(fullname)
   => @.copy_context(fullname)
 
-:provides\Array.<string>\
-  => @provides.map(##)
-    provide\Name\$
-    => 'var ' + provide.ref() + ' = ' + provide.ref() + ' || {};'
-
-:output\Array.<string>\
+:output\A.<s>\
   => arr_flatten(@list.map(##))
     elem\OutputSection\$
     => elem.output()
