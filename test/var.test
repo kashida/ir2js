@@ -6,7 +6,7 @@ a = b;
 #}
 
 #{: for loop var
-for (i := 0; i < 10; i++)
+for i := 0; i < 10; i++
   xyz
 #=
 var i;
@@ -17,7 +17,7 @@ for (; i < 10; i++) {
 #}
 
 #{: for in loop var
-each (k in map)
+each k in map
   xyz
 #=
 var k;
@@ -27,7 +27,7 @@ for (k in map) {
 #}
 
 #{: no var in for loop
-for (i = 0; i < 10; i++)
+for i = 0; i < 10; i++
   xyz
 #=
 i = 0;

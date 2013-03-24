@@ -8,7 +8,7 @@
 
 :clone\!Context\
   c := new Context(@pkg)
-  each (p in @)
+  each p in @
     if (@.hasOwnProperty(p))
       c[p] = @[p]
   => c

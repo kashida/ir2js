@@ -43,8 +43,6 @@ default
   default:
 throw expr
 try
-catch ( abc)
-  catch (abc)
 catch abc
   catch (abc)
 finally

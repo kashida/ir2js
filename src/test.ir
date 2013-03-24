@@ -110,7 +110,7 @@ or
       type_str := obj_stringify(c.types.extract(), true)
       if (type_str)
         actual_output = actual_output.concat(type_str.split('\n'))
-  catch (e)
+  catch e
     console.log('EXCEPTION: ' + @name)
     @warn_with_indent('input', @input)
     @warn_with_indent('expected', @output)

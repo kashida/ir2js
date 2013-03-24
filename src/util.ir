@@ -20,7 +20,7 @@
   num\n\$
   s := ''
   i := 0
-  for (; i < num; i++)
+  for ; i < num; i++
     s += ' '
   => s
 
@@ -46,7 +46,7 @@
       => compact ? '' : start_str + '[]\n'
   else if (obj instanceof Object)
     keys := []
-    each (key in obj)
+    each key in obj
       keys.push(key)
     children := keys.map(##).filter(##)
       k\s\$

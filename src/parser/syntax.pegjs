@@ -545,10 +545,10 @@ DoStatement = 'do'
 WhileStatement = 'while' __ cond:Expression { return ['while (', cond, ')']; }
 
 ForStatement
-  = 'for' (_ '(')? _
+  = 'for' _
     initializer:Expression? _ ';' _
     test:Expression? _ ';' _
-    counter:Expression? (_ ')')? {
+    counter:Expression? {
       return {
         t: [
           'for (;',
@@ -562,7 +562,7 @@ ForStatement
     }
 
 EachStatement
-  = 'each' (_ '(')? _ iter:Identifier _ 'in' _ collection:Expression (_ ')')? {
+  = 'each' _ iter:Identifier _ 'in' _ collection:Expression {
       return {
         t: ['for (', iter, ' in ', collection, ')'],
         p: ['var ', iter],
@@ -586,7 +586,7 @@ ThrowStatement = 'throw' __ Expression
 TryStatement = 'try'
 
 CatchStatement
-  = 'catch' (_ '(')? _ identifier:Identifier (_ ')')? {
+  = 'catch' _ identifier:Identifier {
       return ['catch (', identifier, ')'];
     }
 
