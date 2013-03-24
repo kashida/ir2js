@@ -16,7 +16,7 @@
   => [#]
     doc_lines(decls)
     @.output_func()
-    'var _self = this;'
+    'var self = this;'
     @.output_body('};')
 
 :<set_type

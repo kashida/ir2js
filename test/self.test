@@ -4,24 +4,24 @@
 @.ghi
 @.jkl()
 #=
-_self._abc;
-_self._def();
-_self.ghi;
-_self.jkl();
+self._abc;
+self._def();
+self.ghi;
+self.jkl();
 #}
 
 #{: multi-self reference
 @abc(@def())
 ghi + jkl * @mno()
 #=
-_self._abc(_self._def());
-ghi + jkl * _self._mno();
+self._abc(self._def());
+ghi + jkl * self._mno();
 #}
 
 #{: non-member / non-method self reference
 @[abc].bind(@)
 #=
-_self[abc].bind(_self);
+self[abc].bind(self);
 #}
 
 #{: accessor invocation -- no more xform

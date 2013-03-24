@@ -329,7 +329,7 @@ RegularExpressionLiteral 'regular expression'
       return '/' + body.replace(/^\*/, '\\*') + '/' + flags;
     }
 
-Self = '@' _ name:Identifier? { return name ? '_self._' + name : '_self'; }
+Self = '@' _ name:Identifier? { return name ? 'self._' + name : 'self'; }
 
 CurrentPackage
   = percents:('%'+) _ '.' _ name:Identifier {

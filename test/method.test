@@ -6,16 +6,16 @@
 #=
 /** @constructor */
 var classname = function(){
-var _self = this;
+var self = this;
 };
 classname.prototype._classname = 'classname';
 
 classname.prototype.methodname = function(){
-var _self = this;
+var self = this;
 };
 /** @private */
 classname.prototype._methodname_2 = function(){
-var _self = this;
+var self = this;
 };
 {
   cls:[
@@ -44,7 +44,7 @@ var _self = this;
 #=
 /** @constructor */
 var classname = function(){
-var _self = this;
+var self = this;
 };
 classname.prototype._classname = 'classname';
 
@@ -54,7 +54,7 @@ classname.prototype._classname = 'classname';
  * @return {string}
  */
 classname.prototype.methodname = function(param_a, opt_param_b){
-var _self = this;
+var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 {
@@ -93,7 +93,7 @@ var _self = this;
  * @extends {Parent}
  */
 var Classname = function(){
-var _self = this;
+var self = this;
   Parent.call(this);
 };
 goog.inherits(Classname, Parent);
@@ -101,7 +101,7 @@ Classname.prototype._classname = 'Classname';
 
 /** @override */
 Classname.prototype.methodname = function(param_a, opt_param_b){
-var _self = this;
+var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 
@@ -110,7 +110,7 @@ var _self = this;
  * @private
  */
 Classname.prototype._methodname2 = function(param_a, opt_param_b){
-var _self = this;
+var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 {

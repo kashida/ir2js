@@ -18,4 +18,4 @@ ab\number\$
 
 :ParseLine
 \s\ (@code.length ? @code[0] : '')
-  \s\(_self._code.length ? _self._code[0] : '')
+  \s\(self._code.length ? self._code[0] : '')

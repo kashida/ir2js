@@ -4,7 +4,7 @@
 #=
 /** @constructor */
 var classname = function(){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -33,7 +33,7 @@ classname.prototype._classname = 'classname';
 #=
 /** @constructor */
 var classname = function(){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -94,7 +94,7 @@ this._param2 = value;
 #=
 /** @constructor */
 var classname = function(){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -105,11 +105,11 @@ classname.prototype._classname = 'classname';
 /** @type {string} */
 classname.prototype.member;
 classname.prototype.__defineGetter__('member', function() {
-var _self = this;
+var self = this;
   return '';
 });
 classname.prototype.__defineSetter__('member', function(value) {
-var _self = this;
+var self = this;
   do_something_with(value);
 });
 {
@@ -133,7 +133,7 @@ var _self = this;
 #=
 /** @constructor */
 var classname = function(){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -147,7 +147,7 @@ classname.prototype.__defineSetter__('member', function(value) {
 this._member = value;
 });
 classname.prototype.__defineGetter__('member', function() {
-var _self = this;
+var self = this;
   do_something();
 });
 {
@@ -173,17 +173,17 @@ var _self = this;
 #=
 /** @constructor */
 var classname = function(){
-var _self = this;
+var self = this;
 };
 classname.prototype._classname = 'classname';
 /** @type {string} */
 classname.prototype.member;
 classname.prototype.__defineGetter__('member', function() {
-var _self = this;
+var self = this;
   return '';
 });
 classname.prototype.__defineSetter__('member', function(v) {
-var _self = this;
+var self = this;
   do_something_with(v);
 });
 {
@@ -202,9 +202,9 @@ obj.method()
 '2d' - @pixels()
 '2d @pixels()'
 #=
-_self._method();
+self._method();
 obj.method();
-'2d' - _self._pixels();
+'2d' - self._pixels();
 '2d @pixels()';
 #}
 
@@ -212,8 +212,8 @@ obj.method();
 a = @member
 @member = a
 #=
-a = _self._member;
-_self._member = a;
+a = self._member;
+self._member = a;
 #}
 
 #{: other ref -- no more xform

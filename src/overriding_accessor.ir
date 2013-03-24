@@ -23,5 +23,5 @@
   => [#]
     member.output_decl(class_name)
     member.output_accessor(class_name, @is_getter, [#], @.params)
-      'var _self = this;'
+      'var self = this;'
       @.output_body('')

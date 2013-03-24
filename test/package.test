@@ -28,7 +28,7 @@
  * @extends {abc.def.path.parent}
  */
 abc.def.classname = function(opt_param){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -41,7 +41,7 @@ abc.def.classname.prototype._classname = 'abc.def.classname';
 
 /** @param {number} param */
 abc.def.classname.prototype.methodname = function(param){
-var _self = this;
+var self = this;
   a(abc.def.something);
   goog.base(this, 'methodname', param, 0);
 };

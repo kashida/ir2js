@@ -12,7 +12,7 @@
  * @constructor
  */
 var classname = function(param, opt_member){
-var _self = this;
+var self = this;
   // first comment.
   // second comment.
   /**
@@ -50,7 +50,7 @@ classname.prototype._classname = 'classname';
  * @constructor
  */
 var classname = function(param, opt_member){
-var _self = this;
+var self = this;
 
 
   /**
@@ -89,7 +89,7 @@ classname.prototype._classname = 'classname';
  * @constructor
  */
 var classname = function(opt_param, opt_member){
-var _self = this;
+var self = this;
   var param = opt_param === undefined ? (a + b + c + d) : opt_param;
   /**
    * @type {number}
@@ -124,12 +124,12 @@ classname.prototype._classname = 'classname';
 #=
 /** @constructor */
 var Class = function(){
-var _self = this;
+var self = this;
 };
 Class.prototype._classname = 'Class';
 Class.prototype.method = function(){
-var _self = this;
-  if (/^\s*\/\//.test(_self._str)){
+var self = this;
+  if (/^\s*\/\//.test(self._str)){
     return;
   }
 };

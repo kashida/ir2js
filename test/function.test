@@ -61,7 +61,7 @@ abc(
  * @param {string=} opt_param3
  */
 function(opt_param0, opt_param1, opt_param2, opt_param3){
-  var param0 = opt_param0 === undefined ? (_self._xyz) : opt_param0;
+  var param0 = opt_param0 === undefined ? (self._xyz) : opt_param0;
   var param1 = opt_param1 === undefined ? (param0.member) : opt_param1;
   var param2 = opt_param2 === undefined ? (param1.member) : opt_param2;
   var param3 = opt_param3 === undefined ? (/** @type {string} */(param2)) : opt_param3;

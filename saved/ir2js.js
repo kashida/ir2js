@@ -6503,7 +6503,7 @@ var _self = this;
   return [
     doc_lines(decl),
     _self.output_func(),
-    'var _self = this;',
+    'var self = this;',
     _self.output_body('};'),
     inherit,
     [
@@ -6590,7 +6590,7 @@ var _self = this;
   return [
     doc_lines(decls),
     _self.output_func(),
-    'var _self = this;',
+    'var self = this;',
     _self.output_body('};')
   ];
 };
@@ -6653,7 +6653,7 @@ var _self = this;
   return [
     member.output_decl(class_name),
     member.output_accessor(class_name, _self._is_getter, [
-      'var _self = this;',
+      'var self = this;',
       _self.output_body('')
     ], _self.params)
   ];

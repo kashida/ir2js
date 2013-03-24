@@ -3,7 +3,7 @@
 #=
 /** @constructor */
 var classname = function(){
-var _self = this;
+var self = this;
 };
 classname.prototype._classname = 'classname';
 {
@@ -27,7 +27,7 @@ classname.prototype._classname = 'classname';
  * @constructor
  */
 var classname = function(param_a, opt_param_b){
-var _self = this;
+var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 classname.prototype._classname = 'classname';
@@ -52,7 +52,7 @@ classname.prototype._classname = 'classname';
 #=
 /** @constructor */
 var classname = function(){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -92,7 +92,7 @@ classname.prototype._classname = 'classname';
  * @constructor
  */
 var classname = function(param_a, opt_param_b, opt_param_c){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -132,15 +132,15 @@ classname.prototype._classname = 'classname';
 #=
 /** @constructor */
 var Class1 = function(){
-var _self = this;
+var self = this;
 };
 Class1.prototype._classname = 'Class1';
 Class1.prototype.method = function(){
-var _self = this;
+var self = this;
 };
 /** @constructor */
 var Class2 = function(){
-var _self = this;
+var self = this;
 };
 Class2.prototype._classname = 'Class2';
 {
