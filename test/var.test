@@ -4,3 +4,24 @@ a := b
 var a;
 a = b;
 #}
+
+#{: for loop var
+for (i := 0; i < 10; i++)
+  xyz
+#=
+var i;
+i = 0;
+for (; i < 10; i++){
+  xyz;
+}
+#}
+
+#{: for in loop var
+for (k in map)
+  xyz
+#=
+var k;
+for (k in map){
+  xyz;
+}
+#}
