@@ -1,8 +1,6 @@
 var _fs = require('fs');
 
 
-goog.global = global
-
 var TestFile = function(filename) {
   console.log('=== ' + filename);
   this.expect_error = false;

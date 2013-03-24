@@ -1,4 +1,4 @@
-#BASE_SRC=lib/closure_base.js
+# TODO: Auto-generate this file.
 BASE_SRC=packages.js
 
 NODE=NODE_PATH=compiled/parser nodejs
