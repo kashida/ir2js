@@ -129,7 +129,7 @@ var self = this;
 Class.prototype._classname = 'Class';
 Class.prototype.method = function() {
   var self = this;
-  if (/^\s*\/\//.test(self._str)) {
+  if ((/^\s*\/\//.test(self._str))) {
     return;
   }
 };

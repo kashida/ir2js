@@ -2,7 +2,7 @@
 if ('')
   xyz
 #=
-if ('') {
+if (('')) {
   xyz;
 }
 #}
@@ -11,7 +11,7 @@ if ('') {
 if (!new RegExp('^[\\\'\\"]').test(seg))
   =>
 #=
-if (!new RegExp('^[\\\'\\"]').test(seg)) {
+if ((!new RegExp('^[\\\'\\"]').test(seg))) {
   return;
 }
 #}

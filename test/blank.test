@@ -27,7 +27,7 @@ if (something)
 
   do_more
 #=
-if (something) {
+if ((something)) {
 
   do_something;
 

@@ -519,7 +519,7 @@ StatementLine
   / DoStatement
   / WhileStatement
   / ForStatement
-  / ForInStatement
+  / EachStatement
   / ContinueStatement
   / BreakStatement
   / ReturnStatement
@@ -535,26 +535,20 @@ StatementLine
 ExpressionStatement = Expression
 
 IfStatement
-  = 'if' _ '(' _ cond:Expression _ ')' { return ['if (', cond, ')']; }
+  = 'if' _ cond:Expression { return ['if (', cond, ')']; }
 
 ElseIfStatement
-  = 'else' _ 'if' _ '(' _ cond:Expression _ ')' { return ['else if (', cond, ')']; }
+  = 'else' _ 'if' _ cond:Expression { return ['else if (', cond, ')']; }
 
 ElseStatement = 'else'
 DoStatement = 'do'
-WhileStatement = 'while' __ '(' _ cond:Expression _ ')'
-
-VariableDeclarationList
-  = VariableDeclaration (_ ',' __ VariableDeclaration)*
-
-VariableDeclaration = DeclareAssignmentExpression / Identifier
+WhileStatement = 'while' __ cond:Expression { return ['while (', cond, ')']; }
 
 ForStatement
-  = 'for' _ '(' _
-    //initializer:(VariableDeclarationList / Expression?) _ ';' _
-    initializer:(Expression?) _ ';' _
+  = 'for' (_ '(')? _
+    initializer:Expression? _ ';' _
     test:Expression? _ ';' _
-    counter:Expression? _ ')' {
+    counter:Expression? (_ ')')? {
       return {
         t: [
           'for (;',
@@ -567,8 +561,8 @@ ForStatement
       };
     }
 
-ForInStatement
-  = 'each' _ '(' _ iter:Identifier _ 'in' _ collection:Expression _ ')' {
+EachStatement
+  = 'each' (_ '(')? _ iter:Identifier _ 'in' _ collection:Expression (_ ')')? {
       return {
         t: ['for (', iter, ' in ', collection, ')'],
         p: ['var ', iter],
@@ -582,7 +576,7 @@ ReturnStatement
   = '=>' _ value:Expression? { return value ? ['return ', value] : 'return'; }
 
 SwitchStatement
-  = 'switch' _ '(' _ expr:Expression _ ')' { return ['switch (', expr, ')']; }
+  = 'switch' _ expr:Expression { return ['switch (', expr, ')']; }
 
 CaseStatement
   = 'case' _ selector:Expression _ ':'? { return ['case ', selector, ':']; }
@@ -592,7 +586,7 @@ ThrowStatement = 'throw' __ Expression
 TryStatement = 'try'
 
 CatchStatement
-  = 'catch' _ '(' _ identifier:Identifier _ ')' {
+  = 'catch' (_ '(')? _ identifier:Identifier (_ ')')? {
       return ['catch (', identifier, ')'];
     }
 
