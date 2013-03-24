@@ -7,8 +7,8 @@
 :create_line\SectionLine\
   input\InputLine\$
   parsed := new LineParser(input)
-  if (!parsed.is_valid)
+  if !parsed.is_valid
     => new InvalidLine(input)
-  if (parsed.is_separator)
+  if parsed.is_separator
     => new SeparatorLine(input, parsed)
   => new CodeLine(@context, input, parsed)

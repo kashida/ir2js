@@ -12,7 +12,7 @@ Match markers and blocks.
   @starts_with_marker\b\ false
 
 :transform
-  if (@match_blocks())
+  if @match_blocks()
     @transform_blocks()
 
 Returns true only if matching succeeds and leaving valid set of indexes in
@@ -20,14 +20,14 @@ Returns true only if matching succeeds and leaving valid set of indexes in
 :@match_blocks\b\
   code := @code
   idx := 1
-  if (@code[0] instanceof parser.BlockMarker)
+  if @code[0] instanceof parser.BlockMarker
     idx = 0
     @starts_with_marker = true
 
-  while (idx < code.length)
+  while idx < code.length
     param := null
     elem := @code[idx]
-    if (elem instanceof parser.BlockMarker && elem.type == 'f')
+    if elem instanceof parser.BlockMarker && elem.type == 'f'
       sub_context := @context.clone()
       sub_context.is_file_scope = false
       param = new ParamSet(sub_context, @blocks[@marker_indexes.length])
@@ -37,12 +37,12 @@ Returns true only if matching succeeds and leaving valid set of indexes in
 
     idx += 2
 
-  if (@marker_indexes.length < @blocks.length)
+  if @marker_indexes.length < @blocks.length
     // One extra block is allowed.
     @marker_indexes.push(-1)
     @is_block_statement = true
 
-  if (@marker_indexes.length != @blocks.length)
+  if @marker_indexes.length != @blocks.length
     warn(@input, '# blocks does not match #markers.')
     => false
   => true
@@ -52,7 +52,7 @@ Returns true only if matching succeeds and leaving valid set of indexes in
     block\IndentBlock\$
     i\n\$
     // transform the blocks.
-    if (@params[i])
+    if @params[i]
       @params[i].transform()
     mi := @marker_indexes[i]
     block.transform(mi < 0 ? BlockType.BLOCK : {#}[@code[mi].type])
@@ -79,15 +79,15 @@ Returns true only if matching succeeds and leaving valid set of indexes in
 :@compose_line
   prefix\s\$
   i\n\$
-  if (@blocks.length <= i)
+  if @blocks.length <= i
     => [prefix]
 
   b := @blocks[i]
   p := @params[i]
   bstart := [b.start_str()]
-  if (!p)
+  if !p
     => [prefix + bstart]
-  if (p.is_decl_empty())
+  if p.is_decl_empty()
     => [prefix + 'function(' + p.output_params() + ')' + bstart]
 
   // we don't try to merge the prefix into first line.

@@ -8,10 +8,10 @@ comment section in a file.
   state := 's'
   @lines.forEach(##)
     line\InputLine\$
-    switch(state)
+    switch state
       // starting state -- output all the blank lines as is.
       case 's':
-      if (!line.is_blank)
+      if !line.is_blank
         // first non-blank.
         result.push(buffer)
         buffer = []
@@ -20,13 +20,13 @@ comment section in a file.
 
       // in non-blank line section.
       case 'n':
-      if (line.is_blank)
+      if line.is_blank
         state = 'a'
       break
 
       // blank line immediately following a non-blank.
       case 'a':
-      if (line.is_blank)
+      if line.is_blank
         // run of blank lines is long enough now. flush the comments.
         result.push(['/*', buffer.splice(0, buffer.length - 1), '*/'])
         state = 'b'
@@ -36,14 +36,14 @@ comment section in a file.
 
       // b: blank line section.
       case 'b':
-      if (!line.is_blank)
+      if !line.is_blank
         result.push(buffer)
         buffer = []
         state = 'n'
       break
     buffer.push(line.line)
 
-  switch(state)
+  switch state
     // still in the starting state.
     case 's':
     result.push(buffer)

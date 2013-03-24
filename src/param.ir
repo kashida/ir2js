@@ -11,7 +11,7 @@ Function parameter and / or member declarion.
   @type+\TypeDecoder\
   @value_line+\A.<parser.BlockMarker|s>\
 
-  if (!(parsed.tokens instanceof parser.ParamLine))
+  if !(parsed.tokens instanceof parser.ParamLine)
     =>
 
   @line = parsed.tokens
@@ -19,14 +19,14 @@ Function parameter and / or member declarion.
   @type = new TypeDecoder(@context.pkg, @line.type)
 
   @value_line = @line.init && !@line.init.is_empty ? @line.init.list : null
-  if (@.is_member && @.init_type != '$' && !@value_line)
+  if @.is_member && @.init_type != '$' && !@value_line
     // member with no initializer or optional param init.
     @value_line = ['null']
 
   // sanity check the param consistency.
-  if (!is_ctor && @.is_member)
+  if !is_ctor && @.is_member
     warn(input, 'member param for non-constructor method')
-  if (!@.is_member && @.init_type != '?' && @value_line)
+  if !@.is_member && @.init_type != '?' && @value_line
     warn(input, 'initial value for non-member non-optional')
 
 :+is_member\b\
@@ -63,20 +63,20 @@ Variable initialization output as first statements of function body.
   out\LineOutput\$
   pname := @param_name()
 
-  if (@.is_member)
+  if @.is_member
     out.append_prefix_line('/**')
-    if (@type)
+    if @type
       out.append_prefix_line(' * @type {' + @type.output() + '}')
     out.append_prefix_line(' * @private')
     out.append_prefix_line(' */')
-  if (@.is_member || @.has_init)
+  if @.is_member || @.has_init
     out.line_prefix = [#].join('')
       @.is_member ? 'this._' : 'var '
       @.name
       ' = '
-    if (@.init_type != '')
+    if @.init_type != ''
       out.line_prefix += pname
-      if (@.has_init)
+      if @.has_init
         out.line_prefix += ' === undefined ? ('
         out.line_suffix = ') : ' + pname
     else
@@ -88,7 +88,7 @@ Variable initialization output as first statements of function body.
 :output_argtype\s\
   type := @type.output()
   re := /^\!?([a-zA-Z][\w\.]*)$/.exec(type)
-  if (!re)
+  if !re
     => 'null'
   type_name := re[1]
   => ARG_TYPE_REPLACE_MAP[type_name] || type_name
@@ -96,7 +96,7 @@ Variable initialization output as first statements of function body.
 :argtype\?s\
   type := @type.output()
   re := /^\!?([a-zA-Z][\w\.]*)$/.exec(type)
-  if (!re)
+  if !re
     => null
   type_name := re[1]
   => ARG_TYPE_REPLACE_MAP[type_name] || type_name

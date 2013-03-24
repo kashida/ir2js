@@ -20,17 +20,17 @@
 
 :set_parent
   parent_name\s\$
-  if (!@ctor)
+  if !@ctor
     throw 'set parent called w/o ctor.'
   @ctor.set_parent(parent_name)
 
 :extract\O\
   obj := {}
-  if (@classes)
+  if @classes
     obj['cls'] = @classes.map(##)
       cls\TypeSet\$
       => cls.extract()
-  if (@functs)
+  if @functs
     obj['fns'] = @functs.map(##)
       fn\CallableType\$
       => fn.extract()

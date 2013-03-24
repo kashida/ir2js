@@ -6,7 +6,7 @@
   lines\A.<InputLine>\$
   section := null
   header_line := header.line.substr(1)
-  if (![#].some(##))
+  if ![#].some(##)
     '_create_ctor'
     '_create_method'
     '_create_accessor'
@@ -22,7 +22,7 @@
     --
     method\s\$
     section = @[method].call(@, header_line, header)
-    if (section)
+    if section
       section.lines = lines
       section.close(@scope.context.pkg)
       section.set_type(@scope.types)
@@ -34,7 +34,7 @@
 :@create_ctor\Constructor\
   line\s\$
   re := /^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line)
-  if (!re)
+  if !re
     => null
 
   // need to keep this in a member var too.
@@ -42,7 +42,7 @@
   ctor := new Constructor(@scope.copy_context_with_name(re[1]), re[3])
   @scope.context.cls.ctor = ctor
   @scope.types.add_ctor(ctor.name())
-  if (re[3])
+  if re[3]
     @scope.types.set_parent(ctor.parent_name())
   => ctor
 
@@ -50,11 +50,11 @@
   line\s\$
   header\InputLine\$
   re := /^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
-  if (!re)
+  if !re
     => null
 
   // we should have seen a ctor.
-  if (!@scope.context.cls)
+  if !@scope.context.cls
     warn(header, 'method marker w/o class')
     => null
   => new Method(#)
@@ -66,11 +66,11 @@
   line\s\$
   header\InputLine\$
   re := /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
-  if (!re)
+  if !re
     => null
 
   // we should have seen a ctor.
-  if (!@scope.context.cls)
+  if !@scope.context.cls
     warn(header, 'accessor marker w/o class')
     => null
   type := re[1]
@@ -82,14 +82,14 @@
 :@create_global_function\GlobalFunction\
   line\s\$
   re := /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line)
-  if (!re)
+  if !re
     => null
   => new GlobalFunction(@scope.copy_context_with_name(re[1]), re[3])
 
 :@create_multi_line_str\MultiLineStr\
   line\s\$
   re := /^'\s*(\w+)$/.exec(line)
-  if (!re)
+  if !re
     => null
   => new MultiLineStr(@scope.copy_context_with_name(re[1]))
 
@@ -108,6 +108,6 @@
 :@create_typedef\Typedef\
   line\s\$
   re := /^\!\s*(\w+)$/.exec(line)
-  if (!re)
+  if !re
     => null
   => new Typedef(@scope.copy_context_with_name(re[1]))

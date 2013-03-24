@@ -9,6 +9,6 @@
 :clone\!Context\
   c := new Context(@pkg)
   each p in @
-    if (@.hasOwnProperty(p))
+    if @.hasOwnProperty(p)
       c[p] = @[p]
   => c

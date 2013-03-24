@@ -18,9 +18,9 @@ inserts the suffix line to the array passed as a parameter.
   lines.forEach(##)
     line\s\$
     i\n\$
-    if (line)
+    if line
       last_nonblank = i
-  if (last_nonblank < 0)
+  if last_nonblank < 0
     lines.unshift(@suffix)
   else
     lines.splice(last_nonblank + 1, 0, @suffix)
@@ -31,6 +31,6 @@ inserts the suffix line to the array passed as a parameter.
     line\LineOutput\$
     i\n\$
     => prev.concat(line.output)
-  if (@suffix)
+  if @suffix
     @add_suffix(lines)
   => lines

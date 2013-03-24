@@ -1,8 +1,8 @@
 :=arr_flatten ##
   lines\s|A\$
-  if (typeof(lines) == 'string')
+  if typeof(lines) == 'string'
     => [lines]
-  if (lines instanceof LineOutput || lines instanceof BlockOutput)
+  if lines instanceof LineOutput || lines instanceof BlockOutput
     lines = lines.output
   console.assert(#)
     lines instanceof Array
@@ -30,21 +30,21 @@
   name\s\?
   level\n\? 0
   start_str := whitespaces(level * 2)
-  if (name)
+  if name
     start_str += name + ':'
 
-  if (obj instanceof Array)
+  if obj instanceof Array
     children := obj.map(##).filter(##)
       c\O\$
       => obj_stringify(c, compact, undefined, level + 1)
       --
       c\s\$
       => !!c
-    if (children.length)
+    if children.length
       => start_str + '[\n' + children.join('') + whitespaces(level * 2) + ']\n'
     else
       => compact ? '' : start_str + '[]\n'
-  else if (obj instanceof Object)
+  else if obj instanceof Object
     keys := []
     each key in obj
       keys.push(key)
@@ -54,7 +54,7 @@
       --
       c\s\$
       => !!c
-    if (children.length)
+    if children.length
       => start_str + '{\n' + children.join('') + whitespaces(level * 2) + '}\n'
     else
       => compact ? '' : start_str + '{}\n'
@@ -64,9 +64,9 @@
 :=doc_lines ##
   annotations\A.<s>\$
   alist := arr_flatten(annotations)
-  if (alist.length == 0)
+  if alist.length == 0
     => []
-  if (alist.length == 1)
+  if alist.length == 1
     => ['/** ' + alist[0] + ' */']
   =>[#]
     '/**'

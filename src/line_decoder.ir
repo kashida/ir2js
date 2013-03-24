@@ -20,7 +20,7 @@ decodes blockc markers.
   @line.forEach(##)
     seg\s\$
     i\n\$
-    if (/^['"\/]/.test(seg))
+    if /^['"\/]/.test(seg)
       // string, regular expression, and comment don't need to be split.
       @fragments.add_str(seg)
     else
@@ -34,15 +34,15 @@ decodes blockc markers.
   last_index := 0
   match := re.exec(seg)
   sub_context := null
-  while (match)
+  while match
     @fragments.add_str(seg.substring(last_index, match.index))
     block := {marker: match[1]}
-    if (blocks.length == 0)
+    if blocks.length == 0
       warn(@input_line, 'ran out of blocks: ' + seg)
     else
       b := blocks.shift()
-      if (block.marker == '##')
-        if (!sub_context)
+      if block.marker == '##'
+        if !sub_context
           sub_context = @context.clone()
           sub_context.is_file_scope = false
         block.params = new ParamSet(sub_context, b)
@@ -53,9 +53,9 @@ decodes blockc markers.
     match = re.exec(seg)
 
   last_fragment := seg.substr(last_index)
-  if (last_fragment)
+  if last_fragment
     @fragments.add_str(last_fragment)
-    if (last_seg && blocks.length > 0)
+    if last_seg && blocks.length > 0
       @fragments.add_block({marker: '#', block: blocks.shift()})
       @is_block_statement = true
   assert(!last_seg || blocks.length == 0, @input_line, 'too many blocks for the #s')
@@ -64,9 +64,9 @@ decodes blockc markers.
   @fragments.blocks.forEach(##)
     b\O\$
     // transform the blocks.
-    if (b.params)
+    if b.params
       b.params.transform()
-    if (b.block)
+    if b.block
       b.block.transform({#}[b.marker])
         '##': BlockType.BLOCK
         '#': BlockType.BLOCK
@@ -91,14 +91,14 @@ decodes blockc markers.
 :@compose_line
   prefix\s\$
   i\n\$
-  if (@fragments.blocks.length <= i)
+  if @fragments.blocks.length <= i
     => [prefix]
 
   b := @fragments.blocks[i]
   bstart := [b.block.start_str()]
-  if (!b.params)
+  if !b.params
     => [prefix + bstart]
-  if (b.params.is_decl_empty())
+  if b.params.is_decl_empty()
     => [prefix + 'function(' + b.params.output_params() + ')' + bstart]
 
   // we don't try to merge the prefix into first line.

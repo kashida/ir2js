@@ -11,7 +11,7 @@ First pass line parsing for constructing the block structure.
   @process()
 
 :@process
-  if (/^\s*$/.test(@input.line) || /^\s*\/\//.test(@input.line))
+  if /^\s*$/.test(@input.line) || /^\s*\/\//.test(@input.line)
     // blank or comment line. Nothing to be done.
     =>
   @is_valid = true
@@ -24,10 +24,10 @@ First pass line parsing for constructing the block structure.
   spaces_re := /^(\s*)(.*[\S])(\s*)$/.exec(@input.line)
 
   @indent = spaces_re[1].length
-  if (!/ */.test(spaces_re[1]))
+  if !/ */.test(spaces_re[1])
     warn(@input, 'non-ascii 0x20 space for indentation')
 
-  if (spaces_re[3] != '')
+  if spaces_re[3] != ''
     warn(@input, 'trailing space')
 
 :@check_continuation

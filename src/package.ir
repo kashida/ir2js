@@ -14,8 +14,8 @@ package name.
   str\s\$
   pkg := @pkg
   // up package reference if there are two or more "%"s.
-  while (/^\%\%/.test(str))
-    if (pkg)
+  while /^\%\%/.test(str)
+    if pkg
       // drop the last element.
       pkg = pkg.replace(/\.?[^\.]+$/, '')
     str = str.substr(1)

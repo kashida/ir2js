@@ -37,11 +37,11 @@ TODO: change marker's type to BlockType when it's enum.
 TODO: change marker's type to BlockType when it's enum.
 :transform
   marker\n\?
-  if (marker !== undefined)
+  if marker !== undefined
     @marker = marker
   @lines.forEach(##)
     line\SectionLine\$
-    if (!(line instanceof InvalidLine))
+    if !(line instanceof InvalidLine)
       line.transform()
 
 :start_str\s\
@@ -57,7 +57,7 @@ TODO: change marker's type to BlockType when it's enum.
   @lines.forEach(##)
     line\SectionLine\$
     i\n\$
-    if (!(line instanceof InvalidLine) && !line.param)
+    if !(line instanceof InvalidLine) && !line.param
       last_index = i
   assert(#)
     last_index >= 0 || @marker == BlockType.BLOCK
@@ -70,13 +70,13 @@ TODO: change marker's type to BlockType when it's enum.
     line\SectionLine\$
     i\n\$
     out_line := line.output()
-    if (line instanceof InvalidLine)
+    if line instanceof InvalidLine
       accum_suffix += out_line.line_suffix
       out_line.line_suffix = ''
     else
       line_terminator := i == last_index ? _END_SUFFIX[@marker] : _LINE_SUFFIX[@marker]
       out_line.line_suffix = accum_suffix + out_line.line_suffix
-      if (!line.is_block_statement)
+      if !line.is_block_statement
         out_line.line_suffix += line_terminator
       accum_suffix = ''
     out.append_line(out_line)

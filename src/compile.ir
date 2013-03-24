@@ -3,7 +3,7 @@
   infile\s\$
   outfile\s\$
   pkg_name := infile.replace(/[\/\\][^\/\\]*$/, '')
-  if (basedir && pkg_name.indexOf(basedir) == 0)
+  if basedir && pkg_name.indexOf(basedir) == 0
     // strip off the basedir.
     pkg_name = pkg_name.substr(basedir.length)
   pkg_name = pkg_name.replace(/^[\/\\]*/, '').replace(/[\/\\]/, '.')
@@ -23,7 +23,7 @@
 :=need_compile  ##
   src\s\$
   dst\s\$
-  if (!_path.existsSync(dst))
+  if !_path.existsSync(dst)
     => true
   src_stat := _fs.statSync(src)
   dst_stat := _fs.statSync(dst)
@@ -33,14 +33,14 @@
   basedir\s\$
   inout_filenames\A.<s>\$
   i := 0
-  while (i < inout_filenames.length)
+  while i < inout_filenames.length
     infile := inout_filenames[i++]
     outfile := inout_filenames[i++]
 
     logstr := '[' + infile + ' => ' + outfile + '] '
-    if (!_path.existsSync(infile))
+    if !_path.existsSync(infile)
       console.error(logstr + 'input not found')
-    else if (need_compile(infile, outfile))
+    else if need_compile(infile, outfile)
       console.log(logstr + 'compiling')
       transform_to_js(basedir, infile, outfile)
     else

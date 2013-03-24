@@ -18,9 +18,9 @@
 :parent_call\s\
   args\s\$
   end_str := args ? ', ' + args + ')' : ')'
-  if (@context.is_ctor)
+  if @context.is_ctor
     => @context.cls.ctor.parent_name() + '.call(this' + end_str
-  else if (@context.is_method)
+  else if @context.is_method
     => [#].join('')
       @context.cls.ctor.parent_name()
       '.prototype.'

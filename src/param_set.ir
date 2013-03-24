@@ -20,14 +20,14 @@
   @block.each_line(##, @context)
     line\SectionLine\$
     i\n\$
-    if (param_done)
+    if param_done
       =>
-    if (line instanceof SeparatorLine)
+    if line instanceof SeparatorLine
       param_done = true
       =>
-    if (line instanceof CodeLine && !line.is_continuation)
+    if line instanceof CodeLine && !line.is_continuation
       p := @add_line(\CodeLine\(line), i)
-      if (p)
+      if p
         line.param = p
       else
         param_done = true
@@ -37,28 +37,28 @@
   line\CodeLine\$
   index\n\$
   p := new Param(@context, @is_ctor, line.input, line.parsed)
-  if (!p.success)
-    if (index != 0 || @context.is_file_scope)
+  if !p.success
+    if index != 0 || @context.is_file_scope
       => null
     // could be the return type.
     => @try_return_type(line.str)
 
   @params.push(p)
-  if (p.is_member)
+  if p.is_member
     @context.cls.add_member(p.name, p.type, p.access_type)
   => p
 
 :@try_return_type\b\
   line\s\$
   re := /^\s*\\(.*)\\\s*$/.exec(line)
-  if (!re)
+  if !re
     => false
   @return_type = new TypeDecoder(@context.pkg, re[1])
   => true
 
 :set_return_type
   return_type\s\$
-  if (return_type)
+  if return_type
     @return_type = new TypeDecoder(@context.pkg, return_type)
 
 :is_empty\b\
@@ -81,7 +81,7 @@
     --
     s\s\$
     => !!s
-  if (@return_type)
+  if @return_type
     result.push('@return {' + @return_type.output() + '}')
   => result
 

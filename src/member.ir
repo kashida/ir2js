@@ -10,7 +10,7 @@ returns an array with member declaration if it hasn't been output already.
 returns an empty array otherwise.
 :output_decl\A.<s>\
   class_name\!Name\$
-  if (@declared)
+  if @declared
     => []
   @declared = true
   // TODO: this member decl always allows setting a value to it even when only the
@@ -37,11 +37,11 @@ output a getter or a setter.
 produce necessary accessor methods based on the access type specification.
 :output_accessors\A\
   class_name\!Name\$
-  if (!@access_type || @is_pseudo)
+  if !@access_type || @is_pseudo
     => []
   result := [@.output_decl(class_name)]
-  if ('+&'.indexOf(@access_type) >= 0)
+  if '+&'.indexOf(@access_type) >= 0
     result.push(@.output_accessor(class_name, true, ['return this._' + @name + ';']))
-  if ('*&'.indexOf(@access_type) >= 0)
+  if '*&'.indexOf(@access_type) >= 0
     result.push(@.output_accessor(class_name, false, ['this._' + @name + ' = value;']))
   => result

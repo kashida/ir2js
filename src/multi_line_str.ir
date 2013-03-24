@@ -8,13 +8,13 @@ same number of strings as @.lines.
   result := []
   @.lines.forEach(##)
     line\InputLine\$
-    if (line.is_blank)
+    if line.is_blank
       // empty line is fine.
       result.push('')
       =>
-    if (@indent < 0)
+    if @indent < 0
       @indent = line.indent
-    else if (line.indent < @indent)
+    else if line.indent < @indent
       warn(line, 'inconsistent indentation')
       =>
     result.push(line.line.substr(@indent))

@@ -17,35 +17,35 @@ parses input lines into lines and sections.
 
 :@process_line
   line\InputLine\$
-  if (line.starts_with_colon)
+  if line.starts_with_colon
     // should be a start of a code section.
     @flush_buffer()
     @last_valid_index = 0
-  else if (line.is_indented)
+  else if line.is_indented
     // indented line -- continues either comment or code section.
-    if (@last_valid_index !== null)
+    if @last_valid_index !== null
       @last_valid_index = @buffer.length
-  else if (!line.is_blank)
+  else if !line.is_blank
     // global comment.
-    if (@last_valid_index !== null)
+    if @last_valid_index !== null
       // close the code section.
       @flush_buffer()
   // anything else is invalid line -- continues either comment or code section.
   @buffer.push(line)
 
 :@flush_buffer
-  while (@buffer.length)
+  while @buffer.length
     next_buffer := []
-    if (@last_valid_index !== null)
+    if @last_valid_index !== null
       section := new InputSection(@buffer[0])
       @result.push(section)
       @buffer.forEach(##)
         line\InputLine\$
         index\n\$
-        if (index == 0)
+        if index == 0
           // we already passed the header line to section.
           =>
-        else if (index <= @last_valid_index)
+        else if index <= @last_valid_index
           section.push(line)
         else
           // end of section invaild lines.

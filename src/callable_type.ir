@@ -21,9 +21,9 @@ TODO: use setter.
 
 :extract\O\
   obj := {name: @name, args: @args}
-  if (@parent)
+  if @parent
     obj['parent'] = @parent
-  if (@methods)
+  if @methods
     obj['methods'] = @methods.map(##)
       m\CallableType\$
       => m.extract()

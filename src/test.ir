@@ -39,25 +39,25 @@ or
     index\n\$
     @check_line(line, index)
 
-  if (@state != '')
+  if @state != ''
     console.warn(@filename + ': last test did not terminate?')
 
 :@check_line
   line\s\$
   index\n\$
   input_re := /^#\{((:)|\[(.*)\])?\s*(.*\S)\s*$/.exec(line)
-  if (input_re)
+  if input_re
     @state = 'i'
     @name = input_re[4]
     @package_name = input_re[3] || ''
     @is_global = !input_re[2]
     =>
     
-  if (/^#\=\s*$/.test(line))
+  if /^#\=\s*$/.test(line)
     @state = 'o'
     =>
 
-  if (/^#\}\s*$/.test(line))
+  if /^#\}\s*$/.test(line)
     @state = ''
     @tests.push(new Test(@name, @package_name, @input, @output, @is_global))
     @name = ''
@@ -66,7 +66,7 @@ or
     @is_global = true
     =>
 
-  switch (@state)
+  switch @state
     case 'i':
     @input.push(line)
     break
@@ -76,7 +76,7 @@ or
     break
 
     case '':
-    if (!/^\s*$/.test(line))
+    if !/^\s*$/.test(line)
       console.warn(@filename + ' (line ' + index + ')? ' + line)
     break
 
@@ -84,7 +84,7 @@ or
   @tests.forEach(##)
     test\%.Test\$
     test.run()
-    if (test.failed)
+    if test.failed
       //@failed = true
       process.exit(-1)
 
@@ -106,9 +106,9 @@ or
   try
     c.process_lines(@input)
     actual_output = c.output()
-    if (@is_global)
+    if @is_global
       type_str := obj_stringify(c.types.extract(), true)
-      if (type_str)
+      if type_str
         actual_output = actual_output.concat(type_str.split('\n'))
   catch e
     console.log('EXCEPTION: ' + @name)
@@ -116,7 +116,7 @@ or
     @warn_with_indent('expected', @output)
     throw e
 
-  if (actual_output.join('\n') == @output.join('\n'))
+  if actual_output.join('\n') == @output.join('\n')
     console.log('PASS: ' + @name)
   else
     console.log('FAIL: ' + @name)
@@ -133,10 +133,10 @@ or
   warn_rec := ##
     lines\s|A\$
     level\n\$
-    if (typeof(lines) == 'string')
+    if typeof(lines) == 'string'
       console.log(whitespaces(4 + level * 2) + lines)
     else
-      if (lines instanceof LineOutput)
+      if lines instanceof LineOutput
         lines = lines.output
       lines.forEach(##)
         line\s|A\$
@@ -150,11 +150,11 @@ or
   lines0.forEach(##)
     line0\s\$
     i\n\$
-    if (lines1.length <= i)
+    if lines1.length <= i
       result.push('- ' + line0)
       =>
     line1 := lines1[i]
-    if (line0 != line1)
+    if line0 != line1
       result.push('< ' + line0)
       result.push(' >' + line1)
     else
@@ -179,7 +179,7 @@ argv[0] is node binary and argv[1] is the executing js.
     test := new TestFile(infile)
     test.parse(contents)
     test.run()
-    if (test.failed)
+    if test.failed
       process.exit(-1)
 
   process.exit(0)

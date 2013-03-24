@@ -26,11 +26,11 @@
   @params&\A\
 
 :+is_empty\b\
-  if (@prev_lines.length || @next_lines.length)
+  if @prev_lines.length || @next_lines.length
     => false
-  if (!@list.length)
+  if !@list.length
     => true
-  if (@list.length >= 2)
+  if @list.length >= 2
     => false
   => !(@list[0] instanceof %.BlockMarker) && @list[0] == ''
 
@@ -41,7 +41,7 @@
     arg := arguments[i]
 
     // Recursive cases.
-    if (arg instanceof %.TokenList)
+    if arg instanceof %.TokenList
       arg.list.forEach(##)
         token\%.BlockMarker|s\$
         @.add(token)
@@ -52,20 +52,20 @@
         l\s\$
         @next_lines.push(l)
       continue
-    if (arg instanceof Array)
+    if arg instanceof Array
       arg.forEach(##)
         token\A\$
         @.add(token)
       continue
 
     // Always append a marker.
-    if (arg instanceof %.BlockMarker)
+    if arg instanceof %.BlockMarker
       @list.push(arg)
       continue
 
     // Should be a string. Append only if we can't add to the last element.
     last := @list.length - 1
-    if (!@list.length || @list[last] instanceof %.BlockMarker)
+    if !@list.length || @list[last] instanceof %.BlockMarker
       @list.push(arg)
       continue
     @list[last] += arg
@@ -73,7 +73,7 @@
 
 :prepend\%.TokenList\
   line\%.TokenList|s\$
-  if (line instanceof %.TokenList)
+  if line instanceof %.TokenList
     @prev_lines = @prev_lines.concat(line.prev_lines)
     @next_lines = @next_lines.concat(line.next_lines)
   @prev_lines.push(line.toString())
@@ -81,7 +81,7 @@
 
 :append
   line\%.TokenList|s\$
-  if (line instanceof %.TokenList)
+  if line instanceof %.TokenList
     @prev_lines = @prev_lines.concat(line.prev_lines)
     @next_lines = @next_lines.concat(line.next_lines)
   @next_lines.push(line.toString())
@@ -108,6 +108,6 @@
     @type
     @marker
   init_str := @init.toString()
-  if (init_str)
+  if init_str
     list.push(' ' + init_str)
   => list.join('')

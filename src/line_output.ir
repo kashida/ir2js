@@ -40,15 +40,15 @@ output lines corresponds to one input line.
   @lines.forEach(##)
     line\s|BlockOutput\$
     i\n\$
-    if (line instanceof BlockOutput)
+    if line instanceof BlockOutput
       result = result.concat(line.output)
     else
       to_add := line
-      if (i == 0 && @line_prefix)
+      if i == 0 && @line_prefix
         to_add = @line_prefix + to_add
-      if (i == @lines.length - 1 && @line_suffix)
+      if i == @lines.length - 1 && @line_suffix
         to_add += @line_suffix
-      if (to_add)
+      if to_add
         to_add = indent + to_add
       result.push(to_add)
   @tail_comment.forEach(##)

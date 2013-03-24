@@ -18,7 +18,7 @@
   decl := @.params.output_decls()
   decl.push('@constructor')
   inherit := []
-  if (@parent)
+  if @parent
     decl.push('@extends {' + @parent + '}')
     inherit.push([#].join(''))
       @.context.name.ref()

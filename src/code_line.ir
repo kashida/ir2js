@@ -24,9 +24,9 @@
   => @matcher.is_block_statement
 
 :+parsed\parser.Result\
-  if (@.is_continuation)
+  if @.is_continuation
     warn(@input, 'parse requested for cont. line')
-  if (!@parsed)
+  if !@parsed
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine')
     @parsed = CODE_PARSER.run(#)
       [@input].concat(@continue_lines)
@@ -42,7 +42,7 @@
 
 :output\LineOutput\
   out := new LineOutput(@input)
-  if (@param === true)
+  if @param === true
     => out
 
   out.append_lines(@.parsed.prev_lines.map(##))
@@ -54,7 +54,7 @@
     tail_code\A.<s>\$
     out.append_block(block.output())
     out.append_lines(tail_code)
-  if (@param)
+  if @param
     @param.output_init(out)
   @.parsed.tail_comment.forEach(##)
     comment\s\$

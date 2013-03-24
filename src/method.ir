@@ -7,11 +7,11 @@
 
 :output\A\
   decls := []
-  if (@overriding)
+  if @overriding
     decls = ['@override']
   else
     decls = @.params.output_decls()
-  if (/^_/.test(@.context.name.id))
+  if /^_/.test(@.context.name.id)
     decls.push('@private')
   => [#]
     doc_lines(decls)

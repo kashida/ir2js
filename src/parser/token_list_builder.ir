@@ -4,7 +4,7 @@
   @tokens\%.TokenList\
 
 :build\%.TokenList\
-  if (!@tokens)
+  if !@tokens
     @tokens = new %.TokenList()
     @build_rec(@parsed)
   => @tokens
@@ -16,20 +16,20 @@
 
 :@build_rec
   data\%.TokenList|A|O|s\$
-  if (data instanceof %.TokenList)
+  if data instanceof %.TokenList
     @add_tokens(data)
     =>
 
-  if (data instanceof Array)
+  if data instanceof Array
     @add_array(data)
     =>
 
-  if (data instanceof Object)
+  if data instanceof Object
     @add_object(data)
     =>
 
   // Must be a string.
-  if (data)
+  if data
     @tokens.add(data)
 
 :@add_tokens
@@ -44,9 +44,9 @@
 
 :@add_object
   data\O\$
-  if (data.g)
+  if data.g
     p := data.params
-    switch(data.g)
+    switch data.g
       case 'c': // Current package ref.
       str := p['percents'] + '.' + p.name
       @tokens.add(@.xformer ? @.xformer.pkg_ref(str) : str)
@@ -81,11 +81,11 @@
       @.add_type_object(p)
       break
 
-  if (data.t)
+  if data.t
     @tokens.add(new %.TokenListBuilder(data.t, @.xformer).build())
-  if (data.p)
+  if data.p
     @tokens.prepend(new %.TokenListBuilder(data.p, @.xformer).build())
-  if (data.a)
+  if data.a
     @tokens.append(new %.TokenListBuilder(data.a, @.xformer).build())
 
 :add_type_object

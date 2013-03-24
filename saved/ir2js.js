@@ -96,7 +96,7 @@ return this._is_block_statement;
 
 BlockMatcher.prototype.transform = function() {
   var self = this;
-  if ((self._match_blocks())) {
+  if (self._match_blocks()) {
     self._transform_blocks();
   }
 };
@@ -115,17 +115,17 @@ BlockMatcher.prototype._match_blocks = function() {
   code = self._code;
   var idx;
   idx = 1;
-  if ((self._code[0] instanceof parser.BlockMarker)) {
+  if (self._code[0] instanceof parser.BlockMarker) {
     idx = 0;
     self._starts_with_marker = true;
   }
 
-  while ((idx < code.length)) {
+  while (idx < code.length) {
     var param;
     param = null;
     var elem;
     elem = self._code[idx];
-    if ((elem instanceof parser.BlockMarker && elem.type == 'f')) {
+    if (elem instanceof parser.BlockMarker && elem.type == 'f') {
       var sub_context;
       sub_context = self._context.clone();
       sub_context.is_file_scope = false;
@@ -138,13 +138,13 @@ BlockMatcher.prototype._match_blocks = function() {
     idx += 2;
   }
 
-  if ((self._marker_indexes.length < self._blocks.length)) {
+  if (self._marker_indexes.length < self._blocks.length) {
     // One extra block is allowed.
     self._marker_indexes.push(-1);
     self._is_block_statement = true;
   }
 
-  if ((self._marker_indexes.length != self._blocks.length)) {
+  if (self._marker_indexes.length != self._blocks.length) {
     warn(self._input, '# blocks does not match #markers.');
     return false;
   }
@@ -161,7 +161,7 @@ BlockMatcher.prototype._transform_blocks = function() {
    */
   function(block, i) {
     // transform the blocks.
-    if ((self._params[i])) {
+    if (self._params[i]) {
       self._params[i].transform();
     }
     var mi;
@@ -209,7 +209,7 @@ BlockMatcher.prototype.each_fragment = function(cb) {
  */
 BlockMatcher.prototype._compose_line = function(prefix, i) {
   var self = this;
-  if ((self._blocks.length <= i)) {
+  if (self._blocks.length <= i) {
     return [prefix];
   }
 
@@ -219,10 +219,10 @@ BlockMatcher.prototype._compose_line = function(prefix, i) {
   p = self._params[i];
   var bstart;
   bstart = [b.start_str()];
-  if ((!p)) {
+  if (!p) {
     return [prefix + bstart];
   }
-  if ((p.is_decl_empty())) {
+  if (p.is_decl_empty()) {
     return [prefix + 'function(' + p.output_params() + ')' + bstart];
   }
 
@@ -289,11 +289,11 @@ BlockOutput.prototype._add_suffix = function(lines) {
    * @param {number} i
    */
   function(line, i) {
-    if ((line)) {
+    if (line) {
       last_nonblank = i;
     }
   });
-  if ((last_nonblank < 0)) {
+  if (last_nonblank < 0) {
     lines.unshift(self._suffix);
   }
   else {
@@ -315,7 +315,7 @@ BlockOutput.prototype.__defineGetter__('output', function() {
   function(prev, line, i) {
     return prev.concat(line.output);
   }, []);
-  if ((self._suffix)) {
+  if (self._suffix) {
     self._add_suffix(lines);
   }
   return lines;
@@ -378,10 +378,10 @@ CallableType.prototype.extract = function() {
   var self = this;
   var obj;
   obj = {name: self._name, args: self._args};
-  if ((self._parent)) {
+  if (self._parent) {
     obj['parent'] = self._parent;
   }
-  if ((self._methods)) {
+  if (self._methods) {
     obj['methods'] = self._methods.map(
     /** @param {CallableType} m */
     function(m) {
@@ -510,7 +510,7 @@ CodeParser.prototype._classname = 'CodeParser';
 CodeParser.prototype.parse = function(input_lines) {
   var self = this;
   self._process(input_lines);
-  if ((!input_lines.length)) {
+  if (!input_lines.length) {
     return;
   }
   assert(
@@ -535,7 +535,7 @@ CodeParser.prototype._process = function(input_lines) {
   code_lines.some(
   /** @param {SectionLine} line */
   function(line) {
-    if ((!(line instanceof InvalidLine))) {
+    if (!(line instanceof InvalidLine)) {
       first_line_indent = line.indent;
       return true;
     }
@@ -551,7 +551,7 @@ CodeParser.prototype._process = function(input_lines) {
    */
   function(line, i) {
     // create blocks and assign lines to them.
-    if ((line instanceof InvalidLine)) {
+    if (line instanceof InvalidLine) {
       self._invalid_lines.push(line);
       return;
     }
@@ -561,18 +561,18 @@ CodeParser.prototype._process = function(input_lines) {
     var indent;
     indent = line.indent;
 
-    if ((indent > prev_indent)) {
+    if (indent > prev_indent) {
       self._deeper_indent(i, indent);
     }
-    else if ((indent < prev_indent)) {
+    else if (indent < prev_indent) {
       self._shallower_indent(line, i);
     }
 
     self._add_invalid_lines();
-    if ((line.is_continuation)) {
+    if (line.is_continuation) {
       self._continuation(line, i);
     }
-    else if ((line instanceof SeparatorLine)) {
+    else if (line instanceof SeparatorLine) {
       self._separator(line, indent, i);
     }
     else {
@@ -622,7 +622,7 @@ CodeParser.prototype._deeper_indent = function(i, indent) {
 CodeParser.prototype._shallower_indent = function(line, i) {
   var self = this;
   // back up levels.
-  while ((line.indent < self._top_block().indent)) {
+  while (line.indent < self._top_block().indent) {
     self._blocks.pop();
     assert(
       self._blocks.length >= 1,
@@ -630,7 +630,7 @@ CodeParser.prototype._shallower_indent = function(line, i) {
       'stack size zero (line ' + (i + 1) + '): ' + line.str
     );
   }
-  if ((line.indent > self._top_block().indent)) {
+  if (line.indent > self._top_block().indent) {
     warn(line.input, 'indent level does not match');
   }
 };
@@ -660,7 +660,7 @@ CodeParser.prototype._continuation = function(line, i) {
   var self = this;
   var last_line;
   last_line = self._top_block().last_line();
-  if ((!last_line)) {
+  if (!last_line) {
     warn(line.input, 'continuation as a first line of block');
   }
   else {
@@ -689,7 +689,7 @@ CodeParser.prototype._add_invalid_lines = function() {
 CodeParser.prototype._pop_rest = function() {
   var self = this;
   // pop all the rest of blocks except one.
-  while ((self._blocks.length > 1)) {
+  while (self._blocks.length > 1) {
     self._blocks.pop();
   }
 };
@@ -755,7 +755,7 @@ CodeScope.prototype.output = function() {
 var transform_to_js = function(basedir, infile, outfile) {
   var pkg_name;
   pkg_name = infile.replace(/[\/\\][^\/\\]*$/, '');
-  if ((basedir && pkg_name.indexOf(basedir) == 0)) {
+  if (basedir && pkg_name.indexOf(basedir) == 0) {
     // strip off the basedir.
     pkg_name = pkg_name.substr(basedir.length);
   }
@@ -783,7 +783,7 @@ var transform_to_js = function(basedir, infile, outfile) {
  * @param {string} dst
  */
 var need_compile = function(src, dst) {
-  if ((!_path.existsSync(dst))) {
+  if (!_path.existsSync(dst)) {
     return true;
   }
   var src_stat;
@@ -800,7 +800,7 @@ var need_compile = function(src, dst) {
 var compile_files = function(basedir, inout_filenames) {
   var i;
   i = 0;
-  while ((i < inout_filenames.length)) {
+  while (i < inout_filenames.length) {
     var infile;
     infile = inout_filenames[i++];
     var outfile;
@@ -808,10 +808,10 @@ var compile_files = function(basedir, inout_filenames) {
 
     var logstr;
     logstr = '[' + infile + ' => ' + outfile + '] ';
-    if ((!_path.existsSync(infile))) {
+    if (!_path.existsSync(infile)) {
       console.error(logstr + 'input not found');
     }
-    else if ((need_compile(infile, outfile))) {
+    else if (need_compile(infile, outfile)) {
       console.log(logstr + 'compiling');
       transform_to_js(basedir, infile, outfile);
     }
@@ -914,7 +914,7 @@ Context.prototype.clone = function() {
   c = new Context(self._pkg);
   var p;
   for (p in self) {
-    if ((self.hasOwnProperty(p))) {
+    if (self.hasOwnProperty(p)) {
       c[p] = self[p];
     }
   }
@@ -1048,10 +1048,10 @@ GlobalComment.prototype.output = function() {
   self._lines.forEach(
   /** @param {InputLine} line */
   function(line) {
-    switch ((state)) {
+    switch (state) {
       // starting state -- output all the blank lines as is.
       case 's':;
-      if ((!line.is_blank)) {
+      if (!line.is_blank) {
         // first non-blank.
         result.push(buffer);
         buffer = [];
@@ -1061,14 +1061,14 @@ GlobalComment.prototype.output = function() {
 
       // in non-blank line section.
       case 'n':;
-      if ((line.is_blank)) {
+      if (line.is_blank) {
         state = 'a';
       }
       break;
 
       // blank line immediately following a non-blank.
       case 'a':;
-      if ((line.is_blank)) {
+      if (line.is_blank) {
         // run of blank lines is long enough now. flush the comments.
         result.push(['/*', buffer.splice(0, buffer.length - 1), '*/']);
         state = 'b';
@@ -1080,7 +1080,7 @@ GlobalComment.prototype.output = function() {
 
       // b: blank line section.
       case 'b':;
-      if ((!line.is_blank)) {
+      if (!line.is_blank) {
         result.push(buffer);
         buffer = [];
         state = 'n';
@@ -1090,7 +1090,7 @@ GlobalComment.prototype.output = function() {
     buffer.push(line.line);
   });
 
-  switch ((state)) {
+  switch (state) {
     // still in the starting state.
     case 's':;
     result.push(buffer);
@@ -1214,13 +1214,13 @@ TODO: change marker's type to BlockType when it's enum.
 /** @param {number=} marker */
 IndentBlock.prototype.transform = function(marker) {
   var self = this;
-  if ((marker !== undefined)) {
+  if (marker !== undefined) {
     self._marker = marker;
   }
   self._lines.forEach(
   /** @param {SectionLine} line */
   function(line) {
-    if ((!(line instanceof InvalidLine))) {
+    if (!(line instanceof InvalidLine)) {
       line.transform();
     }
   });
@@ -1251,7 +1251,7 @@ IndentBlock.prototype.output = function() {
    * @param {number} i
    */
   function(line, i) {
-    if ((!(line instanceof InvalidLine) && !line.param)) {
+    if (!(line instanceof InvalidLine) && !line.param) {
       last_index = i;
     }
   });
@@ -1273,7 +1273,7 @@ IndentBlock.prototype.output = function() {
   function(line, i) {
     var out_line;
     out_line = line.output();
-    if ((line instanceof InvalidLine)) {
+    if (line instanceof InvalidLine) {
       accum_suffix += out_line.line_suffix;
       out_line.line_suffix = '';
     }
@@ -1281,7 +1281,7 @@ IndentBlock.prototype.output = function() {
       var line_terminator;
       line_terminator = i == last_index ? _END_SUFFIX[self._marker] : _LINE_SUFFIX[self._marker];
       out_line.line_suffix = accum_suffix + out_line.line_suffix;
-      if ((!line.is_block_statement)) {
+      if (!line.is_block_statement) {
         out_line.line_suffix += line_terminator;
       }
       accum_suffix = '';
@@ -1430,20 +1430,20 @@ InputParser.prototype.parse = function() {
  */
 InputParser.prototype._process_line = function(line) {
   var self = this;
-  if ((line.starts_with_colon)) {
+  if (line.starts_with_colon) {
     // should be a start of a code section.
     self._flush_buffer();
     self._last_valid_index = 0;
   }
-  else if ((line.is_indented)) {
+  else if (line.is_indented) {
     // indented line -- continues either comment or code section.
-    if ((self._last_valid_index !== null)) {
+    if (self._last_valid_index !== null) {
       self._last_valid_index = self._buffer.length;
     }
   }
-  else if ((!line.is_blank)) {
+  else if (!line.is_blank) {
     // global comment.
-    if ((self._last_valid_index !== null)) {
+    if (self._last_valid_index !== null) {
       // close the code section.
       self._flush_buffer();
     }
@@ -1455,10 +1455,10 @@ InputParser.prototype._process_line = function(line) {
 /** @private */
 InputParser.prototype._flush_buffer = function() {
   var self = this;
-  while ((self._buffer.length)) {
+  while (self._buffer.length) {
     var next_buffer;
     next_buffer = [];
-    if ((self._last_valid_index !== null)) {
+    if (self._last_valid_index !== null) {
       var section;
       section = new InputSection(self._buffer[0]);
       self._result.push(section);
@@ -1468,11 +1468,11 @@ InputParser.prototype._flush_buffer = function() {
        * @param {number} index
        */
       function(line, index) {
-        if ((index == 0)) {
+        if (index == 0) {
           // we already passed the header line to section.
           return;
         }
-        else if ((index <= self._last_valid_index)) {
+        else if (index <= self._last_valid_index) {
           section.push(line);
         }
         else {
@@ -1664,10 +1664,10 @@ LineCategorizer.prototype.create_line = function(input) {
   var self = this;
   var parsed;
   parsed = new LineParser(input);
-  if ((!parsed.is_valid)) {
+  if (!parsed.is_valid) {
     return new InvalidLine(input);
   }
-  if ((parsed.is_separator)) {
+  if (parsed.is_separator) {
     return new SeparatorLine(input, parsed);
   }
   return new CodeLine(self._context, input, parsed);
@@ -1739,7 +1739,7 @@ LineDecoder.prototype._split_to_fragments = function(blocks) {
    * @param {number} i
    */
   function(seg, i) {
-    if ((/^['"\/]/.test(seg))) {
+    if (/^['"\/]/.test(seg)) {
       // string, regular expression, and comment don't need to be split.
       self._fragments.add_str(seg);
     }
@@ -1765,18 +1765,18 @@ LineDecoder.prototype._split_segment = function(seg, last_seg, blocks) {
   match = re.exec(seg);
   var sub_context;
   sub_context = null;
-  while ((match)) {
+  while (match) {
     self._fragments.add_str(seg.substring(last_index, match.index));
     var block;
     block = {marker: match[1]};
-    if ((blocks.length == 0)) {
+    if (blocks.length == 0) {
       warn(self._input_line, 'ran out of blocks: ' + seg);
     }
     else {
       var b;
       b = blocks.shift();
-      if ((block.marker == '##')) {
-        if ((!sub_context)) {
+      if (block.marker == '##') {
+        if (!sub_context) {
           sub_context = self._context.clone();
           sub_context.is_file_scope = false;
         }
@@ -1792,9 +1792,9 @@ LineDecoder.prototype._split_segment = function(seg, last_seg, blocks) {
 
   var last_fragment;
   last_fragment = seg.substr(last_index);
-  if ((last_fragment)) {
+  if (last_fragment) {
     self._fragments.add_str(last_fragment);
-    if ((last_seg && blocks.length > 0)) {
+    if (last_seg && blocks.length > 0) {
       self._fragments.add_block({marker: '#', block: blocks.shift()});
       self._is_block_statement = true;
     }
@@ -1809,10 +1809,10 @@ LineDecoder.prototype._transform_blocks = function() {
   /** @param {Object} b */
   function(b) {
     // transform the blocks.
-    if ((b.params)) {
+    if (b.params) {
       b.params.transform();
     }
-    if ((b.block)) {
+    if (b.block) {
       b.block.transform({
         '##': BlockType.BLOCK,
         '#': BlockType.BLOCK,
@@ -1855,7 +1855,7 @@ LineDecoder.prototype.each_fragment = function(cb) {
  */
 LineDecoder.prototype._compose_line = function(prefix, i) {
   var self = this;
-  if ((self._fragments.blocks.length <= i)) {
+  if (self._fragments.blocks.length <= i) {
     return [prefix];
   }
 
@@ -1863,10 +1863,10 @@ LineDecoder.prototype._compose_line = function(prefix, i) {
   b = self._fragments.blocks[i];
   var bstart;
   bstart = [b.block.start_str()];
-  if ((!b.params)) {
+  if (!b.params) {
     return [prefix + bstart];
   }
-  if ((b.params.is_decl_empty())) {
+  if (b.params.is_decl_empty()) {
     return [prefix + 'function(' + b.params.output_params() + ')' + bstart];
   }
 
@@ -2012,19 +2012,19 @@ LineOutput.prototype.__defineGetter__('output', function() {
    * @param {number} i
    */
   function(line, i) {
-    if ((line instanceof BlockOutput)) {
+    if (line instanceof BlockOutput) {
       result = result.concat(line.output);
     }
     else {
       var to_add;
       to_add = line;
-      if ((i == 0 && self._line_prefix)) {
+      if (i == 0 && self._line_prefix) {
         to_add = self._line_prefix + to_add;
       }
-      if ((i == self._lines.length - 1 && self._line_suffix)) {
+      if (i == self._lines.length - 1 && self._line_suffix) {
         to_add += self._line_suffix;
       }
-      if ((to_add)) {
+      if (to_add) {
         to_add = indent + to_add;
       }
       result.push(to_add);
@@ -2101,7 +2101,7 @@ return this._is_separator;
 /** @private */
 LineParser.prototype._process = function() {
   var self = this;
-  if ((/^\s*$/.test(self._input.line) || /^\s*\/\//.test(self._input.line))) {
+  if (/^\s*$/.test(self._input.line) || /^\s*\/\//.test(self._input.line)) {
     // blank or comment line. Nothing to be done.
     return;
   }
@@ -2119,11 +2119,11 @@ LineParser.prototype._check_spaces = function() {
   spaces_re = /^(\s*)(.*[\S])(\s*)$/.exec(self._input.line);
 
   self._indent = spaces_re[1].length;
-  if ((!/ */.test(spaces_re[1]))) {
+  if (!/ */.test(spaces_re[1])) {
     warn(self._input, 'non-ascii 0x20 space for indentation');
   }
 
-  if ((spaces_re[3] != '')) {
+  if (spaces_re[3] != '') {
     warn(self._input, 'trailing space');
   }
 };
@@ -2197,10 +2197,10 @@ LineTransformer.prototype.parent_call = function(args) {
   var self = this;
   var end_str;
   end_str = args ? ', ' + args + ')' : ')';
-  if ((self._context.is_ctor)) {
+  if (self._context.is_ctor) {
     return self._context.cls.ctor.parent_name() + '.call(this' + end_str;
   }
-  else if ((self._context.is_method)) {
+  else if (self._context.is_method) {
     return [
       self._context.cls.ctor.parent_name(),
       '.prototype.',
@@ -2286,7 +2286,7 @@ returns an empty array otherwise.
  */
 Member.prototype.output_decl = function(class_name) {
   var self = this;
-  if ((self._declared)) {
+  if (self._declared) {
     return [];
   }
   self._declared = true;
@@ -2332,15 +2332,15 @@ produce necessary accessor methods based on the access type specification.
  */
 Member.prototype.output_accessors = function(class_name) {
   var self = this;
-  if ((!self._access_type || self._is_pseudo)) {
+  if (!self._access_type || self._is_pseudo) {
     return [];
   }
   var result;
   result = [self.output_decl(class_name)];
-  if (('+&'.indexOf(self._access_type) >= 0)) {
+  if ('+&'.indexOf(self._access_type) >= 0) {
     result.push(self.output_accessor(class_name, true, ['return this._' + self._name + ';']));
   }
-  if (('*&'.indexOf(self._access_type) >= 0)) {
+  if ('*&'.indexOf(self._access_type) >= 0) {
     result.push(self.output_accessor(class_name, false, ['this._' + self._name + ' = value;']));
   }
   return result;
@@ -2446,8 +2446,8 @@ Package.prototype.replace = function(str) {
   var pkg;
   pkg = self._pkg;
   // up package reference if there are two or more "%"s.
-  while ((/^\%\%/.test(str))) {
-    if ((pkg)) {
+  while (/^\%\%/.test(str)) {
+    if (pkg) {
       // drop the last element.
       pkg = pkg.replace(/\.?[^\.]+$/, '');
     }
@@ -2522,7 +2522,7 @@ var Param = function(context, is_ctor, input, parsed) {
    */
   this._value_line = (null);
 
-  if ((!(parsed.tokens instanceof parser.ParamLine))) {
+  if (!(parsed.tokens instanceof parser.ParamLine)) {
     return;
   }
 
@@ -2531,16 +2531,16 @@ var Param = function(context, is_ctor, input, parsed) {
   self._type = new TypeDecoder(self._context.pkg, self._line.type);
 
   self._value_line = self._line.init && !self._line.init.is_empty ? self._line.init.list : null;
-  if ((self.is_member && self.init_type != '$' && !self._value_line)) {
+  if (self.is_member && self.init_type != '$' && !self._value_line) {
     // member with no initializer or optional param init.
     self._value_line = ['null'];
   }
 
   // sanity check the param consistency.
-  if ((!is_ctor && self.is_member)) {
+  if (!is_ctor && self.is_member) {
     warn(input, 'member param for non-constructor method');
   }
-  if ((!self.is_member && self.init_type != '?' && self._value_line)) {
+  if (!self.is_member && self.init_type != '?' && self._value_line) {
     warn(input, 'initial value for non-member non-optional');
   }
 };
@@ -2632,23 +2632,23 @@ Param.prototype.output_init = function(out) {
   var pname;
   pname = self._param_name();
 
-  if ((self.is_member)) {
+  if (self.is_member) {
     out.append_prefix_line('/**');
-    if ((self._type)) {
+    if (self._type) {
       out.append_prefix_line(' * @type {' + self._type.output() + '}');
     }
     out.append_prefix_line(' * @private');
     out.append_prefix_line(' */');
   }
-  if ((self.is_member || self.has_init)) {
+  if (self.is_member || self.has_init) {
     out.line_prefix = [
       self.is_member ? 'this._' : 'var ',
       self.name,
       ' = '
     ].join('');
-    if ((self.init_type != '')) {
+    if (self.init_type != '') {
       out.line_prefix += pname;
-      if ((self.has_init)) {
+      if (self.has_init) {
         out.line_prefix += ' === undefined ? (';
         out.line_suffix = ') : ' + pname;
       }
@@ -2670,7 +2670,7 @@ Param.prototype.output_argtype = function() {
   type = self._type.output();
   var re;
   re = /^\!?([a-zA-Z][\w\.]*)$/.exec(type);
-  if ((!re)) {
+  if (!re) {
     return 'null';
   }
   var type_name;
@@ -2685,7 +2685,7 @@ Param.prototype.argtype = function() {
   type = self._type.output();
   var re;
   re = /^\!?([a-zA-Z][\w\.]*)$/.exec(type);
-  if ((!re)) {
+  if (!re) {
     return null;
   }
   var type_name;
@@ -2749,17 +2749,17 @@ ParamSet.prototype.transform = function() {
    * @param {number} i
    */
   function(line, i) {
-    if ((param_done)) {
+    if (param_done) {
       return;
     }
-    if ((line instanceof SeparatorLine)) {
+    if (line instanceof SeparatorLine) {
       param_done = true;
       return;
     }
-    if ((line instanceof CodeLine && !line.is_continuation)) {
+    if (line instanceof CodeLine && !line.is_continuation) {
       var p;
       p = self._add_line(/** @type {CodeLine} */(line), i);
-      if ((p)) {
+      if (p) {
         line.param = p;
       }
       else {
@@ -2780,8 +2780,8 @@ ParamSet.prototype._add_line = function(line, index) {
   var self = this;
   var p;
   p = new Param(self._context, self._is_ctor, line.input, line.parsed);
-  if ((!p.success)) {
-    if ((index != 0 || self._context.is_file_scope)) {
+  if (!p.success) {
+    if (index != 0 || self._context.is_file_scope) {
       return null;
     }
     // could be the return type.
@@ -2789,7 +2789,7 @@ ParamSet.prototype._add_line = function(line, index) {
   }
 
   self._params.push(p);
-  if ((p.is_member)) {
+  if (p.is_member) {
     self._context.cls.add_member(p.name, p.type, p.access_type);
   }
   return p;
@@ -2804,7 +2804,7 @@ ParamSet.prototype._try_return_type = function(line) {
   var self = this;
   var re;
   re = /^\s*\\(.*)\\\s*$/.exec(line);
-  if ((!re)) {
+  if (!re) {
     return false;
   }
   self._return_type = new TypeDecoder(self._context.pkg, re[1]);
@@ -2814,7 +2814,7 @@ ParamSet.prototype._try_return_type = function(line) {
 /** @param {string} return_type */
 ParamSet.prototype.set_return_type = function(return_type) {
   var self = this;
-  if ((return_type)) {
+  if (return_type) {
     self._return_type = new TypeDecoder(self._context.pkg, return_type);
   }
 };
@@ -2858,7 +2858,7 @@ ParamSet.prototype.output_decls = function() {
   function(s) {
     return !!s;
   });
-  if ((self._return_type)) {
+  if (self._return_type) {
     result.push('@return {' + self._return_type.output() + '}');
   }
   return result;
@@ -2923,7 +2923,7 @@ SectionGenerator.prototype.generate = function(header, lines) {
   section = null;
   var header_line;
   header_line = header.line.substr(1);
-  if ((![
+  if (![
     '_create_ctor',
     '_create_method',
     '_create_accessor',
@@ -2940,13 +2940,13 @@ SectionGenerator.prototype.generate = function(header, lines) {
   /** @param {string} method */
   function(method) {
     section = self[method].call(self, header_line, header);
-    if ((section)) {
+    if (section) {
       section.lines = lines;
       section.close(self._scope.context.pkg);
       section.set_type(self._scope.types);
     }
     return !!section;
-  }))) {
+  })) {
     warn(header, 'line starts with colon and not a code section marker');
   }
   return section;
@@ -2961,7 +2961,7 @@ SectionGenerator.prototype._create_ctor = function(line) {
   var self = this;
   var re;
   re = /^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line);
-  if ((!re)) {
+  if (!re) {
     return null;
   }
 
@@ -2971,7 +2971,7 @@ SectionGenerator.prototype._create_ctor = function(line) {
   ctor = new Constructor(self._scope.copy_context_with_name(re[1]), re[3]);
   self._scope.context.cls.ctor = ctor;
   self._scope.types.add_ctor(ctor.name());
-  if ((re[3])) {
+  if (re[3]) {
     self._scope.types.set_parent(ctor.parent_name());
   }
   return ctor;
@@ -2987,12 +2987,12 @@ SectionGenerator.prototype._create_method = function(line, header) {
   var self = this;
   var re;
   re = /^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line);
-  if ((!re)) {
+  if (!re) {
     return null;
   }
 
   // we should have seen a ctor.
-  if ((!self._scope.context.cls)) {
+  if (!self._scope.context.cls) {
     warn(header, 'method marker w/o class');
     return null;
   }
@@ -3013,12 +3013,12 @@ SectionGenerator.prototype._create_accessor = function(line, header) {
   var self = this;
   var re;
   re = /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line);
-  if ((!re)) {
+  if (!re) {
     return null;
   }
 
   // we should have seen a ctor.
-  if ((!self._scope.context.cls)) {
+  if (!self._scope.context.cls) {
     warn(header, 'accessor marker w/o class');
     return null;
   }
@@ -3042,7 +3042,7 @@ SectionGenerator.prototype._create_global_function = function(line) {
   var self = this;
   var re;
   re = /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line);
-  if ((!re)) {
+  if (!re) {
     return null;
   }
   return new GlobalFunction(self._scope.copy_context_with_name(re[1]), re[3]);
@@ -3057,7 +3057,7 @@ SectionGenerator.prototype._create_multi_line_str = function(line) {
   var self = this;
   var re;
   re = /^'\s*(\w+)$/.exec(line);
-  if ((!re)) {
+  if (!re) {
     return null;
   }
   return new MultiLineStr(self._scope.copy_context_with_name(re[1]));
@@ -3102,7 +3102,7 @@ SectionGenerator.prototype._create_typedef = function(line) {
   var self = this;
   var re;
   re = /^\!\s*(\w+)$/.exec(line);
-  if ((!re)) {
+  if (!re) {
     return null;
   }
   return new Typedef(self._scope.copy_context_with_name(re[1]));
@@ -3316,7 +3316,7 @@ ClassDeps.prototype.load = function(files) {
     /** @param {*} cls */
     function(cls) {
       self._where[cls.name] = file;
-      if ((cls['parent'])) {
+      if (cls['parent']) {
         self._depends[file].push(cls['parent']);
       }
     });
@@ -3371,7 +3371,7 @@ var create_sorted_list = function(files) {
   all = files.concat();
   var sorted;
   sorted = new StringSet();
-  while ((all.length)) {
+  while (all.length) {
     var found;
     found = new StringSet();
     all.forEach(
@@ -3380,12 +3380,12 @@ var create_sorted_list = function(files) {
       // remove the dependencies already satisfied.
       deps.remove_deps(f, sorted);
 
-      if ((!deps.has_deps(f))) {
+      if (!deps.has_deps(f)) {
         found.add(f);
       }
     });
 
-    if ((!found.size())) {
+    if (!found.size()) {
       // no progress. something's wrong.
       console.log('remaining deps: ' + deps);
       throw 'circular inheritance dependencies';
@@ -3501,7 +3501,7 @@ TypeSet.prototype.get_current_ctor = function() {
 /** @param {string} parent_name */
 TypeSet.prototype.set_parent = function(parent_name) {
   var self = this;
-  if ((!self._ctor)) {
+  if (!self._ctor) {
     throw 'set parent called w/o ctor.';
   }
   self._ctor.set_parent(parent_name);
@@ -3512,14 +3512,14 @@ TypeSet.prototype.extract = function() {
   var self = this;
   var obj;
   obj = {};
-  if ((self._classes)) {
+  if (self._classes) {
     obj['cls'] = self._classes.map(
     /** @param {TypeSet} cls */
     function(cls) {
       return cls.extract();
     });
   }
-  if ((self._functs)) {
+  if (self._functs) {
     obj['fns'] = self._functs.map(
     /** @param {CallableType} fn */
     function(fn) {
@@ -3530,10 +3530,10 @@ TypeSet.prototype.extract = function() {
 };
 /** @param {string|Array} lines */
 var arr_flatten = function(lines) {
-  if ((typeof(lines) == 'string')) {
+  if (typeof(lines) == 'string') {
     return [lines];
   }
-  if ((lines instanceof LineOutput || lines instanceof BlockOutput)) {
+  if (lines instanceof LineOutput || lines instanceof BlockOutput) {
     lines = lines.output;
   }
   console.assert(
@@ -3581,11 +3581,11 @@ var obj_stringify = function(obj, compact, name, opt_level) {
   var level = opt_level === undefined ? (0) : opt_level;
   var start_str;
   start_str = whitespaces(level * 2);
-  if ((name)) {
+  if (name) {
     start_str += name + ':';
   }
 
-  if ((obj instanceof Array)) {
+  if (obj instanceof Array) {
     var children;
     children = obj.map(
     /** @param {Object} c */
@@ -3596,14 +3596,14 @@ var obj_stringify = function(obj, compact, name, opt_level) {
     function(c) {
       return !!c;
     });
-    if ((children.length)) {
+    if (children.length) {
       return start_str + '[\n' + children.join('') + whitespaces(level * 2) + ']\n';
     }
     else {
       return compact ? '' : start_str + '[]\n';
     }
   }
-  else if ((obj instanceof Object)) {
+  else if (obj instanceof Object) {
     var keys;
     keys = [];
     var key;
@@ -3620,7 +3620,7 @@ var obj_stringify = function(obj, compact, name, opt_level) {
     function(c) {
       return !!c;
     });
-    if ((children.length)) {
+    if (children.length) {
       return start_str + '{\n' + children.join('') + whitespaces(level * 2) + '}\n';
     }
     else {
@@ -3636,10 +3636,10 @@ var obj_stringify = function(obj, compact, name, opt_level) {
 var doc_lines = function(annotations) {
   var alist;
   alist = arr_flatten(annotations);
-  if ((alist.length == 0)) {
+  if (alist.length == 0) {
     return [];
   }
-  if ((alist.length == 1)) {
+  if (alist.length == 1) {
     return ['/** ' + alist[0] + ' */'];
   }
   return [
@@ -3722,7 +3722,7 @@ parser.Result.prototype.rendered = function() {
   });
   var code_line;
   code_line = self._tokens.toString();
-  if ((code_line)) {
+  if (code_line) {
     lines.push(code_line);
   }
   self._tokens.next_lines.map(
@@ -3767,7 +3767,7 @@ parser.Target.prototype.run = function(input, opt_xformer, show_error_line) {
    * @private
    */
   this._xformer = opt_xformer === undefined ? (null) : opt_xformer;
-  if ((!(input instanceof Array))) {
+  if (!(input instanceof Array)) {
     input = [new InputLine(input, 0)];
   }
 
@@ -3782,7 +3782,7 @@ parser.Target.prototype.run = function(input, opt_xformer, show_error_line) {
     result = _parser.parse(lines, self._rule);
   }
   catch (e) {
-    if ((show_error_line)) {
+    if (show_error_line) {
       // TODO: make this display multi-line right.
       console.error('[FAIL] error for ' + self._rule);
       console.error('I: ' + lines);
@@ -3910,13 +3910,13 @@ this._params = value;
 parser.TokenList.prototype.is_empty;
 parser.TokenList.prototype.__defineGetter__('is_empty', function() {
   var self = this;
-  if ((self._prev_lines.length || self._next_lines.length)) {
+  if (self._prev_lines.length || self._next_lines.length) {
     return false;
   }
-  if ((!self._list.length)) {
+  if (!self._list.length) {
     return true;
   }
-  if ((self._list.length >= 2)) {
+  if (self._list.length >= 2) {
     return false;
   }
   return !(self._list[0] instanceof parser.BlockMarker) && self._list[0] == '';
@@ -3935,7 +3935,7 @@ parser.TokenList.prototype.add = function(args) {
     arg = arguments[i];
 
     // Recursive cases.
-    if ((arg instanceof parser.TokenList)) {
+    if (arg instanceof parser.TokenList) {
       arg.list.forEach(
       /** @param {parser.BlockMarker|string} token */
       function(token) {
@@ -3953,7 +3953,7 @@ parser.TokenList.prototype.add = function(args) {
       });
       continue;
     }
-    if ((arg instanceof Array)) {
+    if (arg instanceof Array) {
       arg.forEach(
       /** @param {Array} token */
       function(token) {
@@ -3963,7 +3963,7 @@ parser.TokenList.prototype.add = function(args) {
     }
 
     // Always append a marker.
-    if ((arg instanceof parser.BlockMarker)) {
+    if (arg instanceof parser.BlockMarker) {
       self._list.push(arg);
       continue;
     }
@@ -3971,7 +3971,7 @@ parser.TokenList.prototype.add = function(args) {
     // Should be a string. Append only if we can't add to the last element.
     var last;
     last = self._list.length - 1;
-    if ((!self._list.length || self._list[last] instanceof parser.BlockMarker)) {
+    if (!self._list.length || self._list[last] instanceof parser.BlockMarker) {
       self._list.push(arg);
       continue;
     }
@@ -3986,7 +3986,7 @@ parser.TokenList.prototype.add = function(args) {
  */
 parser.TokenList.prototype.prepend = function(line) {
   var self = this;
-  if ((line instanceof parser.TokenList)) {
+  if (line instanceof parser.TokenList) {
     self._prev_lines = self._prev_lines.concat(line.prev_lines);
     self._next_lines = self._next_lines.concat(line.next_lines);
   }
@@ -3997,7 +3997,7 @@ parser.TokenList.prototype.prepend = function(line) {
 /** @param {parser.TokenList|string} line */
 parser.TokenList.prototype.append = function(line) {
   var self = this;
-  if ((line instanceof parser.TokenList)) {
+  if (line instanceof parser.TokenList) {
     self._prev_lines = self._prev_lines.concat(line.prev_lines);
     self._next_lines = self._next_lines.concat(line.next_lines);
   }
@@ -4102,7 +4102,7 @@ parser.ParamLine.prototype.toString = function() {
   ];
   var init_str;
   init_str = self._init.toString();
-  if ((init_str)) {
+  if (init_str) {
     list.push(' ' + init_str);
   }
   return list.join('');
@@ -4143,7 +4143,7 @@ this._xformer = value;
 /** @return {parser.TokenList} */
 parser.TokenListBuilder.prototype.build = function() {
   var self = this;
-  if ((!self._tokens)) {
+  if (!self._tokens) {
     self._tokens = new parser.TokenList();
     self._build_rec(self._parsed);
   }
@@ -4166,23 +4166,23 @@ parser.TokenListBuilder.prototype.result = function(input) {
  */
 parser.TokenListBuilder.prototype._build_rec = function(data) {
   var self = this;
-  if ((data instanceof parser.TokenList)) {
+  if (data instanceof parser.TokenList) {
     self._add_tokens(data);
     return;
   }
 
-  if ((data instanceof Array)) {
+  if (data instanceof Array) {
     self._add_array(data);
     return;
   }
 
-  if ((data instanceof Object)) {
+  if (data instanceof Object) {
     self._add_object(data);
     return;
   }
 
   // Must be a string.
-  if ((data)) {
+  if (data) {
     self._tokens.add(data);
   }
 };
@@ -4215,10 +4215,10 @@ parser.TokenListBuilder.prototype._add_array = function(data) {
  */
 parser.TokenListBuilder.prototype._add_object = function(data) {
   var self = this;
-  if ((data.g)) {
+  if (data.g) {
     var p;
     p = data.params;
-    switch ((data.g)) {
+    switch (data.g) {
       case 'c':;
       // Current package ref.
       var str;
@@ -4265,13 +4265,13 @@ parser.TokenListBuilder.prototype._add_object = function(data) {
     }
   }
 
-  if ((data.t)) {
+  if (data.t) {
     self._tokens.add(new parser.TokenListBuilder(data.t, self.xformer).build());
   }
-  if ((data.p)) {
+  if (data.p) {
     self._tokens.prepend(new parser.TokenListBuilder(data.p, self.xformer).build());
   }
-  if ((data.a)) {
+  if (data.a) {
     self._tokens.append(new parser.TokenListBuilder(data.a, self.xformer).build());
   }
 };
@@ -4406,10 +4406,10 @@ CodeLine.prototype.__defineGetter__('is_block_statement', function() {
 CodeLine.prototype.parsed;
 CodeLine.prototype.__defineGetter__('parsed', function() {
   var self = this;
-  if ((self.is_continuation)) {
+  if (self.is_continuation) {
     warn(self._input, 'parse requested for cont. line');
   }
-  if ((!self._parsed)) {
+  if (!self._parsed) {
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine');
     self._parsed = CODE_PARSER.run(
       [self._input].concat(self._continue_lines),
@@ -4434,7 +4434,7 @@ CodeLine.prototype.output = function() {
   var self = this;
   var out;
   out = new LineOutput(self._input);
-  if ((self._param === true)) {
+  if (self._param === true) {
     return out;
   }
 
@@ -4453,7 +4453,7 @@ CodeLine.prototype.output = function() {
     out.append_block(block.output());
     out.append_lines(tail_code);
   });
-  if ((self._param)) {
+  if (self._param) {
     self._param.output_init(out);
   }
   self.parsed.tail_comment.forEach(
@@ -4537,15 +4537,15 @@ MultiLineStr.prototype.strlines = function() {
   self.lines.forEach(
   /** @param {InputLine} line */
   function(line) {
-    if ((line.is_blank)) {
+    if (line.is_blank) {
       // empty line is fine.
       result.push('');
       return;
     }
-    if ((self._indent < 0)) {
+    if (self._indent < 0) {
       self._indent = line.indent;
     }
-    else if ((line.indent < self._indent)) {
+    else if (line.indent < self._indent) {
       warn(line, 'inconsistent indentation');
       return;
     }
@@ -4638,10 +4638,10 @@ Runnable.prototype.output_body = function(block_suffix) {
   lines = [];
   var body_lines;
   body_lines = self.last_block().output();
-  if ((block_suffix)) {
+  if (block_suffix) {
     body_lines.suffix = block_suffix;
   }
-  if ((!body_lines.is_empty)) {
+  if (!body_lines.is_empty) {
     lines.push(body_lines);
   }
   return lines;
@@ -4826,7 +4826,7 @@ Constructor.prototype.output = function() {
   decl.push('@constructor');
   var inherit;
   inherit = [];
-  if ((self._parent)) {
+  if (self._parent) {
     decl.push('@extends {' + self._parent + '}');
     inherit.push([
       self.context.name.ref(),
@@ -4909,13 +4909,13 @@ Method.prototype.output = function() {
   var self = this;
   var decls;
   decls = [];
-  if ((self._overriding)) {
+  if (self._overriding) {
     decls = ['@override'];
   }
   else {
     decls = self.params.output_decls();
   }
-  if ((/^_/.test(self.context.name.id))) {
+  if (/^_/.test(self.context.name.id)) {
     decls.push('@private');
   }
   return [
@@ -4968,7 +4968,7 @@ OverridingAccessor.prototype.output = function() {
   // accessor.
   // TODO: error if there is no member, but there are both getter and setter, and their param
   // and return type do not match. also error if the setter takes more than one param.
-  if ((!member)) {
+  if (!member) {
     // accessor with no corresponding member. use the given param and return types.
     member = self.context.cls.add_member(
       self._name,
@@ -5020,28 +5020,28 @@ OverridingAccessor.prototype.output = function() {
    */
   function(arg, i) {
     // argv[0] is node binary and argv[1] is the executing js.
-    if ((i < 2)) {
+    if (i < 2) {
       return false;
     }
     var option_re;
     option_re = /--(\w+)(=(.*))?/.exec(arg);
-    if ((!option_re)) {
+    if (!option_re) {
       return true;
     }
     var opt_name;
     opt_name = option_re[1];
     var opt_param;
     opt_param = option_re[3];
-    if ((opt_name == 'basedir')) {
+    if (opt_name == 'basedir') {
       basedir = opt_param;
     }
-    else if ((opt_name == 'sort')) {
+    else if (opt_name == 'sort') {
       mode = ExecModes.SORT;
     }
-    else if ((opt_name == 'argtypes')) {
+    else if (opt_name == 'argtypes') {
       mode = ExecModes.ARGTYPE;
     }
-    else if ((opt_name == 'stdout')) {
+    else if (opt_name == 'stdout') {
       reply = ReplyModes.STDOUT;
     }
     else {
@@ -5050,7 +5050,7 @@ OverridingAccessor.prototype.output = function() {
     return false;
   });
 
-  switch ((mode)) {
+  switch (mode) {
     case ExecModes.COMPILE:;
     compile_files(basedir, inout_filenames);
     break;
@@ -5058,7 +5058,7 @@ OverridingAccessor.prototype.output = function() {
     case ExecModes.SORT:;
     var list;
     list = create_sorted_list(inout_filenames);
-    switch ((reply)) {
+    switch (reply) {
       case ReplyModes.MSG:;
       process.send(list);
       break;

@@ -11,7 +11,7 @@ Specific for a particular target (i.e. rule).
   input\!A.<InputLine>|s\$
   @xformer\LineTransformer\?
   show_error_line\b\?
-  if (!(input instanceof Array))
+  if !(input instanceof Array)
     input = [new InputLine(input, 0)]
 
   lines := input.map(##).join('\n')
@@ -20,7 +20,7 @@ Specific for a particular target (i.e. rule).
   try
     result := _parser.parse(lines, @rule)
   catch e
-    if (show_error_line)
+    if show_error_line
       // TODO: make this display multi-line right.
       console.error('[FAIL] error for ' + @rule)
       console.error('I: ' + lines)
