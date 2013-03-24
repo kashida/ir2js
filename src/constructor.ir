@@ -24,7 +24,7 @@
   => [#]
     doc_lines(decl)
     @.output_func()
-    'var self = this;'
+    whitespaces(@.block(0).indent) + 'var self = this;'
     @.output_body('};')
     inherit
     [#].join('')

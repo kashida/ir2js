@@ -4,7 +4,7 @@
 #=
 /** @constructor */
 var classname = function() {
-var self = this;
+  var self = this;
   /**
    * @type {string}
    * @private
@@ -33,7 +33,7 @@ classname.prototype._classname = 'classname';
 #=
 /** @constructor */
 var classname = function() {
-var self = this;
+  var self = this;
   /**
    * @type {string}
    * @private
@@ -94,7 +94,7 @@ this._param2 = value;
 #=
 /** @constructor */
 var classname = function() {
-var self = this;
+  var self = this;
   /**
    * @type {string}
    * @private
@@ -105,11 +105,11 @@ classname.prototype._classname = 'classname';
 /** @type {string} */
 classname.prototype.member;
 classname.prototype.__defineGetter__('member', function() {
-var self = this;
+  var self = this;
   return '';
 });
 classname.prototype.__defineSetter__('member', function(value) {
-var self = this;
+  var self = this;
   do_something_with(value);
 });
 {
@@ -133,7 +133,7 @@ var self = this;
 #=
 /** @constructor */
 var classname = function() {
-var self = this;
+  var self = this;
   /**
    * @type {string}
    * @private
@@ -147,7 +147,7 @@ classname.prototype.__defineSetter__('member', function(value) {
 this._member = value;
 });
 classname.prototype.__defineGetter__('member', function() {
-var self = this;
+  var self = this;
   do_something();
 });
 {
@@ -179,11 +179,11 @@ classname.prototype._classname = 'classname';
 /** @type {string} */
 classname.prototype.member;
 classname.prototype.__defineGetter__('member', function() {
-var self = this;
+  var self = this;
   return '';
 });
 classname.prototype.__defineSetter__('member', function(v) {
-var self = this;
+  var self = this;
   do_something_with(v);
 });
 {

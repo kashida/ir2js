@@ -52,30 +52,27 @@ test: dir compiled/parser/syntax.js compiled/ir2js_test.js
 	@echo '===== TEST'
 	$(NODE) compiled/ir2js_test.js $(TESTS)
 
-compiled/ir2js_test.js: compiled/_ir2js_test
+compiled/ir2js_test.js: compiled/_ir2js_test.js
 	@echo '===== CAT ir2js_test'
 	cat $(BASE_SRC) node/imports.js `$(SORTJS) $(JS_SRCS)` $(TEST_JS_SRC) > $@
 
 
 converter: compiled/ir2js.js
 
-compiled/ir2js.js: $(JS_SRCS) $(CNVT_JS_SRC)
+compiled/ir2js.js: compiled/_ir2js.js
 	@echo '===== CAT ir2js'
 	cat $(BASE_SRC) node/imports.js `$(SORTJS) $(JS_SRCS)` $(CNVT_JS_SRC) >$@
 
 
-# TODO: run closure to verify only if files are updated.
-compiled/_ir2js_test: $(JS_SRCS) $(TEST_JS_SRC)
+compiled/_ir2js_test.js: $(JS_SRCS) $(TEST_JS_SRC)
 	@echo '===== VERIFY ir2js_test: compiling'
-	java $(CLOSURE_ARGS) --js_output_file compiled/_ir2js_test.js \
-	--js $(BASE_SRC) \
+	java $(CLOSURE_ARGS) --js_output_file $@ --js $(BASE_SRC) \
 	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS))) \
 	--js $(TEST_JS_SRC)
 
-compiled/_ir2js: $(JS_SRCS) $(CNVT_JS_SRC)
+compiled/_ir2js.js: $(JS_SRCS) $(CNVT_JS_SRC)
 	@echo '===== VERIFY ir2js: compiling'
-	java $(CLOSURE_ARGS) --js_output_file compiled/_ir2js.js \
-	--js $(BASE_SRC) \
+	java $(CLOSURE_ARGS) --js_output_file $@ --js $(BASE_SRC) \
 	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS))) \
 	--js $(CNVT_JS_SRC)
 

@@ -16,7 +16,7 @@
   => [#]
     doc_lines(decls)
     @.output_func()
-    'var self = this;'
+    whitespaces(@.block(0).indent) + 'var self = this;'
     @.output_body('};')
 
 :<set_type

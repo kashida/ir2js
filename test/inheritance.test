@@ -12,7 +12,7 @@
  * @extends {parent}
  */
 var classname = function(param_a, opt_param_b) {
-var self = this;
+  var self = this;
   /**
    * @type {string}
    * @private
@@ -58,7 +58,7 @@ classname.prototype._classname = 'classname';
  * @extends {parent}
  */
 var classname = function() {
-var self = this;
+  var self = this;
   do_something();
   parent.call(this, something_else());
 };
@@ -67,7 +67,7 @@ classname.prototype._classname = 'classname';
 
 /** @param {string} param */
 classname.prototype.method = function(param) {
-var self = this;
+  var self = this;
   do_something();
   goog.base(this, 'method', param, '');
 };
