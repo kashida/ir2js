@@ -21,7 +21,12 @@
   if (@context.is_ctor)
     => @context.cls.ctor.parent_name() + '.call(this' + end_str
   else if (@context.is_method)
-    => "goog.base(this, '" + @context.name.id + "'" + end_str
+    => [#].join('')
+      @context.cls.ctor.parent_name()
+      '.prototype.'
+      @context.name.id
+      '.call(this'
+      end_str
   else
     warn(@input, 'parent call appeared in non-ctor / non-method.')
     => '%(' + args + ')'

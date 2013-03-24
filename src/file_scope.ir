@@ -41,7 +41,7 @@ parse file scope and separate code sections from comments.
 :provides\Array.<string>\
   => @provides.map(##)
     provide\Name\$
-    => "goog.provide('" + provide.ref() + "');"
+    => 'var ' + provide.ref() + ' = ' + provide.ref() + ' || {};'
 
 :output\Array.<string>\
   => arr_flatten(@list.map(##))

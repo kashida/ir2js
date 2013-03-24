@@ -20,7 +20,11 @@
   inherit := []
   if (@parent)
     decl.push('@extends {' + @parent + '}')
-    inherit.push('goog.inherits(' + @.context.name.ref() + ', ' + @parent + ');')
+    inherit.push([#].join(''))
+      @.context.name.ref()
+      '.prototype = Object.create('
+      @parent
+      '.prototype);'
   => [#]
     doc_lines(decl)
     @.output_func()

@@ -96,7 +96,7 @@ var Classname = function() {
   var self = this;
   Parent.call(this);
 };
-goog.inherits(Classname, Parent);
+Classname.prototype = Object.create(Parent.prototype);
 Classname.prototype._classname = 'Classname';
 
 /** @override */

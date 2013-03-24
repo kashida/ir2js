@@ -36,14 +36,14 @@ abc.def.classname = function(opt_param) {
   this._param = opt_param === undefined ? (abc.def.value) : opt_param;
   abc.def.path.parent.call(this, param);
 };
-goog.inherits(abc.def.classname, abc.def.path.parent);
+abc.def.classname.prototype = Object.create(abc.def.path.parent.prototype);
 abc.def.classname.prototype._classname = 'abc.def.classname';
 
 /** @param {number} param */
 abc.def.classname.prototype.methodname = function(param) {
   var self = this;
   a(abc.def.something);
-  goog.base(this, 'methodname', param, 0);
+  abc.def.path.parent.prototype.methodname.call(this, param, 0);
 };
 {
   cls:[
