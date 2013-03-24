@@ -119,7 +119,7 @@ classname.prototype._classname = 'classname';
 #{ re with param format in it
 ::Class
 :method
-  if (/^\s*\/\//.test(@str))
+  if /^\s*\/\//.test(@str)
     =>
 #=
 /** @constructor */
@@ -129,7 +129,7 @@ var self = this;
 Class.prototype._classname = 'Class';
 Class.prototype.method = function() {
   var self = this;
-  if ((/^\s*\/\//.test(self._str))) {
+  if (/^\s*\/\//.test(self._str)) {
     return;
   }
 };

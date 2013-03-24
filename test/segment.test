@@ -1,17 +1,17 @@
 #{: string should not interfere
-if ('')
+if ''
   xyz
 #=
-if (('')) {
+if ('') {
   xyz;
 }
 #}
 
 #{: string with escape
-if (!new RegExp('^[\\\'\\"]').test(seg))
+if !new RegExp('^[\\\'\\"]').test(seg)
   =>
 #=
-if ((!new RegExp('^[\\\'\\"]').test(seg))) {
+if (!new RegExp('^[\\\'\\"]').test(seg)) {
   return;
 }
 #}

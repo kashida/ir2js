@@ -89,12 +89,12 @@ a = (
 #}
 
 #{: block statement
-if (xyz)
+if xyz
   aaa
   bbb
   ccc
 #=
-if ((xyz)) {
+if (xyz) {
   aaa;
   bbb;
   ccc;
@@ -106,34 +106,34 @@ do
   aaa
   bbb
   ccc
-while (xyz)
+while xyz
 #=
 do {
   aaa;
   bbb;
   ccc;
 }
-while ((xyz));
+while (xyz);
 #}
 
 #{: block statement with comment
-if (test)
+if test
   // comment.
   method(param)
 #=
-if ((test)) {
+if (test) {
   // comment.
   method(param);
 }
 #}
 
 #{: if / else
-if (test)
+if test
   aaa
 else
   bbb
 #=
-if ((test)) {
+if (test) {
   aaa;
 }
 else {
@@ -142,14 +142,14 @@ else {
 #}
 
 #{: multi-level
-if (xyz)
+if xyz
   aaa
   a := func(#) + x
     line1
     line2
     line3
 #=
-if ((xyz)) {
+if (xyz) {
   aaa;
   var a;
   a = func(

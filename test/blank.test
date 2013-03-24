@@ -21,13 +21,13 @@
 #}
 
 #{: blank line as a first line of block
-if (something)
+if something
 
   do_something
 
   do_more
 #=
-if ((something)) {
+if (something) {
 
   do_something;
 

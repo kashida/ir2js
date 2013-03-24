@@ -5,48 +5,29 @@
 
 :Statement
 do
-while   (expr)
-  while ((expr))
-while(i < inout_filenames.length)
-  while ((i < inout_filenames.length))
-for(;;)
-  for (;;)
+while   expr
+  while (expr)
+while i < inout_filenames.length
+  while (i < inout_filenames.length)
 for;;
   for (;;)
-for(i = 0, j := 0; i < j; i++)
-  var j
-  i = 0, j = 0
-  for (; i < j; i++)
 for i = 0, j := 0; i < j; i++
   var j
   i = 0, j = 0
   for (; i < j; i++)
-for(a := new iter(), b := expr; a.has_more(); a.next())
-  var a
-  var b
-  a = new iter(), b = expr
-  for (; a.has_more(); a.next())
 for a := new iter(), b := expr; a.has_more(); a.next()
   var a
   var b
   a = new iter(), b = expr
   for (; a.has_more(); a.next())
-each ( abc in [0, 1, 2])
-  var abc
-  for (abc in [0, 1, 2])
 each abc in [0, 1, 2]
   var abc
   for (abc in [0, 1, 2])
-for ('a' in obj; true;)
-  'a' in obj
-  for (; true;)
 for 'a' in obj; true;
   'a' in obj
   for (; true;)
-if (expr)
-  if ((expr))
-else if (expr)
-  else if ((expr))
+else if expr
+  else if (expr)
 else
 continue
 break
@@ -54,8 +35,8 @@ break
   return 0x10
 =>
   return
-switch (expr)
-  switch ((expr))
+switch expr
+  switch (expr)
 case   'a'
   case 'a':
 default
@@ -69,16 +50,16 @@ catch abc
 finally
 debugger
 abc()
-if (0 + 0 - /|/ abc)
-  if ((0 + 0 - abc))
-if (0 + 0 - /|/ abc) // another comment
-  if ((0 + 0 - abc))
+if 0 + 0 - /|/ abc
+  if (0 + 0 - abc)
+if 0 + 0 - /|/ abc // another comment
+  if (0 + 0 - abc)
   // another comment
-if (0 + 0 - // this is comment /|/ abc)
-  if ((0 + 0 - abc))
+if 0 + 0 - // this is comment /|/ abc
+  if (0 + 0 - abc)
   // this is comment
-if (0 + 0 - // this is comment /|/ abc) // another comment
-  if ((0 + 0 - abc))
+if 0 + 0 - // this is comment /|/ abc // another comment
+  if (0 + 0 - abc)
   // this is comment
   // another comment
 
