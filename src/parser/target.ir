@@ -19,14 +19,14 @@ Specific for a particular target (i.e. rule).
     => input.line
   try
     result := _parser.parse(lines, @rule)
-  catch (e)
+  catch e
     if (show_error_line)
       // TODO: make this display multi-line right.
       console.error('[FAIL] error for ' + @rule)
       console.error('I: ' + lines)
       sp := '   '
       i := 0
-      for (; i < e.offset; i++)
+      for ; i < e.offset; i++
         sp += ' '
       console.error(sp + '^')
       console.error('E: ' + e)
