@@ -1602,7 +1602,7 @@ Match markers and blocks.
  * @constructor
  */
 var BlockMatcher = function(context, input, code, blocks){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -1653,9 +1653,9 @@ return this._is_block_statement;
 });
 
 BlockMatcher.prototype.transform = function(){
-var _self = this;
-  if (_self._match_blocks()){
-    _self._transform_blocks();
+var self = this;
+  if (self._match_blocks()){
+    self._transform_blocks();
   }
 };
 
@@ -1668,42 +1668,42 @@ Returns true only if matching succeeds and leaving valid set of indexes in
  * @private
  */
 BlockMatcher.prototype._match_blocks = function(){
-var _self = this;
+var self = this;
   var code;
-  code = _self._code;
+  code = self._code;
   var idx;
   idx = 1;
-  if (_self._code[0] instanceof parser.BlockMarker){
+  if (self._code[0] instanceof parser.BlockMarker){
     idx = 0;
-    _self._starts_with_marker = true;
+    self._starts_with_marker = true;
   }
 
   while (idx < code.length){
     var param;
     param = null;
     var elem;
-    elem = _self._code[idx];
+    elem = self._code[idx];
     if (elem instanceof parser.BlockMarker && elem.type == 'f'){
       var sub_context;
-      sub_context = _self._context.clone();
+      sub_context = self._context.clone();
       sub_context.is_file_scope = false;
-      param = new ParamSet(sub_context, _self._blocks[_self._marker_indexes.length]);
+      param = new ParamSet(sub_context, self._blocks[self._marker_indexes.length]);
     }
 
-    _self._marker_indexes.push(idx);
-    _self._params.push(param);
+    self._marker_indexes.push(idx);
+    self._params.push(param);
 
     idx += 2;
   }
 
-  if (_self._marker_indexes.length < _self._blocks.length){
+  if (self._marker_indexes.length < self._blocks.length){
     // One extra block is allowed.
-    _self._marker_indexes.push(-1);
-    _self._is_block_statement = true;
+    self._marker_indexes.push(-1);
+    self._is_block_statement = true;
   }
 
-  if (_self._marker_indexes.length != _self._blocks.length){
-    warn(_self._input, '# blocks does not match #markers.');
+  if (self._marker_indexes.length != self._blocks.length){
+    warn(self._input, '# blocks does not match #markers.');
     return false;
   }
   return true;
@@ -1711,50 +1711,50 @@ var _self = this;
 
 /** @private */
 BlockMatcher.prototype._transform_blocks = function(){
-var _self = this;
-  _self._blocks.forEach(
+var self = this;
+  self._blocks.forEach(
   /**
    * @param {IndentBlock} block
    * @param {number} i
    */
   function(block, i){
     // transform the blocks.
-    if (_self._params[i]){
-      _self._params[i].transform();
+    if (self._params[i]){
+      self._params[i].transform();
     }
     var mi;
-    mi = _self._marker_indexes[i];
+    mi = self._marker_indexes[i];
     block.transform(mi < 0 ? BlockType.BLOCK : {
       f: BlockType.BLOCK,
       o: BlockType.OBJ,
       a: BlockType.ARRAY,
       p: BlockType.PARAMS
-    }[_self._code[mi].type]);
+    }[self._code[mi].type]);
   });
 };
 
 /** @return {Array.<string>} */
 BlockMatcher.prototype.first_line = function(){
-var _self = this;
+var self = this;
   // there should be at least one fragment.
-  return _self._compose_line(_self._starts_with_marker ? '' : (
-    /** @type {string} */(_self._code.length ? _self._code[0] : '')
+  return self._compose_line(self._starts_with_marker ? '' : (
+    /** @type {string} */(self._code.length ? self._code[0] : '')
   ), 0);
 };
 
 /** @param {function(IndentBlock, Array.<string>)} cb */
 BlockMatcher.prototype.each_fragment = function(cb){
-var _self = this;
-  _self._blocks.forEach(
+var self = this;
+  self._blocks.forEach(
   /**
    * @param {IndentBlock} block
    * @param {number} i
    */
   function(block, i){
     var mi;
-    mi = _self._marker_indexes[i];
-    cb(block, _self._compose_line(
-      block.end_str() + (mi < 0 || mi + 1 >= _self._code.length ? '' : _self._code[mi + 1]),
+    mi = self._marker_indexes[i];
+    cb(block, self._compose_line(
+      block.end_str() + (mi < 0 || mi + 1 >= self._code.length ? '' : self._code[mi + 1]),
       i + 1
     ));
   });
@@ -1766,15 +1766,15 @@ var _self = this;
  * @private
  */
 BlockMatcher.prototype._compose_line = function(prefix, i){
-var _self = this;
-  if (_self._blocks.length <= i){
+var self = this;
+  if (self._blocks.length <= i){
     return [prefix];
   }
 
   var b;
-  b = _self._blocks[i];
+  b = self._blocks[i];
   var p;
-  p = _self._params[i];
+  p = self._params[i];
   var bstart;
   bstart = [b.start_str()];
   if (!p){
@@ -1795,7 +1795,7 @@ goog.provide('BlockOutput');
 
 /** @constructor */
 var BlockOutput = function(){
-var _self = this;
+var self = this;
   /**
    * @type {Array.<LineOutput>}
    * @private
@@ -1820,15 +1820,15 @@ this._suffix = value;
 
 /** @param {LineOutput} line */
 BlockOutput.prototype.append_line = function(line){
-var _self = this;
-  _self._lines.push(line);
+var self = this;
+  self._lines.push(line);
 };
 
 /** @type {boolean} */
 BlockOutput.prototype.is_empty;
 BlockOutput.prototype.__defineGetter__('is_empty', function() {
-var _self = this;
-  return !_self._lines.length && !_self._suffix;
+var self = this;
+  return !self._lines.length && !self._suffix;
 });
 
 /*
@@ -1839,7 +1839,7 @@ inserts the suffix line to the array passed as a parameter.
  * @private
  */
 BlockOutput.prototype._add_suffix = function(lines){
-var _self = this;
+var self = this;
   // find the last non-blank line.
   var last_nonblank;
   last_nonblank = -1;
@@ -1854,19 +1854,19 @@ var _self = this;
     }
   });
   if (last_nonblank < 0){
-    lines.unshift(_self._suffix);
+    lines.unshift(self._suffix);
   }
   else{
-    lines.splice(last_nonblank + 1, 0, _self._suffix);
+    lines.splice(last_nonblank + 1, 0, self._suffix);
   }
 };
 
 /** @type {Array.<string>} */
 BlockOutput.prototype.output;
 BlockOutput.prototype.__defineGetter__('output', function() {
-var _self = this;
+var self = this;
   var lines;
-  lines = _self._lines.reduce(
+  lines = self._lines.reduce(
   /**
    * @param {Array.<string>} prev
    * @param {LineOutput} line
@@ -1875,8 +1875,8 @@ var _self = this;
   function(prev, line, i){
     return prev.concat(line.output);
   }, []);
-  if (_self._suffix){
-    _self._add_suffix(lines);
+  if (self._suffix){
+    self._add_suffix(lines);
   }
   return lines;
 });
@@ -1887,7 +1887,7 @@ goog.provide('CallableType');
  * @constructor
  */
 var CallableType = function(name){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -1916,35 +1916,35 @@ TODO: use setter.
 */
 /** @param {string} parent_name */
 CallableType.prototype.set_parent = function(parent_name){
-var _self = this;
-  _self._parent = parent_name;
+var self = this;
+  self._parent = parent_name;
 };
 
 /** @param {string} name */
 CallableType.prototype.add_method = function(name){
-var _self = this;
+var self = this;
   var m;
   m = new CallableType(name);
-  _self._methods.push(m);
+  self._methods.push(m);
   return m;
 };
 
 /** @param {string|null} arg */
 CallableType.prototype.add_arg = function(arg){
-var _self = this;
-  _self._args.push(arg);
+var self = this;
+  self._args.push(arg);
 };
 
 /** @return {Object} */
 CallableType.prototype.extract = function(){
-var _self = this;
+var self = this;
   var obj;
-  obj = {name: _self._name, args: _self._args};
-  if (_self._parent){
-    obj['parent'] = _self._parent;
+  obj = {name: self._name, args: self._args};
+  if (self._parent){
+    obj['parent'] = self._parent;
   }
-  if (_self._methods){
-    obj['methods'] = _self._methods.map(
+  if (self._methods){
+    obj['methods'] = self._methods.map(
     /** @param {CallableType} m */
     function(m){
       return m.extract();
@@ -1956,7 +1956,7 @@ goog.provide('Class');
 
 /** @constructor */
 var Class = function(){
-var _self = this;
+var self = this;
   /**
    * @type {Constructor}
    * @private
@@ -1980,14 +1980,14 @@ this._ctor = value;
 
 /** @return {!Name} */
 Class.prototype.name = function(){
-var _self = this;
-  return _self._ctor.context.name;
+var self = this;
+  return self._ctor.context.name;
 };
 
 /** @param {string} name */
 Class.prototype.member = function(name){
-var _self = this;
-  return _self._members[name];
+var self = this;
+  return self._members[name];
 };
 
 /**
@@ -1995,8 +1995,8 @@ var _self = this;
  * @param {Member} member
  */
 Class.prototype.set_member = function(name, member){
-var _self = this;
-  _self._members[name] = member;
+var self = this;
+  self._members[name] = member;
 };
 
 /**
@@ -2004,8 +2004,8 @@ var _self = this;
  * @return {!Name}
  */
 Class.prototype.method_name = function(method_name){
-var _self = this;
-  return _self.name().property(method_name);
+var self = this;
+  return self.name().property(method_name);
 };
 
 /**
@@ -2016,23 +2016,23 @@ var _self = this;
  * @return {Member}
  */
 Class.prototype.add_member = function(name, type, access_type, opt_is_pseudo){
-var _self = this;
+var self = this;
   var is_pseudo = opt_is_pseudo === undefined ? (false) : opt_is_pseudo;
   var m;
   m = new Member(name, type, access_type, is_pseudo);
-  _self._members[name] = m;
+  self._members[name] = m;
   return m;
 };
 
 /** @return {Array} */
 Class.prototype.output_accessors = function(){
-var _self = this;
+var self = this;
   var class_name;
-  class_name = _self.name();
-  return Object.keys(_self._members).map(
+  class_name = self.name();
+  return Object.keys(self._members).map(
   /** @param {string} name */
   function(name){
-    return _self._members[name].output_accessors(class_name);
+    return self._members[name].output_accessors(class_name);
   });
 };
 goog.provide('CodeParser');
@@ -2043,7 +2043,7 @@ goog.provide('CodeParser');
  * @constructor
  */
 var CodeParser = function(context, head){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -2074,15 +2074,15 @@ CodeParser.prototype._classname = 'CodeParser';
 
 /** @param {Array.<InputLine>} input_lines */
 CodeParser.prototype.parse = function(input_lines){
-var _self = this;
-  _self._process(input_lines);
+var self = this;
+  self._process(input_lines);
   if (!input_lines.length){
     return;
   }
   assert(
-    _self._blocks.length <= 1,
+    self._blocks.length <= 1,
     input_lines[0],
-    'block stack depth: ' + _self._blocks.length
+    'block stack depth: ' + self._blocks.length
   );
 };
 
@@ -2091,13 +2091,13 @@ var _self = this;
  * @private
  */
 CodeParser.prototype._process = function(input_lines){
-var _self = this;
-  _self._head.lines = input_lines;
+var self = this;
+  self._head.lines = input_lines;
 
   var first_line_indent;
   first_line_indent = 0;
   var code_lines;
-  code_lines = _self._make_code_lines(input_lines);
+  code_lines = self._make_code_lines(input_lines);
   code_lines.some(
   /** @param {SectionLine} line */
   function(line){
@@ -2107,8 +2107,8 @@ var _self = this;
     }
     return false;
   });
-  _self._blocks = [new IndentBlock(0, first_line_indent, _self._head)];
-  _self._head.add_block(_self._blocks[0]);
+  self._blocks = [new IndentBlock(0, first_line_indent, self._head)];
+  self._head.add_block(self._blocks[0]);
 
   code_lines.forEach(
   /**
@@ -2118,36 +2118,36 @@ var _self = this;
   function(line, i){
     // create blocks and assign lines to them.
     if (line instanceof InvalidLine){
-      _self._invalid_lines.push(line);
+      self._invalid_lines.push(line);
       return;
     }
 
     var prev_indent;
-    prev_indent = _self._top_block().indent;
+    prev_indent = self._top_block().indent;
     var indent;
     indent = line.indent;
 
     if (indent > prev_indent){
-      _self._deeper_indent(i, indent);
+      self._deeper_indent(i, indent);
     }
     else if (indent < prev_indent){
-      _self._shallower_indent(line, i);
+      self._shallower_indent(line, i);
     }
 
-    _self._add_invalid_lines();
+    self._add_invalid_lines();
     if (line.is_continuation){
-      _self._continuation(line, i);
+      self._continuation(line, i);
     }
     else if (line instanceof SeparatorLine){
-      _self._separator(line, indent, i);
+      self._separator(line, indent, i);
     }
     else{
-      _self._last_valid_line = /** @type {CodeLine} */(line);
-      _self._top_block().add(line);
+      self._last_valid_line = /** @type {CodeLine} */(line);
+      self._top_block().add(line);
     }
   });
-  _self._add_invalid_lines();
-  _self._pop_rest();
+  self._add_invalid_lines();
+  self._pop_rest();
 };
 
 /**
@@ -2156,9 +2156,9 @@ var _self = this;
  * @private
  */
 CodeParser.prototype._make_code_lines = function(input_lines){
-var _self = this;
+var self = this;
   var cat;
-  cat = new LineCategorizer(_self._context);
+  cat = new LineCategorizer(self._context);
   return input_lines.map(
   /** @param {InputLine} line */
   function(line){
@@ -2172,12 +2172,12 @@ var _self = this;
  * @private
  */
 CodeParser.prototype._deeper_indent = function(i, indent){
-var _self = this;
+var self = this;
   // push a new block in the stack.
   var b;
-  b = new IndentBlock(i, indent, _self._last_valid_line);
-  _self._last_valid_line.add_block(b);
-  _self._blocks.push(b);
+  b = new IndentBlock(i, indent, self._last_valid_line);
+  self._last_valid_line.add_block(b);
+  self._blocks.push(b);
 };
 
 /**
@@ -2186,17 +2186,17 @@ var _self = this;
  * @private
  */
 CodeParser.prototype._shallower_indent = function(line, i){
-var _self = this;
+var self = this;
   // back up levels.
-  while (line.indent < _self._top_block().indent){
-    _self._blocks.pop();
+  while (line.indent < self._top_block().indent){
+    self._blocks.pop();
     assert(
-      _self._blocks.length >= 1,
+      self._blocks.length >= 1,
       line.input,
       'stack size zero (line ' + (i + 1) + '): ' + line.str
     );
   }
-  if (line.indent > _self._top_block().indent){
+  if (line.indent > self._top_block().indent){
     warn(line.input, 'indent level does not match');
   }
 };
@@ -2208,13 +2208,13 @@ var _self = this;
  * @private
  */
 CodeParser.prototype._separator = function(line, indent, i){
-var _self = this;
+var self = this;
   var prev_b;
-  prev_b = _self._blocks.pop();
+  prev_b = self._blocks.pop();
   var b;
   b = new IndentBlock(i, indent, prev_b.head());
   prev_b.head().add_block(b);
-  _self._blocks.push(b);
+  self._blocks.push(b);
 };
 
 /**
@@ -2223,9 +2223,9 @@ var _self = this;
  * @private
  */
 CodeParser.prototype._continuation = function(line, i){
-var _self = this;
+var self = this;
   var last_line;
-  last_line = _self._top_block().last_line();
+  last_line = self._top_block().last_line();
   if (!last_line){
     warn(line.input, 'continuation as a first line of block');
   }
@@ -2235,36 +2235,36 @@ var _self = this;
       line.input.row_index
     ));
   }
-  _self._last_valid_line = /** @type {CodeLine} */(line);
+  self._last_valid_line = /** @type {CodeLine} */(line);
 };
 
 /** @private */
 CodeParser.prototype._add_invalid_lines = function(){
-var _self = this;
+var self = this;
   var top_block;
-  top_block = _self._top_block();
-  _self._invalid_lines.forEach(
+  top_block = self._top_block();
+  self._invalid_lines.forEach(
   /** @param {SectionLine} line */
   function(line){
     top_block.add(line);
   });
-  _self._invalid_lines = [];
+  self._invalid_lines = [];
 };
 
 /** @private */
 CodeParser.prototype._pop_rest = function(){
-var _self = this;
+var self = this;
   // pop all the rest of blocks except one.
-  while (_self._blocks.length > 1){
-    _self._blocks.pop();
+  while (self._blocks.length > 1){
+    self._blocks.pop();
   }
 };
 
 /** @private */
 CodeParser.prototype._top_block = function(){
-var _self = this;
+var self = this;
   // there should be at least the root block.
-  return _self._blocks[_self._blocks.length - 1];
+  return self._blocks[self._blocks.length - 1];
 };
 goog.provide('CodeScope');
 
@@ -2274,7 +2274,7 @@ goog.provide('CodeScope');
  * @constructor
  */
 var CodeScope = function(context, opt_head){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -2290,10 +2290,10 @@ CodeScope.prototype._classname = 'CodeScope';
 
 /** @param {Array.<string>} lines */
 CodeScope.prototype.process_lines = function(lines){
-var _self = this;
+var self = this;
   var i;
   i = 0;
-  _self.process(lines.map(
+  self.process(lines.map(
   /** @param {string} line */
   function(line){
     return new InputLine(line, i++);
@@ -2302,14 +2302,14 @@ var _self = this;
 
 /** @param {Array.<InputLine>} input_lines */
 CodeScope.prototype.process = function(input_lines){
-var _self = this;
-  new CodeParser(_self._context, _self._head).parse(input_lines);
-  _self._head.transform();
+var self = this;
+  new CodeParser(self._context, self._head).parse(input_lines);
+  self._head.transform();
 };
 
 CodeScope.prototype.output = function(){
-var _self = this;
-  return arr_flatten(_self._head.output()).map(
+var self = this;
+  return arr_flatten(self._head.output()).map(
   /** @param {string} line */
   function(line){
     return line.replace(/\s*$/, '');
@@ -2399,7 +2399,7 @@ goog.provide('Context');
  * @constructor
  */
 var Context = function(pkg){
-var _self = this;
+var self = this;
   /**
    * @type {!Package}
    * @private
@@ -2409,7 +2409,7 @@ var _self = this;
    * @type {!Name}
    * @private
    */
-  this._name = (new Name(_self._pkg, ''));
+  this._name = (new Name(self._pkg, ''));
   /**
    * @type {Class}
    * @private
@@ -2483,13 +2483,13 @@ this._is_file_scope = value;
 
 /** @return {!Context} */
 Context.prototype.clone = function(){
-var _self = this;
+var self = this;
   var c;
-  c = new Context(_self._pkg);
+  c = new Context(self._pkg);
   var p;
-  for (p in _self){
-    if (_self.hasOwnProperty(p)){
-      c[p] = _self[p];
+  for (p in self){
+    if (self.hasOwnProperty(p)){
+      c[p] = self[p];
     }
   }
   return c;
@@ -2508,7 +2508,7 @@ var OutputSection;
  * @constructor
  */
 var FileScope = function(pkg_name){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -2530,7 +2530,7 @@ var _self = this;
    */
   this._list = (null);
 
-  _self._context.is_file_scope = true;
+  self._context.is_file_scope = true;
 };
 FileScope.prototype._classname = 'FileScope';
 /** @type {!Context} */
@@ -2549,12 +2549,12 @@ return this._types;
 
 /** @param {Array.<string>} input */
 FileScope.prototype.process_lines = function(input){
-var _self = this;
+var self = this;
   var gen;
-  gen = new SectionGenerator(_self);
+  gen = new SectionGenerator(self);
   var input_list;
   input_list = new InputParser(input).parse();
-  _self._list = input_list.map(
+  self._list = input_list.map(
   /**
    * @param {GlobalComment|InputSection} section
    * @param {number} index
@@ -2573,12 +2573,12 @@ var _self = this;
  * @return {!Context}
  */
 FileScope.prototype.copy_context = function(name){
-var _self = this;
+var self = this;
   var ctxt;
-  ctxt = _self._context.clone();
+  ctxt = self._context.clone();
   ctxt.name = name;
-  ctxt.cls = _self._context.cls;
-  ctxt.is_file_scope = _self._context.is_file_scope;
+  ctxt.cls = self._context.cls;
+  ctxt.is_file_scope = self._context.is_file_scope;
   return ctxt;
 };
 
@@ -2587,17 +2587,17 @@ var _self = this;
  * @return {!Context}
  */
 FileScope.prototype.copy_context_with_name = function(name){
-var _self = this;
+var self = this;
   var fullname;
-  fullname = new Name(_self._context.pkg, name);
-  _self._provides.push(fullname);
-  return _self.copy_context(fullname);
+  fullname = new Name(self._context.pkg, name);
+  self._provides.push(fullname);
+  return self.copy_context(fullname);
 };
 
 /** @return {Array.<string>} */
 FileScope.prototype.provides = function(){
-var _self = this;
-  return _self._provides.map(
+var self = this;
+  return self._provides.map(
   /** @param {Name} provide */
   function(provide){
     return "goog.provide('" + provide.ref() + "');";
@@ -2606,8 +2606,8 @@ var _self = this;
 
 /** @return {Array.<string>} */
 FileScope.prototype.output = function(){
-var _self = this;
-  return arr_flatten(_self._list.map(
+var self = this;
+  return arr_flatten(self._list.map(
   /** @param {OutputSection} elem */
   function(elem){
     return elem.output();
@@ -2623,7 +2623,7 @@ comment section in a file.
  * @constructor
  */
 var GlobalComment = function(lines){
-var _self = this;
+var self = this;
   /**
    * @type {Array.<InputLine>}
    * @private
@@ -2633,14 +2633,14 @@ var _self = this;
 GlobalComment.prototype._classname = 'GlobalComment';
 
 GlobalComment.prototype.output = function(){
-var _self = this;
+var self = this;
   var result;
   result = [];
   var buffer;
   buffer = [];
   var state;
   state = 's';
-  _self._lines.forEach(
+  self._lines.forEach(
   /** @param {InputLine} line */
   function(line){
     switch (state){
@@ -2723,7 +2723,7 @@ TODO: change marker's type to BlockType when it's enum.
  * @constructor
  */
 var IndentBlock = function(line_no, indent, head){
-var _self = this;
+var self = this;
   /**
    * @type {number}
    * @private
@@ -2782,13 +2782,13 @@ return this._indent;
 
 /** @param {SectionLine} line */
 IndentBlock.prototype.add = function(line){
-var _self = this;
-  _self._lines.push(line);
+var self = this;
+  self._lines.push(line);
 };
 
 IndentBlock.prototype.last_line = function(){
-var _self = this;
-  return _self._lines[_self._lines.length - 1];
+var self = this;
+  return self._lines[self._lines.length - 1];
 };
 
 /**
@@ -2796,13 +2796,13 @@ var _self = this;
  * @param {Object} ctxt
  */
 IndentBlock.prototype.each_line = function(cb, ctxt){
-var _self = this;
-  _self._lines.forEach(cb, ctxt);
+var self = this;
+  self._lines.forEach(cb, ctxt);
 };
 
 IndentBlock.prototype.head = function(){
-var _self = this;
-  return _self._head;
+var self = this;
+  return self._head;
 };
 
 /*
@@ -2810,11 +2810,11 @@ TODO: change marker's type to BlockType when it's enum.
 */
 /** @param {number=} marker */
 IndentBlock.prototype.transform = function(marker){
-var _self = this;
+var self = this;
   if (marker !== undefined){
-    _self._marker = marker;
+    self._marker = marker;
   }
-  _self._lines.forEach(
+  self._lines.forEach(
   /** @param {SectionLine} line */
   function(line){
     if (!(line instanceof InvalidLine)){
@@ -2825,24 +2825,24 @@ var _self = this;
 
 /** @return {string} */
 IndentBlock.prototype.start_str = function(){
-var _self = this;
+var self = this;
   // string to open the block.
-  return _BLOCK_OPEN[_self._marker];
+  return _BLOCK_OPEN[self._marker];
 };
 
 /** @return {string} */
 IndentBlock.prototype.end_str = function(){
-var _self = this;
-  return _BLOCK_CLOSE[_self._marker];
+var self = this;
+  return _BLOCK_CLOSE[self._marker];
 };
 
 /** @return {BlockOutput} */
 IndentBlock.prototype.output = function(){
-var _self = this;
+var self = this;
   // find the last valid line.
   var last_index;
   last_index = -1;
-  _self._lines.forEach(
+  self._lines.forEach(
   /**
    * @param {SectionLine} line
    * @param {number} i
@@ -2853,16 +2853,16 @@ var _self = this;
     }
   });
   assert(
-    last_index >= 0 || _self._marker == BlockType.BLOCK,
-    _self._lines.length ? _self._lines[0].input : UnknownInputLine,
-    'block with no valid lines: ' + _self
+    last_index >= 0 || self._marker == BlockType.BLOCK,
+    self._lines.length ? self._lines[0].input : UnknownInputLine,
+    'block with no valid lines: ' + self
   );
 
   var out;
   out = new BlockOutput();
   var accum_suffix;
   accum_suffix = '';
-  _self._lines.forEach(
+  self._lines.forEach(
   /**
    * @param {SectionLine} line
    * @param {number} i
@@ -2876,7 +2876,7 @@ var _self = this;
     }
     else{
       var line_terminator;
-      line_terminator = i == last_index ? _END_SUFFIX[_self._marker] : _LINE_SUFFIX[_self._marker];
+      line_terminator = i == last_index ? _END_SUFFIX[self._marker] : _LINE_SUFFIX[self._marker];
       out_line.line_suffix = accum_suffix + out_line.line_suffix;
       if (!line.is_block_statement){
         out_line.line_suffix += line_terminator;
@@ -2898,7 +2898,7 @@ a line of input file. keeps track of the row index.
  * @constructor
  */
 var InputLine = function(line, row_index){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -2925,8 +2925,8 @@ return this._row_index;
 /** @type {number} */
 InputLine.prototype.line_no;
 InputLine.prototype.__defineGetter__('line_no', function() {
-var _self = this;
-  return _self._row_index + 1;
+var self = this;
+  return self._row_index + 1;
 });
 
 /*
@@ -2936,39 +2936,39 @@ trailing whitespace should have been stripped already.
 /** @type {string} */
 InputLine.prototype.trim;
 InputLine.prototype.__defineGetter__('trim', function() {
-var _self = this;
+var self = this;
   var re;
-  re = /\S.*/.exec(_self._line);
+  re = /\S.*/.exec(self._line);
   return re ? re[0] : '';
 });
 
 /** @type {boolean} */
 InputLine.prototype.starts_with_colon;
 InputLine.prototype.__defineGetter__('starts_with_colon', function() {
-var _self = this;
-  return _self._line.substr(0, 1) == ':';
+var self = this;
+  return self._line.substr(0, 1) == ':';
 });
 
 /** @type {boolean} */
 InputLine.prototype.is_blank;
 InputLine.prototype.__defineGetter__('is_blank', function() {
-var _self = this;
-  return /^\s*$/.test(_self._line);
+var self = this;
+  return /^\s*$/.test(self._line);
 });
 
 /** @type {boolean} */
 InputLine.prototype.is_indented;
 InputLine.prototype.__defineGetter__('is_indented', function() {
-var _self = this;
-  return /^\s/.test(_self._line);
+var self = this;
+  return /^\s/.test(self._line);
 });
 
 /** @type {number} */
 InputLine.prototype.indent;
 InputLine.prototype.__defineGetter__('indent', function() {
-var _self = this;
+var self = this;
   var re;
-  re = /\S/.exec(_self._line);
+  re = /\S/.exec(self._line);
   return re ? re.index : 0;
 });
 
@@ -2985,7 +2985,7 @@ parses input lines into lines and sections.
  * @constructor
  */
 var InputParser = function(input){
-var _self = this;
+var self = this;
   /**
    * @type {Array.<string>}
    * @private
@@ -3011,18 +3011,18 @@ InputParser.prototype._classname = 'InputParser';
 
 /** @return {Array.<GlobalComment|InputSection>} */
 InputParser.prototype.parse = function(){
-var _self = this;
-  _self._input.forEach(
+var self = this;
+  self._input.forEach(
   /**
    * @param {string} line
    * @param {number} index
    */
   function(line, index){
     line = line.trimRight();
-    _self._process_line(new InputLine(line, index));
+    self._process_line(new InputLine(line, index));
   });
-  _self._flush_buffer();
-  return _self._result;
+  self._flush_buffer();
+  return self._result;
 };
 
 /**
@@ -3030,40 +3030,40 @@ var _self = this;
  * @private
  */
 InputParser.prototype._process_line = function(line){
-var _self = this;
+var self = this;
   if (line.starts_with_colon){
     // should be a start of a code section.
-    _self._flush_buffer();
-    _self._last_valid_index = 0;
+    self._flush_buffer();
+    self._last_valid_index = 0;
   }
   else if (line.is_indented){
     // indented line -- continues either comment or code section.
-    if (_self._last_valid_index !== null){
-      _self._last_valid_index = _self._buffer.length;
+    if (self._last_valid_index !== null){
+      self._last_valid_index = self._buffer.length;
     }
   }
   else if (!line.is_blank){
     // global comment.
-    if (_self._last_valid_index !== null){
+    if (self._last_valid_index !== null){
       // close the code section.
-      _self._flush_buffer();
+      self._flush_buffer();
     }
   }
   // anything else is invalid line -- continues either comment or code section.
-  _self._buffer.push(line);
+  self._buffer.push(line);
 };
 
 /** @private */
 InputParser.prototype._flush_buffer = function(){
-var _self = this;
-  while (_self._buffer.length){
+var self = this;
+  while (self._buffer.length){
     var next_buffer;
     next_buffer = [];
-    if (_self._last_valid_index !== null){
+    if (self._last_valid_index !== null){
       var section;
-      section = new InputSection(_self._buffer[0]);
-      _self._result.push(section);
-      _self._buffer.forEach(
+      section = new InputSection(self._buffer[0]);
+      self._result.push(section);
+      self._buffer.forEach(
       /**
        * @param {InputLine} line
        * @param {number} index
@@ -3073,7 +3073,7 @@ var _self = this;
           // we already passed the header line to section.
           return;
         }
-        else if (index <= _self._last_valid_index){
+        else if (index <= self._last_valid_index){
           section.push(line);
         }
         else{
@@ -3084,10 +3084,10 @@ var _self = this;
     }
     else{
       // we'll give buffer a new array so no need to clone for global comment.
-      _self._result.push(new GlobalComment(_self._buffer));
+      self._result.push(new GlobalComment(self._buffer));
     }
-    _self._last_valid_index = null;
-    _self._buffer = next_buffer;
+    self._last_valid_index = null;
+    self._buffer = next_buffer;
   }
 };
 goog.provide('InputSection');
@@ -3100,7 +3100,7 @@ input code section.
  * @constructor
  */
 var InputSection = function(header){
-var _self = this;
+var self = this;
   /**
    * @type {InputLine}
    * @private
@@ -3139,8 +3139,8 @@ this._code = value;
 
 /** @param {InputLine} line */
 InputSection.prototype.push = function(line){
-var _self = this;
-  _self._lines.push(line);
+var self = this;
+  self._lines.push(line);
 };
 goog.provide('InterlacedLine');
 
@@ -3152,7 +3152,7 @@ maintains:
 */
 /** @constructor */
 var InterlacedLine = function(){
-var _self = this;
+var self = this;
   /**
    * @type {Array.<string>}
    * @private
@@ -3173,23 +3173,23 @@ return this._blocks;
 
 /** @return {string} */
 InterlacedLine.prototype.first_fragment = function(){
-var _self = this;
-  return _self._fragments[0];
+var self = this;
+  return self._fragments[0];
 };
 
 /** @param {string} str */
 InterlacedLine.prototype.add_str = function(str){
-var _self = this;
+var self = this;
   var last_idx;
-  last_idx = _self._fragments.length - 1;
-  _self._fragments[last_idx] = _self._fragments[last_idx] + str;
+  last_idx = self._fragments.length - 1;
+  self._fragments[last_idx] = self._fragments[last_idx] + str;
 };
 
 /** @param {Object} block */
 InterlacedLine.prototype.add_block = function(block){
-var _self = this;
-  _self._fragments.push('');
-  _self._blocks.push(block);
+var self = this;
+  self._fragments.push('');
+  self._blocks.push(block);
 };
 
 /**
@@ -3197,14 +3197,14 @@ var _self = this;
  * @param {*=} ctxt
  */
 InterlacedLine.prototype.each = function(cb, ctxt){
-var _self = this;
-  _self._blocks.forEach(
+var self = this;
+  self._blocks.forEach(
   /**
    * @param {Object} block
    * @param {number} i
    */
   function(block, i){
-    cb.call(ctxt, block, _self._fragments[i + 1], i);
+    cb.call(ctxt, block, self._fragments[i + 1], i);
   });
 };
 goog.provide('InvalidLine');
@@ -3217,7 +3217,7 @@ either blank line or comment only line.
  * @constructor
  */
 var InvalidLine = function(input){
-var _self = this;
+var self = this;
   /**
    * @type {InputLine}
    * @private
@@ -3234,16 +3234,16 @@ return this._input;
 /** @type {string} */
 InvalidLine.prototype.str;
 InvalidLine.prototype.__defineGetter__('str', function() {
-var _self = this;
-  return _self._input.line;
+var self = this;
+  return self._input.line;
 });
 
 /** @return {LineOutput} */
 InvalidLine.prototype.output = function(){
-var _self = this;
+var self = this;
   var out;
-  out = new LineOutput(_self._input);
-  out.append_line(_self._input.trim);
+  out = new LineOutput(self._input);
+  out.append_line(self._input.trim);
   return out;
 };
 goog.provide('SectionLine');
@@ -3257,7 +3257,7 @@ var SectionLine;
  * @constructor
  */
 var LineCategorizer = function(context){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -3271,7 +3271,7 @@ LineCategorizer.prototype._classname = 'LineCategorizer';
  * @return {SectionLine}
  */
 LineCategorizer.prototype.create_line = function(input){
-var _self = this;
+var self = this;
   var parsed;
   parsed = new LineParser(input);
   if (!parsed.is_valid){
@@ -3280,7 +3280,7 @@ var _self = this;
   if (parsed.is_separator){
     return new SeparatorLine(input, parsed);
   }
-  return new CodeLine(_self._context, input, parsed);
+  return new CodeLine(self._context, input, parsed);
 };
 goog.provide('LineDecoder');
 
@@ -3294,7 +3294,7 @@ decodes blockc markers.
  * @constructor
  */
 var LineDecoder = function(context, line, input_line){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -3331,11 +3331,11 @@ return this._is_block_statement;
 
 /** @param {Array.<IndentBlock>} blocks */
 LineDecoder.prototype.transform = function(blocks){
-var _self = this;
+var self = this;
   // make the fragments and blocks.
   // pass a shallow copy of the blocks.
-  _self._split_to_fragments(blocks.slice(0));
-  _self._transform_blocks();
+  self._split_to_fragments(blocks.slice(0));
+  self._transform_blocks();
 };
 
 /**
@@ -3343,9 +3343,9 @@ var _self = this;
  * @private
  */
 LineDecoder.prototype._split_to_fragments = function(blocks){
-var _self = this;
+var self = this;
   // go thru all the matches one by one.
-  _self._line.forEach(
+  self._line.forEach(
   /**
    * @param {string} seg
    * @param {number} i
@@ -3353,10 +3353,10 @@ var _self = this;
   function(seg, i){
     if (/^['"\/]/.test(seg)){
       // string, regular expression, and comment don't need to be split.
-      _self._fragments.add_str(seg);
+      self._fragments.add_str(seg);
     }
     else{
-      _self._split_segment(seg, i == _self._line.length - 1, blocks);
+      self._split_segment(seg, i == self._line.length - 1, blocks);
     }
   });
 };
@@ -3368,7 +3368,7 @@ var _self = this;
  * @private
  */
 LineDecoder.prototype._split_segment = function(seg, last_seg, blocks){
-var _self = this;
+var self = this;
   var re;
   re = /(\{#\}|\[#\]|\(#\)|##?)/g;
   var last_index;
@@ -3378,18 +3378,18 @@ var _self = this;
   var sub_context;
   sub_context = null;
   while (match){
-    _self._fragments.add_str(seg.substring(last_index, match.index));
+    self._fragments.add_str(seg.substring(last_index, match.index));
     var block;
     block = {marker: match[1]};
     if (blocks.length == 0){
-      warn(_self._input_line, 'ran out of blocks: ' + seg);
+      warn(self._input_line, 'ran out of blocks: ' + seg);
     }
     else{
       var b;
       b = blocks.shift();
       if (block.marker == '##'){
         if (!sub_context){
-          sub_context = _self._context.clone();
+          sub_context = self._context.clone();
           sub_context.is_file_scope = false;
         }
         block.params = new ParamSet(sub_context, b);
@@ -3397,7 +3397,7 @@ var _self = this;
       block.block = b;
     }
 
-    _self._fragments.add_block(block);
+    self._fragments.add_block(block);
     last_index = re.lastIndex;
     match = re.exec(seg);
   }
@@ -3405,19 +3405,19 @@ var _self = this;
   var last_fragment;
   last_fragment = seg.substr(last_index);
   if (last_fragment){
-    _self._fragments.add_str(last_fragment);
+    self._fragments.add_str(last_fragment);
     if (last_seg && blocks.length > 0){
-      _self._fragments.add_block({marker: '#', block: blocks.shift()});
-      _self._is_block_statement = true;
+      self._fragments.add_block({marker: '#', block: blocks.shift()});
+      self._is_block_statement = true;
     }
   }
-  assert(!last_seg || blocks.length == 0, _self._input_line, 'too many blocks for the #s');
+  assert(!last_seg || blocks.length == 0, self._input_line, 'too many blocks for the #s');
 };
 
 /** @private */
 LineDecoder.prototype._transform_blocks = function(){
-var _self = this;
-  _self._fragments.blocks.forEach(
+var self = this;
+  self._fragments.blocks.forEach(
   /** @param {Object} b */
   function(b){
     // transform the blocks.
@@ -3438,22 +3438,22 @@ var _self = this;
 
 /** @return {Array.<string>} */
 LineDecoder.prototype.first_line = function(){
-var _self = this;
+var self = this;
   // there should be at least one fragment.
-  return _self._compose_line(_self._fragments.first_fragment(), 0);
+  return self._compose_line(self._fragments.first_fragment(), 0);
 };
 
 /** @param {function(IndentBlock, Array.<string>)} cb */
 LineDecoder.prototype.each_fragment = function(cb){
-var _self = this;
-  _self._fragments.each(
+var self = this;
+  self._fragments.each(
   /**
    * @param {Object} b
    * @param {string} f
    * @param {number} i
    */
   function(b, f, i){
-    cb(b.block, _self._compose_line(
+    cb(b.block, self._compose_line(
       b.block.end_str() + f,
       i + 1
     ));
@@ -3466,13 +3466,13 @@ var _self = this;
  * @private
  */
 LineDecoder.prototype._compose_line = function(prefix, i){
-var _self = this;
-  if (_self._fragments.blocks.length <= i){
+var self = this;
+  if (self._fragments.blocks.length <= i){
     return [prefix];
   }
 
   var b;
-  b = _self._fragments.blocks[i];
+  b = self._fragments.blocks[i];
   var bstart;
   bstart = [b.block.start_str()];
   if (!b.params){
@@ -3499,7 +3499,7 @@ output lines corresponds to one input line.
  * @constructor
  */
 var LineOutput = function(input){
-var _self = this;
+var self = this;
   /**
    * @type {InputLine}
    * @private
@@ -3572,35 +3572,35 @@ this._tail_comment = value;
 
 /** @param {string} line */
 LineOutput.prototype.append_prefix_line = function(line){
-var _self = this;
-  _self._prefix_lines.push(line);
+var self = this;
+  self._prefix_lines.push(line);
 };
 
 /** @param {string} line */
 LineOutput.prototype.append_line = function(line){
-var _self = this;
-  _self._lines.push(line);
+var self = this;
+  self._lines.push(line);
 };
 
 /** @param {BlockOutput} block */
 LineOutput.prototype.append_block = function(block){
-var _self = this;
-  _self._lines.push(block);
+var self = this;
+  self._lines.push(block);
 };
 
 /** @param {Array.<string>} lines */
 LineOutput.prototype.append_lines = function(lines){
-var _self = this;
+var self = this;
   lines.forEach(
   /** @param {string} line */
   function(line){
-    _self._lines.push(line);
+    self._lines.push(line);
   });
 };
 
 LineOutput.prototype.remove_empty_lines = function(){
-var _self = this;
-  _self._lines = _self._lines.filter(
+var self = this;
+  self._lines = self._lines.filter(
   /** @param {BlockOutput|string} line */
   function(line){
     return line;
@@ -3610,17 +3610,17 @@ var _self = this;
 /** @type {Array.<string>} */
 LineOutput.prototype.output;
 LineOutput.prototype.__defineGetter__('output', function() {
-var _self = this;
+var self = this;
   var result;
   result = [];
   var indent;
-  indent = whitespaces(_self._indent);
-  _self._prefix_lines.forEach(
+  indent = whitespaces(self._indent);
+  self._prefix_lines.forEach(
   /** @param {string} line */
   function(line){
     result.push(line ? indent + line : '');
   });
-  _self._lines.forEach(
+  self._lines.forEach(
   /**
    * @param {string|BlockOutput} line
    * @param {number} i
@@ -3632,11 +3632,11 @@ var _self = this;
     else{
       var to_add;
       to_add = line;
-      if (i == 0 && _self._line_prefix){
-        to_add = _self._line_prefix + to_add;
+      if (i == 0 && self._line_prefix){
+        to_add = self._line_prefix + to_add;
       }
-      if (i == _self._lines.length - 1 && _self._line_suffix){
-        to_add += _self._line_suffix;
+      if (i == self._lines.length - 1 && self._line_suffix){
+        to_add += self._line_suffix;
       }
       if (to_add){
         to_add = indent + to_add;
@@ -3644,7 +3644,7 @@ var _self = this;
       result.push(to_add);
     }
   });
-  _self._tail_comment.forEach(
+  self._tail_comment.forEach(
   /** @param {string} c */
   function(c){
     result.push(indent + c);
@@ -3662,7 +3662,7 @@ First pass line parsing for constructing the block structure.
  * @constructor
  */
 var LineParser = function(input){
-var _self = this;
+var self = this;
   /**
    * @type {InputLine}
    * @private
@@ -3690,7 +3690,7 @@ var _self = this;
    */
   this._is_separator = (false);
 
-  _self._process();
+  self._process();
 };
 LineParser.prototype._classname = 'LineParser';
 /** @type {boolean} */
@@ -3716,46 +3716,46 @@ return this._is_separator;
 
 /** @private */
 LineParser.prototype._process = function(){
-var _self = this;
-  if (/^\s*$/.test(_self._input.line) || /^\s*\/\//.test(_self._input.line)){
+var self = this;
+  if (/^\s*$/.test(self._input.line) || /^\s*\/\//.test(self._input.line)){
     // blank or comment line. Nothing to be done.
     return;
   }
-  _self._is_valid = true;
+  self._is_valid = true;
 
-  _self._check_spaces();
-  _self._check_continuation();
-  _self._check_separator();
+  self._check_spaces();
+  self._check_continuation();
+  self._check_separator();
 };
 
 /** @private */
 LineParser.prototype._check_spaces = function(){
-var _self = this;
+var self = this;
   var spaces_re;
-  spaces_re = /^(\s*)(.*[\S])(\s*)$/.exec(_self._input.line);
+  spaces_re = /^(\s*)(.*[\S])(\s*)$/.exec(self._input.line);
 
-  _self._indent = spaces_re[1].length;
+  self._indent = spaces_re[1].length;
   if (!/ */.test(spaces_re[1])){
-    warn(_self._input, 'non-ascii 0x20 space for indentation');
+    warn(self._input, 'non-ascii 0x20 space for indentation');
   }
 
   if (spaces_re[3] != ''){
-    warn(_self._input, 'trailing space');
+    warn(self._input, 'trailing space');
   }
 };
 
 /** @private */
 LineParser.prototype._check_continuation = function(){
-var _self = this;
+var self = this;
   var cont_re;
-  cont_re = /^\s*\|/.exec(_self._input.line);
-  _self._is_continuation = !!cont_re;
+  cont_re = /^\s*\|/.exec(self._input.line);
+  self._is_continuation = !!cont_re;
 };
 
 /** @private */
 LineParser.prototype._check_separator = function(){
-var _self = this;
-  _self._is_separator = /^\s*--\s*$/.test(_self._input.line);
+var self = this;
+  self._is_separator = /^\s*--\s*$/.test(self._input.line);
 };
 goog.provide('LineTransformer');
 
@@ -3765,7 +3765,7 @@ goog.provide('LineTransformer');
  * @constructor
  */
 var LineTransformer = function(context, input){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -3784,9 +3784,9 @@ LineTransformer.prototype._classname = 'LineTransformer';
  * @return {string}
  */
 LineTransformer.prototype.pkg_ref = function(name){
-var _self = this;
+var self = this;
   // relative package reference.
-  return _self._context.pkg.replace(name);
+  return self._context.pkg.replace(name);
 };
 
 /**
@@ -3794,8 +3794,8 @@ var _self = this;
  * @return {string}
  */
 LineTransformer.prototype.cast = function(type){
-var _self = this;
-  return '/** @type {' + new TypeDecoder(_self._context.pkg, type).output() + '} */';
+var self = this;
+  return '/** @type {' + new TypeDecoder(self._context.pkg, type).output() + '} */';
 };
 
 /**
@@ -3803,8 +3803,8 @@ var _self = this;
  * @return {string}
  */
 LineTransformer.prototype.type = function(type){
-var _self = this;
-  return new TypeDecoder(_self._context.pkg, type).output();
+var self = this;
+  return new TypeDecoder(self._context.pkg, type).output();
 };
 
 /**
@@ -3812,17 +3812,17 @@ var _self = this;
  * @return {string}
  */
 LineTransformer.prototype.parent_call = function(args){
-var _self = this;
+var self = this;
   var end_str;
   end_str = args ? ', ' + args + ')' : ')';
-  if (_self._context.is_ctor){
-    return _self._context.cls.ctor.parent_name() + '.call(this' + end_str;
+  if (self._context.is_ctor){
+    return self._context.cls.ctor.parent_name() + '.call(this' + end_str;
   }
-  else if (_self._context.is_method){
-    return "goog.base(this, '" + _self._context.name.id + "'" + end_str;
+  else if (self._context.is_method){
+    return "goog.base(this, '" + self._context.name.id + "'" + end_str;
   }
   else{
-    warn(_self._input, 'parent call appeared in non-ctor / non-method.');
+    warn(self._input, 'parent call appeared in non-ctor / non-method.');
     return '%(' + args + ')';
   }
 };
@@ -3864,7 +3864,7 @@ pseudo member is a place holder for class members that don't exist, but there ar
  * @constructor
  */
 var Member = function(name, type, access_type, is_pseudo){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -3902,16 +3902,16 @@ returns an empty array otherwise.
  * @return {Array.<string>}
  */
 Member.prototype.output_decl = function(class_name){
-var _self = this;
-  if (_self._declared){
+var self = this;
+  if (self._declared){
     return [];
   }
-  _self._declared = true;
+  self._declared = true;
   // TODO: this member decl always allows setting a value to it even when only the
   // getter is provided.
   return [
-    '/** @type {' + _self._type.output() + '}' + ' */',
-    class_name.property(_self._name).decl() + ';'
+    '/** @type {' + self._type.output() + '}' + ' */',
+    class_name.property(self._name).decl() + ';'
   ];
 };
 
@@ -3926,14 +3926,14 @@ output a getter or a setter.
  * @return {Array}
  */
 Member.prototype.output_accessor = function(class_name, is_getter, body, params){
-var _self = this;
+var self = this;
   var p;
-  p = _self._is_pseudo && params ? params.output_params() : 'value';
+  p = self._is_pseudo && params ? params.output_params() : 'value';
   return [
     is_getter ? (
-      class_name.property('__defineGetter__').decl() + "('" + _self._name + "', function() {"
+      class_name.property('__defineGetter__').decl() + "('" + self._name + "', function() {"
     ) : (
-      class_name.property('__defineSetter__').decl() + "('" + _self._name + "', function(" + p + ') {'
+      class_name.property('__defineSetter__').decl() + "('" + self._name + "', function(" + p + ') {'
     ),
     body,
     '});'
@@ -3948,17 +3948,17 @@ produce necessary accessor methods based on the access type specification.
  * @return {Array}
  */
 Member.prototype.output_accessors = function(class_name){
-var _self = this;
-  if (!_self._access_type || _self._is_pseudo){
+var self = this;
+  if (!self._access_type || self._is_pseudo){
     return [];
   }
   var result;
-  result = [_self.output_decl(class_name)];
-  if ('+&'.indexOf(_self._access_type) >= 0){
-    result.push(_self.output_accessor(class_name, true, ['return this._' + _self._name + ';']));
+  result = [self.output_decl(class_name)];
+  if ('+&'.indexOf(self._access_type) >= 0){
+    result.push(self.output_accessor(class_name, true, ['return this._' + self._name + ';']));
   }
-  if ('*&'.indexOf(_self._access_type) >= 0){
-    result.push(_self.output_accessor(class_name, false, ['this._' + _self._name + ' = value;']));
+  if ('*&'.indexOf(self._access_type) >= 0){
+    result.push(self.output_accessor(class_name, false, ['this._' + self._name + ' = value;']));
   }
   return result;
 };
@@ -3973,7 +3973,7 @@ name in file scope.
  * @constructor
  */
 var Name = function(pkg, id){
-var _self = this;
+var self = this;
   /**
    * @type {!Package}
    * @private
@@ -3999,14 +3999,14 @@ return this._id;
 
 /** @return {string} */
 Name.prototype.decl = function(){
-var _self = this;
-  return (_self._pkg.empty() ? 'var ' : '') + _self._pkg.fullname(_self._id);
+var self = this;
+  return (self._pkg.empty() ? 'var ' : '') + self._pkg.fullname(self._id);
 };
 
 /** @return {string} */
 Name.prototype.ref = function(){
-var _self = this;
-  return _self._pkg.fullname(_self._id);
+var self = this;
+  return self._pkg.fullname(self._id);
 };
 
 /**
@@ -4014,14 +4014,14 @@ var _self = this;
  * @return {!Name}
  */
 Name.prototype.property = function(id){
-var _self = this;
-  return new Name(new Package(_self.ref() + '.prototype'), id);
+var self = this;
+  return new Name(new Package(self.ref() + '.prototype'), id);
 };
 
 /** @return {string} */
 Name.prototype.oString = function(){
-var _self = this;
-  return '[' + _self._pkg + ':' + _self._id + ']';
+var self = this;
+  return '[' + self._pkg + ':' + self._id + ']';
 };
 goog.provide('Package');
 
@@ -4034,7 +4034,7 @@ package name.
  * @constructor
  */
 var Package = function(pkg){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -4045,8 +4045,8 @@ Package.prototype._classname = 'Package';
 
 /** @return {boolean} */
 Package.prototype.empty = function(){
-var _self = this;
-  return !_self._pkg;
+var self = this;
+  return !self._pkg;
 };
 
 /**
@@ -4054,15 +4054,15 @@ var _self = this;
  * @return {string}
  */
 Package.prototype.fullname = function(id){
-var _self = this;
-  return (_self._pkg ? _self._pkg + '.' : '') + id;
+var self = this;
+  return (self._pkg ? self._pkg + '.' : '') + id;
 };
 
 /** @param {string} str */
 Package.prototype.replace = function(str){
-var _self = this;
+var self = this;
   var pkg;
-  pkg = _self._pkg;
+  pkg = self._pkg;
   // up package reference if there are two or more "%"s.
   while (/^\%\%/.test(str)){
     if (pkg){
@@ -4084,18 +4084,18 @@ var _self = this;
 
 /** @param {string} str */
 Package.prototype.replace_str = function(str){
-var _self = this;
+var self = this;
   return str.replace(/\%+(\:\:|\.)/g, 
   /** @param {string} ref */
   function(ref){
-    return _self.replace(ref);
+    return self.replace(ref);
   });
 };
 
 /** @return {string} */
 Package.prototype.toString = function(){
-var _self = this;
-  return _self._pkg;
+var self = this;
+  return self._pkg;
 };
 goog.provide('Param');
 
@@ -4111,7 +4111,7 @@ Function parameter and / or member declarion.
  * @constructor
  */
 var Param = function(context, is_ctor, input, parsed){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -4143,21 +4143,21 @@ var _self = this;
     return;
   }
 
-  _self._line = parsed.tokens;
-  _self._success = true;
-  _self._type = new TypeDecoder(_self._context.pkg, _self._line.type);
+  self._line = parsed.tokens;
+  self._success = true;
+  self._type = new TypeDecoder(self._context.pkg, self._line.type);
 
-  _self._value_line = _self._line.init && !_self._line.init.is_empty ? _self._line.init.list : null;
-  if (_self.is_member && _self.init_type != '$' && !_self._value_line){
+  self._value_line = self._line.init && !self._line.init.is_empty ? self._line.init.list : null;
+  if (self.is_member && self.init_type != '$' && !self._value_line){
     // member with no initializer or optional param init.
-    _self._value_line = ['null'];
+    self._value_line = ['null'];
   }
 
   // sanity check the param consistency.
-  if (!is_ctor && _self.is_member){
+  if (!is_ctor && self.is_member){
     warn(input, 'member param for non-constructor method');
   }
-  if (!_self.is_member && _self.init_type != '?' && _self._value_line){
+  if (!self.is_member && self.init_type != '?' && self._value_line){
     warn(input, 'initial value for non-member non-optional');
   }
 };
@@ -4181,36 +4181,36 @@ return this._value_line;
 /** @type {boolean} */
 Param.prototype.is_member;
 Param.prototype.__defineGetter__('is_member', function() {
-var _self = this;
-  return _self._line.is_member;
+var self = this;
+  return self._line.is_member;
 });
 
 /** @type {string} */
 Param.prototype.name;
 Param.prototype.__defineGetter__('name', function() {
-var _self = this;
-  return _self._line.name;
+var self = this;
+  return self._line.name;
 });
 
 /** @type {string} */
 Param.prototype.access_type;
 Param.prototype.__defineGetter__('access_type', function() {
-var _self = this;
-  return _self._line.access;
+var self = this;
+  return self._line.access;
 });
 
 /** @type {string} */
 Param.prototype.init_type;
 Param.prototype.__defineGetter__('init_type', function() {
-var _self = this;
-  return _self._line.marker;
+var self = this;
+  return self._line.marker;
 });
 
 /** @type {boolean} */
 Param.prototype.has_init;
 Param.prototype.__defineGetter__('has_init', function() {
-var _self = this;
-  return !!_self._value_line;
+var self = this;
+  return !!self._value_line;
 });
 
 /**
@@ -4218,26 +4218,26 @@ var _self = this;
  * @private
  */
 Param.prototype._param_name = function(){
-var _self = this;
-  return (_self.has_init ? 'opt_' : '') + _self.name;
+var self = this;
+  return (self.has_init ? 'opt_' : '') + self.name;
 };
 
 /** @return {string} */
 Param.prototype.output_decl = function(){
-var _self = this;
-  return _self._type && _self.init_type != '' ? ([
+var self = this;
+  return self._type && self.init_type != '' ? ([
     '@param {',
-    _self._type.output(),
-    _self.init_type == '?' ? '=' : '',
+    self._type.output(),
+    self.init_type == '?' ? '=' : '',
     '} ',
-    _self._param_name()
+    self._param_name()
   ].join('')) : '';
 };
 
 /** @return {string} */
 Param.prototype.output_param = function(){
-var _self = this;
-  return _self.init_type == '' ? '' : _self._param_name();
+var self = this;
+  return self.init_type == '' ? '' : self._param_name();
 };
 
 /*
@@ -4245,27 +4245,27 @@ Variable initialization output as first statements of function body.
 */
 /** @param {LineOutput} out */
 Param.prototype.output_init = function(out){
-var _self = this;
+var self = this;
   var pname;
-  pname = _self._param_name();
+  pname = self._param_name();
 
-  if (_self.is_member){
+  if (self.is_member){
     out.append_prefix_line('/**');
-    if (_self._type){
-      out.append_prefix_line(' * @type {' + _self._type.output() + '}');
+    if (self._type){
+      out.append_prefix_line(' * @type {' + self._type.output() + '}');
     }
     out.append_prefix_line(' * @private');
     out.append_prefix_line(' */');
   }
-  if (_self.is_member || _self.has_init){
+  if (self.is_member || self.has_init){
     out.line_prefix = [
-      _self.is_member ? 'this._' : 'var ',
-      _self.name,
+      self.is_member ? 'this._' : 'var ',
+      self.name,
       ' = '
     ].join('');
-    if (_self.init_type != ''){
+    if (self.init_type != ''){
       out.line_prefix += pname;
-      if (_self.has_init){
+      if (self.has_init){
         out.line_prefix += ' === undefined ? (';
         out.line_suffix = ') : ' + pname;
       }
@@ -4282,9 +4282,9 @@ var _self = this;
 
 /** @return {string} */
 Param.prototype.output_argtype = function(){
-var _self = this;
+var self = this;
   var type;
-  type = _self._type.output();
+  type = self._type.output();
   var re;
   re = /^\!?([a-zA-Z][\w\.]*)$/.exec(type);
   if (!re){
@@ -4297,9 +4297,9 @@ var _self = this;
 
 /** @return {?string} */
 Param.prototype.argtype = function(){
-var _self = this;
+var self = this;
   var type;
-  type = _self._type.output();
+  type = self._type.output();
   var re;
   re = /^\!?([a-zA-Z][\w\.]*)$/.exec(type);
   if (!re){
@@ -4329,7 +4329,7 @@ goog.provide('ParamSet');
  * @constructor
  */
 var ParamSet = function(context, block, opt_is_ctor){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -4359,10 +4359,10 @@ var _self = this;
 ParamSet.prototype._classname = 'ParamSet';
 
 ParamSet.prototype.transform = function(){
-var _self = this;
+var self = this;
   var param_done;
   param_done = false;
-  _self._block.each_line(
+  self._block.each_line(
   /**
    * @param {SectionLine} line
    * @param {number} i
@@ -4377,7 +4377,7 @@ var _self = this;
     }
     if (line instanceof CodeLine && !line.is_continuation){
       var p;
-      p = _self._add_line(/** @type {CodeLine} */(line), i);
+      p = self._add_line(/** @type {CodeLine} */(line), i);
       if (p){
         line.param = p;
       }
@@ -4386,7 +4386,7 @@ var _self = this;
     // skip invalid lines and continuation lines.
       }
     }
-  }, _self._context);
+  }, self._context);
 };
 
 /**
@@ -4396,20 +4396,20 @@ var _self = this;
  * @private
  */
 ParamSet.prototype._add_line = function(line, index){
-var _self = this;
+var self = this;
   var p;
-  p = new Param(_self._context, _self._is_ctor, line.input, line.parsed);
+  p = new Param(self._context, self._is_ctor, line.input, line.parsed);
   if (!p.success){
-    if (index != 0 || _self._context.is_file_scope){
+    if (index != 0 || self._context.is_file_scope){
       return null;
     }
     // could be the return type.
-    return _self._try_return_type(line.str);
+    return self._try_return_type(line.str);
   }
 
-  _self._params.push(p);
+  self._params.push(p);
   if (p.is_member){
-    _self._context.cls.add_member(p.name, p.type, p.access_type);
+    self._context.cls.add_member(p.name, p.type, p.access_type);
   }
   return p;
 };
@@ -4420,34 +4420,34 @@ var _self = this;
  * @private
  */
 ParamSet.prototype._try_return_type = function(line){
-var _self = this;
+var self = this;
   var re;
   re = /^\s*\\(.*)\\\s*$/.exec(line);
   if (!re){
     return false;
   }
-  _self._return_type = new TypeDecoder(_self._context.pkg, re[1]);
+  self._return_type = new TypeDecoder(self._context.pkg, re[1]);
   return true;
 };
 
 /** @param {string} return_type */
 ParamSet.prototype.set_return_type = function(return_type){
-var _self = this;
+var self = this;
   if (return_type){
-    _self._return_type = new TypeDecoder(_self._context.pkg, return_type);
+    self._return_type = new TypeDecoder(self._context.pkg, return_type);
   }
 };
 
 /** @return {boolean} */
 ParamSet.prototype.is_empty = function(){
-var _self = this;
-  return _self._params.length == 0;
+var self = this;
+  return self._params.length == 0;
 };
 
 /** @return {boolean} */
 ParamSet.prototype.is_init_empty = function(){
-var _self = this;
-  return !_self._params.some(
+var self = this;
+  return !self._params.some(
   /** @param {Param} p */
   function(p){
     return p.is_member || p.init_type == '?';
@@ -4456,8 +4456,8 @@ var _self = this;
 
 /** @return {boolean} */
 ParamSet.prototype.is_decl_empty = function(){
-var _self = this;
-  return !_self._return_type && !_self._params.some(
+var self = this;
+  return !self._return_type && !self._params.some(
   /** @param {Param} p */
   function(p){
     return !!p.type;
@@ -4466,9 +4466,9 @@ var _self = this;
 
 /** @return {Array.<string>} */
 ParamSet.prototype.output_decls = function(){
-var _self = this;
+var self = this;
   var result;
-  result = _self._params.map(
+  result = self._params.map(
   /** @param {Param} p */
   function(p){
     return p.output_decl();
@@ -4477,17 +4477,17 @@ var _self = this;
   function(s){
     return !!s;
   });
-  if (_self._return_type){
-    result.push('@return {' + _self._return_type.output() + '}');
+  if (self._return_type){
+    result.push('@return {' + self._return_type.output() + '}');
   }
   return result;
 };
 
 /** @return {string} */
 ParamSet.prototype.output_params = function(){
-var _self = this;
+var self = this;
   // function parameter output.
-  return _self._params.map(
+  return self._params.map(
   /** @param {Param} p */
   function(p){
     return p.output_param();
@@ -4500,8 +4500,8 @@ var _self = this;
 
 /** @return {string} */
 ParamSet.prototype.output_argtypes = function(){
-var _self = this;
-  return '[' + _self._params.map(
+var self = this;
+  return '[' + self._params.map(
   /** @param {Param} p */
   function(p){
     return p.output_argtype();
@@ -4510,8 +4510,8 @@ var _self = this;
 
 /** @param {CallableType} types */
 ParamSet.prototype.set_argtypes = function(types){
-var _self = this;
-  _self._params.forEach(
+var self = this;
+  self._params.forEach(
   /** @param {!Param} p */
   function(p){
     types.add_arg(p.argtype());
@@ -4524,7 +4524,7 @@ goog.provide('SectionGenerator');
  * @constructor
  */
 var SectionGenerator = function(scope){
-var _self = this;
+var self = this;
   /**
    * @type {FileScope}
    * @private
@@ -4539,7 +4539,7 @@ SectionGenerator.prototype._classname = 'SectionGenerator';
  * @return {CodeSection}
  */
 SectionGenerator.prototype.generate = function(header, lines){
-var _self = this;
+var self = this;
   var section;
   section = null;
   var header_line;
@@ -4560,11 +4560,11 @@ var _self = this;
   ].some(
   /** @param {string} method */
   function(method){
-    section = _self[method].call(_self, header_line, header);
+    section = self[method].call(self, header_line, header);
     if (section){
       section.lines = lines;
-      section.close(_self._scope.context.pkg);
-      section.set_type(_self._scope.types);
+      section.close(self._scope.context.pkg);
+      section.set_type(self._scope.types);
     }
     return !!section;
   })){
@@ -4579,7 +4579,7 @@ var _self = this;
  * @private
  */
 SectionGenerator.prototype._create_ctor = function(line){
-var _self = this;
+var self = this;
   var re;
   re = /^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line);
   if (!re){
@@ -4587,13 +4587,13 @@ var _self = this;
   }
 
   // need to keep this in a member var too.
-  _self._scope.context.cls = new Class();
+  self._scope.context.cls = new Class();
   var ctor;
-  ctor = new Constructor(_self._scope.copy_context_with_name(re[1]), re[3]);
-  _self._scope.context.cls.ctor = ctor;
-  _self._scope.types.add_ctor(ctor.name());
+  ctor = new Constructor(self._scope.copy_context_with_name(re[1]), re[3]);
+  self._scope.context.cls.ctor = ctor;
+  self._scope.types.add_ctor(ctor.name());
   if (re[3]){
-    _self._scope.types.set_parent(ctor.parent_name());
+    self._scope.types.set_parent(ctor.parent_name());
   }
   return ctor;
 };
@@ -4605,7 +4605,7 @@ var _self = this;
  * @private
  */
 SectionGenerator.prototype._create_method = function(line, header){
-var _self = this;
+var self = this;
   var re;
   re = /^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line);
   if (!re){
@@ -4613,12 +4613,12 @@ var _self = this;
   }
 
   // we should have seen a ctor.
-  if (!_self._scope.context.cls){
+  if (!self._scope.context.cls){
     warn(header, 'method marker w/o class');
     return null;
   }
   return new Method(
-      _self._scope.copy_context(_self._scope.context.cls.method_name((re[2] ? '_' : '') + re[3])),
+      self._scope.copy_context(self._scope.context.cls.method_name((re[2] ? '_' : '') + re[3])),
       re[5],
       !!re[1]
   );
@@ -4631,7 +4631,7 @@ var _self = this;
  * @private
  */
 SectionGenerator.prototype._create_accessor = function(line, header){
-var _self = this;
+var self = this;
   var re;
   re = /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line);
   if (!re){
@@ -4639,7 +4639,7 @@ var _self = this;
   }
 
   // we should have seen a ctor.
-  if (!_self._scope.context.cls){
+  if (!self._scope.context.cls){
     warn(header, 'accessor marker w/o class');
     return null;
   }
@@ -4650,7 +4650,7 @@ var _self = this;
   var ret_type;
   ret_type = re[4];
   var ctx;
-  ctx = _self._scope.copy_context(_self._scope.context.cls.method_name(name));
+  ctx = self._scope.copy_context(self._scope.context.cls.method_name(name));
   return new OverridingAccessor(ctx, name, ret_type, type == '+');
 };
 
@@ -4660,13 +4660,13 @@ var _self = this;
  * @private
  */
 SectionGenerator.prototype._create_global_function = function(line){
-var _self = this;
+var self = this;
   var re;
   re = /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line);
   if (!re){
     return null;
   }
-  return new GlobalFunction(_self._scope.copy_context_with_name(re[1]), re[3]);
+  return new GlobalFunction(self._scope.copy_context_with_name(re[1]), re[3]);
 };
 
 /**
@@ -4675,13 +4675,13 @@ var _self = this;
  * @private
  */
 SectionGenerator.prototype._create_multi_line_str = function(line){
-var _self = this;
+var self = this;
   var re;
   re = /^'\s*(\w+)$/.exec(line);
   if (!re){
     return null;
   }
-  return new MultiLineStr(_self._scope.copy_context_with_name(re[1]));
+  return new MultiLineStr(self._scope.copy_context_with_name(re[1]));
 };
 
 /**
@@ -4690,7 +4690,7 @@ var _self = this;
  * @private
  */
 SectionGenerator.prototype._create_global_code = function(line){
-var _self = this;
+var self = this;
   return line == '' ? new GlobalCode() : null;
 };
 
@@ -4700,7 +4700,7 @@ var _self = this;
  * @private
  */
 SectionGenerator.prototype._create_native_code = function(line){
-var _self = this;
+var self = this;
   return line == '~' ? new NativeCode() : null;
 };
 
@@ -4710,7 +4710,7 @@ var _self = this;
  * @private
  */
 SectionGenerator.prototype._create_anonymous_scope = function(line){
-var _self = this;
+var self = this;
   return line == '{' ? new AnonymousScope() : null;
 };
 
@@ -4720,19 +4720,19 @@ var _self = this;
  * @private
  */
 SectionGenerator.prototype._create_typedef = function(line){
-var _self = this;
+var self = this;
   var re;
   re = /^\!\s*(\w+)$/.exec(line);
   if (!re){
     return null;
   }
-  return new Typedef(_self._scope.copy_context_with_name(re[1]));
+  return new Typedef(self._scope.copy_context_with_name(re[1]));
 };
 goog.provide('SectionHead');
 
 /** @constructor */
 var SectionHead = function(){
-var _self = this;
+var self = this;
   /**
    * @type {Array.<IndentBlock>}}
    * @private
@@ -4748,14 +4748,14 @@ return this._blocks;
 
 /** @param {IndentBlock} block */
 SectionHead.prototype.add_block = function(block){
-var _self = this;
-  _self._blocks.push(block);
+var self = this;
+  self._blocks.push(block);
 };
 
 /** @return {number} */
 SectionHead.prototype.num_blocks = function(){
-var _self = this;
-  return _self._blocks.length;
+var self = this;
+  return self._blocks.length;
 };
 
 /**
@@ -4763,21 +4763,21 @@ var _self = this;
  * @return {IndentBlock}
  */
 SectionHead.prototype.block = function(index){
-var _self = this;
-  return _self._blocks[index];
+var self = this;
+  return self._blocks[index];
 };
 
 /** @return {IndentBlock} */
 SectionHead.prototype.last_block = function(){
-var _self = this;
-  return _self._blocks[_self._blocks.length - 1];
+var self = this;
+  return self._blocks[self._blocks.length - 1];
 };
 
 /*
 do all the work necessary to produce code output.
 */
 SectionHead.prototype.transform = function(){
-var _self = this;
+var self = this;
 };
 goog.provide('SeparatorLine');
 
@@ -4787,7 +4787,7 @@ goog.provide('SeparatorLine');
  * @constructor
  */
 var SeparatorLine = function(input, parser){
-var _self = this;
+var self = this;
   /**
    * @type {InputLine}
    * @private
@@ -4814,13 +4814,13 @@ return this._indent;
 /** @type {boolean} */
 SeparatorLine.prototype.is_continuation;
 SeparatorLine.prototype.__defineGetter__('is_continuation', function() {
-var _self = this;
+var self = this;
   return false;
 });
 
 /** @return {LineOutput} */
 SeparatorLine.prototype.output = function(){
-var _self = this;
+var self = this;
   return null;
 };
 goog.provide('StringSet');
@@ -4829,7 +4829,7 @@ goog.provide('create_sorted_list');
 
 /** @constructor */
 var StringSet = function(){
-var _self = this;
+var self = this;
   /**
    * @type {Array.<string>}
    * @private
@@ -4845,20 +4845,20 @@ StringSet.prototype._classname = 'StringSet';
 
 /** @return {string} */
 StringSet.prototype.toString = function(){
-var _self = this;
-  return _self._list.join('|');
+var self = this;
+  return self._list.join('|');
 };
 
 /** @return {Array.<string>} */
 StringSet.prototype.list = function(){
-var _self = this;
-  return _self._list;
+var self = this;
+  return self._list;
 };
 
 /** @return {number} */
 StringSet.prototype.size = function(){
-var _self = this;
-  return _self._list.length;
+var self = this;
+  return self._list.length;
 };
 
 /**
@@ -4866,25 +4866,25 @@ var _self = this;
  * @return {boolean}
  */
 StringSet.prototype.has = function(str){
-var _self = this;
-  return _self._map[str];
+var self = this;
+  return self._map[str];
 };
 
 /** @param {Array.<string>} strs */
 StringSet.prototype.add_all = function(strs){
-var _self = this;
+var self = this;
   strs.forEach(
   /** @param {string} str */
   function(str){
-    _self.add(str);
+    self.add(str);
   });
 };
 
 /** @param {string} str */
 StringSet.prototype.add = function(str){
-var _self = this;
-  _self._list.push(str);
-  _self._map[str] = true;
+var self = this;
+  self._list.push(str);
+  self._map[str] = true;
 };
 
 /**
@@ -4892,12 +4892,12 @@ var _self = this;
  * @return {Array.<string>}
  */
 StringSet.prototype.filter_out = function(strs){
-var _self = this;
+var self = this;
   // remove the strings that are in this set.
   return strs.filter(
   /** @param {string} f */
   function(f){
-    return !_self._map[f];
+    return !self._map[f];
   });
 };
 
@@ -4908,7 +4908,7 @@ depends -- maps file name to array of required class names.
 */
 /** @constructor */
 var ClassDeps = function(){
-var _self = this;
+var self = this;
   /**
    * @type {Object.<string, string>}
    * @private
@@ -4924,36 +4924,36 @@ ClassDeps.prototype._classname = 'ClassDeps';
 
 /** @return {string} */
 ClassDeps.prototype.toString = function(){
-var _self = this;
-  return Object.keys(/** @type {!Object} */(_self._depends)).map(
+var self = this;
+  return Object.keys(/** @type {!Object} */(self._depends)).map(
   /** @param {string} k */
   function(k){
-    return '[' + k + ':' + _self._depends[k].join('|') + ']';
+    return '[' + k + ':' + self._depends[k].join('|') + ']';
   }).join('');
 };
 
 /** @param {Array.<string>} files */
 ClassDeps.prototype.load = function(files){
-var _self = this;
+var self = this;
   files.forEach(
   /** @param {string} file */
   function(file){
-    _self._depends[file] = [];
+    self._depends[file] = [];
     var tk;
     tk = JSON.parse(_fs.readFileSync(file.replace(/\.js/, '.tk'), 'utf-8'));
     tk['cls'].forEach(
     /** @param {*} cls */
     function(cls){
-      _self._where[cls.name] = file;
+      self._where[cls.name] = file;
       if (cls['parent']){
-        _self._depends[file].push(cls['parent']);
+        self._depends[file].push(cls['parent']);
       }
     });
     // remove self dependencies.
-    _self._depends[file] = _self._depends[file].filter(
+    self._depends[file] = self._depends[file].filter(
     /** @param {string} dep */
     function(dep){
-      return _self._where[dep] != file;
+      return self._where[dep] != file;
     });
   });
 };
@@ -4963,9 +4963,9 @@ var _self = this;
  * @return {boolean}
  */
 ClassDeps.prototype.has_deps = function(file){
-var _self = this;
+var self = this;
   var dep;
-  dep = _self._depends[file];
+  dep = self._depends[file];
   return !!dep && !!dep.length;
 };
 
@@ -4974,14 +4974,14 @@ var _self = this;
  * @param {StringSet} provided_files
  */
 ClassDeps.prototype.remove_deps = function(file, provided_files){
-var _self = this;
-  _self._depends[file] = _self._depends[file].filter(
+var self = this;
+  self._depends[file] = self._depends[file].filter(
   /**
    * @param {string} dep
    * @param {number} i
    */
   function(dep, i){
-    return !provided_files.has(_self._where[dep]);
+    return !provided_files.has(self._where[dep]);
   });
 };
 
@@ -5035,7 +5035,7 @@ goog.provide('TypeDecoder');
  * @constructor
  */
 var TypeDecoder = function(pkg, type){
-var _self = this;
+var self = this;
   /**
    * @type {!Package}
    * @private
@@ -5051,14 +5051,14 @@ var _self = this;
    * @private
    */
   this._decoded = ('');
-  _self._process();
+  self._process();
 };
 TypeDecoder.prototype._classname = 'TypeDecoder';
 
 /** @private */
 TypeDecoder.prototype._process = function(){
-var _self = this;
-  _self._decoded = _self._pkg.replace_str(_self._type);
+var self = this;
+  self._decoded = self._pkg.replace_str(self._type);
   [
     ['\\bb\\b', 'boolean'],
     ['\\bf\\b', 'function'],
@@ -5070,20 +5070,20 @@ var _self = this;
   ].forEach(
   /** @param {string} re_type */
   function(re_type){
-    _self._decoded = _self._decoded.replace(new RegExp(re_type[0], 'g'), re_type[1]);
+    self._decoded = self._decoded.replace(new RegExp(re_type[0], 'g'), re_type[1]);
   });
 };
 
 /** @return {string} */
 TypeDecoder.prototype.output = function(){
-var _self = this;
-  return _self._decoded;
+var self = this;
+  return self._decoded;
 };
 goog.provide('TypeSet');
 
 /** @constructor */
 var TypeSet = function(){
-var _self = this;
+var self = this;
   /**
    * @type {CallableType}
    * @private
@@ -5107,10 +5107,10 @@ TypeSet.prototype._classname = 'TypeSet';
  * @return {CallableType}
  */
 TypeSet.prototype.add_ctor = function(name){
-var _self = this;
-  _self._ctor = new CallableType(name);
-  _self._classes.push(_self._ctor);
-  return _self._ctor;
+var self = this;
+  self._ctor = new CallableType(name);
+  self._classes.push(self._ctor);
+  return self._ctor;
 };
 
 /**
@@ -5118,42 +5118,42 @@ var _self = this;
  * @return {CallableType}
  */
 TypeSet.prototype.add_funct = function(name){
-var _self = this;
+var self = this;
   var fn;
   fn = new CallableType(name);
-  _self._functs.push(fn);
+  self._functs.push(fn);
   return fn;
 };
 
 /** @return {CallableType} */
 TypeSet.prototype.get_current_ctor = function(){
-var _self = this;
-  return _self._ctor;
+var self = this;
+  return self._ctor;
 };
 
 /** @param {string} parent_name */
 TypeSet.prototype.set_parent = function(parent_name){
-var _self = this;
-  if (!_self._ctor){
+var self = this;
+  if (!self._ctor){
     throw 'set parent called w/o ctor.';
   }
-  _self._ctor.set_parent(parent_name);
+  self._ctor.set_parent(parent_name);
 };
 
 /** @return {Object} */
 TypeSet.prototype.extract = function(){
-var _self = this;
+var self = this;
   var obj;
   obj = {};
-  if (_self._classes){
-    obj['cls'] = _self._classes.map(
+  if (self._classes){
+    obj['cls'] = self._classes.map(
     /** @param {TypeSet} cls */
     function(cls){
       return cls.extract();
     });
   }
-  if (_self._functs){
-    obj['fns'] = _self._functs.map(
+  if (self._functs){
+    obj['fns'] = self._functs.map(
     /** @param {CallableType} fn */
     function(fn){
       return fn.extract();
@@ -5304,7 +5304,7 @@ Container and interface of the TokenList to the rest of the converter.
  * @constructor
  */
 parser.Result = function(tokens, input){
-var _self = this;
+var self = this;
   /**
    * @type {parser.TokenList}
    * @private
@@ -5326,47 +5326,47 @@ return this._tokens;
 /** @type {Array.<parser.BlockMarker|string>} */
 parser.Result.prototype.code;
 parser.Result.prototype.__defineGetter__('code', function() {
-var _self = this;
-  return _self._tokens.list;
+var self = this;
+  return self._tokens.list;
 });
 
 /** @type {Array.<string>} */
 parser.Result.prototype.prev_lines;
 parser.Result.prototype.__defineGetter__('prev_lines', function() {
-var _self = this;
-  return _self._tokens.prev_lines;
+var self = this;
+  return self._tokens.prev_lines;
 });
 
 /** @type {Array.<string>} */
 parser.Result.prototype.next_lines;
 parser.Result.prototype.__defineGetter__('next_lines', function() {
-var _self = this;
-  return _self._tokens.next_lines;
+var self = this;
+  return self._tokens.next_lines;
 });
 
 /** @type {Array.<string>} */
 parser.Result.prototype.tail_comment;
 parser.Result.prototype.__defineGetter__('tail_comment', function() {
-var _self = this;
-  return _self._tokens.next_lines;
+var self = this;
+  return self._tokens.next_lines;
 });
 
 /** @return {Array.<string>} */
 parser.Result.prototype.rendered = function(){
-var _self = this;
+var self = this;
   var lines;
   lines = [];
-  _self._tokens.prev_lines.map(
+  self._tokens.prev_lines.map(
   /** @param {parser.TokenList|string} line */
   function(line){
     lines.push(line.toString());
   });
   var code_line;
-  code_line = _self._tokens.toString();
+  code_line = self._tokens.toString();
   if (code_line){
     lines.push(code_line);
   }
-  _self._tokens.next_lines.map(
+  self._tokens.next_lines.map(
   /** @param {parser.TokenList|string} line */
   function(line){
     lines.push(line.toString());
@@ -5388,7 +5388,7 @@ Specific for a particular target (i.e. rule).
  * @constructor
  */
 parser.Target = function(rule){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -5404,7 +5404,7 @@ parser.Target.prototype._classname = 'parser.Target';
  * @return {?parser.Result}
  */
 parser.Target.prototype.run = function(input, opt_xformer, show_error_line){
-var _self = this;
+var self = this;
   /**
    * @type {LineTransformer}
    * @private
@@ -5422,12 +5422,12 @@ var _self = this;
   }).join('\n');
   try{
     var result;
-    result = _parser.parse(lines, _self._rule);
+    result = _parser.parse(lines, self._rule);
   }
   catch (e){
     if (show_error_line){
       // TODO: make this display multi-line right.
-      console.error('[FAIL] error for ' + _self._rule);
+      console.error('[FAIL] error for ' + self._rule);
       console.error('I: ' + lines);
       var sp;
       sp = '   ';
@@ -5443,7 +5443,7 @@ var _self = this;
   }
   var b;
   b = new parser.TokenListBuilder(result);
-  b.xformer = _self._xformer;
+  b.xformer = self._xformer;
   return b.result(input);
 };
 goog.provide('parser.BlockMarker');
@@ -5455,7 +5455,7 @@ goog.provide('parser.ParamLine');
  * @constructor
  */
 parser.BlockMarker = function(type){
-var _self = this;
+var self = this;
   // one character string.
   // a: array.
   // o: object.
@@ -5476,8 +5476,8 @@ return this._type;
 
 /** @return {string} */
 parser.BlockMarker.prototype.toString = function(){
-var _self = this;
-  return '|#' + _self._type + '|';
+var self = this;
+  return '|#' + self._type + '|';
 };
 
 
@@ -5486,7 +5486,7 @@ var _self = this;
  * @constructor
  */
 parser.TokenList = function(orig){
-var _self = this;
+var self = this;
   /**
    * @type {Array.<parser.BlockMarker|string>}
    * @private
@@ -5556,17 +5556,17 @@ this._params = value;
 /** @type {boolean} */
 parser.TokenList.prototype.is_empty;
 parser.TokenList.prototype.__defineGetter__('is_empty', function() {
-var _self = this;
-  if (_self._prev_lines.length || _self._next_lines.length){
+var self = this;
+  if (self._prev_lines.length || self._next_lines.length){
     return false;
   }
-  if (!_self._list.length){
+  if (!self._list.length){
     return true;
   }
-  if (_self._list.length >= 2){
+  if (self._list.length >= 2){
     return false;
   }
-  return !(_self._list[0] instanceof parser.BlockMarker) && _self._list[0] == '';
+  return !(self._list[0] instanceof parser.BlockMarker) && self._list[0] == '';
 });
 
 /**
@@ -5574,7 +5574,7 @@ var _self = this;
  * @return {parser.TokenList}
  */
 parser.TokenList.prototype.add = function(args){
-var _self = this;
+var self = this;
   var i;
   i = 0;
   for (; i < arguments.length; i++){
@@ -5586,17 +5586,17 @@ var _self = this;
       arg.list.forEach(
       /** @param {parser.BlockMarker|string} token */
       function(token){
-        _self.add(token);
+        self.add(token);
       });
       arg.prev_lines.forEach(
       /** @param {string} l */
       function(l){
-        _self._prev_lines.push(l);
+        self._prev_lines.push(l);
       });
       arg.next_lines.forEach(
       /** @param {string} l */
       function(l){
-        _self._next_lines.push(l);
+        self._next_lines.push(l);
       });
       continue;
     }
@@ -5604,27 +5604,27 @@ var _self = this;
       arg.forEach(
       /** @param {Array} token */
       function(token){
-        _self.add(token);
+        self.add(token);
       });
       continue;
     }
 
     // Always append a marker.
     if (arg instanceof parser.BlockMarker){
-      _self._list.push(arg);
+      self._list.push(arg);
       continue;
     }
 
     // Should be a string. Append only if we can't add to the last element.
     var last;
-    last = _self._list.length - 1;
-    if (!_self._list.length || _self._list[last] instanceof parser.BlockMarker){
-      _self._list.push(arg);
+    last = self._list.length - 1;
+    if (!self._list.length || self._list[last] instanceof parser.BlockMarker){
+      self._list.push(arg);
       continue;
     }
-    _self._list[last] += arg;
+    self._list[last] += arg;
   }
-  return _self;
+  return self;
 };
 
 /**
@@ -5632,30 +5632,30 @@ var _self = this;
  * @return {parser.TokenList}
  */
 parser.TokenList.prototype.prepend = function(line){
-var _self = this;
+var self = this;
   if (line instanceof parser.TokenList){
-    _self._prev_lines = _self._prev_lines.concat(line.prev_lines);
-    _self._next_lines = _self._next_lines.concat(line.next_lines);
+    self._prev_lines = self._prev_lines.concat(line.prev_lines);
+    self._next_lines = self._next_lines.concat(line.next_lines);
   }
-  _self._prev_lines.push(line.toString());
-  return _self;
+  self._prev_lines.push(line.toString());
+  return self;
 };
 
 /** @param {parser.TokenList|string} line */
 parser.TokenList.prototype.append = function(line){
-var _self = this;
+var self = this;
   if (line instanceof parser.TokenList){
-    _self._prev_lines = _self._prev_lines.concat(line.prev_lines);
-    _self._next_lines = _self._next_lines.concat(line.next_lines);
+    self._prev_lines = self._prev_lines.concat(line.prev_lines);
+    self._next_lines = self._next_lines.concat(line.next_lines);
   }
-  _self._next_lines.push(line.toString());
-  return _self;
+  self._next_lines.push(line.toString());
+  return self;
 };
 
 /** @return {string} */
 parser.TokenList.prototype.toString = function(){
-var _self = this;
-  return _self._list.join('');
+var self = this;
+  return self._list.join('');
 };
 
 
@@ -5670,7 +5670,7 @@ var _self = this;
  * @extends {parser.TokenList}
  */
 parser.ParamLine = function(name, is_member, access, type, marker, init){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -5738,17 +5738,17 @@ return this._init;
 
 /** @return {string} */
 parser.ParamLine.prototype.toString = function(){
-var _self = this;
+var self = this;
   var list;
   list = [
-    _self._is_member ? '@' : '',
-    _self._name,
-    _self._access,
-    _self._type,
-    _self._marker
+    self._is_member ? '@' : '',
+    self._name,
+    self._access,
+    self._type,
+    self._marker
   ];
   var init_str;
-  init_str = _self._init.toString();
+  init_str = self._init.toString();
   if (init_str){
     list.push(' ' + init_str);
   }
@@ -5763,7 +5763,7 @@ goog.provide('parser.ParamLineBuilder');
  * @constructor
  */
 parser.TokenListBuilder = function(parsed, opt_xformer){
-var _self = this;
+var self = this;
   /**
    * @type {parser.TokenList|Array|Object|string}
    * @private
@@ -5792,12 +5792,12 @@ this._xformer = value;
 
 /** @return {parser.TokenList} */
 parser.TokenListBuilder.prototype.build = function(){
-var _self = this;
-  if (!_self._tokens){
-    _self._tokens = new parser.TokenList();
-    _self._build_rec(_self._parsed);
+var self = this;
+  if (!self._tokens){
+    self._tokens = new parser.TokenList();
+    self._build_rec(self._parsed);
   }
-  return _self._tokens;
+  return self._tokens;
 };
 
 /**
@@ -5805,9 +5805,9 @@ var _self = this;
  * @return {parser.Result}
  */
 parser.TokenListBuilder.prototype.result = function(input){
-var _self = this;
-  _self.build();
-  return new parser.Result(_self._tokens, input);
+var self = this;
+  self.build();
+  return new parser.Result(self._tokens, input);
 };
 
 /**
@@ -5815,25 +5815,25 @@ var _self = this;
  * @private
  */
 parser.TokenListBuilder.prototype._build_rec = function(data){
-var _self = this;
+var self = this;
   if (data instanceof parser.TokenList){
-    _self._add_tokens(data);
+    self._add_tokens(data);
     return;
   }
 
   if (data instanceof Array){
-    _self._add_array(data);
+    self._add_array(data);
     return;
   }
 
   if (data instanceof Object){
-    _self._add_object(data);
+    self._add_object(data);
     return;
   }
 
   // Must be a string.
   if (data){
-    _self._tokens.add(data);
+    self._tokens.add(data);
   }
 };
 
@@ -5842,8 +5842,8 @@ var _self = this;
  * @private
  */
 parser.TokenListBuilder.prototype._add_tokens = function(data){
-var _self = this;
-  _self._tokens.add(data);
+var self = this;
+  self._tokens.add(data);
 };
 
 /**
@@ -5851,11 +5851,11 @@ var _self = this;
  * @private
  */
 parser.TokenListBuilder.prototype._add_array = function(data){
-var _self = this;
+var self = this;
   data.forEach(
   /** @param {parser.TokenList|Array|Object|string} elem */
   function(elem){
-    _self._build_rec(elem);
+    self._build_rec(elem);
   });
 };
 
@@ -5864,7 +5864,7 @@ var _self = this;
  * @private
  */
 parser.TokenListBuilder.prototype._add_object = function(data){
-var _self = this;
+var self = this;
   if (data.g){
     var p;
     p = data.params;
@@ -5873,63 +5873,63 @@ var _self = this;
       // Current package ref.
       var str;
       str = p['percents'] + '.' + p.name;
-      _self._tokens.add(_self.xformer ? _self.xformer.pkg_ref(str) : str);
+      self._tokens.add(self.xformer ? self.xformer.pkg_ref(str) : str);
       break;
 
       case 'e':;
       // Parent call.
-      _self._tokens.add(_self.xformer ? _self.xformer.parent_call(
-        new parser.TokenListBuilder(p.args, _self.xformer).build().toString()
+      self._tokens.add(self.xformer ? self.xformer.parent_call(
+        new parser.TokenListBuilder(p.args, self.xformer).build().toString()
       ) : ['%(', p.args, ')']);
       break;
 
       case 'm':;
       // Marker.
-      _self._tokens.add(new parser.BlockMarker(p.type));
+      self._tokens.add(new parser.BlockMarker(p.type));
       break;
 
       case 'p':;
       // Param line.
       var t;
-      t = _self._tokens;
-      _self._tokens = new parser.ParamLine(
+      t = self._tokens;
+      self._tokens = new parser.ParamLine(
         p.name,
         p.member,
         p.access,
-        new parser.ParamLineBuilder(p.type, _self.xformer).build().toString(),
+        new parser.ParamLineBuilder(p.type, self.xformer).build().toString(),
         p.marker,
-        new parser.TokenListBuilder(p.init, _self.xformer).build()
+        new parser.TokenListBuilder(p.init, self.xformer).build()
       );
-      _self._tokens.add(t);
+      self._tokens.add(t);
       break;
 
       case 's':;
       // Separator line.
-      _self._tokens.grammar = 's';
+      self._tokens.grammar = 's';
       break;
 
       case 't':;
       // Type literal.
-      _self.add_type_object(p);
+      self.add_type_object(p);
       break;
     }
   }
 
   if (data.t){
-    _self._tokens.add(new parser.TokenListBuilder(data.t, _self.xformer).build());
+    self._tokens.add(new parser.TokenListBuilder(data.t, self.xformer).build());
   }
   if (data.p){
-    _self._tokens.prepend(new parser.TokenListBuilder(data.p, _self.xformer).build());
+    self._tokens.prepend(new parser.TokenListBuilder(data.p, self.xformer).build());
   }
   if (data.a){
-    _self._tokens.append(new parser.TokenListBuilder(data.a, _self.xformer).build());
+    self._tokens.append(new parser.TokenListBuilder(data.a, self.xformer).build());
   }
 };
 
 /** @param {Object} params */
 parser.TokenListBuilder.prototype.add_type_object = function(params){
-var _self = this;
-  _self._tokens.add(_self.xformer ? _self.xformer.cast(params.type) : params.tokens);
+var self = this;
+  self._tokens.add(self.xformer ? self.xformer.cast(params.type) : params.tokens);
 };
 
 
@@ -5940,7 +5940,7 @@ var _self = this;
  * @extends {parser.TokenListBuilder}
  */
 parser.ParamLineBuilder = function(parsed, xformer){
-var _self = this;
+var self = this;
   parser.TokenListBuilder.call(this, parsed, xformer);
 };
 goog.inherits(parser.ParamLineBuilder, parser.TokenListBuilder);
@@ -5948,8 +5948,8 @@ parser.ParamLineBuilder.prototype._classname = 'parser.ParamLineBuilder';
 
 /** @param {Object} params */
 parser.ParamLineBuilder.prototype.add_type_object = function(params){
-var _self = this;
-  _self._tokens.add(_self.xformer ? _self.xformer.type(params.type) : params.tokens);
+var self = this;
+  self._tokens.add(self.xformer ? self.xformer.type(params.type) : params.tokens);
 };
 goog.provide('CodeLine');
 
@@ -5964,7 +5964,7 @@ goog.provide('CodeLine');
  * @extends {SectionHead}
  */
 var CodeLine = function(context, input, line_parsed){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -6029,74 +6029,74 @@ this._param = value;
 /** @type {string} */
 CodeLine.prototype.str;
 CodeLine.prototype.__defineGetter__('str', function() {
-var _self = this;
-  return _self._input.line;
+var self = this;
+  return self._input.line;
 });
 
 /** @type {number} */
 CodeLine.prototype.indent;
 CodeLine.prototype.__defineGetter__('indent', function() {
-var _self = this;
-  return _self._line_parsed.indent;
+var self = this;
+  return self._line_parsed.indent;
 });
 
 /** @type {boolean} */
 CodeLine.prototype.is_continuation;
 CodeLine.prototype.__defineGetter__('is_continuation', function() {
-var _self = this;
-  return _self._line_parsed.is_continuation;
+var self = this;
+  return self._line_parsed.is_continuation;
 });
 
 /** @type {boolean} */
 CodeLine.prototype.is_block_statement;
 CodeLine.prototype.__defineGetter__('is_block_statement', function() {
-var _self = this;
-  return _self._matcher.is_block_statement;
+var self = this;
+  return self._matcher.is_block_statement;
 });
 
 /** @type {parser.Result} */
 CodeLine.prototype.parsed;
 CodeLine.prototype.__defineGetter__('parsed', function() {
-var _self = this;
-  if (_self.is_continuation){
-    warn(_self._input, 'parse requested for cont. line');
+var self = this;
+  if (self.is_continuation){
+    warn(self._input, 'parse requested for cont. line');
   }
-  if (!_self._parsed){
+  if (!self._parsed){
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine');
-    _self._parsed = CODE_PARSER.run(
-      [_self._input].concat(_self._continue_lines),
-      new LineTransformer(_self._context, _self._input),
+    self._parsed = CODE_PARSER.run(
+      [self._input].concat(self._continue_lines),
+      new LineTransformer(self._context, self._input),
       true
     );
   }
-  return _self._parsed;
+  return self._parsed;
 });
 
 CodeLine.prototype.transform = function(){
-var _self = this;
+var self = this;
   var code;
-  code = (_self._param && _self._param !== true && _self._param.value_line) || _self.parsed.code;
+  code = (self._param && self._param !== true && self._param.value_line) || self.parsed.code;
 
-  _self._matcher = new BlockMatcher(_self._context, _self._input, code, _self.blocks);
-  _self._matcher.transform();
+  self._matcher = new BlockMatcher(self._context, self._input, code, self.blocks);
+  self._matcher.transform();
 };
 
 /** @return {LineOutput} */
 CodeLine.prototype.output = function(){
-var _self = this;
+var self = this;
   var out;
-  out = new LineOutput(_self._input);
-  if (_self._param === true){
+  out = new LineOutput(self._input);
+  if (self._param === true){
     return out;
   }
 
-  out.append_lines(_self.parsed.prev_lines.map(
+  out.append_lines(self.parsed.prev_lines.map(
   /** @param {string} line */
   function(line){
     return line + ';';
   }));
-  out.append_lines(_self._matcher.first_line());
-  _self._matcher.each_fragment(
+  out.append_lines(self._matcher.first_line());
+  self._matcher.each_fragment(
   /**
    * @param {IndentBlock} block
    * @param {Array.<string>} tail_code
@@ -6105,10 +6105,10 @@ var _self = this;
     out.append_block(block.output());
     out.append_lines(tail_code);
   });
-  if (_self._param){
-    _self._param.output_init(out);
+  if (self._param){
+    self._param.output_init(out);
   }
-  _self.parsed.tail_comment.forEach(
+  self.parsed.tail_comment.forEach(
   /** @param {string} comment */
   function(comment){
     out.tail_comment.push(comment);
@@ -6122,7 +6122,7 @@ goog.provide('CodeSection');
  * @extends {SectionHead}
  */
 var CodeSection = function(){
-var _self = this;
+var self = this;
   /**
    * @type {Array.<InputLine>}
    * @private
@@ -6146,12 +6146,12 @@ abstract method.
 */
 /** @param {!Package=} pkg */
 CodeSection.prototype.close = function(pkg){
-var _self = this;
+var self = this;
 };
 
 /** @param {TypeSet} types */
 CodeSection.prototype.set_type = function(types){
-var _self = this;
+var self = this;
 };
 goog.provide('MultiLineStr');
 
@@ -6161,7 +6161,7 @@ goog.provide('MultiLineStr');
  * @extends {CodeSection}
  */
 var MultiLineStr = function(context){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -6187,10 +6187,10 @@ same number of strings as @.lines.
 */
 /** @return {Array.<string>} */
 MultiLineStr.prototype.strlines = function(){
-var _self = this;
+var self = this;
   var result;
   result = [];
-  _self.lines.forEach(
+  self.lines.forEach(
   /** @param {InputLine} line */
   function(line){
     if (line.is_blank){
@@ -6198,25 +6198,25 @@ var _self = this;
       result.push('');
       return;
     }
-    if (_self._indent < 0){
-      _self._indent = line.indent;
+    if (self._indent < 0){
+      self._indent = line.indent;
     }
-    else if (line.indent < _self._indent){
+    else if (line.indent < self._indent){
       warn(line, 'inconsistent indentation');
       return;
     }
-    result.push(line.line.substr(_self._indent));
+    result.push(line.line.substr(self._indent));
   });
   return result;
 };
 
 /** @return {Array.<LineOutput>} */
 MultiLineStr.prototype.output = function(){
-var _self = this;
+var self = this;
   var lines;
-  lines = _self.strlines();
+  lines = self.strlines();
   return [
-    _self._context.name.decl() + ' =',
+    self._context.name.decl() + ' =',
     lines.map(
     /**
      * @param {string} line
@@ -6224,8 +6224,8 @@ var _self = this;
      */
     function(line, i){
       var out;
-      out = new LineOutput(_self.lines[i]);
-      out.indent = _self._indent;
+      out = new LineOutput(self.lines[i]);
+      out.indent = self._indent;
       out.append_line("'" + line + "\\n'" + (i == lines.length - 1 ? ';' : ' +'));
       return out;
     })
@@ -6238,7 +6238,7 @@ goog.provide('NativeCode');
  * @extends {CodeSection}
  */
 var NativeCode = function(){
-var _self = this;
+var self = this;
   CodeSection.call(this);
 };
 goog.inherits(NativeCode, CodeSection);
@@ -6246,8 +6246,8 @@ NativeCode.prototype._classname = 'NativeCode';
 
 /** @return {Array.<LineOutput>} */
 NativeCode.prototype.output = function(){
-var _self = this;
-  return _self.lines.map(
+var self = this;
+  return self.lines.map(
   /** @param {InputLine} line */
   function(line){
     var out;
@@ -6263,7 +6263,7 @@ goog.provide('Runnable');
  * @extends {CodeSection}
  */
 var Runnable = function(){
-var _self = this;
+var self = this;
   CodeSection.call(this);
 };
 goog.inherits(Runnable, CodeSection);
@@ -6271,21 +6271,21 @@ Runnable.prototype._classname = 'Runnable';
 
 /** @override */
 Runnable.prototype.close = function(pkg){
-var _self = this;
+var self = this;
   var c;
-  c = new CodeScope(new Context(pkg || new Package('')), _self);
-  c.process(_self.lines);
+  c = new CodeScope(new Context(pkg || new Package('')), self);
+  c.process(self.lines);
 };
 
 /** @override */
 Runnable.prototype.transform = function(){
-var _self = this;
+var self = this;
   assert(
-    _self.num_blocks() == 1,
-    _self.lines[0],
-    'Runnable has ' + _self.num_blocks() + ' blocks'
+    self.num_blocks() == 1,
+    self.lines[0],
+    'Runnable has ' + self.num_blocks() + ' blocks'
   );
-  _self.block(0).transform();
+  self.block(0).transform();
 };
 
 /**
@@ -6293,11 +6293,11 @@ var _self = this;
  * @return {Array.<LineOutput>}
  */
 Runnable.prototype.output_body = function(block_suffix){
-var _self = this;
+var self = this;
   var lines;
   lines = [];
   var body_lines;
-  body_lines = _self.last_block().output();
+  body_lines = self.last_block().output();
   if (block_suffix){
     body_lines.suffix = block_suffix;
   }
@@ -6313,7 +6313,7 @@ goog.provide('AnonymousScope');
  * @extends {Runnable}
  */
 var AnonymousScope = function(){
-var _self = this;
+var self = this;
   Runnable.call(this);
 };
 goog.inherits(AnonymousScope, Runnable);
@@ -6321,8 +6321,8 @@ AnonymousScope.prototype._classname = 'AnonymousScope';
 
 /** @return {Array} */
 AnonymousScope.prototype.output = function(){
-var _self = this;
-  return ['(function() {', _self.output_body('})();')];
+var self = this;
+  return ['(function() {', self.output_body('})();')];
 };
 goog.provide('Callable');
 
@@ -6333,7 +6333,7 @@ goog.provide('Callable');
  * @extends {Runnable}
  */
 var Callable = function(context, return_type){
-var _self = this;
+var self = this;
   /**
    * @type {!Context}
    * @private
@@ -6374,36 +6374,36 @@ this._params = value;
 
 /** @return {string} */
 Callable.prototype.name = function(){
-var _self = this;
-  return _self._context.name.ref();
+var self = this;
+  return self._context.name.ref();
 };
 
 /** @override */
 Callable.prototype.close = function(pkg){
-var _self = this;
+var self = this;
   var c;
-  c = new CodeScope(_self._context, _self);
-  c.process(_self.lines);
+  c = new CodeScope(self._context, self);
+  c.process(self.lines);
 };
 
 /** @override */
 Callable.prototype.transform = function(){
-var _self = this;
+var self = this;
   assert(
-    _self.num_blocks() == 1,
-    _self.lines[0],
-    'callable takes 1 block -- found ' + _self.num_blocks()
+    self.num_blocks() == 1,
+    self.lines[0],
+    'callable takes 1 block -- found ' + self.num_blocks()
   );
-  _self._params = new ParamSet(_self._context, _self.block(0));
-  _self._params.transform();
-  _self._params.set_return_type(_self._return_type);
-  _self.block(0).transform();
+  self._params = new ParamSet(self._context, self.block(0));
+  self._params.transform();
+  self._params.set_return_type(self._return_type);
+  self.block(0).transform();
 };
 
 /** @return {string} */
 Callable.prototype.output_func = function(){
-var _self = this;
-  return _self._context.name.decl() + ' = function(' + _self._params.output_params() + '){';
+var self = this;
+  return self._context.name.decl() + ' = function(' + self._params.output_params() + '){';
 };
 goog.provide('GlobalCode');
 
@@ -6412,7 +6412,7 @@ goog.provide('GlobalCode');
  * @extends {Runnable}
  */
 var GlobalCode = function(){
-var _self = this;
+var self = this;
   Runnable.call(this);
 };
 goog.inherits(GlobalCode, Runnable);
@@ -6420,8 +6420,8 @@ GlobalCode.prototype._classname = 'GlobalCode';
 
 /** @return {Array} */
 GlobalCode.prototype.output = function(){
-var _self = this;
-  return _self.output_body('');
+var self = this;
+  return self.output_body('');
 };
 goog.provide('Typedef');
 
@@ -6431,7 +6431,7 @@ goog.provide('Typedef');
  * @extends {MultiLineStr}
  */
 var Typedef = function(context){
-var _self = this;
+var self = this;
   MultiLineStr.call(this, context);
 };
 goog.inherits(Typedef, MultiLineStr);
@@ -6439,15 +6439,15 @@ Typedef.prototype._classname = 'Typedef';
 
 /** @return {Array.<LineOutput>} */
 Typedef.prototype.output = function(){
-var _self = this;
+var self = this;
   var decoder;
-  decoder = new TypeDecoder(_self.context.pkg, _self.strlines().join(''));
+  decoder = new TypeDecoder(self.context.pkg, self.strlines().join(''));
   var out;
-  out = new LineOutput(_self.lines[0]);
+  out = new LineOutput(self.lines[0]);
   out.indent = 0;
   out.append_lines([
     doc_lines(['@typedef {' + decoder.output() + '}']),
-    _self.context.name.decl() + ';'
+    self.context.name.decl() + ';'
   ]);
   return [out];
 };
@@ -6460,7 +6460,7 @@ goog.provide('Constructor');
  * @extends {Callable}
  */
 var Constructor = function(context, opt_parent){
-var _self = this;
+var self = this;
   /**
    * @type {string?}
    * @private
@@ -6468,58 +6468,58 @@ var _self = this;
   this._parent = opt_parent === undefined ? (null) : opt_parent;
   context.is_ctor = true;
   Callable.call(this, context, '');
-  _self._parent = _self._parent ? _self.context.pkg.replace(_self._parent) : '';
+  self._parent = self._parent ? self.context.pkg.replace(self._parent) : '';
 };
 goog.inherits(Constructor, Callable);
 Constructor.prototype._classname = 'Constructor';
 
 /** @return {string} */
 Constructor.prototype.parent_name = function(){
-var _self = this;
-  return /** @type {string} */(_self._parent);
+var self = this;
+  return /** @type {string} */(self._parent);
 };
 
 /** @override */
 Constructor.prototype.transform = function(){
-var _self = this;
-  assert(_self.num_blocks() == 1, _self.lines[0]);
-  _self.params = new ParamSet(_self.context, _self.block(0), true);
-  _self.params.transform();
-  _self.block(0).transform();
+var self = this;
+  assert(self.num_blocks() == 1, self.lines[0]);
+  self.params = new ParamSet(self.context, self.block(0), true);
+  self.params.transform();
+  self.block(0).transform();
 };
 
 /** @return {Array} */
 Constructor.prototype.output = function(){
-var _self = this;
+var self = this;
   var decl;
-  decl = _self.params.output_decls();
+  decl = self.params.output_decls();
   decl.push('@constructor');
   var inherit;
   inherit = [];
-  if (_self._parent){
-    decl.push('@extends {' + _self._parent + '}');
-    inherit.push('goog.inherits(' + _self.context.name.ref() + ', ' + _self._parent + ');');
+  if (self._parent){
+    decl.push('@extends {' + self._parent + '}');
+    inherit.push('goog.inherits(' + self.context.name.ref() + ', ' + self._parent + ');');
   }
   return [
     doc_lines(decl),
-    _self.output_func(),
+    self.output_func(),
     'var self = this;',
-    _self.output_body('};'),
+    self.output_body('};'),
     inherit,
     [
-      _self.context.name.property('_classname').decl(),
+      self.context.name.property('_classname').decl(),
       " = '",
-      _self.context.name.ref(),
+      self.context.name.ref(),
       "';"
     ].join(''),
-    _self.context.cls.output_accessors()
+    self.context.cls.output_accessors()
   ];
 };
 
 /** @override */
 Constructor.prototype.set_type = function(types){
-var _self = this;
-  _self.params.set_argtypes(types.get_current_ctor());
+var self = this;
+  self.params.set_argtypes(types.get_current_ctor());
 };
 goog.provide('GlobalFunction');
 
@@ -6530,7 +6530,7 @@ goog.provide('GlobalFunction');
  * @extends {Callable}
  */
 var GlobalFunction = function(context, return_type){
-var _self = this;
+var self = this;
   Callable.call(this, context, return_type);
 };
 goog.inherits(GlobalFunction, Callable);
@@ -6538,18 +6538,18 @@ GlobalFunction.prototype._classname = 'GlobalFunction';
 
 /** @return {Array} */
 GlobalFunction.prototype.output = function(){
-var _self = this;
+var self = this;
   return [
-    doc_lines(_self.params.output_decls()),
-    _self.output_func(),
-    _self.output_body('};')
+    doc_lines(self.params.output_decls()),
+    self.output_func(),
+    self.output_body('};')
   ];
 };
 
 /** @override */
 GlobalFunction.prototype.set_type = function(types){
-var _self = this;
-  _self.params.set_argtypes(types.add_funct(_self.context.name.ref()));
+var self = this;
+  self.params.set_argtypes(types.add_funct(self.context.name.ref()));
 };
 goog.provide('Method');
 
@@ -6561,7 +6561,7 @@ goog.provide('Method');
  * @extends {Callable}
  */
 var Method = function(context, return_type, overriding){
-var _self = this;
+var self = this;
   /**
    * @type {boolean}
    * @private
@@ -6575,31 +6575,31 @@ Method.prototype._classname = 'Method';
 
 /** @return {Array} */
 Method.prototype.output = function(){
-var _self = this;
+var self = this;
   var decls;
   decls = [];
-  if (_self._overriding){
+  if (self._overriding){
     decls = ['@override'];
   }
   else{
-    decls = _self.params.output_decls();
+    decls = self.params.output_decls();
   }
-  if (/^_/.test(_self.context.name.id)){
+  if (/^_/.test(self.context.name.id)){
     decls.push('@private');
   }
   return [
     doc_lines(decls),
-    _self.output_func(),
+    self.output_func(),
     'var self = this;',
-    _self.output_body('};')
+    self.output_body('};')
   ];
 };
 
 /** @override */
 Method.prototype.set_type = function(types){
-var _self = this;
-  _self.params.set_argtypes(
-    types.get_current_ctor().add_method(_self.context.name.id)
+var self = this;
+  self.params.set_argtypes(
+    types.get_current_ctor().add_method(self.context.name.id)
   );
 };
 goog.provide('OverridingAccessor');
@@ -6613,7 +6613,7 @@ goog.provide('OverridingAccessor');
  * @extends {Callable}
  */
 var OverridingAccessor = function(context, name, return_type, is_getter){
-var _self = this;
+var self = this;
   /**
    * @type {string}
    * @private
@@ -6632,30 +6632,30 @@ OverridingAccessor.prototype._classname = 'OverridingAccessor';
 
 /** @return {Array} */
 OverridingAccessor.prototype.output = function(){
-var _self = this;
+var self = this;
   var member;
-  member = _self.context.cls.member(_self._name);
+  member = self.context.cls.member(self._name);
   // TODO: error if there is member and we have param or return type specified to the
   // accessor.
   // TODO: error if there is no member, but there are both getter and setter, and their param
   // and return type do not match. also error if the setter takes more than one param.
   if (!member){
     // accessor with no corresponding member. use the given param and return types.
-    member = _self.context.cls.add_member(
-      _self._name,
-      new TypeDecoder(_self.context.pkg, _self.return_type),
+    member = self.context.cls.add_member(
+      self._name,
+      new TypeDecoder(self.context.pkg, self.return_type),
       '&',
       true
     );
   }
   var class_name;
-  class_name = _self.context.cls.name();
+  class_name = self.context.cls.name();
   return [
     member.output_decl(class_name),
-    member.output_accessor(class_name, _self._is_getter, [
+    member.output_accessor(class_name, self._is_getter, [
       'var self = this;',
-      _self.output_body('')
-    ], _self.params)
+      self.output_body('')
+    ], self.params)
   ];
 };
 
