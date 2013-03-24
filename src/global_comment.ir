@@ -10,7 +10,7 @@ comment section in a file.
     line\InputLine\$
     switch state
       // starting state -- output all the blank lines as is.
-      case 's':
+      case 's'
       if !line.is_blank
         // first non-blank.
         result.push(buffer)
@@ -19,13 +19,13 @@ comment section in a file.
       break
 
       // in non-blank line section.
-      case 'n':
+      case 'n'
       if line.is_blank
         state = 'a'
       break
 
       // blank line immediately following a non-blank.
-      case 'a':
+      case 'a'
       if line.is_blank
         // run of blank lines is long enough now. flush the comments.
         result.push(['/*', buffer.splice(0, buffer.length - 1), '*/'])
@@ -35,7 +35,7 @@ comment section in a file.
       break
 
       // b: blank line section.
-      case 'b':
+      case 'b'
       if !line.is_blank
         result.push(buffer)
         buffer = []
@@ -45,24 +45,24 @@ comment section in a file.
 
   switch state
     // still in the starting state.
-    case 's':
+    case 's'
     result.push(buffer)
     break
 
     // in non-blank line section.
-    case 'n':
+    case 'n'
     result.push(['/*', buffer, '*/'])
     break
 
     // one blank line immediately following a non-blank.
-    case 'a':
+    case 'a'
     // run of blank lines is long enough now. flush the comments.
     result.push(['/*', buffer.splice(0, buffer.length - 1), '*/'])
     result.push(buffer)
     break
 
     // b: blank line section.
-    case 'b':
+    case 'b'
     result.push(buffer)
     break
 

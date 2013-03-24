@@ -67,15 +67,15 @@ or
     =>
 
   switch @state
-    case 'i':
+    case 'i'
     @input.push(line)
     break
 
-    case 'o':
+    case 'o'
     @output.push(line)
     break
 
-    case '':
+    case ''
     if !/^\s*$/.test(line)
       console.warn(@filename + ' (line ' + index + ')? ' + line)
     break

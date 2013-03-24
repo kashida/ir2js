@@ -579,7 +579,7 @@ SwitchStatement
   = 'switch' _ expr:Expression { return ['switch (', expr, ')']; }
 
 CaseStatement
-  = 'case' _ selector:Expression _ ':'? { return ['case ', selector, ':']; }
+  = 'case' _ selector:Expression _ { return ['case ', selector, ':']; }
 
 DefaultStatement = 'default' { return 'default:'; }
 ThrowStatement = 'throw' __ Expression

@@ -47,21 +47,21 @@
   if data.g
     p := data.params
     switch data.g
-      case 'c': // Current package ref.
+      case 'c' // Current package ref.
       str := p['percents'] + '.' + p.name
       @tokens.add(@.xformer ? @.xformer.pkg_ref(str) : str)
       break
 
-      case 'e': // Parent call.
+      case 'e' // Parent call.
       @tokens.add(@.xformer ? @.xformer.parent_call(#) : ['%(', p.args, ')'])
         new %.TokenListBuilder(p.args, @.xformer).build().toString()
       break
 
-      case 'm': // Marker.
+      case 'm' // Marker.
       @tokens.add(new %.BlockMarker(p.type))
       break
 
-      case 'p': // Param line.
+      case 'p' // Param line.
       t := @tokens
       @tokens = new %.ParamLine(#)
         p.name
@@ -73,11 +73,11 @@
       @tokens.add(t)
       break
 
-      case 's': // Separator line.
+      case 's' // Separator line.
       @tokens.grammar = 's'
       break
 
-      case 't': // Type literal.
+      case 't' // Type literal.
       @.add_type_object(p)
       break
 

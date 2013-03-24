@@ -41,23 +41,23 @@
     => false
 
   switch mode
-    case ExecModes.COMPILE:
+    case ExecModes.COMPILE
     compile_files(basedir, inout_filenames)
     break
 
-    case ExecModes.SORT:
+    case ExecModes.SORT
     list := create_sorted_list(inout_filenames)
     switch reply
-      case ReplyModes.MSG:
+      case ReplyModes.MSG
       process.send(list)
       break
 
-      case ReplyModes.STDOUT:
+      case ReplyModes.STDOUT
       console.log(list.join(' '))
       break
     break
 
-    case ExecModes.ARGTYPE:
+    case ExecModes.ARGTYPE
     create_argtypes(basedir, inout_filenames)
     break
   process.exit(0)

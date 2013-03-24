@@ -4220,26 +4220,22 @@ parser.TokenListBuilder.prototype._add_object = function(data) {
     p = data.params;
     switch (data.g) {
       case 'c':;
-      // Current package ref.
       var str;
       str = p['percents'] + '.' + p.name;
       self._tokens.add(self.xformer ? self.xformer.pkg_ref(str) : str);
       break;
 
       case 'e':;
-      // Parent call.
       self._tokens.add(self.xformer ? self.xformer.parent_call(
         new parser.TokenListBuilder(p.args, self.xformer).build().toString()
       ) : ['%(', p.args, ')']);
       break;
 
       case 'm':;
-      // Marker.
       self._tokens.add(new parser.BlockMarker(p.type));
       break;
 
       case 'p':;
-      // Param line.
       var t;
       t = self._tokens;
       self._tokens = new parser.ParamLine(
@@ -4254,12 +4250,10 @@ parser.TokenListBuilder.prototype._add_object = function(data) {
       break;
 
       case 's':;
-      // Separator line.
       self._tokens.grammar = 's';
       break;
 
       case 't':;
-      // Type literal.
       self.add_type_object(p);
       break;
     }
