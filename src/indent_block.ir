@@ -14,7 +14,7 @@ TODO: change marker's type to BlockType when it's enum.
     ARRAY: 2
     PARAMS: 3
 
-  _BLOCK_OPEN := ['{', '{', '[', '(']
+  _BLOCK_OPEN := [' {', '{', '[', '(']
   _LINE_SUFFIX := [';', ',', ',', ',']
   _END_SUFFIX := [';', '', '', '']
   _BLOCK_CLOSE := ['}', '}', ']', ')']

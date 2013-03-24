@@ -94,7 +94,7 @@ if (xyz)
   bbb
   ccc
 #=
-if (xyz){
+if (xyz) {
   aaa;
   bbb;
   ccc;
@@ -108,7 +108,7 @@ do
   ccc
 while (xyz)
 #=
-do{
+do {
   aaa;
   bbb;
   ccc;
@@ -121,7 +121,7 @@ if (test)
   // comment.
   method(param)
 #=
-if (test){
+if (test) {
   // comment.
   method(param);
 }
@@ -133,10 +133,10 @@ if (test)
 else
   bbb
 #=
-if (test){
+if (test) {
   aaa;
 }
-else{
+else {
   bbb;
 }
 #}
@@ -149,7 +149,7 @@ if (xyz)
     line2
     line3
 #=
-if (xyz){
+if (xyz) {
   aaa;
   var a;
   a = func(
@@ -174,7 +174,7 @@ func(
  * @param {number} p1
  * @param {number} p2
  */
-function(p0, p1, p2){
+function(p0, p1, p2) {
   statement0;
   statement1;
 }, this);
@@ -205,7 +205,7 @@ a = [
  * @param {boolean} param0
  * @param {boolean} param1
  */
-function(param0, param1){
+function(param0, param1) {
   statement0;
   statement1;
 };

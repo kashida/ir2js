@@ -23,4 +23,4 @@
   @.block(0).transform()
 
 :output_func\s\
-  => @context.name.decl() + ' = function(' + @params.output_params() + '){'
+  => @context.name.decl() + ' = function(' + @params.output_params() + ') {'

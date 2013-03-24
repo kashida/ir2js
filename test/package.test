@@ -27,7 +27,7 @@
  * @constructor
  * @extends {abc.def.path.parent}
  */
-abc.def.classname = function(opt_param){
+abc.def.classname = function(opt_param) {
 var self = this;
   /**
    * @type {string}
@@ -40,7 +40,7 @@ goog.inherits(abc.def.classname, abc.def.path.parent);
 abc.def.classname.prototype._classname = 'abc.def.classname';
 
 /** @param {number} param */
-abc.def.classname.prototype.methodname = function(param){
+abc.def.classname.prototype.methodname = function(param) {
 var self = this;
   a(abc.def.something);
   goog.base(this, 'methodname', param, 0);
@@ -77,7 +77,7 @@ var self = this;
  * @param {Array.<abc.yet.another.type>=} opt_p1
  * @return {abc.def.some.type}
  */
-abc.def.func = function(p0, opt_p1){
+abc.def.func = function(p0, opt_p1) {
   var p1 = opt_p1 === undefined ? (global.value) : opt_p1;
 };
 {

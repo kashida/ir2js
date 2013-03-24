@@ -8,7 +8,7 @@
     c\s\? x
     =>
 #=
-function(){
+function() {
   aaa;
 
   /**
@@ -17,7 +17,7 @@ function(){
    * @param {string=} opt_c
    * @return {number}
    */
-  function(a, b, opt_c){
+  function(a, b, opt_c) {
     var c = opt_c === undefined ? (x) : opt_c;
     return;
   };
@@ -38,7 +38,7 @@ abc(
  * @param {string} param1
  * @return {number}
  */
-function(param0, param1){
+function(param0, param1) {
   body0;
   body1;
 });
@@ -60,7 +60,7 @@ abc(
  * @param {string=} opt_param2
  * @param {string=} opt_param3
  */
-function(opt_param0, opt_param1, opt_param2, opt_param3){
+function(opt_param0, opt_param1, opt_param2, opt_param3) {
   var param0 = opt_param0 === undefined ? (self._xyz) : opt_param0;
   var param1 = opt_param1 === undefined ? (param0.member) : opt_param1;
   var param2 = opt_param2 === undefined ? (param1.member) : opt_param2;

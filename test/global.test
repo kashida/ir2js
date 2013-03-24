@@ -39,7 +39,7 @@
  * @param {boolean=} opt_param1
  * @return {number}
  */
-var func_name = function(param0, opt_param1){
+var func_name = function(param0, opt_param1) {
   var param1 = opt_param1 === undefined ? (value) : opt_param1;
   var a;
   a = param0;
@@ -77,7 +77,7 @@ var func_name = function(param0, opt_param1){
  * @param {boolean=} opt_param1
  * @return {number}
  */
-var func_name = function(param0, opt_param1){
+var func_name = function(param0, opt_param1) {
   var param1 = opt_param1 === undefined ? (value) : opt_param1;
   func(
   /**
@@ -85,7 +85,7 @@ var func_name = function(param0, opt_param1){
    * @param {Array.<string>=} opt_param3
    * @return {string}
    */
-  function(param2, opt_param3){
+  function(param2, opt_param3) {
     var param3 = opt_param3 === undefined ? ([]) : opt_param3;
     do_something();
     var a;

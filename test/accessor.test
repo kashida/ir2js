@@ -3,7 +3,7 @@
   @param\s\
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
   /**
    * @type {string}
@@ -32,7 +32,7 @@ classname.prototype._classname = 'classname';
   @param2&\s\
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
   /**
    * @type {string}
@@ -93,7 +93,7 @@ this._param2 = value;
   do_something_with(value)
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
   /**
    * @type {string}
@@ -132,7 +132,7 @@ var self = this;
   do_something()
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
   /**
    * @type {string}
@@ -172,7 +172,7 @@ var self = this;
   do_something_with(v)
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';
@@ -250,10 +250,10 @@ str.length
 str.length
   =>
 #=
-str.length{
+str.length {
   return;
 }
-str.length{
+str.length {
   return;
 }
 #}

@@ -2,7 +2,7 @@
 if ('')
   xyz
 #=
-if (''){
+if ('') {
   xyz;
 }
 #}
@@ -11,7 +11,7 @@ if (''){
 if (!new RegExp('^[\\\'\\"]').test(seg))
   =>
 #=
-if (!new RegExp('^[\\\'\\"]').test(seg)){
+if (!new RegExp('^[\\\'\\"]').test(seg)) {
   return;
 }
 #}
@@ -49,7 +49,7 @@ def(
  * @param {number=} opt_b
  * @param {number=} c
  */
-function(a, opt_b, c){
+function(a, opt_b, c) {
   // comment for a.
   var b = opt_b === undefined ? (0) : opt_b;
   // comment for b.

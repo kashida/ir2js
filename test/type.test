@@ -12,7 +12,7 @@ abc(
  * @param {number} param1
  * @return {boolean}
  */
-function(param0, param1){
+function(param0, param1) {
   body0;
   body1;
 });
@@ -36,7 +36,7 @@ abc(
  * @param {Function=} param3
  * @return {boolean}
  */
-function(param0, param1, param2, param3){
+function(param0, param1, param2, param3) {
   body0;
   body1;
 });
@@ -55,7 +55,7 @@ function(param0, param1, param2, param3){
  * @param {number=} opt_param1
  * @param {!Test=} param2
  */
-var func_name = function(param0, opt_param1, param2){
+var func_name = function(param0, opt_param1, param2) {
   var param1 = opt_param1 === undefined ? (value) : opt_param1;
   var a;
   a = param0;
@@ -90,7 +90,7 @@ var func_name = function(param0, opt_param1, param2){
  * @param {!number=} p2
  * @param {RegExp=} p3
  */
-some.package.func_name = function(p0, p1, p2, p3){
+some.package.func_name = function(p0, p1, p2, p3) {
 };
 {
   fns:[
@@ -118,7 +118,7 @@ some.package.func_name = function(p0, p1, p2, p3){
 :@methodname2
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';
@@ -127,13 +127,13 @@ classname.prototype._classname = 'classname';
  * @param {string} param_a
  * @param {Test=} opt_param_b
  */
-classname.prototype.methodname1 = function(param_a, opt_param_b){
+classname.prototype.methodname1 = function(param_a, opt_param_b) {
 var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 
 /** @private */
-classname.prototype._methodname2 = function(){
+classname.prototype._methodname2 = function() {
 var self = this;
 };
 {
@@ -162,7 +162,7 @@ var self = this;
 ::classname
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';
@@ -186,7 +186,7 @@ classname.prototype._classname = 'classname';
  * @param {number=} opt_param_b
  * @constructor
  */
-var classname = function(param_a, opt_param_b){
+var classname = function(param_a, opt_param_b) {
 var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
@@ -211,7 +211,7 @@ classname.prototype._classname = 'classname';
   @param_b\number\
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
   /**
    * @type {string}
@@ -249,7 +249,7 @@ classname.prototype._classname = 'classname';
  * @param {number=} opt_param_b
  * @constructor
  */
-var classname = function(param_a, opt_param_b){
+var classname = function(param_a, opt_param_b) {
 var self = this;
   /**
    * @type {string}
@@ -282,7 +282,7 @@ classname.prototype._classname = 'classname';
   @param+\string\
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
   /**
    * @type {string}
@@ -315,7 +315,7 @@ return this._param;
   @param1&\Test\
 #=
 /** @constructor */
-var classname = function(){
+var classname = function() {
 var self = this;
   /**
    * @type {string}

@@ -11,7 +11,7 @@ for (i := 0; i < 10; i++)
 #=
 var i;
 i = 0;
-for (; i < 10; i++){
+for (; i < 10; i++) {
   xyz;
 }
 #}
@@ -21,7 +21,7 @@ for (k in map)
   xyz
 #=
 var k;
-for (k in map){
+for (k in map) {
   xyz;
 }
 #}
