@@ -1,6 +1,6 @@
 ::CodeParser
   @context\!Context\$
-  @head\SectionHead\$
+  @head\section.Head\$
   @blocks\A.<IndentBlock>\ []
   @last_valid_line\CodeLine\
   @invalid_lines\A.<SectionLine>\ []

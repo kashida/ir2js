@@ -1,4 +1,4 @@
-::CodeSection <SectionHead
+::Code <%.Head
   @lines&\A.<InputLine>\ []
   %()
 

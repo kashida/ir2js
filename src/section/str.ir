@@ -1,4 +1,4 @@
-::MultiLineStr <CodeSection
+::Str <%.Code
   @context+\!Context\$
   @indent\n\ -1
   %()

@@ -2,7 +2,7 @@ TODO: change marker's type to BlockType when it's enum.
 ::IndentBlock
   @line_no+\n\$
   @indent+\n\$
-  @head\SectionHead\$
+  @head\section.Head\$
   @lines\A.<SectionLine>\ []
   @marker\n\ BlockType.BLOCK
 

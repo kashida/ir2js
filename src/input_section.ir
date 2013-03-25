@@ -2,7 +2,7 @@ input code section.
 ::InputSection
   @header+\InputLine\$
   @lines+\A.<InputLine>\ []
-  @code&\CodeSection\
+  @code&\section.Code\
 
 :push
   line\InputLine\$

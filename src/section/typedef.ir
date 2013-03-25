@@ -1,4 +1,4 @@
-::Typedef <MultiLineStr
+::Typedef <%.Str
   context\!Context\$
   %(context)
 

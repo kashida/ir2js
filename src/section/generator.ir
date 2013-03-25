@@ -1,7 +1,7 @@
-::SectionGenerator
+::Generator
   @scope\FileScope\$
 
-:generate\CodeSection\
+:generate\%.Code\
   header\InputLine\$
   lines\A.<InputLine>\$
   section := null
@@ -31,7 +31,7 @@
     warn(header, 'line starts with colon and not a code section marker')
   => section
 
-:@create_ctor\Constructor\
+:@create_ctor\%.Constructor\
   line\s\$
   re := /^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line)
   if !re
@@ -39,14 +39,14 @@
 
   // need to keep this in a member var too.
   @scope.context.cls = new Class()
-  ctor := new Constructor(@scope.copy_context_with_name(re[1]), re[3])
+  ctor := new %.Constructor(@scope.copy_context_with_name(re[1]), re[3])
   @scope.context.cls.ctor = ctor
   @scope.types.add_ctor(ctor.name())
   if re[3]
     @scope.types.set_parent(ctor.parent_name())
   => ctor
 
-:@create_method\Method\
+:@create_method\%.Method\
   line\s\$
   header\InputLine\$
   re := /^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
@@ -57,12 +57,12 @@
   if !@scope.context.cls
     warn(header, 'method marker w/o class')
     => null
-  => new Method(#)
+  => new %.Method(#)
       @scope.copy_context(@scope.context.cls.method_name((re[2] ? '_' : '') + re[3]))
       re[5]
       !!re[1]
 
-:@create_accessor\OverridingAccessor\
+:@create_accessor\%.Accessor\
   line\s\$
   header\InputLine\$
   re := /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
@@ -77,37 +77,37 @@
   name := re[2]
   ret_type := re[4]
   ctx := @scope.copy_context(@scope.context.cls.method_name(name))
-  => new OverridingAccessor(ctx, name, ret_type, type == '+')
+  => new %.Accessor(ctx, name, ret_type, type == '+')
 
-:@create_global_function\GlobalFunction\
+:@create_global_function\%.Function\
   line\s\$
   re := /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line)
   if !re
     => null
-  => new GlobalFunction(@scope.copy_context_with_name(re[1]), re[3])
+  => new %.Function(@scope.copy_context_with_name(re[1]), re[3])
 
-:@create_multi_line_str\MultiLineStr\
+:@create_multi_line_str\%.Str\
   line\s\$
   re := /^'\s*(\w+)$/.exec(line)
   if !re
     => null
-  => new MultiLineStr(@scope.copy_context_with_name(re[1]))
+  => new %.Str(@scope.copy_context_with_name(re[1]))
 
-:@create_global_code\GlobalCode\
+:@create_global_code\%.Global\
   line\s\$
-  => line == '' ? new GlobalCode() : null
+  => line == '' ? new %.Global() : null
 
-:@create_native_code\NativeCode\
+:@create_native_code\%.Native\
   line\s\$
-  => line == '~' ? new NativeCode() : null
+  => line == '~' ? new %.Native() : null
 
-:@create_anonymous_scope\AnonymousScope\
+:@create_anonymous_scope\%.Scope\
   line\s\$
-  => line == '{' ? new AnonymousScope() : null
+  => line == '{' ? new %.Scope() : null
 
-:@create_typedef\Typedef\
+:@create_typedef\%.Typedef\
   line\s\$
   re := /^\!\s*(\w+)$/.exec(line)
   if !re
     => null
-  => new Typedef(@scope.copy_context_with_name(re[1]))
+  => new %.Typedef(@scope.copy_context_with_name(re[1]))

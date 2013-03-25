@@ -1,4 +1,6 @@
-::OverridingAccessor <Callable
+Overriding accessor.
+
+::Accessor <%.Callable
   context\!Context\$
   @name\s\$
   return_type\s\$

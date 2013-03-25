@@ -1,6 +1,6 @@
 ::CodeScope
   @context\!Context\$
-  @head\SectionHead\? new GlobalCode()
+  @head\section.Head\? new section.Global()
 
 :process_lines
   lines\A.<s>\$

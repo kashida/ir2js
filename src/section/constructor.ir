@@ -1,4 +1,4 @@
-::Constructor <Callable
+::Constructor <%.Callable
   context\!Context\$
   @parent\s?\?
   context.is_ctor = true

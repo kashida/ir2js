@@ -1,4 +1,4 @@
-::NativeCode <CodeSection
+::Native <%.Code
   %()
 
 :output\A.<output.Line>\

@@ -1,4 +1,4 @@
-::AnonymousScope <Runnable
+::Scope <%.Runnable
   %()
 
 :output\A\

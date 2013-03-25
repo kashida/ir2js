@@ -1,4 +1,4 @@
-::GlobalCode <Runnable
+::Global <%.Runnable
   %()
 
 :output\A\

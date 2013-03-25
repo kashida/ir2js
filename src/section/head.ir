@@ -1,4 +1,4 @@
-::SectionHead
+::Head
   @blocks+\A.<IndentBlock>}\ []
 
 :add_block

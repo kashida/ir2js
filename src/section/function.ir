@@ -1,4 +1,4 @@
-::GlobalFunction <Callable
+::Function <%.Callable
   context\!Context\$
   return_type\s\$
   %(context, return_type)

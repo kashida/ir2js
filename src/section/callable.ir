@@ -1,4 +1,4 @@
-::Callable <Runnable
+::Callable <%.Runnable
   @context+\!Context\$
   @return_type+\s\$
   @params&\ParamSet\

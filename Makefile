@@ -105,10 +105,12 @@ compiled/parser/syntax.js: src/parser/syntax.pegjs
 compiled/%.js: src/%.ir
 	@$(NODE) saved/ir2js.js --basedir=src $^ $@
 
+# TODO: Make compiler create these dirs automatically.
 dir:
 	mkdir -p compiled
 	mkdir -p compiled/parser
 	mkdir -p compiled/output
+	mkdir -p compiled/section
 
 
 ############################################################
