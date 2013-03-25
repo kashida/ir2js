@@ -1,5 +1,6 @@
-parses input lines into lines and sections.
+Parses input lines into comments and sections.
 'line' is used only during processing.
+
 ::InputParser
   @input\A.<s>\$
   @result\A.<GlobalComment|InputSection>\ []
