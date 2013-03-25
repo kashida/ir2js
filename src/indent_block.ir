@@ -13,11 +13,16 @@ TODO: change marker's type to BlockType when it's enum.
     OBJ: 1
     ARRAY: 2
     PARAMS: 3
+    MULT: 4
+    ADD: 5
+    LOG_AND: 6
+    LOG_OR: 7
 
-  _BLOCK_OPEN := [' {', '{', '[', '(']
-  _LINE_SUFFIX := [';', ',', ',', ',']
-  _END_SUFFIX := [';', '', '', '']
-  _BLOCK_CLOSE := ['}', '}', ']', ')']
+  _BLOCK_OPEN := [' {', '{', '[', '(', '(', '(', '(', '(']
+  _LINE_PREFIX := ['', '', '', '', '(', '(', '(', '(']
+  _LINE_SUFFIX := [';', ',', ',', ',', ') *', ') +', ') &&', ') ||']
+  _END_SUFFIX := [';', '', '', '', ')', ')', ')', ')']
+  _BLOCK_CLOSE := ['}', '}', ']', ')', ')', ')', ')', ')']
 
 :add
   line\SectionLine\$
@@ -74,10 +79,11 @@ TODO: change marker's type to BlockType when it's enum.
       accum_suffix += out_line.line_suffix
       out_line.line_suffix = ''
     else
-      line_terminator := i == last_index ? _END_SUFFIX[@marker] : _LINE_SUFFIX[@marker]
       out_line.line_suffix = accum_suffix + out_line.line_suffix
       if !line.is_block_statement
-        out_line.line_suffix += line_terminator
+        out_line.line_prefix += _LINE_PREFIX[@marker]
+        out_line.line_suffix += (#)
+          i == last_index ? _END_SUFFIX[@marker] : _LINE_SUFFIX[@marker]
       accum_suffix = ''
     out.append_line(out_line)
   => out

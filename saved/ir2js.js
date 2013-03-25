@@ -170,7 +170,11 @@ BlockMatcher.prototype._transform_blocks = function() {
       f: BlockType.BLOCK,
       o: BlockType.OBJ,
       a: BlockType.ARRAY,
-      p: BlockType.PARAMS
+      p: BlockType.PARAMS,
+      '*': BlockType.MULT,
+      '+': BlockType.ADD,
+      '&&': BlockType.LOG_AND,
+      '||': BlockType.LOG_OR
     }[self._code[mi].type]);
   });
 };
@@ -1171,17 +1175,23 @@ return this._indent;
     BLOCK: 0,
     OBJ: 1,
     ARRAY: 2,
-    PARAMS: 3
+    PARAMS: 3,
+    MULT: 4,
+    ADD: 5,
+    LOG_AND: 6,
+    LOG_OR: 7
   };
 
   var _BLOCK_OPEN;
-  _BLOCK_OPEN = [' {', '{', '[', '('];
+  _BLOCK_OPEN = [' {', '{', '[', '(', '(', '(', '(', '('];
+  var _LINE_PREFIX;
+  _LINE_PREFIX = ['', '', '', '', '(', '(', '(', '('];
   var _LINE_SUFFIX;
-  _LINE_SUFFIX = [';', ',', ',', ','];
+  _LINE_SUFFIX = [';', ',', ',', ',', ') *', ') +', ') &&', ') ||'];
   var _END_SUFFIX;
-  _END_SUFFIX = [';', '', '', ''];
+  _END_SUFFIX = [';', '', '', '', ')', ')', ')', ')'];
   var _BLOCK_CLOSE;
-  _BLOCK_CLOSE = ['}', '}', ']', ')'];
+  _BLOCK_CLOSE = ['}', '}', ']', ')', ')', ')', ')', ')'];
 
 /** @param {SectionLine} line */
 IndentBlock.prototype.add = function(line) {
@@ -1278,11 +1288,12 @@ IndentBlock.prototype.output = function() {
       out_line.line_suffix = '';
     }
     else {
-      var line_terminator;
-      line_terminator = i == last_index ? _END_SUFFIX[self._marker] : _LINE_SUFFIX[self._marker];
       out_line.line_suffix = accum_suffix + out_line.line_suffix;
       if (!line.is_block_statement) {
-        out_line.line_suffix += line_terminator;
+        out_line.line_prefix += _LINE_PREFIX[self._marker];
+        out_line.line_suffix += (
+          i == last_index ? _END_SUFFIX[self._marker] : _LINE_SUFFIX[self._marker]
+        );
       }
       accum_suffix = '';
     }

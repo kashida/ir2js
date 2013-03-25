@@ -342,11 +342,17 @@ ObjectBlockMarker = '{' _ '#' _ '}' { return {g: 'm', params: {type: 'o'}}; }
 ParameterBlockMarker = '(' _ '#' _ ')' { return {g: 'm', params: {type: 'p'}}; }
 FunctionBlockMarker = '##' { return {g: 'm', params: {type: 'f'}}; }
 
+BinaryOpBlockMarker
+  = '#' op:('*' / '+' / '&&' / '||') {
+      return {g: 'm', params: {type: op}};
+    }
+
 BlockMarker
   = ArrayBlockMarker
   / ObjectBlockMarker
   / ParameterBlockMarker
   / FunctionBlockMarker
+  / BinaryOpBlockMarker
 
 
 ////////////////////////////////////////////////////////////

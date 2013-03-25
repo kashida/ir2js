@@ -60,6 +60,10 @@ Returns true only if matching succeeds and leaving valid set of indexes in
       o: BlockType.OBJ
       a: BlockType.ARRAY
       p: BlockType.PARAMS
+      '*': BlockType.MULT
+      '+': BlockType.ADD
+      '&&': BlockType.LOG_AND
+      '||': BlockType.LOG_OR
 
 :first_line\A.<s>\
   // there should be at least one fragment.

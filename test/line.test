@@ -88,6 +88,46 @@ a = (
 ) + x;
 #}
 
+#{: binary-op block
+a := #+ * 0
+  123
+  a + b
+  f(x)
+#=
+var a;
+a = (
+  (123) +
+  (a + b) +
+  (f(x))
+) * 0;
+#}
+
+#{: binary-op block 2
+a := #&&
+  f(#* + 3)
+    123
+    a + b
+    f(x)
+  is_true
+  #||
+    condition0
+    condition1
+#=
+var a;
+a = (
+  (f((
+    (123) *
+    (a + b) *
+    (f(x))
+  ) + 3)) &&
+  (is_true) &&
+  ((
+    (condition0) ||
+    (condition1)
+  ))
+);
+#}
+
 #{: block statement
 if xyz
   aaa
