@@ -1,5 +1,5 @@
 ::TypeDecoder
-  @pkg\!Package\$
+  @pkg\!context.Package\$
   @type\s\$
   @decoded\s\''
   @process()

@@ -4,7 +4,7 @@ parse file scope and separate code sections from comments.
 
 ::FileScope
   pkg_name\s\$
-  @context+\!Context\ new Context(new Package(pkg_name))
+  @context+\!context.Context\ new context.Context(new context.Package(pkg_name))
   @types+\TypeSet\ new TypeSet()
   @list\A.<OutputSection>\
 
@@ -23,17 +23,17 @@ parse file scope and separate code sections from comments.
       section.header
       section.lines
 
-:copy_context\!Context\
-  name\!Name\$
+:copy_context\!context.Context\
+  name\!context.Name\$
   ctxt := @context.clone()
   ctxt.name = name
   ctxt.cls = @context.cls
   ctxt.is_file_scope = @context.is_file_scope
   => ctxt
 
-:copy_context_with_name\!Context\
+:copy_context_with_name\!context.Context\
   name\string\$
-  fullname := new Name(@context.pkg, name)
+  fullname := new context.Name(@context.pkg, name)
   => @.copy_context(fullname)
 
 :output\A.<s>\

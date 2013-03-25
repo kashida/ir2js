@@ -1,5 +1,5 @@
 ::Typedef <%.Str
-  context\!Context\$
+  context\!context.Context\$
   %(context)
 
 :output\A.<output.Line>\

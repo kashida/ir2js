@@ -2,7 +2,7 @@
   @ctor&\section.Constructor\
   @members\!O.<s, Member>\ {}
 
-:name\!Name\
+:name\!%.Name\
   => @ctor.context.name
 
 :member
@@ -14,7 +14,7 @@
   member\Member\$
   @members[name] = member
 
-:method_name\!Name\
+:method_name\!%.Name\
   method_name\s\$
   => @.name().property(method_name)
 

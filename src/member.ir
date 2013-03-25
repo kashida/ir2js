@@ -1,4 +1,6 @@
-pseudo member is a place holder for class members that don't exist, but there are accessors for.
+Pseudo member is a place holder for class members that don't exist, but there
+are accessors for.
+
 ::Member
   @name\s\$
   @type\TypeDecoder\$
@@ -9,7 +11,7 @@ pseudo member is a place holder for class members that don't exist, but there ar
 returns an array with member declaration if it hasn't been output already.
 returns an empty array otherwise.
 :output_decl\A.<s>\
-  class_name\!Name\$
+  class_name\!context.Name\$
   if @declared
     => []
   @declared = true
@@ -21,7 +23,7 @@ returns an empty array otherwise.
 
 output a getter or a setter.
 :output_accessor\A\
-  class_name\!Name\$
+  class_name\!context.Name\$
   is_getter\b\$
   body\A\$
   params\ParamSet\?
@@ -36,7 +38,7 @@ output a getter or a setter.
 
 produce necessary accessor methods based on the access type specification.
 :output_accessors\A\
-  class_name\!Name\$
+  class_name\!context.Name\$
   if !@access_type || @is_pseudo
     => []
   result := [@.output_decl(class_name)]

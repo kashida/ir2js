@@ -1,5 +1,5 @@
 ::Callable <%.Runnable
-  @context+\!Context\$
+  @context+\!context.Context\$
   @return_type+\s\$
   @params&\ParamSet\
   %()
@@ -8,7 +8,7 @@
   => @context.name.ref()
 
 :<close
-  pkg\!Package\?
+  pkg\!context.Package\?
   c := new CodeScope(@context, @)
   c.process(@.lines)
 

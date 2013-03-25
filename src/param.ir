@@ -1,7 +1,7 @@
 Function parameter and / or member declarion.
 
 ::Param
-  @context\!Context\$
+  @context\!context.Context\$
   is_ctor\b\$
   input\InputLine\$
   parsed\parser.Result\$

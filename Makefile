@@ -108,8 +108,9 @@ compiled/%.js: src/%.ir
 # TODO: Make compiler create these dirs automatically.
 dir:
 	mkdir -p compiled
-	mkdir -p compiled/parser
+	mkdir -p compiled/context
 	mkdir -p compiled/output
+	mkdir -p compiled/parser
 	mkdir -p compiled/section
 
 

@@ -38,7 +38,7 @@
     => null
 
   // need to keep this in a member var too.
-  @scope.context.cls = new Class()
+  @scope.context.cls = new context.Class()
   ctor := new %.Constructor(@scope.copy_context_with_name(re[1]), re[3])
   @scope.context.cls.ctor = ctor
   @scope.types.add_ctor(ctor.name())

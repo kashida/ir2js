@@ -1,7 +1,7 @@
 Overriding accessor.
 
 ::Accessor <%.Callable
-  context\!Context\$
+  context\!context.Context\$
   @name\s\$
   return_type\s\$
   @is_getter\b\$

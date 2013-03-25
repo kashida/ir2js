@@ -1,5 +1,5 @@
 ::CodeParser
-  @context\!Context\$
+  @context\!context.Context\$
   @head\section.Head\$
   @blocks\A.<IndentBlock>\ []
   @last_valid_line\CodeLine\

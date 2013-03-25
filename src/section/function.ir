@@ -1,5 +1,5 @@
 ::Function <%.Callable
-  context\!Context\$
+  context\!context.Context\$
   return_type\s\$
   %(context, return_type)
 

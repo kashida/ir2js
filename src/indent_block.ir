@@ -1,9 +1,9 @@
-TODO: change marker's type to BlockType when it's enum.
 ::IndentBlock
   @line_no+\n\$
   @indent+\n\$
   @head\section.Head\$
   @lines\A.<SectionLine>\ []
+  // TODO: type to BlockType when it's enum.
   @marker\n\ BlockType.BLOCK
 
 :

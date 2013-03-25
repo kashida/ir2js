@@ -9,7 +9,7 @@
     'RegExp': 'null'
 
 ::ParamSet
-  @context\!Context\$
+  @context\!context.Context\$
   @block\IndentBlock\$
   @is_ctor\b\? false
   @params\A.<!Param>\ []

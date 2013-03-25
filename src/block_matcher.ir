@@ -1,7 +1,7 @@
 Match markers and blocks.
 
 ::BlockMatcher
-  @context\!Context\$
+  @context\!context.Context\$
   @input\InputLine\$
   @code\A.<parser.BlockMarker|s>\$
   @blocks\A.<IndentBlock>\$

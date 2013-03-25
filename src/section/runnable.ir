@@ -2,8 +2,8 @@
   %()
 
 :<close
-  pkg\!Package\?
-  c := new CodeScope(new Context(pkg || new Package('')), @)
+  pkg\!context.Package\?
+  c := new CodeScope(new context.Context(pkg || new context.Package('')), @)
   c.process(@.lines)
 
 :<transform

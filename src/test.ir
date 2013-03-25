@@ -100,7 +100,7 @@ or
   c := @is_global ? (#) : (#)
     new FileScope(@package_name)
     --
-    new CodeScope(new Context(new Package('')))
+    new CodeScope(new context.Context(new context.Package('')))
 
   actual_output := ''
   try

@@ -1,6 +1,6 @@
 decodes blockc markers.
 ::LineDecoder
-  @context\!Context\$
+  @context\!context.Context\$
   @line\A.<s>\$
   @input_line\InputLine\$
   @fragments\!InterlacedLine\ new InterlacedLine

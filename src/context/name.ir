@@ -1,6 +1,7 @@
-name in file scope.
+Name in file scope.
+
 ::Name
-  @pkg+\!Package\$
+  @pkg+\!%.Package\$
   @id+\s\$
 
 :decl\s\
@@ -9,9 +10,9 @@ name in file scope.
 :ref\s\
   => @pkg.fullname(@id)
 
-:property\!Name\
+:property\!%.Name\
   id\s\$
-  => new Name(new Package(@.ref() + '.prototype'), id)
+  => new %.Name(new %.Package(@.ref() + '.prototype'), id)
 
 :oString\s\
   => '[' + @pkg + ':' + @id + ']'

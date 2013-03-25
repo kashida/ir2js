@@ -1,5 +1,5 @@
 ::CodeScope
-  @context\!Context\$
+  @context\!context.Context\$
   @head\section.Head\? new section.Global()
 
 :process_lines

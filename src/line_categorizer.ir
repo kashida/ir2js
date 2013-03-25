@@ -2,7 +2,7 @@
   CodeLine|SeparatorLine|InvalidLine
 
 ::LineCategorizer
-  @context\!Context\$
+  @context\!context.Context\$
 
 :create_line\SectionLine\
   input\InputLine\$

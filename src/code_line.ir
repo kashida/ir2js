@@ -2,7 +2,7 @@
   CODE_PARSER := null
 
 ::CodeLine <section.Head
-  @context\!Context\$
+  @context\!context.Context\$
   @input+\InputLine\$
   @line_parsed\LineParser\$
   @parsed\parser.Result\

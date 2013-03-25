@@ -1,5 +1,5 @@
 ::Method <%.Callable
-  context\!Context\$
+  context\!context.Context\$
   return_type\s\$
   @overriding\b\$
   context.is_method = true

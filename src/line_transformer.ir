@@ -1,5 +1,5 @@
 ::LineTransformer
-  @context\!Context\$
+  @context\!context.Context\$
   @input\InputLine\$
 
 :pkg_ref\s\
