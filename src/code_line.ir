@@ -3,7 +3,7 @@
 
 ::CodeLine <section.Head
   @context\!context.Context\$
-  @input+\InputLine\$
+  @input+\input.Line\$
   @line_parsed\LineParser\$
   @parsed\parser.Result\
   @continue_lines&\!A.<!CodeLine>\ []

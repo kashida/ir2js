@@ -2,8 +2,8 @@
   @scope\FileScope\$
 
 :generate\%.Code\
-  header\InputLine\$
-  lines\A.<InputLine>\$
+  header\input.Line\$
+  lines\A.<input.Line>\$
   section := null
   header_line := header.line.substr(1)
   if ![#].some(##)
@@ -48,7 +48,7 @@
 
 :@create_method\%.Method\
   line\s\$
-  header\InputLine\$
+  header\input.Line\$
   re := /^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
   if !re
     => null
@@ -64,7 +64,7 @@
 
 :@create_accessor\%.Accessor\
   line\s\$
-  header\InputLine\$
+  header\input.Line\$
   re := /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
   if !re
     => null

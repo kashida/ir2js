@@ -1,7 +1,7 @@
 First pass line parsing for constructing the block structure.
 
 ::LineParser
-  @input\InputLine\$
+  @input\input.Line\$
 
   @is_valid+\b\ false
   @indent+\n\ 0

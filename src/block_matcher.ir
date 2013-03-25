@@ -2,7 +2,7 @@ Match markers and blocks.
 
 ::BlockMatcher
   @context\!context.Context\$
-  @input\InputLine\$
+  @input\input.Line\$
   @code\A.<parser.BlockMarker|s>\$
   @blocks\A.<IndentBlock>\$
   @marker_indexes\A.<n>\ []

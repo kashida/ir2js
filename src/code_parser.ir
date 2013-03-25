@@ -6,7 +6,7 @@
   @invalid_lines\A.<SectionLine>\ []
 
 :parse
-  input_lines\A.<InputLine>\$
+  input_lines\A.<input.Line>\$
   @process(input_lines)
   if !input_lines.length
     =>
@@ -16,7 +16,7 @@
     'block stack depth: ' + @blocks.length
 
 :@process
-  input_lines\A.<InputLine>\$
+  input_lines\A.<input.Line>\$
   @head.lines = input_lines
 
   first_line_indent := 0
@@ -58,10 +58,10 @@
   @pop_rest()
 
 :@make_code_lines\A.<SectionLine>\
-  input_lines\A.<InputLine>\$
+  input_lines\A.<input.Line>\$
   cat := new LineCategorizer(@context)
   => input_lines.map(##)
-    line\InputLine\$
+    line\input.Line\$
     => cat.create_line(line)
 
 :@deeper_indent
@@ -101,7 +101,7 @@
   if !last_line
     warn(line.input, 'continuation as a first line of block')
   else
-    last_line.continue_lines.push(new InputLine(#))
+    last_line.continue_lines.push(new input.Line(#))
       line.input.line.replace(/\|/, ' ')
       line.input.row_index
   @last_valid_line = \CodeLine\(line)

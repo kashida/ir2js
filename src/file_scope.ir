@@ -1,6 +1,6 @@
 parse file scope and separate code sections from comments.
 :!OutputSection
-  GlobalComment|section.Code
+  input.Comment|section.Code
 
 ::FileScope
   pkg_name\s\$
@@ -9,17 +9,16 @@ parse file scope and separate code sections from comments.
   @list\A.<OutputSection>\
 
   @context.is_file_scope = true
-}
 
 :process_lines
-  input\A.<s>\$
+  line\A.<s>\$
   gen := new section.Generator(@)
-  input_list := new InputParser(input).parse()
+  input_list := new input.File(line).parse()
   @list = input_list.map(##)
-    section\GlobalComment|InputSection\$
+    section\input.Comment|input.Section\$
     index\n\$
-    // convert InputSection to section.Code and leave GlobalComment as is.
-    => section instanceof InputSection ? gen.generate(#) : section
+    // convert input.Section to section.Code and leave input.Comment as is.
+    => section instanceof input.Section ? gen.generate(#) : section
       section.header
       section.lines
 

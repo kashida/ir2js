@@ -2,7 +2,7 @@ decodes blockc markers.
 ::LineDecoder
   @context\!context.Context\$
   @line\A.<s>\$
-  @input_line\InputLine\$
+  @input_line\input.Line\$
   @fragments\!InterlacedLine\ new InterlacedLine
   // whether this line is a statement that comes with a block, like 'if'.
   @is_block_statement+\b\ false

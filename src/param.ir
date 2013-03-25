@@ -3,7 +3,7 @@ Function parameter and / or member declarion.
 ::Param
   @context\!context.Context\$
   is_ctor\b\$
-  input\InputLine\$
+  input\input.Line\$
   parsed\parser.Result\$
 
   @line\parser.ParamLine\

@@ -3,7 +3,7 @@
 
 :output\A.<output.Line>\
   => @.lines.map(##)
-    line\InputLine\$
+    line\input.Line\$
     out := new output.Line(line)
     out.append_line(line.trim)
     => out

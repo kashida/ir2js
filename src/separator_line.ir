@@ -1,5 +1,5 @@
 ::SeparatorLine
-  @input+\InputLine\$
+  @input+\input.Line\$
   parser\LineParser\$
   @indent+\n\ parser.indent
 

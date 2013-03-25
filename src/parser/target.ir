@@ -8,14 +8,14 @@ Specific for a particular target (i.e. rule).
   @rule\s\$
 
 :run\?%.Result\
-  input\!A.<InputLine>|s\$
-  @xformer\LineTransformer\?
+  input\!A.<input.Line>|s\$
+  xformer\LineTransformer\?
   show_error_line\b\?
   if !(input instanceof Array)
-    input = [new InputLine(input, 0)]
+    input = [new input.Line(input, 0)]
 
   lines := input.map(##).join('\n')
-    input\InputLine\$
+    input\input.Line\$
     => input.line
   try
     result := _parser.parse(lines, @rule)
@@ -32,5 +32,6 @@ Specific for a particular target (i.e. rule).
       console.error('E: ' + e)
     => null
   b := new %.TokenListBuilder(result)
-  b.xformer = @xformer
+  if xformer
+    b.xformer = xformer
   => b.result(input)

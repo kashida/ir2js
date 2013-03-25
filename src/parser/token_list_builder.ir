@@ -10,7 +10,7 @@
   => @tokens
 
 :result\%.Result\
-  input\!A.<InputLine>\$
+  input\!A.<input.Line>\$
   @.build()
   => new %.Result(@tokens, input)
 

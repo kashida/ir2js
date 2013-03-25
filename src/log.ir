@@ -1,11 +1,11 @@
 :=warn ##
-  line\InputLine\$
+  line\input.Line\$
   msg\s\? '*warning*'
   console.warn(msg + ' (line ' + line.line_no + '): ' + line.line)
 
 :=assert ##
   check\*\$
-  line\InputLine\? UnknownInputLine
+  line\input.Line\? UnknownInputLine
   msg\s\? '*assertion*'
   console.assert(#)
     check

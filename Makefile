@@ -109,6 +109,7 @@ compiled/%.js: src/%.ir
 dir:
 	mkdir -p compiled
 	mkdir -p compiled/context
+	mkdir -p compiled/input
 	mkdir -p compiled/output
 	mkdir -p compiled/parser
 	mkdir -p compiled/section

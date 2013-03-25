@@ -1,23 +1,23 @@
 Parses input lines into comments and sections.
 'line' is used only during processing.
 
-::InputParser
+::File
   @input\A.<s>\$
-  @result\A.<GlobalComment|InputSection>\ []
-  @buffer\A.<InputLine>\ []
+  @result\A.<%.Comment|%.Section>\ []
+  @buffer\A.<%.Line>\ []
   @last_valid_index\n?\
 
-:parse\A.<GlobalComment|InputSection>\
+:parse\A.<%.Comment|%.Section>\
   @input.forEach(##)
     line\s\$
     index\n\$
     line = line.trimRight()
-    @process_line(new InputLine(line, index))
+    @process_line(new %.Line(line, index))
   @flush_buffer()
   => @result
 
 :@process_line
-  line\InputLine\$
+  line\%.Line\$
   if line.starts_with_colon
     // should be a start of a code section.
     @flush_buffer()
@@ -38,10 +38,10 @@ Parses input lines into comments and sections.
   while @buffer.length
     next_buffer := []
     if @last_valid_index !== null
-      section := new InputSection(@buffer[0])
+      section := new %.Section(@buffer[0])
       @result.push(section)
       @buffer.forEach(##)
-        line\InputLine\$
+        line\%.Line\$
         index\n\$
         if index == 0
           // we already passed the header line to section.
@@ -53,6 +53,6 @@ Parses input lines into comments and sections.
           next_buffer.push(line)
     else
       // we'll give buffer a new array so no need to clone for global comment.
-      @result.push(new GlobalComment(@buffer))
+      @result.push(new %.Comment(@buffer))
     @last_valid_index = null
     @buffer = next_buffer

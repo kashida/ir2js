@@ -7,10 +7,10 @@
   i := 0
   @.process(lines.map(##))
     line\s\$
-    => new InputLine(line, i++)
+    => new input.Line(line, i++)
 
 :process
-  input_lines\A.<InputLine>\$
+  input_lines\A.<input.Line>\$
   new CodeParser(@context, @head).parse(input_lines)
   @head.transform()
 

@@ -3,7 +3,7 @@ Container and interface of the TokenList to the rest of the converter.
 
 ::Result
   @tokens+\%.TokenList\$
-  @input\!A.<!InputLine>\$
+  @input\!A.<!input.Line>\$
 
 :+code\A.<%.BlockMarker|s>\
   => @tokens.list

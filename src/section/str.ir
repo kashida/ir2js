@@ -7,7 +7,7 @@ same number of strings as @.lines.
 :strlines\A.<s>\
   result := []
   @.lines.forEach(##)
-    line\InputLine\$
+    line\input.Line\$
     if line.is_blank
       // empty line is fine.
       result.push('')

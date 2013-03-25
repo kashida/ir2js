@@ -1,6 +1,6 @@
 either blank line or comment only line.
 ::InvalidLine
-  @input+\InputLine\$
+  @input+\input.Line\$
 
 :+str\s\
   => @input.line

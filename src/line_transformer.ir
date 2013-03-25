@@ -1,6 +1,6 @@
 ::LineTransformer
   @context\!context.Context\$
-  @input\InputLine\$
+  @input\input.Line\$
 
 :pkg_ref\s\
   name\s\$
