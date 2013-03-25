@@ -1,9 +1,9 @@
 ::NativeCode <CodeSection
   %()
 
-:output\A.<LineOutput>\
+:output\A.<output.Line>\
   => @.lines.map(##)
     line\InputLine\$
-    out := new LineOutput(line)
+    out := new output.Line(line)
     out.append_line(line.trim)
     => out

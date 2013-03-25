@@ -60,7 +60,7 @@ Function parameter and / or member declarion.
 
 Variable initialization output as first statements of function body.
 :output_init
-  out\LineOutput\$
+  out\output.Line\$
   pname := @param_name()
 
   if @.is_member

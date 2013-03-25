@@ -1,9 +1,10 @@
-output lines corresponds to one input line.
-::LineOutput
+Output lines corresponds to one input line.
+
+::Line
   @input\InputLine\$
   @indent&\n\ input.indent
   @prefix_lines\A.<s>\ []
-  @lines\A.<BlockOutput|s>\ []
+  @lines\A.<%.Block|s>\ []
   @line_prefix&\s\ ''
   @line_suffix&\s\ ''
   @tail_comment&\A.<s>\ []
@@ -17,7 +18,7 @@ output lines corresponds to one input line.
   @lines.push(line)
 
 :append_block
-  block\BlockOutput\$
+  block\%.Block\$
   @lines.push(block)
 
 :append_lines
@@ -28,7 +29,7 @@ output lines corresponds to one input line.
 
 :remove_empty_lines
   @lines = @lines.filter(##)
-    line\BlockOutput|s\$
+    line\%.Block|s\$
     => line
 
 :+output\A.<s>\
@@ -38,9 +39,9 @@ output lines corresponds to one input line.
     line\s\$
     result.push(line ? indent + line : '')
   @lines.forEach(##)
-    line\s|BlockOutput\$
+    line\s|%.Block\$
     i\n\$
-    if line instanceof BlockOutput
+    if line instanceof %.Block
       result = result.concat(line.output)
     else
       to_add := line

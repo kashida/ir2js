@@ -2,7 +2,7 @@
   lines\s|A\$
   if typeof(lines) == 'string'
     => [lines]
-  if lines instanceof LineOutput || lines instanceof BlockOutput
+  if lines instanceof output.Line || lines instanceof output.Block
     lines = lines.output
   console.assert(#)
     lines instanceof Array

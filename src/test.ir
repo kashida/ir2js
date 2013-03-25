@@ -136,7 +136,7 @@ or
     if typeof(lines) == 'string'
       console.log(whitespaces(4 + level * 2) + lines)
     else
-      if lines instanceof LineOutput
+      if lines instanceof output.Line
         lines = lines.output
       lines.forEach(##)
         line\s|A\$

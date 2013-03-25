@@ -4,7 +4,7 @@ BASE_SRC=packages.js
 NODE=NODE_PATH=compiled/parser nodejs
 
 SRCS=$(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/*.ir)))
-SRCS+=$(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
+SRCS+=$(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/*/*.ir)))
 JS_SRCS=$(filter-out %/test.js,$(filter-out %/main.js,$(SRCS)))
 CNVT_JS_SRC=compiled/main.js
 TEST_JS_SRC=compiled/test.js
@@ -108,6 +108,7 @@ compiled/%.js: src/%.ir
 dir:
 	mkdir -p compiled
 	mkdir -p compiled/parser
+	mkdir -p compiled/output
 
 
 ############################################################

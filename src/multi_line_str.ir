@@ -20,14 +20,14 @@ same number of strings as @.lines.
     result.push(line.line.substr(@indent))
   => result
 
-:output\A.<LineOutput>\
+:output\A.<output.Line>\
   lines := @.strlines()
   => [#]
     @context.name.decl() + ' ='
     lines.map(##)
       line\s\$
       i\n\$
-      out := new LineOutput(@.lines[i])
+      out := new output.Line(@.lines[i])
       out.indent = @indent
       out.append_line("'" + line + "\\n'" + (i == lines.length - 1 ? ';' : ' +'))
       => out

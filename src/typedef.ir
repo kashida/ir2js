@@ -2,9 +2,9 @@
   context\!Context\$
   %(context)
 
-:output\A.<LineOutput>\
+:output\A.<output.Line>\
   decoder := new TypeDecoder(@.context.pkg, @.strlines().join(''))
-  out := new LineOutput(@.lines[0])
+  out := new output.Line(@.lines[0])
   out.indent = 0
   out.append_lines([#])
     doc_lines(['@typedef {' + decoder.output() + '}'])

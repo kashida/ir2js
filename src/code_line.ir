@@ -40,8 +40,8 @@
   @matcher = new BlockMatcher(@context, @input, code, @.blocks)
   @matcher.transform()
 
-:output\LineOutput\
-  out := new LineOutput(@input)
+:output\output.Line\
+  out := new output.Line(@input)
   if @param === true
     => out
 

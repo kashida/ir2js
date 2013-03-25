@@ -6,5 +6,5 @@
 :+is_continuation\b\
   => false
 
-:output\LineOutput\
+:output\output.Line\
   => null

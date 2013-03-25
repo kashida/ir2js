@@ -13,7 +13,7 @@
     'Runnable has ' + @.num_blocks() + ' blocks'
   @.block(0).transform()
 
-:output_body\A.<LineOutput>\
+:output_body\A.<output.Line>\
   block_suffix\s\$
   lines := []
   body_lines := @.last_block().output()

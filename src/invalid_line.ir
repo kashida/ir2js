@@ -5,7 +5,7 @@ either blank line or comment only line.
 :+str\s\
   => @input.line
 
-:output\LineOutput\
-  out := new LineOutput(@input)
+:output\output.Line\
+  out := new output.Line(@input)
   out.append_line(@input.trim)
   => out

@@ -1,1 +1,2 @@
 var parser = {};
+var output = {};
