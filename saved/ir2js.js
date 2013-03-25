@@ -1,4 +1,7 @@
+var context = {};
+var output = {};
 var parser = {};
+var section = {};
 var _fs = require('fs');
 var _path = require('path');
 var _util = require('util');
@@ -37,7 +40,7 @@ Match markers and blocks.
 */
 
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @param {InputLine} input
  * @param {Array.<parser.BlockMarker|string>} code
  * @param {Array.<IndentBlock>} blocks
@@ -46,7 +49,7 @@ Match markers and blocks.
 var BlockMatcher = function(context, input, code, blocks) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
@@ -237,93 +240,6 @@ BlockMatcher.prototype._compose_line = function(prefix, i) {
     'function(' + p.output_params() + ')' + bstart
   ]);
 };
-/** @constructor */
-var BlockOutput = function() {
-  var self = this;
-  /**
-   * @type {Array.<LineOutput>}
-   * @private
-   */
-  this._lines = ([]);
-  // the suffix, if assigned a value, will be inserted after the last nonblank line.
-  /**
-   * @type {string?}
-   * @private
-   */
-  this._suffix = (null);
-};
-BlockOutput.prototype._classname = 'BlockOutput';
-/** @type {string?} */
-BlockOutput.prototype.suffix;
-BlockOutput.prototype.__defineGetter__('suffix', function() {
-return this._suffix;
-});
-BlockOutput.prototype.__defineSetter__('suffix', function(value) {
-this._suffix = value;
-});
-
-/** @param {LineOutput} line */
-BlockOutput.prototype.append_line = function(line) {
-  var self = this;
-  self._lines.push(line);
-};
-
-/** @type {boolean} */
-BlockOutput.prototype.is_empty;
-BlockOutput.prototype.__defineGetter__('is_empty', function() {
-  var self = this;
-  return !self._lines.length && !self._suffix;
-});
-
-/*
-inserts the suffix line to the array passed as a parameter.
-*/
-/**
- * @param {Array.<string>} lines
- * @private
- */
-BlockOutput.prototype._add_suffix = function(lines) {
-  var self = this;
-  // find the last non-blank line.
-  var last_nonblank;
-  last_nonblank = -1;
-  lines.forEach(
-  /**
-   * @param {string} line
-   * @param {number} i
-   */
-  function(line, i) {
-    if (line) {
-      last_nonblank = i;
-    }
-  });
-  if (last_nonblank < 0) {
-    lines.unshift(self._suffix);
-  }
-  else {
-    lines.splice(last_nonblank + 1, 0, self._suffix);
-  }
-};
-
-/** @type {Array.<string>} */
-BlockOutput.prototype.output;
-BlockOutput.prototype.__defineGetter__('output', function() {
-  var self = this;
-  var lines;
-  lines = self._lines.reduce(
-  /**
-   * @param {Array.<string>} prev
-   * @param {LineOutput} line
-   * @param {number} i
-   */
-  function(prev, line, i) {
-    return prev.concat(line.output);
-  }, []);
-  if (self._suffix) {
-    self._add_suffix(lines);
-  }
-  return lines;
-});
 /**
  * @param {string} name
  * @constructor
@@ -394,101 +310,20 @@ CallableType.prototype.extract = function() {
   }
   return obj;
 };
-/** @constructor */
-var Class = function() {
-  var self = this;
-  /**
-   * @type {Constructor}
-   * @private
-   */
-  this._ctor = (null);
-  /**
-   * @type {!Object.<string, Member>}
-   * @private
-   */
-  this._members = ({});
-};
-Class.prototype._classname = 'Class';
-/** @type {Constructor} */
-Class.prototype.ctor;
-Class.prototype.__defineGetter__('ctor', function() {
-return this._ctor;
-});
-Class.prototype.__defineSetter__('ctor', function(value) {
-this._ctor = value;
-});
-
-/** @return {!Name} */
-Class.prototype.name = function() {
-  var self = this;
-  return self._ctor.context.name;
-};
-
-/** @param {string} name */
-Class.prototype.member = function(name) {
-  var self = this;
-  return self._members[name];
-};
-
 /**
- * @param {string} name
- * @param {Member} member
- */
-Class.prototype.set_member = function(name, member) {
-  var self = this;
-  self._members[name] = member;
-};
-
-/**
- * @param {string} method_name
- * @return {!Name}
- */
-Class.prototype.method_name = function(method_name) {
-  var self = this;
-  return self.name().property(method_name);
-};
-
-/**
- * @param {string} name
- * @param {TypeDecoder} type
- * @param {string} access_type
- * @param {boolean=} opt_is_pseudo
- * @return {Member}
- */
-Class.prototype.add_member = function(name, type, access_type, opt_is_pseudo) {
-  var self = this;
-  var is_pseudo = opt_is_pseudo === undefined ? (false) : opt_is_pseudo;
-  var m;
-  m = new Member(name, type, access_type, is_pseudo);
-  self._members[name] = m;
-  return m;
-};
-
-/** @return {Array} */
-Class.prototype.output_accessors = function() {
-  var self = this;
-  var class_name;
-  class_name = self.name();
-  return Object.keys(self._members).map(
-  /** @param {string} name */
-  function(name) {
-    return self._members[name].output_accessors(class_name);
-  });
-};
-/**
- * @param {!Context} context
- * @param {SectionHead} head
+ * @param {!context.Context} context
+ * @param {section.Head} head
  * @constructor
  */
 var CodeParser = function(context, head) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
   /**
-   * @type {SectionHead}
+   * @type {section.Head}
    * @private
    */
   this._head = head;
@@ -705,22 +540,22 @@ CodeParser.prototype._top_block = function() {
   return self._blocks[self._blocks.length - 1];
 };
 /**
- * @param {!Context} context
- * @param {SectionHead=} opt_head
+ * @param {!context.Context} context
+ * @param {section.Head=} opt_head
  * @constructor
  */
 var CodeScope = function(context, opt_head) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
   /**
-   * @type {SectionHead}
+   * @type {section.Head}
    * @private
    */
-  this._head = opt_head === undefined ? (new GlobalCode()) : opt_head;
+  this._head = opt_head === undefined ? (new section.Global()) : opt_head;
 };
 CodeScope.prototype._classname = 'CodeScope';
 
@@ -824,110 +659,10 @@ var compile_files = function(basedir, inout_filenames) {
     }
   }
 };
-/**
- * @param {!Package} pkg
- * @constructor
- */
-var Context = function(pkg) {
-  var self = this;
-  /**
-   * @type {!Package}
-   * @private
-   */
-  this._pkg = pkg;
-  /**
-   * @type {!Name}
-   * @private
-   */
-  this._name = (new Name(self._pkg, ''));
-  /**
-   * @type {Class}
-   * @private
-   */
-  this._cls = (null);
-  /**
-   * @type {boolean}
-   * @private
-   */
-  this._is_ctor = (false);
-  /**
-   * @type {boolean}
-   * @private
-   */
-  this._is_method = (false);
-  /**
-   * @type {boolean}
-   * @private
-   */
-  this._is_file_scope = (false);
-};
-Context.prototype._classname = 'Context';
-/** @type {!Package} */
-Context.prototype.pkg;
-Context.prototype.__defineGetter__('pkg', function() {
-return this._pkg;
-});
-Context.prototype.__defineSetter__('pkg', function(value) {
-this._pkg = value;
-});
-/** @type {!Name} */
-Context.prototype.name;
-Context.prototype.__defineGetter__('name', function() {
-return this._name;
-});
-Context.prototype.__defineSetter__('name', function(value) {
-this._name = value;
-});
-/** @type {Class} */
-Context.prototype.cls;
-Context.prototype.__defineGetter__('cls', function() {
-return this._cls;
-});
-Context.prototype.__defineSetter__('cls', function(value) {
-this._cls = value;
-});
-/** @type {boolean} */
-Context.prototype.is_ctor;
-Context.prototype.__defineGetter__('is_ctor', function() {
-return this._is_ctor;
-});
-Context.prototype.__defineSetter__('is_ctor', function(value) {
-this._is_ctor = value;
-});
-/** @type {boolean} */
-Context.prototype.is_method;
-Context.prototype.__defineGetter__('is_method', function() {
-return this._is_method;
-});
-Context.prototype.__defineSetter__('is_method', function(value) {
-this._is_method = value;
-});
-/** @type {boolean} */
-Context.prototype.is_file_scope;
-Context.prototype.__defineGetter__('is_file_scope', function() {
-return this._is_file_scope;
-});
-Context.prototype.__defineSetter__('is_file_scope', function(value) {
-this._is_file_scope = value;
-});
-
-/** @return {!Context} */
-Context.prototype.clone = function() {
-  var self = this;
-  var c;
-  c = new Context(self._pkg);
-  var p;
-  for (p in self) {
-    if (self.hasOwnProperty(p)) {
-      c[p] = self[p];
-    }
-  }
-  return c;
-};
 /*
 parse file scope and separate code sections from comments.
 */
-/** @typedef {GlobalComment|CodeSection} */
+/** @typedef {GlobalComment|section.Code} */
 var OutputSection;
 
 /**
@@ -937,10 +672,10 @@ var OutputSection;
 var FileScope = function(pkg_name) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
-  this._context = (new Context(new Package(pkg_name)));
+  this._context = (new context.Context(new context.Package(pkg_name)));
   /**
    * @type {TypeSet}
    * @private
@@ -955,7 +690,7 @@ var FileScope = function(pkg_name) {
   self._context.is_file_scope = true;
 };
 FileScope.prototype._classname = 'FileScope';
-/** @type {!Context} */
+/** @type {!context.Context} */
 FileScope.prototype.context;
 FileScope.prototype.__defineGetter__('context', function() {
 return this._context;
@@ -973,7 +708,7 @@ return this._types;
 FileScope.prototype.process_lines = function(input) {
   var self = this;
   var gen;
-  gen = new SectionGenerator(self);
+  gen = new section.Generator(self);
   var input_list;
   input_list = new InputParser(input).parse();
   self._list = input_list.map(
@@ -982,7 +717,7 @@ FileScope.prototype.process_lines = function(input) {
    * @param {number} index
    */
   function(section, index) {
-    // convert InputSection to CodeSection and leave GlobalComment as is.
+    // convert InputSection to section.Code and leave GlobalComment as is.
     return section instanceof InputSection ? gen.generate(
       section.header,
       section.lines
@@ -991,8 +726,8 @@ FileScope.prototype.process_lines = function(input) {
 };
 
 /**
- * @param {!Name} name
- * @return {!Context}
+ * @param {!context.Name} name
+ * @return {!context.Context}
  */
 FileScope.prototype.copy_context = function(name) {
   var self = this;
@@ -1006,12 +741,12 @@ FileScope.prototype.copy_context = function(name) {
 
 /**
  * @param {string} name
- * @return {!Context}
+ * @return {!context.Context}
  */
 FileScope.prototype.copy_context_with_name = function(name) {
   var self = this;
   var fullname;
-  fullname = new Name(self._context.pkg, name);
+  fullname = new context.Name(self._context.pkg, name);
   return self.copy_context(fullname);
 };
 
@@ -1120,13 +855,10 @@ GlobalComment.prototype.output = function() {
 
   return result;
 };
-/*
-TODO: change marker's type to BlockType when it's enum.
-*/
 /**
  * @param {number} line_no
  * @param {number} indent
- * @param {SectionHead} head
+ * @param {section.Head} head
  * @constructor
  */
 var IndentBlock = function(line_no, indent, head) {
@@ -1142,7 +874,7 @@ var IndentBlock = function(line_no, indent, head) {
    */
   this._indent = indent;
   /**
-   * @type {SectionHead}
+   * @type {section.Head}
    * @private
    */
   this._head = head;
@@ -1151,6 +883,7 @@ var IndentBlock = function(line_no, indent, head) {
    * @private
    */
   this._lines = ([]);
+  // TODO: type to BlockType when it's enum.
   /**
    * @type {number}
    * @private
@@ -1249,7 +982,7 @@ IndentBlock.prototype.end_str = function() {
   return _BLOCK_CLOSE[self._marker];
 };
 
-/** @return {BlockOutput} */
+/** @return {output.Block} */
 IndentBlock.prototype.output = function() {
   var self = this;
   // find the last valid line.
@@ -1272,7 +1005,7 @@ IndentBlock.prototype.output = function() {
   );
 
   var out;
-  out = new BlockOutput();
+  out = new output.Block();
   var accum_suffix;
   accum_suffix = '';
   self._lines.forEach(
@@ -1520,7 +1253,7 @@ var InputSection = function(header) {
    */
   this._lines = ([]);
   /**
-   * @type {CodeSection}
+   * @type {section.Code}
    * @private
    */
   this._code = (null);
@@ -1536,7 +1269,7 @@ InputSection.prototype.lines;
 InputSection.prototype.__defineGetter__('lines', function() {
 return this._lines;
 });
-/** @type {CodeSection} */
+/** @type {section.Code} */
 InputSection.prototype.code;
 InputSection.prototype.__defineGetter__('code', function() {
 return this._code;
@@ -1642,11 +1375,11 @@ InvalidLine.prototype.__defineGetter__('str', function() {
   return self._input.line;
 });
 
-/** @return {LineOutput} */
+/** @return {output.Line} */
 InvalidLine.prototype.output = function() {
   var self = this;
   var out;
-  out = new LineOutput(self._input);
+  out = new output.Line(self._input);
   out.append_line(self._input.trim);
   return out;
 };
@@ -1654,13 +1387,13 @@ InvalidLine.prototype.output = function() {
 var SectionLine;
 
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @constructor
  */
 var LineCategorizer = function(context) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
@@ -1687,7 +1420,7 @@ LineCategorizer.prototype.create_line = function(input) {
 decodes blockc markers.
 */
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @param {Array.<string>} line
  * @param {InputLine} input_line
  * @constructor
@@ -1695,7 +1428,7 @@ decodes blockc markers.
 var LineDecoder = function(context, line, input_line) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
@@ -1889,166 +1622,6 @@ LineDecoder.prototype._compose_line = function(prefix, i) {
   ]);
 };
 /*
-output lines corresponds to one input line.
-*/
-/**
- * @param {InputLine} input
- * @constructor
- */
-var LineOutput = function(input) {
-  var self = this;
-  /**
-   * @type {InputLine}
-   * @private
-   */
-  this._input = input;
-  /**
-   * @type {number}
-   * @private
-   */
-  this._indent = (input.indent);
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
-  this._prefix_lines = ([]);
-  /**
-   * @type {Array.<BlockOutput|string>}
-   * @private
-   */
-  this._lines = ([]);
-  /**
-   * @type {string}
-   * @private
-   */
-  this._line_prefix = ('');
-  /**
-   * @type {string}
-   * @private
-   */
-  this._line_suffix = ('');
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
-  this._tail_comment = ([]);
-};
-LineOutput.prototype._classname = 'LineOutput';
-/** @type {number} */
-LineOutput.prototype.indent;
-LineOutput.prototype.__defineGetter__('indent', function() {
-return this._indent;
-});
-LineOutput.prototype.__defineSetter__('indent', function(value) {
-this._indent = value;
-});
-/** @type {string} */
-LineOutput.prototype.line_prefix;
-LineOutput.prototype.__defineGetter__('line_prefix', function() {
-return this._line_prefix;
-});
-LineOutput.prototype.__defineSetter__('line_prefix', function(value) {
-this._line_prefix = value;
-});
-/** @type {string} */
-LineOutput.prototype.line_suffix;
-LineOutput.prototype.__defineGetter__('line_suffix', function() {
-return this._line_suffix;
-});
-LineOutput.prototype.__defineSetter__('line_suffix', function(value) {
-this._line_suffix = value;
-});
-/** @type {Array.<string>} */
-LineOutput.prototype.tail_comment;
-LineOutput.prototype.__defineGetter__('tail_comment', function() {
-return this._tail_comment;
-});
-LineOutput.prototype.__defineSetter__('tail_comment', function(value) {
-this._tail_comment = value;
-});
-
-/** @param {string} line */
-LineOutput.prototype.append_prefix_line = function(line) {
-  var self = this;
-  self._prefix_lines.push(line);
-};
-
-/** @param {string} line */
-LineOutput.prototype.append_line = function(line) {
-  var self = this;
-  self._lines.push(line);
-};
-
-/** @param {BlockOutput} block */
-LineOutput.prototype.append_block = function(block) {
-  var self = this;
-  self._lines.push(block);
-};
-
-/** @param {Array.<string>} lines */
-LineOutput.prototype.append_lines = function(lines) {
-  var self = this;
-  lines.forEach(
-  /** @param {string} line */
-  function(line) {
-    self._lines.push(line);
-  });
-};
-
-LineOutput.prototype.remove_empty_lines = function() {
-  var self = this;
-  self._lines = self._lines.filter(
-  /** @param {BlockOutput|string} line */
-  function(line) {
-    return line;
-  });
-};
-
-/** @type {Array.<string>} */
-LineOutput.prototype.output;
-LineOutput.prototype.__defineGetter__('output', function() {
-  var self = this;
-  var result;
-  result = [];
-  var indent;
-  indent = whitespaces(self._indent);
-  self._prefix_lines.forEach(
-  /** @param {string} line */
-  function(line) {
-    result.push(line ? indent + line : '');
-  });
-  self._lines.forEach(
-  /**
-   * @param {string|BlockOutput} line
-   * @param {number} i
-   */
-  function(line, i) {
-    if (line instanceof BlockOutput) {
-      result = result.concat(line.output);
-    }
-    else {
-      var to_add;
-      to_add = line;
-      if (i == 0 && self._line_prefix) {
-        to_add = self._line_prefix + to_add;
-      }
-      if (i == self._lines.length - 1 && self._line_suffix) {
-        to_add += self._line_suffix;
-      }
-      if (to_add) {
-        to_add = indent + to_add;
-      }
-      result.push(to_add);
-    }
-  });
-  self._tail_comment.forEach(
-  /** @param {string} c */
-  function(c) {
-    result.push(indent + c);
-  });
-  return result;
-});
-/*
 First pass line parsing for constructing the block structure.
 */
 
@@ -2153,14 +1726,14 @@ LineParser.prototype._check_separator = function() {
   self._is_separator = /^\s*--\s*$/.test(self._input.line);
 };
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @param {InputLine} input
  * @constructor
  */
 var LineTransformer = function(context, input) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
@@ -2248,8 +1821,10 @@ var assert = function(check, opt_line, opt_msg) {
   );
 };
 /*
-pseudo member is a place holder for class members that don't exist, but there are accessors for.
+Pseudo member is a place holder for class members that don't exist, but there
+are accessors for.
 */
+
 /**
  * @param {string} name
  * @param {TypeDecoder} type
@@ -2292,7 +1867,7 @@ returns an array with member declaration if it hasn't been output already.
 returns an empty array otherwise.
 */
 /**
- * @param {!Name} class_name
+ * @param {!context.Name} class_name
  * @return {Array.<string>}
  */
 Member.prototype.output_decl = function(class_name) {
@@ -2313,7 +1888,7 @@ Member.prototype.output_decl = function(class_name) {
 output a getter or a setter.
 */
 /**
- * @param {!Name} class_name
+ * @param {!context.Name} class_name
  * @param {boolean} is_getter
  * @param {Array} body
  * @param {ParamSet=} params
@@ -2338,7 +1913,7 @@ Member.prototype.output_accessor = function(class_name, is_getter, body, params)
 produce necessary accessor methods based on the access type specification.
 */
 /**
- * @param {!Name} class_name
+ * @param {!context.Name} class_name
  * @return {Array}
  */
 Member.prototype.output_accessors = function(class_name) {
@@ -2357,148 +1932,11 @@ Member.prototype.output_accessors = function(class_name) {
   return result;
 };
 /*
-name in file scope.
-*/
-/**
- * @param {!Package} pkg
- * @param {string} id
- * @constructor
- */
-var Name = function(pkg, id) {
-  var self = this;
-  /**
-   * @type {!Package}
-   * @private
-   */
-  this._pkg = pkg;
-  /**
-   * @type {string}
-   * @private
-   */
-  this._id = id;
-};
-Name.prototype._classname = 'Name';
-/** @type {!Package} */
-Name.prototype.pkg;
-Name.prototype.__defineGetter__('pkg', function() {
-return this._pkg;
-});
-/** @type {string} */
-Name.prototype.id;
-Name.prototype.__defineGetter__('id', function() {
-return this._id;
-});
-
-/** @return {string} */
-Name.prototype.decl = function() {
-  var self = this;
-  return (self._pkg.empty() ? 'var ' : '') + self._pkg.fullname(self._id);
-};
-
-/** @return {string} */
-Name.prototype.ref = function() {
-  var self = this;
-  return self._pkg.fullname(self._id);
-};
-
-/**
- * @param {string} id
- * @return {!Name}
- */
-Name.prototype.property = function(id) {
-  var self = this;
-  return new Name(new Package(self.ref() + '.prototype'), id);
-};
-
-/** @return {string} */
-Name.prototype.oString = function() {
-  var self = this;
-  return '[' + self._pkg + ':' + self._id + ']';
-};
-/*
-package name.
-*/
-
-/**
- * @param {string} pkg
- * @constructor
- */
-var Package = function(pkg) {
-  var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
-  this._pkg = pkg;
-};
-Package.prototype._classname = 'Package';
-
-/** @return {boolean} */
-Package.prototype.empty = function() {
-  var self = this;
-  return !self._pkg;
-};
-
-/**
- * @param {string} id
- * @return {string}
- */
-Package.prototype.fullname = function(id) {
-  var self = this;
-  return (self._pkg ? self._pkg + '.' : '') + id;
-};
-
-/**
- * @param {string} str
- * @return {string}
- */
-Package.prototype.replace = function(str) {
-  var self = this;
-  var pkg;
-  pkg = self._pkg;
-  // up package reference if there are two or more "%"s.
-  while (/^\%\%/.test(str)) {
-    if (pkg) {
-      // drop the last element.
-      pkg = pkg.replace(/\.?[^\.]+$/, '');
-    }
-    str = str.substr(1);
-  }
-  // replace "%" with the current package name.
-  return str.replace(/^\%(\:\:|\.)/, 
-  /**
-   * @param {Array.<string>} _
-   * @param {string} connector
-   */
-  function(_, connector) {
-    return pkg ? pkg + connector : '';
-  });
-};
-
-/**
- * @param {string} str
- * @return {string}
- */
-Package.prototype.replace_str = function(str) {
-  var self = this;
-  return str.replace(/\%+(\:\:|\.)/g, 
-  /** @param {string} ref */
-  function(ref) {
-    return self.replace(ref);
-  });
-};
-
-/** @return {string} */
-Package.prototype.toString = function() {
-  var self = this;
-  return self._pkg;
-};
-/*
 Function parameter and / or member declarion.
 */
 
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @param {boolean} is_ctor
  * @param {InputLine} input
  * @param {parser.Result} parsed
@@ -2507,7 +1945,7 @@ Function parameter and / or member declarion.
 var Param = function(context, is_ctor, input, parsed) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
@@ -2637,7 +2075,7 @@ Param.prototype.output_param = function() {
 /*
 Variable initialization output as first statements of function body.
 */
-/** @param {LineOutput} out */
+/** @param {output.Line} out */
 Param.prototype.output_init = function(out) {
   var self = this;
   var pname;
@@ -2715,7 +2153,7 @@ Param.prototype.argtype = function() {
   };
 
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @param {IndentBlock} block
  * @param {boolean=} opt_is_ctor
  * @constructor
@@ -2723,7 +2161,7 @@ Param.prototype.argtype = function() {
 var ParamSet = function(context, block, opt_is_ctor) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
@@ -2910,264 +2348,6 @@ ParamSet.prototype.set_argtypes = function(types) {
   });
 };
 /**
- * @param {FileScope} scope
- * @constructor
- */
-var SectionGenerator = function(scope) {
-  var self = this;
-  /**
-   * @type {FileScope}
-   * @private
-   */
-  this._scope = scope;
-};
-SectionGenerator.prototype._classname = 'SectionGenerator';
-
-/**
- * @param {InputLine} header
- * @param {Array.<InputLine>} lines
- * @return {CodeSection}
- */
-SectionGenerator.prototype.generate = function(header, lines) {
-  var self = this;
-  var section;
-  section = null;
-  var header_line;
-  header_line = header.line.substr(1);
-  if (![
-    '_create_ctor',
-    '_create_method',
-    '_create_accessor',
-    '_create_global_function',
-    '_create_multi_line_str',
-    '_create_global_code',
-    '_create_native_code',
-    '_create_anonymous_scope',
-    //'_create_interface'
-    '_create_typedef'
-    //'_create_var' -- any type including array, map, number, etc.
-    //'_create_class_context' -- for adding methods to e.g. Object.
-  ].some(
-  /** @param {string} method */
-  function(method) {
-    section = self[method].call(self, header_line, header);
-    if (section) {
-      section.lines = lines;
-      section.close(self._scope.context.pkg);
-      section.set_type(self._scope.types);
-    }
-    return !!section;
-  })) {
-    warn(header, 'line starts with colon and not a code section marker');
-  }
-  return section;
-};
-
-/**
- * @param {string} line
- * @return {Constructor}
- * @private
- */
-SectionGenerator.prototype._create_ctor = function(line) {
-  var self = this;
-  var re;
-  re = /^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line);
-  if (!re) {
-    return null;
-  }
-
-  // need to keep this in a member var too.
-  self._scope.context.cls = new Class();
-  var ctor;
-  ctor = new Constructor(self._scope.copy_context_with_name(re[1]), re[3]);
-  self._scope.context.cls.ctor = ctor;
-  self._scope.types.add_ctor(ctor.name());
-  if (re[3]) {
-    self._scope.types.set_parent(ctor.parent_name());
-  }
-  return ctor;
-};
-
-/**
- * @param {string} line
- * @param {InputLine} header
- * @return {Method}
- * @private
- */
-SectionGenerator.prototype._create_method = function(line, header) {
-  var self = this;
-  var re;
-  re = /^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line);
-  if (!re) {
-    return null;
-  }
-
-  // we should have seen a ctor.
-  if (!self._scope.context.cls) {
-    warn(header, 'method marker w/o class');
-    return null;
-  }
-  return new Method(
-      self._scope.copy_context(self._scope.context.cls.method_name((re[2] ? '_' : '') + re[3])),
-      re[5],
-      !!re[1]
-  );
-};
-
-/**
- * @param {string} line
- * @param {InputLine} header
- * @return {OverridingAccessor}
- * @private
- */
-SectionGenerator.prototype._create_accessor = function(line, header) {
-  var self = this;
-  var re;
-  re = /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line);
-  if (!re) {
-    return null;
-  }
-
-  // we should have seen a ctor.
-  if (!self._scope.context.cls) {
-    warn(header, 'accessor marker w/o class');
-    return null;
-  }
-  var type;
-  type = re[1];
-  var name;
-  name = re[2];
-  var ret_type;
-  ret_type = re[4];
-  var ctx;
-  ctx = self._scope.copy_context(self._scope.context.cls.method_name(name));
-  return new OverridingAccessor(ctx, name, ret_type, type == '+');
-};
-
-/**
- * @param {string} line
- * @return {GlobalFunction}
- * @private
- */
-SectionGenerator.prototype._create_global_function = function(line) {
-  var self = this;
-  var re;
-  re = /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line);
-  if (!re) {
-    return null;
-  }
-  return new GlobalFunction(self._scope.copy_context_with_name(re[1]), re[3]);
-};
-
-/**
- * @param {string} line
- * @return {MultiLineStr}
- * @private
- */
-SectionGenerator.prototype._create_multi_line_str = function(line) {
-  var self = this;
-  var re;
-  re = /^'\s*(\w+)$/.exec(line);
-  if (!re) {
-    return null;
-  }
-  return new MultiLineStr(self._scope.copy_context_with_name(re[1]));
-};
-
-/**
- * @param {string} line
- * @return {GlobalCode}
- * @private
- */
-SectionGenerator.prototype._create_global_code = function(line) {
-  var self = this;
-  return line == '' ? new GlobalCode() : null;
-};
-
-/**
- * @param {string} line
- * @return {NativeCode}
- * @private
- */
-SectionGenerator.prototype._create_native_code = function(line) {
-  var self = this;
-  return line == '~' ? new NativeCode() : null;
-};
-
-/**
- * @param {string} line
- * @return {AnonymousScope}
- * @private
- */
-SectionGenerator.prototype._create_anonymous_scope = function(line) {
-  var self = this;
-  return line == '{' ? new AnonymousScope() : null;
-};
-
-/**
- * @param {string} line
- * @return {Typedef}
- * @private
- */
-SectionGenerator.prototype._create_typedef = function(line) {
-  var self = this;
-  var re;
-  re = /^\!\s*(\w+)$/.exec(line);
-  if (!re) {
-    return null;
-  }
-  return new Typedef(self._scope.copy_context_with_name(re[1]));
-};
-/** @constructor */
-var SectionHead = function() {
-  var self = this;
-  /**
-   * @type {Array.<IndentBlock>}}
-   * @private
-   */
-  this._blocks = ([]);
-};
-SectionHead.prototype._classname = 'SectionHead';
-/** @type {Array.<IndentBlock>}} */
-SectionHead.prototype.blocks;
-SectionHead.prototype.__defineGetter__('blocks', function() {
-return this._blocks;
-});
-
-/** @param {IndentBlock} block */
-SectionHead.prototype.add_block = function(block) {
-  var self = this;
-  self._blocks.push(block);
-};
-
-/** @return {number} */
-SectionHead.prototype.num_blocks = function() {
-  var self = this;
-  return self._blocks.length;
-};
-
-/**
- * @param {number} index
- * @return {IndentBlock}
- */
-SectionHead.prototype.block = function(index) {
-  var self = this;
-  return self._blocks[index];
-};
-
-/** @return {IndentBlock} */
-SectionHead.prototype.last_block = function() {
-  var self = this;
-  return self._blocks[self._blocks.length - 1];
-};
-
-/*
-do all the work necessary to produce code output.
-*/
-SectionHead.prototype.transform = function() {
-var self = this;
-};
-/**
  * @param {InputLine} input
  * @param {LineParser} parser
  * @constructor
@@ -3204,7 +2384,7 @@ SeparatorLine.prototype.__defineGetter__('is_continuation', function() {
   return false;
 });
 
-/** @return {LineOutput} */
+/** @return {output.Line} */
 SeparatorLine.prototype.output = function() {
   var self = this;
   return null;
@@ -3410,14 +2590,14 @@ var create_sorted_list = function(files) {
   return sorted.list();
 };
 /**
- * @param {!Package} pkg
+ * @param {!context.Package} pkg
  * @param {string} type
  * @constructor
  */
 var TypeDecoder = function(pkg, type) {
   var self = this;
   /**
-   * @type {!Package}
+   * @type {!context.Package}
    * @private
    */
   this._pkg = pkg;
@@ -3544,7 +2724,7 @@ var arr_flatten = function(lines) {
   if (typeof(lines) == 'string') {
     return [lines];
   }
-  if (lines instanceof LineOutput || lines instanceof BlockOutput) {
+  if (lines instanceof output.Line || lines instanceof output.Block) {
     lines = lines.output;
   }
   console.assert(
@@ -3663,6 +2843,573 @@ var doc_lines = function(annotations) {
     ' */'
   ];
 };
+/** @constructor */
+context.Class = function() {
+  var self = this;
+  /**
+   * @type {section.Constructor}
+   * @private
+   */
+  this._ctor = (null);
+  /**
+   * @type {!Object.<string, Member>}
+   * @private
+   */
+  this._members = ({});
+};
+context.Class.prototype._classname = 'context.Class';
+/** @type {section.Constructor} */
+context.Class.prototype.ctor;
+context.Class.prototype.__defineGetter__('ctor', function() {
+return this._ctor;
+});
+context.Class.prototype.__defineSetter__('ctor', function(value) {
+this._ctor = value;
+});
+
+/** @return {!context.Name} */
+context.Class.prototype.name = function() {
+  var self = this;
+  return self._ctor.context.name;
+};
+
+/** @param {string} name */
+context.Class.prototype.member = function(name) {
+  var self = this;
+  return self._members[name];
+};
+
+/**
+ * @param {string} name
+ * @param {Member} member
+ */
+context.Class.prototype.set_member = function(name, member) {
+  var self = this;
+  self._members[name] = member;
+};
+
+/**
+ * @param {string} method_name
+ * @return {!context.Name}
+ */
+context.Class.prototype.method_name = function(method_name) {
+  var self = this;
+  return self.name().property(method_name);
+};
+
+/**
+ * @param {string} name
+ * @param {TypeDecoder} type
+ * @param {string} access_type
+ * @param {boolean=} opt_is_pseudo
+ * @return {Member}
+ */
+context.Class.prototype.add_member = function(name, type, access_type, opt_is_pseudo) {
+  var self = this;
+  var is_pseudo = opt_is_pseudo === undefined ? (false) : opt_is_pseudo;
+  var m;
+  m = new Member(name, type, access_type, is_pseudo);
+  self._members[name] = m;
+  return m;
+};
+
+/** @return {Array} */
+context.Class.prototype.output_accessors = function() {
+  var self = this;
+  var class_name;
+  class_name = self.name();
+  return Object.keys(self._members).map(
+  /** @param {string} name */
+  function(name) {
+    return self._members[name].output_accessors(class_name);
+  });
+};
+/**
+ * @param {!context.Package} pkg
+ * @constructor
+ */
+context.Context = function(pkg) {
+  var self = this;
+  /**
+   * @type {!context.Package}
+   * @private
+   */
+  this._pkg = pkg;
+  /**
+   * @type {!context.Name}
+   * @private
+   */
+  this._name = (new context.Name(self._pkg, ''));
+  /**
+   * @type {context.Class}
+   * @private
+   */
+  this._cls = (null);
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._is_ctor = (false);
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._is_method = (false);
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._is_file_scope = (false);
+};
+context.Context.prototype._classname = 'context.Context';
+/** @type {!context.Package} */
+context.Context.prototype.pkg;
+context.Context.prototype.__defineGetter__('pkg', function() {
+return this._pkg;
+});
+context.Context.prototype.__defineSetter__('pkg', function(value) {
+this._pkg = value;
+});
+/** @type {!context.Name} */
+context.Context.prototype.name;
+context.Context.prototype.__defineGetter__('name', function() {
+return this._name;
+});
+context.Context.prototype.__defineSetter__('name', function(value) {
+this._name = value;
+});
+/** @type {context.Class} */
+context.Context.prototype.cls;
+context.Context.prototype.__defineGetter__('cls', function() {
+return this._cls;
+});
+context.Context.prototype.__defineSetter__('cls', function(value) {
+this._cls = value;
+});
+/** @type {boolean} */
+context.Context.prototype.is_ctor;
+context.Context.prototype.__defineGetter__('is_ctor', function() {
+return this._is_ctor;
+});
+context.Context.prototype.__defineSetter__('is_ctor', function(value) {
+this._is_ctor = value;
+});
+/** @type {boolean} */
+context.Context.prototype.is_method;
+context.Context.prototype.__defineGetter__('is_method', function() {
+return this._is_method;
+});
+context.Context.prototype.__defineSetter__('is_method', function(value) {
+this._is_method = value;
+});
+/** @type {boolean} */
+context.Context.prototype.is_file_scope;
+context.Context.prototype.__defineGetter__('is_file_scope', function() {
+return this._is_file_scope;
+});
+context.Context.prototype.__defineSetter__('is_file_scope', function(value) {
+this._is_file_scope = value;
+});
+
+/** @return {!context.Context} */
+context.Context.prototype.clone = function() {
+  var self = this;
+  var c;
+  c = new context.Context(self._pkg);
+  var p;
+  for (p in self) {
+    if (self.hasOwnProperty(p)) {
+      c[p] = self[p];
+    }
+  }
+  return c;
+};
+/*
+Name in file scope.
+*/
+
+/**
+ * @param {!context.Package} pkg
+ * @param {string} id
+ * @constructor
+ */
+context.Name = function(pkg, id) {
+  var self = this;
+  /**
+   * @type {!context.Package}
+   * @private
+   */
+  this._pkg = pkg;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._id = id;
+};
+context.Name.prototype._classname = 'context.Name';
+/** @type {!context.Package} */
+context.Name.prototype.pkg;
+context.Name.prototype.__defineGetter__('pkg', function() {
+return this._pkg;
+});
+/** @type {string} */
+context.Name.prototype.id;
+context.Name.prototype.__defineGetter__('id', function() {
+return this._id;
+});
+
+/** @return {string} */
+context.Name.prototype.decl = function() {
+  var self = this;
+  return (self._pkg.empty() ? 'var ' : '') + self._pkg.fullname(self._id);
+};
+
+/** @return {string} */
+context.Name.prototype.ref = function() {
+  var self = this;
+  return self._pkg.fullname(self._id);
+};
+
+/**
+ * @param {string} id
+ * @return {!context.Name}
+ */
+context.Name.prototype.property = function(id) {
+  var self = this;
+  return new context.Name(new context.Package(self.ref() + '.prototype'), id);
+};
+
+/** @return {string} */
+context.Name.prototype.oString = function() {
+  var self = this;
+  return '[' + self._pkg + ':' + self._id + ']';
+};
+/*
+package name.
+*/
+
+/**
+ * @param {string} pkg
+ * @constructor
+ */
+context.Package = function(pkg) {
+  var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._pkg = pkg;
+};
+context.Package.prototype._classname = 'context.Package';
+
+/** @return {boolean} */
+context.Package.prototype.empty = function() {
+  var self = this;
+  return !self._pkg;
+};
+
+/**
+ * @param {string} id
+ * @return {string}
+ */
+context.Package.prototype.fullname = function(id) {
+  var self = this;
+  return (self._pkg ? self._pkg + '.' : '') + id;
+};
+
+/**
+ * @param {string} str
+ * @return {string}
+ */
+context.Package.prototype.replace = function(str) {
+  var self = this;
+  var pkg;
+  pkg = self._pkg;
+  // up package reference if there are two or more "%"s.
+  while (/^\%\%/.test(str)) {
+    if (pkg) {
+      // drop the last element.
+      pkg = pkg.replace(/\.?[^\.]+$/, '');
+    }
+    str = str.substr(1);
+  }
+  // replace "%" with the current package name.
+  return str.replace(/^\%(\:\:|\.)/, 
+  /**
+   * @param {Array.<string>} _
+   * @param {string} connector
+   */
+  function(_, connector) {
+    return pkg ? pkg + connector : '';
+  });
+};
+
+/**
+ * @param {string} str
+ * @return {string}
+ */
+context.Package.prototype.replace_str = function(str) {
+  var self = this;
+  return str.replace(/\%+(\:\:|\.)/g, 
+  /** @param {string} ref */
+  function(ref) {
+    return self.replace(ref);
+  });
+};
+
+/** @return {string} */
+context.Package.prototype.toString = function() {
+  var self = this;
+  return self._pkg;
+};
+/** @constructor */
+output.Block = function() {
+  var self = this;
+  /**
+   * @type {Array.<output.Line>}
+   * @private
+   */
+  this._lines = ([]);
+  // the suffix, if assigned a value, will be inserted after the last nonblank line.
+  /**
+   * @type {string?}
+   * @private
+   */
+  this._suffix = (null);
+};
+output.Block.prototype._classname = 'output.Block';
+/** @type {string?} */
+output.Block.prototype.suffix;
+output.Block.prototype.__defineGetter__('suffix', function() {
+return this._suffix;
+});
+output.Block.prototype.__defineSetter__('suffix', function(value) {
+this._suffix = value;
+});
+
+/** @param {output.Line} line */
+output.Block.prototype.append_line = function(line) {
+  var self = this;
+  self._lines.push(line);
+};
+
+/** @type {boolean} */
+output.Block.prototype.is_empty;
+output.Block.prototype.__defineGetter__('is_empty', function() {
+  var self = this;
+  return !self._lines.length && !self._suffix;
+});
+
+/*
+inserts the suffix line to the array passed as a parameter.
+*/
+/**
+ * @param {Array.<string>} lines
+ * @private
+ */
+output.Block.prototype._add_suffix = function(lines) {
+  var self = this;
+  // find the last non-blank line.
+  var last_nonblank;
+  last_nonblank = -1;
+  lines.forEach(
+  /**
+   * @param {string} line
+   * @param {number} i
+   */
+  function(line, i) {
+    if (line) {
+      last_nonblank = i;
+    }
+  });
+  if (last_nonblank < 0) {
+    lines.unshift(self._suffix);
+  }
+  else {
+    lines.splice(last_nonblank + 1, 0, self._suffix);
+  }
+};
+
+/** @type {Array.<string>} */
+output.Block.prototype.output;
+output.Block.prototype.__defineGetter__('output', function() {
+  var self = this;
+  var lines;
+  lines = self._lines.reduce(
+  /**
+   * @param {Array.<string>} prev
+   * @param {output.Line} line
+   * @param {number} i
+   */
+  function(prev, line, i) {
+    return prev.concat(line.output);
+  }, []);
+  if (self._suffix) {
+    self._add_suffix(lines);
+  }
+  return lines;
+});
+/*
+Output lines corresponds to one input line.
+*/
+
+/**
+ * @param {InputLine} input
+ * @constructor
+ */
+output.Line = function(input) {
+  var self = this;
+  /**
+   * @type {InputLine}
+   * @private
+   */
+  this._input = input;
+  /**
+   * @type {number}
+   * @private
+   */
+  this._indent = (input.indent);
+  /**
+   * @type {Array.<string>}
+   * @private
+   */
+  this._prefix_lines = ([]);
+  /**
+   * @type {Array.<output.Block|string>}
+   * @private
+   */
+  this._lines = ([]);
+  /**
+   * @type {string}
+   * @private
+   */
+  this._line_prefix = ('');
+  /**
+   * @type {string}
+   * @private
+   */
+  this._line_suffix = ('');
+  /**
+   * @type {Array.<string>}
+   * @private
+   */
+  this._tail_comment = ([]);
+};
+output.Line.prototype._classname = 'output.Line';
+/** @type {number} */
+output.Line.prototype.indent;
+output.Line.prototype.__defineGetter__('indent', function() {
+return this._indent;
+});
+output.Line.prototype.__defineSetter__('indent', function(value) {
+this._indent = value;
+});
+/** @type {string} */
+output.Line.prototype.line_prefix;
+output.Line.prototype.__defineGetter__('line_prefix', function() {
+return this._line_prefix;
+});
+output.Line.prototype.__defineSetter__('line_prefix', function(value) {
+this._line_prefix = value;
+});
+/** @type {string} */
+output.Line.prototype.line_suffix;
+output.Line.prototype.__defineGetter__('line_suffix', function() {
+return this._line_suffix;
+});
+output.Line.prototype.__defineSetter__('line_suffix', function(value) {
+this._line_suffix = value;
+});
+/** @type {Array.<string>} */
+output.Line.prototype.tail_comment;
+output.Line.prototype.__defineGetter__('tail_comment', function() {
+return this._tail_comment;
+});
+output.Line.prototype.__defineSetter__('tail_comment', function(value) {
+this._tail_comment = value;
+});
+
+/** @param {string} line */
+output.Line.prototype.append_prefix_line = function(line) {
+  var self = this;
+  self._prefix_lines.push(line);
+};
+
+/** @param {string} line */
+output.Line.prototype.append_line = function(line) {
+  var self = this;
+  self._lines.push(line);
+};
+
+/** @param {output.Block} block */
+output.Line.prototype.append_block = function(block) {
+  var self = this;
+  self._lines.push(block);
+};
+
+/** @param {Array.<string>} lines */
+output.Line.prototype.append_lines = function(lines) {
+  var self = this;
+  lines.forEach(
+  /** @param {string} line */
+  function(line) {
+    self._lines.push(line);
+  });
+};
+
+output.Line.prototype.remove_empty_lines = function() {
+  var self = this;
+  self._lines = self._lines.filter(
+  /** @param {output.Block|string} line */
+  function(line) {
+    return line;
+  });
+};
+
+/** @type {Array.<string>} */
+output.Line.prototype.output;
+output.Line.prototype.__defineGetter__('output', function() {
+  var self = this;
+  var result;
+  result = [];
+  var indent;
+  indent = whitespaces(self._indent);
+  self._prefix_lines.forEach(
+  /** @param {string} line */
+  function(line) {
+    result.push(line ? indent + line : '');
+  });
+  self._lines.forEach(
+  /**
+   * @param {string|output.Block} line
+   * @param {number} i
+   */
+  function(line, i) {
+    if (line instanceof output.Block) {
+      result = result.concat(line.output);
+    }
+    else {
+      var to_add;
+      to_add = line;
+      if (i == 0 && self._line_prefix) {
+        to_add = self._line_prefix + to_add;
+      }
+      if (i == self._lines.length - 1 && self._line_suffix) {
+        to_add += self._line_suffix;
+      }
+      if (to_add) {
+        to_add = indent + to_add;
+      }
+      result.push(to_add);
+    }
+  });
+  self._tail_comment.forEach(
+  /** @param {string} c */
+  function(c) {
+    result.push(indent + c);
+  });
+  return result;
+});
 /*
 Use PEGJS syntax to create a TokenList.
 Container and interface of the TokenList to the rest of the converter.
@@ -4306,20 +4053,278 @@ parser.ParamLineBuilder.prototype.add_type_object = function(params) {
   var self = this;
   self._tokens.add(self.xformer ? self.xformer.type(params.type) : params.tokens);
 };
+/**
+ * @param {FileScope} scope
+ * @constructor
+ */
+section.Generator = function(scope) {
+  var self = this;
+  /**
+   * @type {FileScope}
+   * @private
+   */
+  this._scope = scope;
+};
+section.Generator.prototype._classname = 'section.Generator';
+
+/**
+ * @param {InputLine} header
+ * @param {Array.<InputLine>} lines
+ * @return {section.Code}
+ */
+section.Generator.prototype.generate = function(header, lines) {
+  var self = this;
+  var section;
+  section = null;
+  var header_line;
+  header_line = header.line.substr(1);
+  if (![
+    '_create_ctor',
+    '_create_method',
+    '_create_accessor',
+    '_create_global_function',
+    '_create_multi_line_str',
+    '_create_global_code',
+    '_create_native_code',
+    '_create_anonymous_scope',
+    //'_create_interface'
+    '_create_typedef'
+    //'_create_var' -- any type including array, map, number, etc.
+    //'_create_class_context' -- for adding methods to e.g. Object.
+  ].some(
+  /** @param {string} method */
+  function(method) {
+    section = self[method].call(self, header_line, header);
+    if (section) {
+      section.lines = lines;
+      section.close(self._scope.context.pkg);
+      section.set_type(self._scope.types);
+    }
+    return !!section;
+  })) {
+    warn(header, 'line starts with colon and not a code section marker');
+  }
+  return section;
+};
+
+/**
+ * @param {string} line
+ * @return {section.Constructor}
+ * @private
+ */
+section.Generator.prototype._create_ctor = function(line) {
+  var self = this;
+  var re;
+  re = /^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line);
+  if (!re) {
+    return null;
+  }
+
+  // need to keep this in a member var too.
+  self._scope.context.cls = new context.Class();
+  var ctor;
+  ctor = new section.Constructor(self._scope.copy_context_with_name(re[1]), re[3]);
+  self._scope.context.cls.ctor = ctor;
+  self._scope.types.add_ctor(ctor.name());
+  if (re[3]) {
+    self._scope.types.set_parent(ctor.parent_name());
+  }
+  return ctor;
+};
+
+/**
+ * @param {string} line
+ * @param {InputLine} header
+ * @return {section.Method}
+ * @private
+ */
+section.Generator.prototype._create_method = function(line, header) {
+  var self = this;
+  var re;
+  re = /^(\<?)(\@?)\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line);
+  if (!re) {
+    return null;
+  }
+
+  // we should have seen a ctor.
+  if (!self._scope.context.cls) {
+    warn(header, 'method marker w/o class');
+    return null;
+  }
+  return new section.Method(
+      self._scope.copy_context(self._scope.context.cls.method_name((re[2] ? '_' : '') + re[3])),
+      re[5],
+      !!re[1]
+  );
+};
+
+/**
+ * @param {string} line
+ * @param {InputLine} header
+ * @return {section.Accessor}
+ * @private
+ */
+section.Generator.prototype._create_accessor = function(line, header) {
+  var self = this;
+  var re;
+  re = /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line);
+  if (!re) {
+    return null;
+  }
+
+  // we should have seen a ctor.
+  if (!self._scope.context.cls) {
+    warn(header, 'accessor marker w/o class');
+    return null;
+  }
+  var type;
+  type = re[1];
+  var name;
+  name = re[2];
+  var ret_type;
+  ret_type = re[4];
+  var ctx;
+  ctx = self._scope.copy_context(self._scope.context.cls.method_name(name));
+  return new section.Accessor(ctx, name, ret_type, type == '+');
+};
+
+/**
+ * @param {string} line
+ * @return {section.Function}
+ * @private
+ */
+section.Generator.prototype._create_global_function = function(line) {
+  var self = this;
+  var re;
+  re = /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line);
+  if (!re) {
+    return null;
+  }
+  return new section.Function(self._scope.copy_context_with_name(re[1]), re[3]);
+};
+
+/**
+ * @param {string} line
+ * @return {section.Str}
+ * @private
+ */
+section.Generator.prototype._create_multi_line_str = function(line) {
+  var self = this;
+  var re;
+  re = /^'\s*(\w+)$/.exec(line);
+  if (!re) {
+    return null;
+  }
+  return new section.Str(self._scope.copy_context_with_name(re[1]));
+};
+
+/**
+ * @param {string} line
+ * @return {section.Global}
+ * @private
+ */
+section.Generator.prototype._create_global_code = function(line) {
+  var self = this;
+  return line == '' ? new section.Global() : null;
+};
+
+/**
+ * @param {string} line
+ * @return {section.Native}
+ * @private
+ */
+section.Generator.prototype._create_native_code = function(line) {
+  var self = this;
+  return line == '~' ? new section.Native() : null;
+};
+
+/**
+ * @param {string} line
+ * @return {section.Scope}
+ * @private
+ */
+section.Generator.prototype._create_anonymous_scope = function(line) {
+  var self = this;
+  return line == '{' ? new section.Scope() : null;
+};
+
+/**
+ * @param {string} line
+ * @return {section.Typedef}
+ * @private
+ */
+section.Generator.prototype._create_typedef = function(line) {
+  var self = this;
+  var re;
+  re = /^\!\s*(\w+)$/.exec(line);
+  if (!re) {
+    return null;
+  }
+  return new section.Typedef(self._scope.copy_context_with_name(re[1]));
+};
+/** @constructor */
+section.Head = function() {
+  var self = this;
+  /**
+   * @type {Array.<IndentBlock>}}
+   * @private
+   */
+  this._blocks = ([]);
+};
+section.Head.prototype._classname = 'section.Head';
+/** @type {Array.<IndentBlock>}} */
+section.Head.prototype.blocks;
+section.Head.prototype.__defineGetter__('blocks', function() {
+return this._blocks;
+});
+
+/** @param {IndentBlock} block */
+section.Head.prototype.add_block = function(block) {
+  var self = this;
+  self._blocks.push(block);
+};
+
+/** @return {number} */
+section.Head.prototype.num_blocks = function() {
+  var self = this;
+  return self._blocks.length;
+};
+
+/**
+ * @param {number} index
+ * @return {IndentBlock}
+ */
+section.Head.prototype.block = function(index) {
+  var self = this;
+  return self._blocks[index];
+};
+
+/** @return {IndentBlock} */
+section.Head.prototype.last_block = function() {
+  var self = this;
+  return self._blocks[self._blocks.length - 1];
+};
+
+/*
+do all the work necessary to produce code output.
+*/
+section.Head.prototype.transform = function() {
+var self = this;
+};
   var CODE_PARSER;
   CODE_PARSER = null;
 
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @param {InputLine} input
  * @param {LineParser} line_parsed
  * @constructor
- * @extends {SectionHead}
+ * @extends {section.Head}
  */
 var CodeLine = function(context, input, line_parsed) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
@@ -4353,9 +4358,9 @@ var CodeLine = function(context, input, line_parsed) {
    * @private
    */
   this._matcher = (null);
-  SectionHead.call(this);
+  section.Head.call(this);
 };
-CodeLine.prototype = Object.create(SectionHead.prototype);
+CodeLine.prototype = Object.create(section.Head.prototype);
 CodeLine.prototype._classname = 'CodeLine';
 /** @type {InputLine} */
 CodeLine.prototype.input;
@@ -4434,11 +4439,11 @@ CodeLine.prototype.transform = function() {
   self._matcher.transform();
 };
 
-/** @return {LineOutput} */
+/** @return {output.Line} */
 CodeLine.prototype.output = function() {
   var self = this;
   var out;
-  out = new LineOutput(self._input);
+  out = new output.Line(self._input);
   if (self._param === true) {
     return out;
   }
@@ -4470,49 +4475,120 @@ CodeLine.prototype.output = function() {
 };
 /**
  * @constructor
- * @extends {SectionHead}
+ * @extends {section.Head}
  */
-var CodeSection = function() {
+section.Code = function() {
   var self = this;
   /**
    * @type {Array.<InputLine>}
    * @private
    */
   this._lines = ([]);
-  SectionHead.call(this);
+  section.Head.call(this);
 };
-CodeSection.prototype = Object.create(SectionHead.prototype);
-CodeSection.prototype._classname = 'CodeSection';
+section.Code.prototype = Object.create(section.Head.prototype);
+section.Code.prototype._classname = 'section.Code';
 /** @type {Array.<InputLine>} */
-CodeSection.prototype.lines;
-CodeSection.prototype.__defineGetter__('lines', function() {
+section.Code.prototype.lines;
+section.Code.prototype.__defineGetter__('lines', function() {
 return this._lines;
 });
-CodeSection.prototype.__defineSetter__('lines', function(value) {
+section.Code.prototype.__defineSetter__('lines', function(value) {
 this._lines = value;
 });
 
 /*
 abstract method.
 */
-/** @param {!Package=} pkg */
-CodeSection.prototype.close = function(pkg) {
+/** @param {!context.Package=} pkg */
+section.Code.prototype.close = function(pkg) {
  var self = this;
 };
 
 /** @param {TypeSet} types */
-CodeSection.prototype.set_type = function(types) {
+section.Code.prototype.set_type = function(types) {
   var self = this;
 };
 /**
- * @param {!Context} context
  * @constructor
- * @extends {CodeSection}
+ * @extends {section.Code}
  */
-var MultiLineStr = function(context) {
+section.Native = function() {
+  var self = this;
+  section.Code.call(this);
+};
+section.Native.prototype = Object.create(section.Code.prototype);
+section.Native.prototype._classname = 'section.Native';
+
+/** @return {Array.<output.Line>} */
+section.Native.prototype.output = function() {
+  var self = this;
+  return self.lines.map(
+  /** @param {InputLine} line */
+  function(line) {
+    var out;
+    out = new output.Line(line);
+    out.append_line(line.trim);
+    return out;
+  });
+};
+/**
+ * @constructor
+ * @extends {section.Code}
+ */
+section.Runnable = function() {
+  var self = this;
+  section.Code.call(this);
+};
+section.Runnable.prototype = Object.create(section.Code.prototype);
+section.Runnable.prototype._classname = 'section.Runnable';
+
+/** @override */
+section.Runnable.prototype.close = function(pkg) {
+  var self = this;
+  var c;
+  c = new CodeScope(new context.Context(pkg || new context.Package('')), self);
+  c.process(self.lines);
+};
+
+/** @override */
+section.Runnable.prototype.transform = function() {
+  var self = this;
+  assert(
+    self.num_blocks() == 1,
+    self.lines[0],
+    'Runnable has ' + self.num_blocks() + ' blocks'
+  );
+  self.block(0).transform();
+};
+
+/**
+ * @param {string} block_suffix
+ * @return {Array.<output.Line>}
+ */
+section.Runnable.prototype.output_body = function(block_suffix) {
+  var self = this;
+  var lines;
+  lines = [];
+  var body_lines;
+  body_lines = self.last_block().output();
+  if (block_suffix) {
+    body_lines.suffix = block_suffix;
+  }
+  if (!body_lines.is_empty) {
+    lines.push(body_lines);
+  }
+  return lines;
+};
+/**
+ * @param {!context.Context} context
+ * @constructor
+ * @extends {section.Code}
+ */
+section.Str = function(context) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
@@ -4521,13 +4597,13 @@ var MultiLineStr = function(context) {
    * @private
    */
   this._indent = (-1);
-  CodeSection.call(this);
+  section.Code.call(this);
 };
-MultiLineStr.prototype = Object.create(CodeSection.prototype);
-MultiLineStr.prototype._classname = 'MultiLineStr';
-/** @type {!Context} */
-MultiLineStr.prototype.context;
-MultiLineStr.prototype.__defineGetter__('context', function() {
+section.Str.prototype = Object.create(section.Code.prototype);
+section.Str.prototype._classname = 'section.Str';
+/** @type {!context.Context} */
+section.Str.prototype.context;
+section.Str.prototype.__defineGetter__('context', function() {
 return this._context;
 });
 
@@ -4535,7 +4611,7 @@ return this._context;
 same number of strings as @.lines.
 */
 /** @return {Array.<string>} */
-MultiLineStr.prototype.strlines = function() {
+section.Str.prototype.strlines = function() {
   var self = this;
   var result;
   result = [];
@@ -4559,8 +4635,8 @@ MultiLineStr.prototype.strlines = function() {
   return result;
 };
 
-/** @return {Array.<LineOutput>} */
-MultiLineStr.prototype.output = function() {
+/** @return {Array.<output.Line>} */
+section.Str.prototype.output = function() {
   var self = this;
   var lines;
   lines = self.strlines();
@@ -4573,7 +4649,7 @@ MultiLineStr.prototype.output = function() {
      */
     function(line, i) {
       var out;
-      out = new LineOutput(self.lines[i]);
+      out = new output.Line(self.lines[i]);
       out.indent = self._indent;
       out.append_line("'" + line + "\\n'" + (i == lines.length - 1 ? ';' : ' +'));
       return out;
@@ -4581,102 +4657,15 @@ MultiLineStr.prototype.output = function() {
   ];
 };
 /**
- * @constructor
- * @extends {CodeSection}
- */
-var NativeCode = function() {
-  var self = this;
-  CodeSection.call(this);
-};
-NativeCode.prototype = Object.create(CodeSection.prototype);
-NativeCode.prototype._classname = 'NativeCode';
-
-/** @return {Array.<LineOutput>} */
-NativeCode.prototype.output = function() {
-  var self = this;
-  return self.lines.map(
-  /** @param {InputLine} line */
-  function(line) {
-    var out;
-    out = new LineOutput(line);
-    out.append_line(line.trim);
-    return out;
-  });
-};
-/**
- * @constructor
- * @extends {CodeSection}
- */
-var Runnable = function() {
-  var self = this;
-  CodeSection.call(this);
-};
-Runnable.prototype = Object.create(CodeSection.prototype);
-Runnable.prototype._classname = 'Runnable';
-
-/** @override */
-Runnable.prototype.close = function(pkg) {
-  var self = this;
-  var c;
-  c = new CodeScope(new Context(pkg || new Package('')), self);
-  c.process(self.lines);
-};
-
-/** @override */
-Runnable.prototype.transform = function() {
-  var self = this;
-  assert(
-    self.num_blocks() == 1,
-    self.lines[0],
-    'Runnable has ' + self.num_blocks() + ' blocks'
-  );
-  self.block(0).transform();
-};
-
-/**
- * @param {string} block_suffix
- * @return {Array.<LineOutput>}
- */
-Runnable.prototype.output_body = function(block_suffix) {
-  var self = this;
-  var lines;
-  lines = [];
-  var body_lines;
-  body_lines = self.last_block().output();
-  if (block_suffix) {
-    body_lines.suffix = block_suffix;
-  }
-  if (!body_lines.is_empty) {
-    lines.push(body_lines);
-  }
-  return lines;
-};
-/**
- * @constructor
- * @extends {Runnable}
- */
-var AnonymousScope = function() {
-  var self = this;
-  Runnable.call(this);
-};
-AnonymousScope.prototype = Object.create(Runnable.prototype);
-AnonymousScope.prototype._classname = 'AnonymousScope';
-
-/** @return {Array} */
-AnonymousScope.prototype.output = function() {
-  var self = this;
-  return ['(function() {', self.output_body('})();')];
-};
-/**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @param {string} return_type
  * @constructor
- * @extends {Runnable}
+ * @extends {section.Runnable}
  */
-var Callable = function(context, return_type) {
+section.Callable = function(context, return_type) {
   var self = this;
   /**
-   * @type {!Context}
+   * @type {!context.Context}
    * @private
    */
   this._context = context;
@@ -4690,37 +4679,37 @@ var Callable = function(context, return_type) {
    * @private
    */
   this._params = (null);
-  Runnable.call(this);
+  section.Runnable.call(this);
 };
-Callable.prototype = Object.create(Runnable.prototype);
-Callable.prototype._classname = 'Callable';
-/** @type {!Context} */
-Callable.prototype.context;
-Callable.prototype.__defineGetter__('context', function() {
+section.Callable.prototype = Object.create(section.Runnable.prototype);
+section.Callable.prototype._classname = 'section.Callable';
+/** @type {!context.Context} */
+section.Callable.prototype.context;
+section.Callable.prototype.__defineGetter__('context', function() {
 return this._context;
 });
 /** @type {string} */
-Callable.prototype.return_type;
-Callable.prototype.__defineGetter__('return_type', function() {
+section.Callable.prototype.return_type;
+section.Callable.prototype.__defineGetter__('return_type', function() {
 return this._return_type;
 });
 /** @type {ParamSet} */
-Callable.prototype.params;
-Callable.prototype.__defineGetter__('params', function() {
+section.Callable.prototype.params;
+section.Callable.prototype.__defineGetter__('params', function() {
 return this._params;
 });
-Callable.prototype.__defineSetter__('params', function(value) {
+section.Callable.prototype.__defineSetter__('params', function(value) {
 this._params = value;
 });
 
 /** @return {string} */
-Callable.prototype.name = function() {
+section.Callable.prototype.name = function() {
   var self = this;
   return self._context.name.ref();
 };
 
 /** @override */
-Callable.prototype.close = function(pkg) {
+section.Callable.prototype.close = function(pkg) {
   var self = this;
   var c;
   c = new CodeScope(self._context, self);
@@ -4728,7 +4717,7 @@ Callable.prototype.close = function(pkg) {
 };
 
 /** @override */
-Callable.prototype.transform = function() {
+section.Callable.prototype.transform = function() {
   var self = this;
   assert(
     self.num_blocks() == 1,
@@ -4742,45 +4731,61 @@ Callable.prototype.transform = function() {
 };
 
 /** @return {string} */
-Callable.prototype.output_func = function() {
+section.Callable.prototype.output_func = function() {
   var self = this;
   return self._context.name.decl() + ' = function(' + self._params.output_params() + ') {';
 };
 /**
  * @constructor
- * @extends {Runnable}
+ * @extends {section.Runnable}
  */
-var GlobalCode = function() {
+section.Global = function() {
   var self = this;
-  Runnable.call(this);
+  section.Runnable.call(this);
 };
-GlobalCode.prototype = Object.create(Runnable.prototype);
-GlobalCode.prototype._classname = 'GlobalCode';
+section.Global.prototype = Object.create(section.Runnable.prototype);
+section.Global.prototype._classname = 'section.Global';
 
 /** @return {Array} */
-GlobalCode.prototype.output = function() {
+section.Global.prototype.output = function() {
   var self = this;
   return self.output_body('');
 };
 /**
- * @param {!Context} context
  * @constructor
- * @extends {MultiLineStr}
+ * @extends {section.Runnable}
  */
-var Typedef = function(context) {
+section.Scope = function() {
   var self = this;
-  MultiLineStr.call(this, context);
+  section.Runnable.call(this);
 };
-Typedef.prototype = Object.create(MultiLineStr.prototype);
-Typedef.prototype._classname = 'Typedef';
+section.Scope.prototype = Object.create(section.Runnable.prototype);
+section.Scope.prototype._classname = 'section.Scope';
 
-/** @return {Array.<LineOutput>} */
-Typedef.prototype.output = function() {
+/** @return {Array} */
+section.Scope.prototype.output = function() {
+  var self = this;
+  return ['(function() {', self.output_body('})();')];
+};
+/**
+ * @param {!context.Context} context
+ * @constructor
+ * @extends {section.Str}
+ */
+section.Typedef = function(context) {
+  var self = this;
+  section.Str.call(this, context);
+};
+section.Typedef.prototype = Object.create(section.Str.prototype);
+section.Typedef.prototype._classname = 'section.Typedef';
+
+/** @return {Array.<output.Line>} */
+section.Typedef.prototype.output = function() {
   var self = this;
   var decoder;
   decoder = new TypeDecoder(self.context.pkg, self.strlines().join(''));
   var out;
-  out = new LineOutput(self.lines[0]);
+  out = new output.Line(self.lines[0]);
   out.indent = 0;
   out.append_lines([
     doc_lines(['@typedef {' + decoder.output() + '}']),
@@ -4788,13 +4793,71 @@ Typedef.prototype.output = function() {
   ]);
   return [out];
 };
+/*
+Overriding accessor.
+*/
+
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
+ * @param {string} name
+ * @param {string} return_type
+ * @param {boolean} is_getter
+ * @constructor
+ * @extends {section.Callable}
+ */
+section.Accessor = function(context, name, return_type, is_getter) {
+  var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._name = name;
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._is_getter = is_getter;
+  context.is_method = true;
+  section.Callable.call(this, context, return_type);
+};
+section.Accessor.prototype = Object.create(section.Callable.prototype);
+section.Accessor.prototype._classname = 'section.Accessor';
+
+/** @return {Array} */
+section.Accessor.prototype.output = function() {
+  var self = this;
+  var member;
+  member = self.context.cls.member(self._name);
+  // TODO: error if there is member and we have param or return type specified to the
+  // accessor.
+  // TODO: error if there is no member, but there are both getter and setter, and their param
+  // and return type do not match. also error if the setter takes more than one param.
+  if (!member) {
+    // accessor with no corresponding member. use the given param and return types.
+    member = self.context.cls.add_member(
+      self._name,
+      new TypeDecoder(self.context.pkg, self.return_type),
+      '&',
+      true
+    );
+  }
+  var class_name;
+  class_name = self.context.cls.name();
+  return [
+    member.output_decl(class_name),
+    member.output_accessor(class_name, self._is_getter, [
+      whitespaces(self.block(0).indent) + 'var self = this;',
+      self.output_body('')
+    ], self.params)
+  ];
+};
+/**
+ * @param {!context.Context} context
  * @param {string?=} opt_parent
  * @constructor
- * @extends {Callable}
+ * @extends {section.Callable}
  */
-var Constructor = function(context, opt_parent) {
+section.Constructor = function(context, opt_parent) {
   var self = this;
   /**
    * @type {string?}
@@ -4802,20 +4865,20 @@ var Constructor = function(context, opt_parent) {
    */
   this._parent = opt_parent === undefined ? (null) : opt_parent;
   context.is_ctor = true;
-  Callable.call(this, context, '');
+  section.Callable.call(this, context, '');
   self._parent = self._parent ? self.context.pkg.replace(self._parent) : '';
 };
-Constructor.prototype = Object.create(Callable.prototype);
-Constructor.prototype._classname = 'Constructor';
+section.Constructor.prototype = Object.create(section.Callable.prototype);
+section.Constructor.prototype._classname = 'section.Constructor';
 
 /** @return {string} */
-Constructor.prototype.parent_name = function() {
+section.Constructor.prototype.parent_name = function() {
   var self = this;
   return /** @type {string} */(self._parent);
 };
 
 /** @override */
-Constructor.prototype.transform = function() {
+section.Constructor.prototype.transform = function() {
   var self = this;
   assert(self.num_blocks() == 1, self.lines[0]);
   self.params = new ParamSet(self.context, self.block(0), true);
@@ -4824,7 +4887,7 @@ Constructor.prototype.transform = function() {
 };
 
 /** @return {Array} */
-Constructor.prototype.output = function() {
+section.Constructor.prototype.output = function() {
   var self = this;
   var decl;
   decl = self.params.output_decls();
@@ -4857,25 +4920,25 @@ Constructor.prototype.output = function() {
 };
 
 /** @override */
-Constructor.prototype.set_type = function(types) {
+section.Constructor.prototype.set_type = function(types) {
   var self = this;
   self.params.set_argtypes(types.get_current_ctor());
 };
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @param {string} return_type
  * @constructor
- * @extends {Callable}
+ * @extends {section.Callable}
  */
-var GlobalFunction = function(context, return_type) {
+section.Function = function(context, return_type) {
   var self = this;
-  Callable.call(this, context, return_type);
+  section.Callable.call(this, context, return_type);
 };
-GlobalFunction.prototype = Object.create(Callable.prototype);
-GlobalFunction.prototype._classname = 'GlobalFunction';
+section.Function.prototype = Object.create(section.Callable.prototype);
+section.Function.prototype._classname = 'section.Function';
 
 /** @return {Array} */
-GlobalFunction.prototype.output = function() {
+section.Function.prototype.output = function() {
   var self = this;
   return [
     doc_lines(self.params.output_decls()),
@@ -4885,18 +4948,18 @@ GlobalFunction.prototype.output = function() {
 };
 
 /** @override */
-GlobalFunction.prototype.set_type = function(types) {
+section.Function.prototype.set_type = function(types) {
   var self = this;
   self.params.set_argtypes(types.add_funct(self.context.name.ref()));
 };
 /**
- * @param {!Context} context
+ * @param {!context.Context} context
  * @param {string} return_type
  * @param {boolean} overriding
  * @constructor
- * @extends {Callable}
+ * @extends {section.Callable}
  */
-var Method = function(context, return_type, overriding) {
+section.Method = function(context, return_type, overriding) {
   var self = this;
   /**
    * @type {boolean}
@@ -4904,13 +4967,13 @@ var Method = function(context, return_type, overriding) {
    */
   this._overriding = overriding;
   context.is_method = true;
-  Callable.call(this, context, return_type);
+  section.Callable.call(this, context, return_type);
 };
-Method.prototype = Object.create(Callable.prototype);
-Method.prototype._classname = 'Method';
+section.Method.prototype = Object.create(section.Callable.prototype);
+section.Method.prototype._classname = 'section.Method';
 
 /** @return {Array} */
-Method.prototype.output = function() {
+section.Method.prototype.output = function() {
   var self = this;
   var decls;
   decls = [];
@@ -4932,65 +4995,11 @@ Method.prototype.output = function() {
 };
 
 /** @override */
-Method.prototype.set_type = function(types) {
+section.Method.prototype.set_type = function(types) {
   var self = this;
   self.params.set_argtypes(
     types.get_current_ctor().add_method(self.context.name.id)
   );
-};
-/**
- * @param {!Context} context
- * @param {string} name
- * @param {string} return_type
- * @param {boolean} is_getter
- * @constructor
- * @extends {Callable}
- */
-var OverridingAccessor = function(context, name, return_type, is_getter) {
-  var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
-  this._name = name;
-  /**
-   * @type {boolean}
-   * @private
-   */
-  this._is_getter = is_getter;
-  context.is_method = true;
-  Callable.call(this, context, return_type);
-};
-OverridingAccessor.prototype = Object.create(Callable.prototype);
-OverridingAccessor.prototype._classname = 'OverridingAccessor';
-
-/** @return {Array} */
-OverridingAccessor.prototype.output = function() {
-  var self = this;
-  var member;
-  member = self.context.cls.member(self._name);
-  // TODO: error if there is member and we have param or return type specified to the
-  // accessor.
-  // TODO: error if there is no member, but there are both getter and setter, and their param
-  // and return type do not match. also error if the setter takes more than one param.
-  if (!member) {
-    // accessor with no corresponding member. use the given param and return types.
-    member = self.context.cls.add_member(
-      self._name,
-      new TypeDecoder(self.context.pkg, self.return_type),
-      '&',
-      true
-    );
-  }
-  var class_name;
-  class_name = self.context.cls.name();
-  return [
-    member.output_decl(class_name),
-    member.output_accessor(class_name, self._is_getter, [
-      whitespaces(self.block(0).indent) + 'var self = this;',
-      self.output_body('')
-    ], self.params)
-  ];
 };
   // TODO: @enum
   var ExecModes;
