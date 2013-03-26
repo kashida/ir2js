@@ -1,4 +1,5 @@
-input code section.
+Input code section.
+
 ::Section
   @header+\%.Line\$
   @lines+\A.<%.Line>\ []

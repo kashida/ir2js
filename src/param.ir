@@ -3,7 +3,7 @@ Function parameter and / or member declarion.
 ::Param
   @context\!context.Context\$
   is_ctor\b\$
-  input\input.Line\$
+  inputs\input.Line\$
   parsed\parser.Result\$
 
   @line\parser.ParamLine\
@@ -25,9 +25,9 @@ Function parameter and / or member declarion.
 
   // sanity check the param consistency.
   if !is_ctor && @.is_member
-    warn(input, 'member param for non-constructor method')
+    warn(inputs, 'member param for non-constructor method')
   if !@.is_member && @.init_type != '?' && @value_line
-    warn(input, 'initial value for non-member non-optional')
+    warn(inputs, 'initial value for non-member non-optional')
 
 :+is_member\b\
   => @line.is_member

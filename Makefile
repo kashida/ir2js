@@ -83,7 +83,7 @@ compiled/_ir2js.js: $(JS_SRCS) $(CNVT_JS_SRC)
 
 PARSER_TEST_SRCS=\
 $(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
-PARSER_TEST_SRCS+=compiled/input_line.js
+PARSER_TEST_SRCS+=compiled/input/line.js
 
 test_parse: dir compiled/parser/syntax.js compiled/parser_main.js
 	@$(NODE) compiled/parser_main.js -p src/*.ir | grep '^X|'

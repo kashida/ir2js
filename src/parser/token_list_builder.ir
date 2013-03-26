@@ -10,9 +10,9 @@
   => @tokens
 
 :result\%.Result\
-  input\!A.<input.Line>\$
+  line\!A.<input.Line>\$
   @.build()
-  => new %.Result(@tokens, input)
+  => new %.Result(@tokens, line)
 
 :@build_rec
   data\%.TokenList|A|O|s\$

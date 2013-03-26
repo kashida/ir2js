@@ -337,22 +337,24 @@ CurrentPackage
       return {g: 'c', params: {name: name, percents: percents.join('')}};
     }
 
-ArrayBlockMarker = '[' _ '#' _ ']' { return {g: 'm', params: {type: 'a'}}; }
-ObjectBlockMarker = '{' _ '#' _ '}' { return {g: 'm', params: {type: 'o'}}; }
-ParameterBlockMarker = '(' _ '#' _ ')' { return {g: 'm', params: {type: 'p'}}; }
-FunctionBlockMarker = '##' { return {g: 'm', params: {type: 'f'}}; }
-
 BinaryOpBlockMarker
   = '#' op:('*' / '+' / '&&' / '||') {
       return {g: 'm', params: {type: op}};
     }
 
+ArrayBlockMarker = '[' _ '#' _ ']' { return {g: 'm', params: {type: 'a'}}; }
+ObjectBlockMarker = '{' _ '#' _ '}' { return {g: 'm', params: {type: 'o'}}; }
+ParameterBlockMarker = '(' _ '#' _ ')' { return {g: 'm', params: {type: 'p'}}; }
+FunctionBlockMarker = '##' { return {g: 'm', params: {type: 'f'}}; }
+LineBlockMarker = '#' { return {g: 'm', params: {type: 'l'}}; }
+
 BlockMarker
-  = ArrayBlockMarker
+  = BinaryOpBlockMarker
+  / ArrayBlockMarker
   / ObjectBlockMarker
   / ParameterBlockMarker
   / FunctionBlockMarker
-  / BinaryOpBlockMarker
+  / LineBlockMarker
 
 
 ////////////////////////////////////////////////////////////

@@ -9,8 +9,7 @@
   pkg_name = pkg_name.replace(/^[\/\\]*/, '').replace(/[\/\\]/, '.')
 
   c := new FileScope(pkg_name)
-  input := _fs.readFileSync(infile, 'utf-8')
-  c.process_lines(input.split('\n'))
+  c.process_lines(_fs.readFileSync(infile, 'utf-8').split('\n'))
   _fs.writeFileSync(#)
     outfile
     c.output().join('\n')

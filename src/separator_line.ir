@@ -1,7 +1,7 @@
 ::SeparatorLine
   @input+\input.Line\$
-  parser\LineParser\$
-  @indent+\n\ parser.indent
+  p\LineParser\$
+  @indent+\n\ p.indent
 
 :+is_continuation\b\
   => false
