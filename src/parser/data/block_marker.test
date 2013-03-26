@@ -12,6 +12,10 @@
 (# )
   |#p|
 
+:Expression
+0 + (#)
+  0 + |#p|
+
 :Statement
 a(#)
   a|#p|

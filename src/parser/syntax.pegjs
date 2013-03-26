@@ -354,7 +354,7 @@ BlockMarker
   / ObjectBlockMarker
   / ParameterBlockMarker
   / FunctionBlockMarker
-//  / LineBlockMarker
+  / LineBlockMarker
 
 
 ////////////////////////////////////////////////////////////
@@ -432,8 +432,8 @@ CallExpression
     )*
 
 Arguments
-  = '(' _ ArgumentList? _ ')'
-  / ParameterBlockMarker
+  = ParameterBlockMarker
+  / '(' _ ArgumentList? _ ')'
 
 ArgumentList
   = AssignmentExpression (_ ',' __ AssignmentExpression)*
