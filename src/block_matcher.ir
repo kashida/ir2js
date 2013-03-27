@@ -20,20 +20,25 @@ Returns true only if matching succeeds and leaving valid set of indexes in
 :@match_blocks\b\
   code := @code
   idx := 1
+  is_line := false
   if @code[0] instanceof parser.BlockMarker
     idx = 0
     @starts_with_marker = true
 
   while idx < code.length
     param := null
-    elem := @code[idx]
-    if elem instanceof parser.BlockMarker && elem.type == 'f'
+    marker := @code[idx]
+    assert(marker instanceof parser.BlockMarker, @input)
+    if marker.type == 'f'
       sub_context := @context.clone()
       sub_context.is_file_scope = false
       param = new ParamSet(sub_context, @blocks[@marker_indexes.length])
 
-    @marker_indexes.push(idx)
-    @params.push(param)
+    if !is_line || marker.type != 'l'
+      @marker_indexes.push(idx)
+      @params.push(param)
+    if marker.type == 'l'
+      is_line = true
 
     idx += 2
 
@@ -60,23 +65,27 @@ Returns true only if matching succeeds and leaving valid set of indexes in
       o: BlockType.OBJ
       a: BlockType.ARRAY
       p: BlockType.PARAMS
+      l: BlockType.LINE
       '*': BlockType.MULT
       '+': BlockType.ADD
       '&&': BlockType.LOG_AND
       '||': BlockType.LOG_OR
 
-:first_line\A.<s>\
+:each
+  code_handler\f(A.<s>)\$
+  block_handler\f(IndentBlock)\$
+
+  // first line.
   // there should be at least one fragment.
-  => @compose_line(@starts_with_marker ? '' : (#), 0)
+  code_handler(@compose_line(@starts_with_marker ? '' : (#), 0))
     \s\ (@code.length ? @code[0] : '')
 
-:each_fragment
-  cb\function(IndentBlock, A.<s>)\$
   @blocks.forEach(##)
     block\IndentBlock\$
     i\n\$
     mi := @marker_indexes[i]
-    cb(block, @compose_line(#))
+    block_handler(block)
+    code_handler(@compose_line(#))
       block.end_str() + (mi < 0 || mi + 1 >= @code.length ? '' : @code[mi + 1])
       i + 1
 
@@ -88,7 +97,7 @@ Returns true only if matching succeeds and leaving valid set of indexes in
 
   b := @blocks[i]
   p := @params[i]
-  bstart := [b.start_str()]
+  bstart := b.start_str()
   if !p
     => [prefix + bstart]
   if p.is_decl_empty()
