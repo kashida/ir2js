@@ -64,10 +64,9 @@ Variable initialization output as first statements of function body.
   pname := @param_name()
 
   if @.is_member
-    out.append_prefix_line('/**')
-    out.append_prefix_line(' * @type {' + @type.output() + '}')
-    out.append_prefix_line(' * @private')
-    out.append_prefix_line(' */')
+    out.prefix_lines = out.prefix_lines.concat(doc_lines([#]))
+      '@type {' + @type.output() + '}'
+      '@private'
 
   if @.is_member || @.has_init
     out.line_prefix = [#].join('')

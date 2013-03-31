@@ -68,7 +68,7 @@
     => []
   if alist.length == 1
     => ['/** ' + alist[0] + ' */']
-  =>[#]
+  => arr_flatten([#])
     '/**'
     alist.map(##)
       annotation\s\$
