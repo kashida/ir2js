@@ -47,28 +47,17 @@ Valid only after run call.
 
 :@handle_marker
   marker\parser.BlockMarker\$
-  switch marker.type
-    case 'f'
+  if marker.type != 'l'
     if @lidx > 0
       @lidx = 0
       @bidx++
-    if @block_cb
-      @block_cb('f', true)
+
+  if @block_cb
+    @block_cb(marker.type, marker.type == 'f')
+
+  if marker.type != 'l'
     @bidx++
+  if marker.type == 'f'
     @pidx++
-    break
-
-    case 'l'
-    if @block_cb
-      @block_cb('l', false)
+  if marker.type == 'l'
     @lidx++
-    break
-
-    default
-    if @lidx > 0
-      @lidx = 0
-      @bidx++
-    if @block_cb
-      @block_cb(marker.type, false)
-    @bidx++
-    break
