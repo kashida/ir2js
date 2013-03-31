@@ -1,0 +1,29 @@
+::Multiline
+  @lines+\!A.<!%.Block|s>\ []
+  @last_line_open\b\ false
+
+:+empty\b\
+  => !@lines.length
+
+:append_str
+  line\s\$
+  if @last_line_open
+    @lines[@lines.length - 1] += line
+  else
+    @lines.push(line)
+  @last_line_open = true
+
+:append_lines
+  lines\!A.<s>\$
+  lines.forEach(##)
+    line\s\$
+    @.append_str(line)
+    @.terminate_line()
+
+:terminate_line
+  @last_line_open = false
+
+:append_block
+  block\!%.Block\$
+  @lines.push(block)
+  @last_line_open = false
