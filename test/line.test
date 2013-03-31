@@ -165,6 +165,37 @@ c = (
 );
 #}
 
+#{: conditional marker
+a = #? / # + #? * (#)
+  some_condition()
+  true_result
+  false_result
+  --
+  3
+  --
+  a + b + is_test()
+  3 + 3 / 2
+  a = 3
+  --
+  list0
+  list1
+#=
+a = (
+  (some_condition()) ?
+  (true_result) :
+  (false_result)
+) / (
+  3
+) + (
+  (a + b + is_test()) ?
+  (3 + 3 / 2) :
+  (a = 3)
+) * (
+  list0,
+  list1
+);
+#}
+
 #{: block statement
 if xyz
   aaa

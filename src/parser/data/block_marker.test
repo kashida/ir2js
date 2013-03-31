@@ -11,10 +11,16 @@
   |#o|
 (# )
   |#p|
+#
+  |#l|
+#?
+  |#c|
 
 :Expression
 0 + (#)
   0 + |#p|
+a = #? ? true : false
+  a = |#c| ? true : false
 
 :Statement
 a(#)

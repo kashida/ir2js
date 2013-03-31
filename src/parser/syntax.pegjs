@@ -49,64 +49,60 @@ UnicodeDigit = Nd
 UnicodeConnectorPunctuation = Pc
 
 ReservedWord
-  = Keyword
+  = (
+    Keyword
   / FutureReservedWord
   / NullLiteral
   / BooleanLiteral
+  ) !IdentifierPart
 
 Keyword
-  = (
-        'break'
-      / 'case'
-      / 'catch'
-      / 'continue'
-      / 'debugger'
-      / 'default'
-      / 'delete'
-      / 'do'
-      / 'else'
-      / 'finally'
-      / 'for'
-      / 'each'
-      / 'if'
-      / 'instanceof'
-      / 'in'
-      / 'new'
-      / 'switch'
-      / 'throw'
-      / 'try'
-      / 'typeof'
-      / 'while'
-    )
-    !IdentifierPart
+  = 'break'
+  / 'case'
+  / 'catch'
+  / 'continue'
+  / 'debugger'
+  / 'default'
+  / 'delete'
+  / 'do'
+  / 'else'
+  / 'finally'
+  / 'for'
+  / 'each'
+  / 'if'
+  / 'instanceof'
+  / 'in'
+  / 'new'
+  / 'switch'
+  / 'throw'
+  / 'try'
+  / 'typeof'
+  / 'while'
 
 FutureReservedWord
-  = (
-        'class'
-      / 'const'
-      / 'enum'
-      / 'export'
-      / 'extends'
-      / 'function'
-      / 'import'
-      / 'return'
-      / 'super'
-      / 'var'
-      / 'void'
-      / 'with'
+  = 'class'
+  / 'const'
+  / 'enum'
+  / 'export'
+  / 'extends'
+  / 'function'
+  / 'import'
+  / 'return'
+  / 'super'
+  / 'var'
+  / 'void'
+  / 'with'
 
-      // Strict mode reserved words.
-      / 'implements'
-      / 'let'
-      / 'private'
-      / 'public'
-      / 'interface'
-      / 'package'
-      / 'protected'
-      / 'static'
-      / 'yield'
-    )
-    !IdentifierPart
+  // Strict mode reserved words.
+  / 'implements'
+  / 'let'
+  / 'private'
+  / 'public'
+  / 'interface'
+  / 'package'
+  / 'protected'
+  / 'static'
+  / 'yield'
 
 DecimalString
   = before:DecimalIntegerString
@@ -346,7 +342,8 @@ ArrayBlockMarker = '[' _ '#' _ ']' { return {g: 'm', params: {type: 'a'}}; }
 ObjectBlockMarker = '{' _ '#' _ '}' { return {g: 'm', params: {type: 'o'}}; }
 ParameterBlockMarker = '(' _ '#' _ ')' { return {g: 'm', params: {type: 'p'}}; }
 FunctionBlockMarker = '##' { return {g: 'm', params: {type: 'f'}}; }
-LineBlockMarker = '#' { return {g: 'm', params: {type: 'l'}}; }
+LineBlockMarker = '#' !('#' / '?') { return {g: 'm', params: {type: 'l'}}; }
+ConditionalBlockMarker = '#?' { return {g: 'm', params: {type: 'c'}}; }
 
 BlockMarker
   = BinaryOpBlockMarker
@@ -354,6 +351,7 @@ BlockMarker
   / ObjectBlockMarker
   / ParameterBlockMarker
   / FunctionBlockMarker
+  / ConditionalBlockMarker
   / LineBlockMarker
 
 
@@ -361,11 +359,13 @@ BlockMarker
 // Expressions
 
 Literal
-  = NullLiteral
+  = (
+    NullLiteral
   / BooleanLiteral
   / NumericLiteral
   / StringLiteral
   / RegularExpressionLiteral
+  ) !IdentifierPart
 
 PrimaryExpression
   = Self

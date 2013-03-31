@@ -14,16 +14,18 @@
     ARRAY: 2
     PARAMS: 3
     LINE: 4
-    MULT: 5
-    ADD: 6
-    LOG_AND: 7
-    LOG_OR: 8
+    COND: 5
+    MULT: 6
+    ADD: 7
+    LOG_AND: 8
+    LOG_OR: 9
 
-  _BLOCK_OPEN  := [' {', '{', '[', '(', '(', '(',   '(',   '(',    '(']
-  _LINE_PREFIX := ['',   '',  '',  '',  '',  '(',   '(',   '(',    '(']
-  _LINE_SUFFIX := [';',  ',', ',', ',', '',  ') *', ') +', ') &&', ') ||']
-  _END_SUFFIX  := [';',  '',  '',  '',  '',  ')',   ')',   ')',    ')']
-  _BLOCK_CLOSE := ['}',  '}', ']', ')', ')', ')',   ')',   ')',    ')']
+  _BLOCK_OPEN   := [' {', '{', '[', '(', '(', '(',   '(',   '(',   '(',    '(']
+  _LINE_PREFIX  := ['',   '',  '',  '',  '',  '(',   '(',   '(',   '(',    '(']
+  _LINE_SUFFIX  := [';',  ',', ',', ',', '',  ') :', ') *', ') +', ') &&', ') ||']
+  _FIRST_SUFFIX := [';',  ',', ',', ',', '',  ') ?', ') *', ') +', ') &&', ') ||']
+  _END_SUFFIX   := [';',  '',  '',  '',  '',  ')',   ')',   ')',   ')',    ')']
+  _BLOCK_CLOSE  := ['}',  '}', ']', ')', ')', ')',   ')',   ')',   ')',    ')']
 
 :add
   line\SectionLine\$
@@ -90,7 +92,8 @@ TODO: change marker's type to BlockType when it's enum.
       if !line.is_block_statement
         out_line.line_prefix += _LINE_PREFIX[@marker]
         out_line.line_suffix += (#)
-          i == last_index ? _END_SUFFIX[@marker] : _LINE_SUFFIX[@marker]
+          i == last_index ? _END_SUFFIX[@marker] : (#)
+            i == 0 ? _FIRST_SUFFIX[@marker] : _LINE_SUFFIX[@marker]
       accum_suffix = ''
     out.append_line(out_line)
   => out

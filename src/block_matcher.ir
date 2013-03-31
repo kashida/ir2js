@@ -33,6 +33,11 @@ Returns true only if matching succeeds.
     type\s\$
     with_param\b\$
     // transform the blocks.
+
+    // TODO: Error check number of lines in the block matches the number of
+    // line markers.
+    // TODO: Error check conditional block marker if the block has exactly
+    // 3 lines
     if type == 'l' && itr.lidx != 0
       // Line marker block gets callback for every line.
       // Only need to transform for the first line.
@@ -44,6 +49,7 @@ Returns true only if matching succeeds.
       o: BlockType.OBJ
       a: BlockType.ARRAY
       p: BlockType.PARAMS
+      c: BlockType.COND
       l: BlockType.LINE
       '*': BlockType.MULT
       '+': BlockType.ADD
