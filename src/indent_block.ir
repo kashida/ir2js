@@ -57,7 +57,7 @@ TODO: change marker's type to BlockType when it's enum.
 :+end_str\s\
   => _BLOCK_CLOSE[@marker]
 
-:output\output.Block\
+:output\!output.Block\
   // find the last valid line.
   last_index := -1
   @lines.forEach(##)

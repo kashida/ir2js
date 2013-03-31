@@ -55,16 +55,16 @@ Returns true only if matching succeeds.
     type\s\$
     with_param\b\$
     block := @blocks[itr.bidx]
-    out.append_lines(@compose_line(#))
+    out.lines.append_lines(@compose_line(#))
       itr.cidx == 0 ? '' : \s\ (@code[itr.cidx - 1])
       prev_block
       block
       with_param ? @params[itr.pidx] : null
-    out.append_block(block.output())
+    out.lines.append_block(block.output())
     prev_block = block
   itr.run()
   if itr.ends_with_code
-    out.append_lines(@compose_line(#))
+    out.lines.append_lines(@compose_line(#))
       \s\ (@code[itr.cidx])
       prev_block
       null

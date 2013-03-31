@@ -3,10 +3,10 @@ Helper for Line to construct the output.
 ::IndentedMultiline
   num_indent\n\$
   @indent\s\ whitespaces(num_indent)
-  @lines\A.<s>\ []
+  @lines\!A.<s>\ []
   @last_line_open\b\ false
 
-:+output\A.<s>\
+:+output\!A.<s>\
   => @lines
 
 :append_line
@@ -23,7 +23,7 @@ Helper for Line to construct the output.
     @last_line_open = false
 
 :append_all
-  lines\A.<s>\$
+  lines\!A.<s>\$
   lines.forEach(##)
     line\s\$
     @.append_line(line)
@@ -31,6 +31,6 @@ Helper for Line to construct the output.
 Lines added as is.
 Block does not share its lines with the surrounding lines.
 :append_block
-  block\A.<s>\$
+  block\!A.<s>\$
   @lines = @lines.concat(block)
   @last_line_open = false
