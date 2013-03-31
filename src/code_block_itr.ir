@@ -25,6 +25,12 @@ Valid only after run call.
     if frg instanceof parser.BlockMarker
       @handle_marker(frg)
 
+  if @lidx > 0
+    if @cb
+      @cb('l', false)
+    @lidx = 0
+    @bidx++
+
   // There may be one extra block.
   if @bidx > @blocks.length || @bidx + 1 < @blocks.length
     warn(@input, '# blocks does not match #markers.')
@@ -42,11 +48,15 @@ Valid only after run call.
   marker\parser.BlockMarker\$
   switch marker.type
     case 'f'
+    if @lidx > 0
+      if @cb
+        @cb('l', false)
+      @lidx = 0
+      @bidx++
     if @cb
-      @cb(marker.type, true)
+      @cb('f', true)
     @bidx++
     @pidx++
-    @lidx = 0
     break
 
     case 'l'
@@ -54,6 +64,11 @@ Valid only after run call.
     break
 
     default
+    if @lidx > 0
+      if @cb
+        @cb('l', false)
+      @lidx = 0
+      @bidx++
     if @cb
       @cb(marker.type, false)
     @bidx++
