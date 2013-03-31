@@ -26,11 +26,6 @@ Output lines corresponds to one input line.
     line\s\$
     @lines.push(line)
 
-:remove_empty_lines
-  @lines = @lines.filter(##)
-    line\%.Block|s\$
-    => line
-
 :+output\A.<s>\
   out_lines := new %.IndentedMultiline(@indent)
   out_lines.append_all(@prefix_lines)
