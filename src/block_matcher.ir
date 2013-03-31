@@ -33,6 +33,10 @@ Returns true only if matching succeeds.
     type\s\$
     with_param\b\$
     // transform the blocks.
+    if type == 'l' && itr.lidx != 0
+      // Line marker block gets callback for every line.
+      // Only need to transform for the first line.
+      =>
     if with_param
       @params[itr.pidx].transform()
     @blocks[itr.bidx].transform({#}[type])
