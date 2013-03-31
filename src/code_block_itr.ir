@@ -29,8 +29,6 @@ Valid only after run call.
         @code_cb()
 
   if @lidx > 0
-    if @block_cb
-      @block_cb('l', false)
     @lidx = 0
     @bidx++
 
@@ -52,8 +50,6 @@ Valid only after run call.
   switch marker.type
     case 'f'
     if @lidx > 0
-      if @block_cb
-        @block_cb('l', false)
       @lidx = 0
       @bidx++
     if @block_cb
@@ -63,17 +59,16 @@ Valid only after run call.
     break
 
     case 'l'
+    if @block_cb
+      @block_cb('l', false)
     @lidx++
     break
 
     default
     if @lidx > 0
-      if @block_cb
-        @block_cb('l', false)
       @lidx = 0
       @bidx++
     if @block_cb
       @block_cb(marker.type, false)
     @bidx++
-    @lidx = 0
     break

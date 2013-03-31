@@ -19,11 +19,11 @@
     LOG_AND: 7
     LOG_OR: 8
 
-  _BLOCK_OPEN := [' {', '{', '[', '(', '', '(', '(', '(', '(']
-  _LINE_PREFIX := ['', '', '', '', '(', '(', '(', '(', '(']
-  _LINE_SUFFIX := [';', ',', ',', ',', ')', ') *', ') +', ') &&', ') ||']
-  _END_SUFFIX := [';', '', '', '', ')', ')', ')', ')', ')']
-  _BLOCK_CLOSE := ['}', '}', ']', ')', '', ')', ')', ')', ')']
+  _BLOCK_OPEN  := [' {', '{', '[', '(', '(', '(',   '(',   '(',    '(']
+  _LINE_PREFIX := ['',   '',  '',  '',  '',  '(',   '(',   '(',    '(']
+  _LINE_SUFFIX := [';',  ',', ',', ',', '',  ') *', ') +', ') &&', ') ||']
+  _END_SUFFIX  := [';',  '',  '',  '',  '',  ')',   ')',   ')',    ')']
+  _BLOCK_CLOSE := ['}',  '}', ']', ')', ')', ')',   ')',   ')',    ')']
 
 :add
   line\SectionLine\$
@@ -58,6 +58,7 @@ TODO: change marker's type to BlockType when it's enum.
   => _BLOCK_CLOSE[@marker]
 
 :output\!output.Block\
+  line_index\n\?
   // find the last valid line.
   last_index := -1
   @lines.forEach(##)
@@ -72,9 +73,14 @@ TODO: change marker's type to BlockType when it's enum.
 
   out := new output.Block()
   accum_suffix := ''
+  valid_line_count := 0
   @lines.forEach(##)
     line\SectionLine\$
     i\n\$
+    if !(line instanceof InvalidLine) && !line.param
+      valid_line_count++
+    if line_index !== undefined && line_index + 1 != valid_line_count
+      =>
     out_line := line.output()
     if line instanceof InvalidLine || out_line.empty
       accum_suffix += out_line.line_suffix

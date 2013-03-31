@@ -57,7 +57,7 @@ Returns true only if matching succeeds.
     if with_param
       @output_params(out, @params[itr.pidx])
     out.lines.append_str(block.start_str)
-    out.lines.append_block(block.output())
+    out.lines.append_block(block.output(type == 'l' ? itr.lidx : undefined))
     out.lines.append_str(block.end_str)
   itr.code_cb = ##
     out.lines.append_str(\s\ (@code[itr.cidx]))
