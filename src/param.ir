@@ -71,11 +71,11 @@ Variable initialization output as first statements of function body.
       '@type {' + @type.output() + '}'
       '@private'
 
-  out.line_prefix = [#].join('')
+  out.line_prefix = #+
     @.is_member ? 'this._' : 'var '
     @.name
     ' = '
-  if @.init_type != ''
+  if @.init_type
     out.line_prefix += pname
     if @.has_init
       out.line_prefix += ' === undefined ? ('

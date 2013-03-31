@@ -48,12 +48,7 @@
   out.append_lines(@.parsed.prev_lines.map(##))
     line\s\$
     => line + ';'
-  @matcher.each(##, ##)
-    code\A.<s>\$
-    out.append_lines(code)
-    --
-    block\IndentBlock\$
-    out.append_block(block.output())
+  @matcher.output(out)
   if @param
     @param.output_init(out)
   @.parsed.tail_comment.forEach(##)

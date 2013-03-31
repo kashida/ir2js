@@ -47,32 +47,30 @@ Returns true only if matching succeeds.
       '||': BlockType.LOG_OR
   itr.run()
 
-:each
-  code_handler\f(A.<s>)\$
-  block_handler\f(IndentBlock)\$
-
+:output
+  out\output.Line\$
   prev_block := null
   itr := new CodeBlockItr(@input, @code, @blocks)
   itr.cb = ##
     type\s\$
     with_param\b\$
     block := @blocks[itr.bidx]
-    code_handler(@compose_line(#))
+    out.append_lines(@compose_line(#))
       itr.cidx == 0 ? '' : \s\ (@code[itr.cidx - 1])
       prev_block
       block
       with_param ? @params[itr.pidx] : null
-    block_handler(block)
+    out.append_block(block.output())
     prev_block = block
   itr.run()
   if itr.ends_with_code
-    code_handler(@compose_line(#))
+    out.append_lines(@compose_line(#))
       \s\ (@code[itr.cidx])
       prev_block
       null
       null
   else if prev_block
-    code_handler([prev_block.end_str])
+    out.append_lines([prev_block.end_str])
 
 :@compose_line
   frg\s\$
