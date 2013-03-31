@@ -49,42 +49,27 @@ Returns true only if matching succeeds.
 
 :output
   out\output.Line\$
-  prev_block := null
   itr := new CodeBlockItr(@input, @code, @blocks)
   itr.block_cb = ##
     type\s\$
     with_param\b\$
     block := @blocks[itr.bidx]
-    //out.lines.append_str(block.start_str)
-    out.lines.append_lines(@compose_line(#))
-      ''
-      null
-      block
-      with_param ? @params[itr.pidx] : null
+    if with_param
+      @output_params(out, @params[itr.pidx])
+    out.lines.append_str(block.start_str)
     out.lines.append_block(block.output())
     out.lines.append_str(block.end_str)
-    prev_block = block
   itr.code_cb = ##
     out.lines.append_str(\s\ (@code[itr.cidx]))
   itr.run()
 
-:@compose_line
-  frg\s\$
-  prev_block\IndentBlock\$
-  next_block\IndentBlock\$
-  next_param\ParamSet\$
-  block_end := prev_block ? prev_block.end_str : ''
-  block_start := next_block ? next_block.start_str : ''
-  if !next_param
-    => [block_end + frg + block_start]
-  if next_param.is_decl_empty()
-    => [#+]
-      block_end + frg
-      'function(' + next_param.output_params() + ')'
-      block_start
-
-  // we don't try to merge the frg into first line.
-  => arr_flatten([#])
-    block_end + frg
-    doc_lines(next_param.output_decls())
-    'function(' + next_param.output_params() + ')' + block_start
+:@output_params
+  out\output.Line\$
+  param\ParamSet\$
+  if param.is_decl_empty()
+    out.lines.append_str('function(' + param.output_params() + ')')
+  else
+    // we don't try to merge the frg into first line.
+    out.lines.terminate_line()
+    out.lines.append_lines(doc_lines(param.output_decls()))
+    out.lines.append_str('function(' + param.output_params() + ')')

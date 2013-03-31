@@ -74,7 +74,7 @@
     p\Param\$
     => !!p.type
 
-:output_decls\A.<s>\
+:output_decls\!A.<s>\
   result := @params.map(##).filter(##)
     p\Param\$
     => p.output_decl()

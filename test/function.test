@@ -10,7 +10,6 @@
 #=
 function() {
   aaa;
-
   /**
    * @param {string} a
    * @param {string} b
