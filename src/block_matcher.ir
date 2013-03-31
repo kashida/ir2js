@@ -70,7 +70,7 @@ Returns true only if matching succeeds.
       null
       null
   else if prev_block
-    out.append_lines([prev_block.end_str])
+    out.append_line(prev_block.end_str)
 
 :@compose_line
   frg\s\$
