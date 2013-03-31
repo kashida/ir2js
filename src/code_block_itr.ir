@@ -2,8 +2,8 @@
   @input\input.Line\$
   @code\A.<parser.BlockMarker|s>\$
   @blocks\A.<IndentBlock>\$
-  @cb&\?f(s, b)\
-  @extra_cb&\?f(s, b)\
+  @block_cb&\?f(s, b)\
+  @code_cb&\?f()\
   @cidx+\n\ 0
   @bidx+\n\ 0
   @lidx+\n\ 0
@@ -24,10 +24,13 @@ Valid only after run call.
     @cidx = i
     if frg instanceof parser.BlockMarker
       @handle_marker(frg)
+    else
+      if @code_cb
+        @code_cb()
 
   if @lidx > 0
-    if @cb
-      @cb('l', false)
+    if @block_cb
+      @block_cb('l', false)
     @lidx = 0
     @bidx++
 
@@ -39,8 +42,8 @@ Valid only after run call.
   if @bidx < @blocks.length
     @extra_block = true
     @cidx++
-    if @cb
-      @cb('f', false)
+    if @block_cb
+      @block_cb('f', false)
     @bidx++
   => true
 
@@ -49,12 +52,12 @@ Valid only after run call.
   switch marker.type
     case 'f'
     if @lidx > 0
-      if @cb
-        @cb('l', false)
+      if @block_cb
+        @block_cb('l', false)
       @lidx = 0
       @bidx++
-    if @cb
-      @cb('f', true)
+    if @block_cb
+      @block_cb('f', true)
     @bidx++
     @pidx++
     break
@@ -65,12 +68,12 @@ Valid only after run call.
 
     default
     if @lidx > 0
-      if @cb
-        @cb('l', false)
+      if @block_cb
+        @block_cb('l', false)
       @lidx = 0
       @bidx++
-    if @cb
-      @cb(marker.type, false)
+    if @block_cb
+      @block_cb(marker.type, false)
     @bidx++
     @lidx = 0
     break

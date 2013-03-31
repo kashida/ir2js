@@ -15,7 +15,7 @@ Match markers and blocks.
 Returns true only if matching succeeds.
 :@match_blocks\b\
   itr := new CodeBlockItr(@input, @code, @blocks)
-  itr.cb = ##
+  itr.block_cb = ##
     type\s\$
     with_param\b\$
     if with_param
@@ -29,7 +29,7 @@ Returns true only if matching succeeds.
 
 :@transform_blocks
   itr := new CodeBlockItr(@input, @code, @blocks)
-  itr.cb = ##
+  itr.block_cb = ##
     type\s\$
     with_param\b\$
     // transform the blocks.
@@ -51,26 +51,22 @@ Returns true only if matching succeeds.
   out\output.Line\$
   prev_block := null
   itr := new CodeBlockItr(@input, @code, @blocks)
-  itr.cb = ##
+  itr.block_cb = ##
     type\s\$
     with_param\b\$
     block := @blocks[itr.bidx]
+    //out.lines.append_str(block.start_str)
     out.lines.append_lines(@compose_line(#))
-      itr.cidx == 0 ? '' : \s\ (@code[itr.cidx - 1])
-      prev_block
+      ''
+      null
       block
       with_param ? @params[itr.pidx] : null
     out.lines.append_block(block.output())
+    out.lines.append_str(block.end_str)
     prev_block = block
+  itr.code_cb = ##
+    out.lines.append_str(\s\ (@code[itr.cidx]))
   itr.run()
-  if itr.ends_with_code
-    out.lines.append_lines(@compose_line(#))
-      \s\ (@code[itr.cidx])
-      prev_block
-      null
-      null
-  else if prev_block
-    out.append_line(prev_block.end_str)
 
 :@compose_line
   frg\s\$
