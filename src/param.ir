@@ -65,8 +65,7 @@ Variable initialization output as first statements of function body.
 
   if @.is_member
     out.append_prefix_line('/**')
-    if @type
-      out.append_prefix_line(' * @type {' + @type.output() + '}')
+    out.append_prefix_line(' * @type {' + @type.output() + '}')
     out.append_prefix_line(' * @private')
     out.append_prefix_line(' */')
 

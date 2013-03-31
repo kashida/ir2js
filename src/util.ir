@@ -61,7 +61,7 @@
   else
     => start_str + obj + '\n'
 
-:=doc_lines ##
+:=doc_lines ##\A.<s>\
   annotations\A.<s>\$
   alist := arr_flatten(annotations)
   if alist.length == 0
