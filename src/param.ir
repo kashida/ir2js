@@ -69,6 +69,7 @@ Variable initialization output as first statements of function body.
       out.append_prefix_line(' * @type {' + @type.output() + '}')
     out.append_prefix_line(' * @private')
     out.append_prefix_line(' */')
+
   if @.is_member || @.has_init
     out.line_prefix = [#].join('')
       @.is_member ? 'this._' : 'var '
@@ -84,6 +85,8 @@ Variable initialization output as first statements of function body.
       out.line_suffix = ')'
   else
     out.remove_empty_lines()
+    out.line_prefix = ''
+    out.line_suffix = ''
 
 :output_argtype\s\
   type := @type.output()

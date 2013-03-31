@@ -3,64 +3,39 @@ Match markers and blocks.
 ::BlockMatcher
   @context\!context.Context\$
   @input\input.Line\$
-  @code\A.<parser.BlockMarker|s>\$
-  @blocks\A.<IndentBlock>\$
-  @marker_indexes\A.<n>\ []
-  @params\A.<ParamSet>\ []
-  // whether this line is a statement that comes with a block, like 'if'.
+  @code\A.<!parser.BlockMarker|s>\$
+  @blocks\A.<!IndentBlock>\$
+  @params\A.<!ParamSet>\ []
   @is_block_statement+\b\ false
-  @starts_with_marker\b\ false
 
 :transform
   if @match_blocks()
     @transform_blocks()
 
-Returns true only if matching succeeds and leaving valid set of indexes in
-@marker_indexes and @params.
+Returns true only if matching succeeds.
 :@match_blocks\b\
-  code := @code
-  idx := 1
-  is_line := false
-  if @code[0] instanceof parser.BlockMarker
-    idx = 0
-    @starts_with_marker = true
-
-  while idx < code.length
-    param := null
-    marker := @code[idx]
-    assert(marker instanceof parser.BlockMarker, @input)
-    if marker.type == 'f'
+  itr := new CodeBlockItr(@input, @code, @blocks)
+  itr.cb = ##
+    type\s\$
+    with_param\b\$
+    if with_param
       sub_context := @context.clone()
       sub_context.is_file_scope = false
-      param = new ParamSet(sub_context, @blocks[@marker_indexes.length])
-
-    if !is_line || marker.type != 'l'
-      @marker_indexes.push(idx)
+      param := new ParamSet(sub_context, @blocks[itr.bidx])
       @params.push(param)
-    if marker.type == 'l'
-      is_line = true
-
-    idx += 2
-
-  if @marker_indexes.length < @blocks.length
-    // One extra block is allowed.
-    @marker_indexes.push(-1)
-    @is_block_statement = true
-
-  if @marker_indexes.length != @blocks.length
-    warn(@input, '# blocks does not match #markers.')
-    => false
-  => true
+  success := itr.run()
+  @is_block_statement = itr.extra_block
+  => success
 
 :@transform_blocks
-  @blocks.forEach(##)
-    block\IndentBlock\$
-    i\n\$
+  itr := new CodeBlockItr(@input, @code, @blocks)
+  itr.cb = ##
+    type\s\$
+    with_param\b\$
     // transform the blocks.
-    if @params[i]
-      @params[i].transform()
-    mi := @marker_indexes[i]
-    block.transform(mi < 0 ? BlockType.BLOCK : {#}[@code[mi].type])
+    if with_param
+      @params[itr.pidx].transform()
+    @blocks[itr.bidx].transform({#}[type])
       f: BlockType.BLOCK
       o: BlockType.OBJ
       a: BlockType.ARRAY
@@ -70,41 +45,52 @@ Returns true only if matching succeeds and leaving valid set of indexes in
       '+': BlockType.ADD
       '&&': BlockType.LOG_AND
       '||': BlockType.LOG_OR
+  itr.run()
 
 :each
   code_handler\f(A.<s>)\$
   block_handler\f(IndentBlock)\$
 
-  // first line.
-  // there should be at least one fragment.
-  code_handler(@compose_line(@starts_with_marker ? '' : (#), 0))
-    \s\ (@code.length ? @code[0] : '')
-
-  @blocks.forEach(##)
-    block\IndentBlock\$
-    i\n\$
-    mi := @marker_indexes[i]
-    block_handler(block)
+  prev_block := null
+  itr := new CodeBlockItr(@input, @code, @blocks)
+  itr.cb = ##
+    type\s\$
+    with_param\b\$
+    block := @blocks[itr.bidx]
     code_handler(@compose_line(#))
-      block.end_str() + (mi < 0 || mi + 1 >= @code.length ? '' : @code[mi + 1])
-      i + 1
+      itr.cidx == 0 ? '' : \s\ (@code[itr.cidx - 1])
+      prev_block
+      block
+      with_param ? @params[itr.pidx] : null
+    block_handler(block)
+    prev_block = block
+  itr.run()
+  if itr.ends_with_code
+    code_handler(@compose_line(#))
+      \s\ (@code[itr.cidx])
+      prev_block
+      null
+      null
+  else if prev_block
+    code_handler([prev_block.end_str])
 
 :@compose_line
-  prefix\s\$
-  i\n\$
-  if @blocks.length <= i
-    => [prefix]
+  frg\s\$
+  prev_block\IndentBlock\$
+  next_block\IndentBlock\$
+  next_param\ParamSet\$
+  block_end := prev_block ? prev_block.end_str : ''
+  block_start := next_block ? next_block.start_str : ''
+  if !next_param
+    => [block_end + frg + block_start]
+  if next_param.is_decl_empty()
+    => [#+]
+      block_end + frg
+      'function(' + next_param.output_params() + ')'
+      block_start
 
-  b := @blocks[i]
-  p := @params[i]
-  bstart := b.start_str()
-  if !p
-    => [prefix + bstart]
-  if p.is_decl_empty()
-    => [prefix + 'function(' + p.output_params() + ')' + bstart]
-
-  // we don't try to merge the prefix into first line.
+  // we don't try to merge the frg into first line.
   => arr_flatten([#])
-    prefix
-    doc_lines(p.output_decls())
-    'function(' + p.output_params() + ')' + bstart
+    block_end + frg
+    doc_lines(next_param.output_decls())
+    'function(' + next_param.output_params() + ')' + block_start

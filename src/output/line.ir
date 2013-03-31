@@ -9,6 +9,9 @@ Output lines corresponds to one input line.
   @line_suffix&\s\ ''
   @tail_comment&\A.<s>\ []
 
+:+empty\b\
+  => !@lines.length && !@line_prefix && !@line_suffix
+
 :append_prefix_line
   line\s\$
   @prefix_lines.push(line)
@@ -33,26 +36,18 @@ Output lines corresponds to one input line.
     => line
 
 :+output\A.<s>\
-  result := []
-  indent := whitespaces(@indent)
-  @prefix_lines.forEach(##)
-    line\s\$
-    result.push(line ? indent + line : '')
+  out_lines := new %.IndentedMultiline(@indent)
+  out_lines.append_all(@prefix_lines)
+  out_lines.append_line(@line_prefix, false)
   @lines.forEach(##)
     line\s|%.Block\$
     i\n\$
     if line instanceof %.Block
-      result = result.concat(line.output)
+      out_lines.append_block(line.output)
     else
-      to_add := line
-      if i == 0 && @line_prefix
-        to_add = @line_prefix + to_add
-      if i == @lines.length - 1 && @line_suffix
-        to_add += @line_suffix
-      if to_add
-        to_add = indent + to_add
-      result.push(to_add)
-  @tail_comment.forEach(##)
-    c\s\$
-    result.push(indent + c)
-  => result
+      // line is a string.
+      out_lines.append_line(line, i < @lines.length - 1, true)
+  // This closes the last line even when @line_suffix is ''.
+  out_lines.append_line(@line_suffix)
+  out_lines.append_all(@tail_comment)
+  => out_lines.output

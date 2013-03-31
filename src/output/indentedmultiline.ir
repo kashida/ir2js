@@ -1,0 +1,36 @@
+Helper for Line to construct the output.
+
+::IndentedMultiline
+  num_indent\n\$
+  @indent\s\ whitespaces(num_indent)
+  @lines\A.<s>\ []
+  @last_line_open\b\ false
+
+:+output\A.<s>\
+  => @lines
+
+:append_line
+  line\s\$
+  end_line\b\? true
+  insert_blank\b\? false
+  if line || insert_blank
+    if @last_line_open
+      @lines[@lines.length - 1] += line
+    else
+      @lines.push(line ? @indent + line : '')
+    @last_line_open = !end_line
+  else
+    @last_line_open = false
+
+:append_all
+  lines\A.<s>\$
+  lines.forEach(##)
+    line\s\$
+    @.append_line(line)
+
+Lines added as is.
+Block does not share its lines with the surrounding lines.
+:append_block
+  block\A.<s>\$
+  @lines = @lines.concat(block)
+  @last_line_open = false

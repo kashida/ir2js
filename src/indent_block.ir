@@ -50,11 +50,11 @@ TODO: change marker's type to BlockType when it's enum.
     if !(line instanceof InvalidLine)
       line.transform()
 
-:start_str\s\
+:+start_str\s\
   // string to open the block.
   => _BLOCK_OPEN[@marker]
 
-:end_str\s\
+:+end_str\s\
   => _BLOCK_CLOSE[@marker]
 
 :output\output.Block\
@@ -76,7 +76,7 @@ TODO: change marker's type to BlockType when it's enum.
     line\SectionLine\$
     i\n\$
     out_line := line.output()
-    if line instanceof InvalidLine
+    if line instanceof InvalidLine || out_line.empty
       accum_suffix += out_line.line_suffix
       out_line.line_suffix = ''
     else
