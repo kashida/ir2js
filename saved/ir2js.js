@@ -1,4 +1,5 @@
 var context = {};
+var input = {};
 var output = {};
 var parser = {};
 var section = {};
@@ -41,9 +42,9 @@ Match markers and blocks.
 
 /**
  * @param {!context.Context} context
- * @param {InputLine} input
- * @param {Array.<parser.BlockMarker|string>} code
- * @param {Array.<IndentBlock>} blocks
+ * @param {input.Line} input
+ * @param {Array.<!parser.BlockMarker|string>} code
+ * @param {Array.<!IndentBlock>} blocks
  * @constructor
  */
 var BlockMatcher = function(context, input, code, blocks) {
@@ -54,41 +55,30 @@ var BlockMatcher = function(context, input, code, blocks) {
    */
   this._context = context;
   /**
-   * @type {InputLine}
+   * @type {input.Line}
    * @private
    */
   this._input = input;
   /**
-   * @type {Array.<parser.BlockMarker|string>}
+   * @type {Array.<!parser.BlockMarker|string>}
    * @private
    */
   this._code = code;
   /**
-   * @type {Array.<IndentBlock>}
+   * @type {Array.<!IndentBlock>}
    * @private
    */
   this._blocks = blocks;
   /**
-   * @type {Array.<number>}
-   * @private
-   */
-  this._marker_indexes = ([]);
-  /**
-   * @type {Array.<ParamSet>}
+   * @type {Array.<!ParamSet>}
    * @private
    */
   this._params = ([]);
-  // whether this line is a statement that comes with a block, like 'if'.
   /**
    * @type {boolean}
    * @private
    */
   this._is_block_statement = (false);
-  /**
-   * @type {boolean}
-   * @private
-   */
-  this._starts_with_marker = (false);
 };
 BlockMatcher.prototype._classname = 'BlockMatcher';
 /** @type {boolean} */
@@ -105,8 +95,7 @@ BlockMatcher.prototype.transform = function() {
 };
 
 /*
-Returns true only if matching succeeds and leaving valid set of indexes in
-@marker_indexes and @params.
+Returns true only if matching succeeds.
 */
 /**
  * @return {boolean}
@@ -114,131 +103,112 @@ Returns true only if matching succeeds and leaving valid set of indexes in
  */
 BlockMatcher.prototype._match_blocks = function() {
   var self = this;
-  var code;
-  code = self._code;
-  var idx;
-  idx = 1;
-  if (self._code[0] instanceof parser.BlockMarker) {
-    idx = 0;
-    self._starts_with_marker = true;
-  }
-
-  while (idx < code.length) {
-    var param;
-    param = null;
-    var elem;
-    elem = self._code[idx];
-    if (elem instanceof parser.BlockMarker && elem.type == 'f') {
+  var itr;
+  itr = new CodeBlockItr(self._input, self._code, self._blocks);
+  itr.block_cb = 
+  /**
+   * @param {string} type
+   * @param {boolean} with_param
+   */
+  function(type, with_param) {
+    if (with_param) {
       var sub_context;
       sub_context = self._context.clone();
       sub_context.is_file_scope = false;
-      param = new ParamSet(sub_context, self._blocks[self._marker_indexes.length]);
+      var param;
+      param = new ParamSet(sub_context, self._blocks[itr.bidx]);
+      self._params.push(param);
     }
-
-    self._marker_indexes.push(idx);
-    self._params.push(param);
-
-    idx += 2;
-  }
-
-  if (self._marker_indexes.length < self._blocks.length) {
-    // One extra block is allowed.
-    self._marker_indexes.push(-1);
-    self._is_block_statement = true;
-  }
-
-  if (self._marker_indexes.length != self._blocks.length) {
-    warn(self._input, '# blocks does not match #markers.');
-    return false;
-  }
-  return true;
+  };
+  var success;
+  success = itr.run();
+  self._is_block_statement = itr.extra_block;
+  return success;
 };
 
 /** @private */
 BlockMatcher.prototype._transform_blocks = function() {
   var self = this;
-  self._blocks.forEach(
+  var itr;
+  itr = new CodeBlockItr(self._input, self._code, self._blocks);
+  itr.block_cb = 
   /**
-   * @param {IndentBlock} block
-   * @param {number} i
+   * @param {string} type
+   * @param {boolean} with_param
    */
-  function(block, i) {
+  function(type, with_param) {
     // transform the blocks.
-    if (self._params[i]) {
-      self._params[i].transform();
+
+    // TODO: Error check number of lines in the block matches the number of
+    // line markers.
+    // TODO: Error check conditional block marker if the block has exactly
+    // 3 lines
+    if (type == 'l' && itr.lidx != 0) {
+      // Line marker block gets callback for every line.
+      // Only need to transform for the first line.
+      return;
     }
-    var mi;
-    mi = self._marker_indexes[i];
-    block.transform(mi < 0 ? BlockType.BLOCK : {
+    if (with_param) {
+      self._params[itr.pidx].transform();
+    }
+    self._blocks[itr.bidx].transform({
       f: BlockType.BLOCK,
       o: BlockType.OBJ,
       a: BlockType.ARRAY,
       p: BlockType.PARAMS,
+      c: BlockType.COND,
+      l: BlockType.LINE,
       '*': BlockType.MULT,
       '+': BlockType.ADD,
       '&&': BlockType.LOG_AND,
       '||': BlockType.LOG_OR
-    }[self._code[mi].type]);
-  });
+    }[type]);
+  };
+  itr.run();
 };
 
-/** @return {Array.<string>} */
-BlockMatcher.prototype.first_line = function() {
+/** @param {output.Line} out */
+BlockMatcher.prototype.output = function(out) {
   var self = this;
-  // there should be at least one fragment.
-  return self._compose_line(self._starts_with_marker ? '' : (
-    /** @type {string} */(self._code.length ? self._code[0] : '')
-  ), 0);
-};
-
-/** @param {function(IndentBlock, Array.<string>)} cb */
-BlockMatcher.prototype.each_fragment = function(cb) {
-  var self = this;
-  self._blocks.forEach(
+  var itr;
+  itr = new CodeBlockItr(self._input, self._code, self._blocks);
+  itr.block_cb = 
   /**
-   * @param {IndentBlock} block
-   * @param {number} i
+   * @param {string} type
+   * @param {boolean} with_param
    */
-  function(block, i) {
-    var mi;
-    mi = self._marker_indexes[i];
-    cb(block, self._compose_line(
-      block.end_str() + (mi < 0 || mi + 1 >= self._code.length ? '' : self._code[mi + 1]),
-      i + 1
-    ));
-  });
+  function(type, with_param) {
+    var block;
+    block = self._blocks[itr.bidx];
+    if (with_param) {
+      self._output_params(out, self._params[itr.pidx]);
+    }
+    out.lines.append_str(block.start_str);
+    out.lines.append_block(block.output(type == 'l' ? itr.lidx : undefined));
+    out.lines.append_str(block.end_str);
+  };
+  itr.code_cb = function() {
+    out.lines.append_str(/** @type {string} */(self._code[itr.cidx]));
+  };
+  itr.run();
 };
 
 /**
- * @param {string} prefix
- * @param {number} i
+ * @param {output.Line} out
+ * @param {ParamSet} param
  * @private
  */
-BlockMatcher.prototype._compose_line = function(prefix, i) {
+BlockMatcher.prototype._output_params = function(out, param) {
   var self = this;
-  if (self._blocks.length <= i) {
-    return [prefix];
+  if (param.is_decl_empty()) {
+    out.lines.append_str('function(' + param.output_params() + ')');
   }
-
-  var b;
-  b = self._blocks[i];
-  var p;
-  p = self._params[i];
-  var bstart;
-  bstart = [b.start_str()];
-  if (!p) {
-    return [prefix + bstart];
+  else {
+    // we don't try to merge the frg into first line.
+    out.lines.terminate_line();
+    out.lines.append_lines(doc_lines(param.output_decls()));
+    out.lines.append_str('function(' + param.output_params() + ')');
   }
-  if (p.is_decl_empty()) {
-    return [prefix + 'function(' + p.output_params() + ')' + bstart];
-  }
-
-  // we don't try to merge the prefix into first line.
-  return arr_flatten([
-    prefix,
-    doc_lines(p.output_decls()),
-    'function(' + p.output_params() + ')' + bstart
-  ]);
 };
 /**
  * @param {string} name
@@ -311,6 +281,190 @@ CallableType.prototype.extract = function() {
   return obj;
 };
 /**
+ * @param {input.Line} input
+ * @param {Array.<parser.BlockMarker|string>} code
+ * @param {Array.<IndentBlock>} blocks
+ * @constructor
+ */
+var CodeBlockItr = function(input, code, blocks) {
+  var self = this;
+  /**
+   * @type {input.Line}
+   * @private
+   */
+  this._input = input;
+  /**
+   * @type {Array.<parser.BlockMarker|string>}
+   * @private
+   */
+  this._code = code;
+  /**
+   * @type {Array.<IndentBlock>}
+   * @private
+   */
+  this._blocks = blocks;
+  /**
+   * @type {?function(string, boolean)}
+   * @private
+   */
+  this._block_cb = (null);
+  /**
+   * @type {?function()}
+   * @private
+   */
+  this._code_cb = (null);
+  /**
+   * @type {number}
+   * @private
+   */
+  this._cidx = (0);
+  /**
+   * @type {number}
+   * @private
+   */
+  this._bidx = (0);
+  /**
+   * @type {number}
+   * @private
+   */
+  this._lidx = (0);
+  /**
+   * @type {number}
+   * @private
+   */
+  this._pidx = (0);
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._extra_block = (false);
+};
+CodeBlockItr.prototype._classname = 'CodeBlockItr';
+/** @type {?function(string, boolean)} */
+CodeBlockItr.prototype.block_cb;
+CodeBlockItr.prototype.__defineGetter__('block_cb', function() {
+return this._block_cb;
+});
+CodeBlockItr.prototype.__defineSetter__('block_cb', function(value) {
+this._block_cb = value;
+});
+/** @type {?function()} */
+CodeBlockItr.prototype.code_cb;
+CodeBlockItr.prototype.__defineGetter__('code_cb', function() {
+return this._code_cb;
+});
+CodeBlockItr.prototype.__defineSetter__('code_cb', function(value) {
+this._code_cb = value;
+});
+/** @type {number} */
+CodeBlockItr.prototype.cidx;
+CodeBlockItr.prototype.__defineGetter__('cidx', function() {
+return this._cidx;
+});
+/** @type {number} */
+CodeBlockItr.prototype.bidx;
+CodeBlockItr.prototype.__defineGetter__('bidx', function() {
+return this._bidx;
+});
+/** @type {number} */
+CodeBlockItr.prototype.lidx;
+CodeBlockItr.prototype.__defineGetter__('lidx', function() {
+return this._lidx;
+});
+/** @type {number} */
+CodeBlockItr.prototype.pidx;
+CodeBlockItr.prototype.__defineGetter__('pidx', function() {
+return this._pidx;
+});
+/** @type {boolean} */
+CodeBlockItr.prototype.extra_block;
+CodeBlockItr.prototype.__defineGetter__('extra_block', function() {
+return this._extra_block;
+});
+
+/*
+Valid only after run call.
+*/
+/** @type {boolean} */
+CodeBlockItr.prototype.ends_with_code;
+CodeBlockItr.prototype.__defineGetter__('ends_with_code', function() {
+  var self = this;
+  return (
+    (self._code.length) &&
+    (!(self._code[self._code.length - 1] instanceof parser.BlockMarker)) &&
+    (!self._extra_block)
+  );
+});
+
+CodeBlockItr.prototype.run = function() {
+  var self = this;
+  self._code.forEach(
+  /**
+   * @param {parser.BlockMarker|string} frg
+   * @param {number} i
+   */
+  function(frg, i) {
+    self._cidx = i;
+    if (frg instanceof parser.BlockMarker) {
+      self._handle_marker(frg);
+    }
+    else {
+      if (self._code_cb) {
+        self._code_cb();
+      }
+    }
+  });
+
+  if (self._lidx > 0) {
+    self._lidx = 0;
+    self._bidx++;
+  }
+
+  // There may be one extra block.
+  if (self._bidx > self._blocks.length || self._bidx + 1 < self._blocks.length) {
+    warn(self._input, '# blocks does not match #markers.');
+    return false;
+  }
+
+  if (self._bidx < self._blocks.length) {
+    self._extra_block = true;
+    self._cidx++;
+    if (self._block_cb) {
+      self._block_cb('f', false);
+    }
+    self._bidx++;
+  }
+  return true;
+};
+
+/**
+ * @param {parser.BlockMarker} marker
+ * @private
+ */
+CodeBlockItr.prototype._handle_marker = function(marker) {
+  var self = this;
+  if (marker.type != 'l') {
+    if (self._lidx > 0) {
+      self._lidx = 0;
+      self._bidx++;
+    }
+  }
+
+  if (self._block_cb) {
+    self._block_cb(marker.type, marker.type == 'f');
+  }
+
+  if (marker.type != 'l') {
+    self._bidx++;
+  }
+  if (marker.type == 'f') {
+    self._pidx++;
+  }
+  if (marker.type == 'l') {
+    self._lidx++;
+  }
+};
+/**
  * @param {!context.Context} context
  * @param {section.Head} head
  * @constructor
@@ -345,7 +499,7 @@ var CodeParser = function(context, head) {
 };
 CodeParser.prototype._classname = 'CodeParser';
 
-/** @param {Array.<InputLine>} input_lines */
+/** @param {Array.<input.Line>} input_lines */
 CodeParser.prototype.parse = function(input_lines) {
   var self = this;
   self._process(input_lines);
@@ -360,7 +514,7 @@ CodeParser.prototype.parse = function(input_lines) {
 };
 
 /**
- * @param {Array.<InputLine>} input_lines
+ * @param {Array.<input.Line>} input_lines
  * @private
  */
 CodeParser.prototype._process = function(input_lines) {
@@ -424,7 +578,7 @@ CodeParser.prototype._process = function(input_lines) {
 };
 
 /**
- * @param {Array.<InputLine>} input_lines
+ * @param {Array.<input.Line>} input_lines
  * @return {Array.<SectionLine>}
  * @private
  */
@@ -433,7 +587,7 @@ CodeParser.prototype._make_code_lines = function(input_lines) {
   var cat;
   cat = new LineCategorizer(self._context);
   return input_lines.map(
-  /** @param {InputLine} line */
+  /** @param {input.Line} line */
   function(line) {
     return cat.create_line(line);
   });
@@ -503,7 +657,7 @@ CodeParser.prototype._continuation = function(line, i) {
     warn(line.input, 'continuation as a first line of block');
   }
   else {
-    last_line.continue_lines.push(new InputLine(
+    last_line.continue_lines.push(new input.Line(
       line.input.line.replace(/\|/, ' '),
       line.input.row_index
     ));
@@ -567,11 +721,11 @@ CodeScope.prototype.process_lines = function(lines) {
   self.process(lines.map(
   /** @param {string} line */
   function(line) {
-    return new InputLine(line, i++);
+    return new input.Line(line, i++);
   }));
 };
 
-/** @param {Array.<InputLine>} input_lines */
+/** @param {Array.<input.Line>} input_lines */
 CodeScope.prototype.process = function(input_lines) {
   var self = this;
   new CodeParser(self._context, self._head).parse(input_lines);
@@ -602,9 +756,7 @@ var transform_to_js = function(basedir, infile, outfile) {
 
   var c;
   c = new FileScope(pkg_name);
-  var input;
-  input = _fs.readFileSync(infile, 'utf-8');
-  c.process_lines(input.split('\n'));
+  c.process_lines(_fs.readFileSync(infile, 'utf-8').split('\n'));
   _fs.writeFileSync(
     outfile,
     c.output().join('\n'),
@@ -662,7 +814,7 @@ var compile_files = function(basedir, inout_filenames) {
 /*
 parse file scope and separate code sections from comments.
 */
-/** @typedef {GlobalComment|section.Code} */
+/** @typedef {input.Comment|section.Code} */
 var OutputSection;
 
 /**
@@ -700,25 +852,22 @@ FileScope.prototype.types;
 FileScope.prototype.__defineGetter__('types', function() {
 return this._types;
 });
-/*
-}
-*/
 
-/** @param {Array.<string>} input */
-FileScope.prototype.process_lines = function(input) {
+/** @param {Array.<string>} line */
+FileScope.prototype.process_lines = function(line) {
   var self = this;
   var gen;
   gen = new section.Generator(self);
   var input_list;
-  input_list = new InputParser(input).parse();
+  input_list = new input.File(line).parse();
   self._list = input_list.map(
   /**
-   * @param {GlobalComment|InputSection} section
+   * @param {input.Comment|input.Section} section
    * @param {number} index
    */
   function(section, index) {
-    // convert InputSection to section.Code and leave GlobalComment as is.
-    return section instanceof InputSection ? gen.generate(
+    // convert input.Section to section.Code and leave input.Comment as is.
+    return section instanceof input.Section ? gen.generate(
       section.header,
       section.lines
     ) : section;
@@ -758,102 +907,6 @@ FileScope.prototype.output = function() {
   function(elem) {
     return elem.output();
   }));
-};
-/*
-comment section in a file.
-*/
-/**
- * @param {Array.<InputLine>} lines
- * @constructor
- */
-var GlobalComment = function(lines) {
-  var self = this;
-  /**
-   * @type {Array.<InputLine>}
-   * @private
-   */
-  this._lines = lines;
-};
-GlobalComment.prototype._classname = 'GlobalComment';
-
-GlobalComment.prototype.output = function() {
-  var self = this;
-  var result;
-  result = [];
-  var buffer;
-  buffer = [];
-  var state;
-  state = 's';
-  self._lines.forEach(
-  /** @param {InputLine} line */
-  function(line) {
-    switch (state) {
-      // starting state -- output all the blank lines as is.
-      case 's':;
-      if (!line.is_blank) {
-        // first non-blank.
-        result.push(buffer);
-        buffer = [];
-        state = 'n';
-      }
-      break;
-
-      // in non-blank line section.
-      case 'n':;
-      if (line.is_blank) {
-        state = 'a';
-      }
-      break;
-
-      // blank line immediately following a non-blank.
-      case 'a':;
-      if (line.is_blank) {
-        // run of blank lines is long enough now. flush the comments.
-        result.push(['/*', buffer.splice(0, buffer.length - 1), '*/']);
-        state = 'b';
-      }
-      else {
-        state = 'n';
-      }
-      break;
-
-      // b: blank line section.
-      case 'b':;
-      if (!line.is_blank) {
-        result.push(buffer);
-        buffer = [];
-        state = 'n';
-      }
-      break;
-    }
-    buffer.push(line.line);
-  });
-
-  switch (state) {
-    // still in the starting state.
-    case 's':;
-    result.push(buffer);
-    break;
-
-    // in non-blank line section.
-    case 'n':;
-    result.push(['/*', buffer, '*/']);
-    break;
-
-    // one blank line immediately following a non-blank.
-    case 'a':;
-    // run of blank lines is long enough now. flush the comments.
-    result.push(['/*', buffer.splice(0, buffer.length - 1), '*/']);
-    result.push(buffer);
-    break;
-
-    // b: blank line section.
-    case 'b':;
-    result.push(buffer);
-    break;
-  }
-
-  return result;
 };
 /**
  * @param {number} line_no
@@ -909,22 +962,26 @@ return this._indent;
     OBJ: 1,
     ARRAY: 2,
     PARAMS: 3,
-    MULT: 4,
-    ADD: 5,
-    LOG_AND: 6,
-    LOG_OR: 7
+    LINE: 4,
+    COND: 5,
+    MULT: 6,
+    ADD: 7,
+    LOG_AND: 8,
+    LOG_OR: 9
   };
 
   var _BLOCK_OPEN;
-  _BLOCK_OPEN = [' {', '{', '[', '(', '(', '(', '(', '('];
+  _BLOCK_OPEN = [' {', '{', '[', '(', '(', '(', '(', '(', '(', '('];
   var _LINE_PREFIX;
-  _LINE_PREFIX = ['', '', '', '', '(', '(', '(', '('];
+  _LINE_PREFIX = ['', '', '', '', '', '(', '(', '(', '(', '('];
   var _LINE_SUFFIX;
-  _LINE_SUFFIX = [';', ',', ',', ',', ') *', ') +', ') &&', ') ||'];
+  _LINE_SUFFIX = [';', ',', ',', ',', '', ') :', ') *', ') +', ') &&', ') ||'];
+  var _FIRST_SUFFIX;
+  _FIRST_SUFFIX = [';', ',', ',', ',', '', ') ?', ') *', ') +', ') &&', ') ||'];
   var _END_SUFFIX;
-  _END_SUFFIX = [';', '', '', '', ')', ')', ')', ')'];
+  _END_SUFFIX = [';', '', '', '', '', ')', ')', ')', ')', ')'];
   var _BLOCK_CLOSE;
-  _BLOCK_CLOSE = ['}', '}', ']', ')', ')', ')', ')', ')'];
+  _BLOCK_CLOSE = ['}', '}', ']', ')', ')', ')', ')', ')', ')', ')'];
 
 /** @param {SectionLine} line */
 IndentBlock.prototype.add = function(line) {
@@ -969,21 +1026,26 @@ IndentBlock.prototype.transform = function(marker) {
   });
 };
 
-/** @return {string} */
-IndentBlock.prototype.start_str = function() {
+/** @type {string} */
+IndentBlock.prototype.start_str;
+IndentBlock.prototype.__defineGetter__('start_str', function() {
   var self = this;
   // string to open the block.
   return _BLOCK_OPEN[self._marker];
-};
+});
 
-/** @return {string} */
-IndentBlock.prototype.end_str = function() {
+/** @type {string} */
+IndentBlock.prototype.end_str;
+IndentBlock.prototype.__defineGetter__('end_str', function() {
   var self = this;
   return _BLOCK_CLOSE[self._marker];
-};
+});
 
-/** @return {output.Block} */
-IndentBlock.prototype.output = function() {
+/**
+ * @param {number=} line_index
+ * @return {!output.Block}
+ */
+IndentBlock.prototype.output = function(line_index) {
   var self = this;
   // find the last valid line.
   var last_index;
@@ -1008,15 +1070,23 @@ IndentBlock.prototype.output = function() {
   out = new output.Block();
   var accum_suffix;
   accum_suffix = '';
+  var valid_line_count;
+  valid_line_count = 0;
   self._lines.forEach(
   /**
    * @param {SectionLine} line
    * @param {number} i
    */
   function(line, i) {
+    if (!(line instanceof InvalidLine) && !line.param) {
+      valid_line_count++;
+    }
+    if (line_index !== undefined && line_index + 1 != valid_line_count) {
+      return;
+    }
     var out_line;
     out_line = line.output();
-    if (line instanceof InvalidLine) {
+    if (line instanceof InvalidLine || out_line.empty) {
       accum_suffix += out_line.line_suffix;
       out_line.line_suffix = '';
     }
@@ -1025,7 +1095,9 @@ IndentBlock.prototype.output = function() {
       if (!line.is_block_statement) {
         out_line.line_prefix += _LINE_PREFIX[self._marker];
         out_line.line_suffix += (
-          i == last_index ? _END_SUFFIX[self._marker] : _LINE_SUFFIX[self._marker]
+          i == last_index ? _END_SUFFIX[self._marker] : (
+            i == 0 ? _FIRST_SUFFIX[self._marker] : _LINE_SUFFIX[self._marker]
+          )
         );
       }
       accum_suffix = '';
@@ -1035,334 +1107,22 @@ IndentBlock.prototype.output = function() {
   return out;
 };
 /*
-a line of input file. keeps track of the row index.
-*/
-/**
- * @param {string} line
- * @param {number} row_index
- * @constructor
- */
-var InputLine = function(line, row_index) {
-  var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
-  this._line = line;
-  /**
-   * @type {number}
-   * @private
-   */
-  this._row_index = row_index;
-};
-InputLine.prototype._classname = 'InputLine';
-/** @type {string} */
-InputLine.prototype.line;
-InputLine.prototype.__defineGetter__('line', function() {
-return this._line;
-});
-/** @type {number} */
-InputLine.prototype.row_index;
-InputLine.prototype.__defineGetter__('row_index', function() {
-return this._row_index;
-});
-
-/** @type {number} */
-InputLine.prototype.line_no;
-InputLine.prototype.__defineGetter__('line_no', function() {
-  var self = this;
-  return self._row_index + 1;
-});
-
-/*
-the line contents with indentation stripped off.
-trailing whitespace should have been stripped already.
-*/
-/** @type {string} */
-InputLine.prototype.trim;
-InputLine.prototype.__defineGetter__('trim', function() {
-  var self = this;
-  var re;
-  re = /\S.*/.exec(self._line);
-  return re ? re[0] : '';
-});
-
-/** @type {boolean} */
-InputLine.prototype.starts_with_colon;
-InputLine.prototype.__defineGetter__('starts_with_colon', function() {
-  var self = this;
-  return self._line.substr(0, 1) == ':';
-});
-
-/** @type {boolean} */
-InputLine.prototype.is_blank;
-InputLine.prototype.__defineGetter__('is_blank', function() {
-  var self = this;
-  return /^\s*$/.test(self._line);
-});
-
-/** @type {boolean} */
-InputLine.prototype.is_indented;
-InputLine.prototype.__defineGetter__('is_indented', function() {
-  var self = this;
-  return /^\s/.test(self._line);
-});
-
-/** @type {number} */
-InputLine.prototype.indent;
-InputLine.prototype.__defineGetter__('indent', function() {
-  var self = this;
-  var re;
-  re = /\S/.exec(self._line);
-  return re ? re.index : 0;
-});
-
-  var UnknownInputLine;
-  UnknownInputLine = new InputLine('', -1);
-/*
-parses input lines into lines and sections.
-'line' is used only during processing.
-*/
-/**
- * @param {Array.<string>} input
- * @constructor
- */
-var InputParser = function(input) {
-  var self = this;
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
-  this._input = input;
-  /**
-   * @type {Array.<GlobalComment|InputSection>}
-   * @private
-   */
-  this._result = ([]);
-  /**
-   * @type {Array.<InputLine>}
-   * @private
-   */
-  this._buffer = ([]);
-  /**
-   * @type {number?}
-   * @private
-   */
-  this._last_valid_index = (null);
-};
-InputParser.prototype._classname = 'InputParser';
-
-/** @return {Array.<GlobalComment|InputSection>} */
-InputParser.prototype.parse = function() {
-  var self = this;
-  self._input.forEach(
-  /**
-   * @param {string} line
-   * @param {number} index
-   */
-  function(line, index) {
-    line = line.trimRight();
-    self._process_line(new InputLine(line, index));
-  });
-  self._flush_buffer();
-  return self._result;
-};
-
-/**
- * @param {InputLine} line
- * @private
- */
-InputParser.prototype._process_line = function(line) {
-  var self = this;
-  if (line.starts_with_colon) {
-    // should be a start of a code section.
-    self._flush_buffer();
-    self._last_valid_index = 0;
-  }
-  else if (line.is_indented) {
-    // indented line -- continues either comment or code section.
-    if (self._last_valid_index !== null) {
-      self._last_valid_index = self._buffer.length;
-    }
-  }
-  else if (!line.is_blank) {
-    // global comment.
-    if (self._last_valid_index !== null) {
-      // close the code section.
-      self._flush_buffer();
-    }
-  }
-  // anything else is invalid line -- continues either comment or code section.
-  self._buffer.push(line);
-};
-
-/** @private */
-InputParser.prototype._flush_buffer = function() {
-  var self = this;
-  while (self._buffer.length) {
-    var next_buffer;
-    next_buffer = [];
-    if (self._last_valid_index !== null) {
-      var section;
-      section = new InputSection(self._buffer[0]);
-      self._result.push(section);
-      self._buffer.forEach(
-      /**
-       * @param {InputLine} line
-       * @param {number} index
-       */
-      function(line, index) {
-        if (index == 0) {
-          // we already passed the header line to section.
-          return;
-        }
-        else if (index <= self._last_valid_index) {
-          section.push(line);
-        }
-        else {
-          // end of section invaild lines.
-          next_buffer.push(line);
-        }
-      });
-    }
-    else {
-      // we'll give buffer a new array so no need to clone for global comment.
-      self._result.push(new GlobalComment(self._buffer));
-    }
-    self._last_valid_index = null;
-    self._buffer = next_buffer;
-  }
-};
-/*
-input code section.
-*/
-/**
- * @param {InputLine} header
- * @constructor
- */
-var InputSection = function(header) {
-  var self = this;
-  /**
-   * @type {InputLine}
-   * @private
-   */
-  this._header = header;
-  /**
-   * @type {Array.<InputLine>}
-   * @private
-   */
-  this._lines = ([]);
-  /**
-   * @type {section.Code}
-   * @private
-   */
-  this._code = (null);
-};
-InputSection.prototype._classname = 'InputSection';
-/** @type {InputLine} */
-InputSection.prototype.header;
-InputSection.prototype.__defineGetter__('header', function() {
-return this._header;
-});
-/** @type {Array.<InputLine>} */
-InputSection.prototype.lines;
-InputSection.prototype.__defineGetter__('lines', function() {
-return this._lines;
-});
-/** @type {section.Code} */
-InputSection.prototype.code;
-InputSection.prototype.__defineGetter__('code', function() {
-return this._code;
-});
-InputSection.prototype.__defineSetter__('code', function(value) {
-this._code = value;
-});
-
-/** @param {InputLine} line */
-InputSection.prototype.push = function(line) {
-  var self = this;
-  self._lines.push(line);
-};
-/*
-fragments of string interlaced by block references.
-maintains:
-- at least one fragment.
-- exactly one more fragments than blocks.
-*/
-/** @constructor */
-var InterlacedLine = function() {
-  var self = this;
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
-  this._fragments = (['']);
-  /**
-   * @type {Array.<Object>}
-   * @private
-   */
-  this._blocks = ([]);
-};
-InterlacedLine.prototype._classname = 'InterlacedLine';
-/** @type {Array.<Object>} */
-InterlacedLine.prototype.blocks;
-InterlacedLine.prototype.__defineGetter__('blocks', function() {
-return this._blocks;
-});
-
-/** @return {string} */
-InterlacedLine.prototype.first_fragment = function() {
-  var self = this;
-  return self._fragments[0];
-};
-
-/** @param {string} str */
-InterlacedLine.prototype.add_str = function(str) {
-  var self = this;
-  var last_idx;
-  last_idx = self._fragments.length - 1;
-  self._fragments[last_idx] = self._fragments[last_idx] + str;
-};
-
-/** @param {Object} block */
-InterlacedLine.prototype.add_block = function(block) {
-  var self = this;
-  self._fragments.push('');
-  self._blocks.push(block);
-};
-
-/**
- * @param {function(Object, string, number)} cb
- * @param {*=} ctxt
- */
-InterlacedLine.prototype.each = function(cb, ctxt) {
-  var self = this;
-  self._blocks.forEach(
-  /**
-   * @param {Object} block
-   * @param {number} i
-   */
-  function(block, i) {
-    cb.call(ctxt, block, self._fragments[i + 1], i);
-  });
-};
-/*
 either blank line or comment only line.
 */
 /**
- * @param {InputLine} input
+ * @param {input.Line} input
  * @constructor
  */
 var InvalidLine = function(input) {
   var self = this;
   /**
-   * @type {InputLine}
+   * @type {input.Line}
    * @private
    */
   this._input = input;
 };
 InvalidLine.prototype._classname = 'InvalidLine';
-/** @type {InputLine} */
+/** @type {input.Line} */
 InvalidLine.prototype.input;
 InvalidLine.prototype.__defineGetter__('input', function() {
 return this._input;
@@ -1401,238 +1161,33 @@ var LineCategorizer = function(context) {
 LineCategorizer.prototype._classname = 'LineCategorizer';
 
 /**
- * @param {InputLine} input
+ * @param {input.Line} line
  * @return {SectionLine}
  */
-LineCategorizer.prototype.create_line = function(input) {
+LineCategorizer.prototype.create_line = function(line) {
   var self = this;
   var parsed;
-  parsed = new LineParser(input);
+  parsed = new LineParser(line);
   if (!parsed.is_valid) {
-    return new InvalidLine(input);
+    return new InvalidLine(line);
   }
   if (parsed.is_separator) {
-    return new SeparatorLine(input, parsed);
+    return new SeparatorLine(line, parsed);
   }
-  return new CodeLine(self._context, input, parsed);
-};
-/*
-decodes blockc markers.
-*/
-/**
- * @param {!context.Context} context
- * @param {Array.<string>} line
- * @param {InputLine} input_line
- * @constructor
- */
-var LineDecoder = function(context, line, input_line) {
-  var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
-  this._context = context;
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
-  this._line = line;
-  /**
-   * @type {InputLine}
-   * @private
-   */
-  this._input_line = input_line;
-  /**
-   * @type {!InterlacedLine}
-   * @private
-   */
-  this._fragments = (new InterlacedLine);
-  // whether this line is a statement that comes with a block, like 'if'.
-  /**
-   * @type {boolean}
-   * @private
-   */
-  this._is_block_statement = (false);
-};
-LineDecoder.prototype._classname = 'LineDecoder';
-/** @type {boolean} */
-LineDecoder.prototype.is_block_statement;
-LineDecoder.prototype.__defineGetter__('is_block_statement', function() {
-return this._is_block_statement;
-});
-
-/** @param {Array.<IndentBlock>} blocks */
-LineDecoder.prototype.transform = function(blocks) {
-  var self = this;
-  // make the fragments and blocks.
-  // pass a shallow copy of the blocks.
-  self._split_to_fragments(blocks.slice(0));
-  self._transform_blocks();
-};
-
-/**
- * @param {Array.<IndentBlock>} blocks
- * @private
- */
-LineDecoder.prototype._split_to_fragments = function(blocks) {
-  var self = this;
-  // go thru all the matches one by one.
-  self._line.forEach(
-  /**
-   * @param {string} seg
-   * @param {number} i
-   */
-  function(seg, i) {
-    if (/^['"\/]/.test(seg)) {
-      // string, regular expression, and comment don't need to be split.
-      self._fragments.add_str(seg);
-    }
-    else {
-      self._split_segment(seg, i == self._line.length - 1, blocks);
-    }
-  });
-};
-
-/**
- * @param {string} seg
- * @param {boolean} last_seg
- * @param {Array.<IndentBlock>} blocks
- * @private
- */
-LineDecoder.prototype._split_segment = function(seg, last_seg, blocks) {
-  var self = this;
-  var re;
-  re = /(\{#\}|\[#\]|\(#\)|##?)/g;
-  var last_index;
-  last_index = 0;
-  var match;
-  match = re.exec(seg);
-  var sub_context;
-  sub_context = null;
-  while (match) {
-    self._fragments.add_str(seg.substring(last_index, match.index));
-    var block;
-    block = {marker: match[1]};
-    if (blocks.length == 0) {
-      warn(self._input_line, 'ran out of blocks: ' + seg);
-    }
-    else {
-      var b;
-      b = blocks.shift();
-      if (block.marker == '##') {
-        if (!sub_context) {
-          sub_context = self._context.clone();
-          sub_context.is_file_scope = false;
-        }
-        block.params = new ParamSet(sub_context, b);
-      }
-      block.block = b;
-    }
-
-    self._fragments.add_block(block);
-    last_index = re.lastIndex;
-    match = re.exec(seg);
-  }
-
-  var last_fragment;
-  last_fragment = seg.substr(last_index);
-  if (last_fragment) {
-    self._fragments.add_str(last_fragment);
-    if (last_seg && blocks.length > 0) {
-      self._fragments.add_block({marker: '#', block: blocks.shift()});
-      self._is_block_statement = true;
-    }
-  }
-  assert(!last_seg || blocks.length == 0, self._input_line, 'too many blocks for the #s');
-};
-
-/** @private */
-LineDecoder.prototype._transform_blocks = function() {
-  var self = this;
-  self._fragments.blocks.forEach(
-  /** @param {Object} b */
-  function(b) {
-    // transform the blocks.
-    if (b.params) {
-      b.params.transform();
-    }
-    if (b.block) {
-      b.block.transform({
-        '##': BlockType.BLOCK,
-        '#': BlockType.BLOCK,
-        '{#}': BlockType.OBJ,
-        '[#]': BlockType.ARRAY,
-        '(#)': BlockType.PARAMS
-      }[b.marker]);
-    }
-  });
-};
-
-/** @return {Array.<string>} */
-LineDecoder.prototype.first_line = function() {
-  var self = this;
-  // there should be at least one fragment.
-  return self._compose_line(self._fragments.first_fragment(), 0);
-};
-
-/** @param {function(IndentBlock, Array.<string>)} cb */
-LineDecoder.prototype.each_fragment = function(cb) {
-  var self = this;
-  self._fragments.each(
-  /**
-   * @param {Object} b
-   * @param {string} f
-   * @param {number} i
-   */
-  function(b, f, i) {
-    cb(b.block, self._compose_line(
-      b.block.end_str() + f,
-      i + 1
-    ));
-  });
-};
-
-/**
- * @param {string} prefix
- * @param {number} i
- * @private
- */
-LineDecoder.prototype._compose_line = function(prefix, i) {
-  var self = this;
-  if (self._fragments.blocks.length <= i) {
-    return [prefix];
-  }
-
-  var b;
-  b = self._fragments.blocks[i];
-  var bstart;
-  bstart = [b.block.start_str()];
-  if (!b.params) {
-    return [prefix + bstart];
-  }
-  if (b.params.is_decl_empty()) {
-    return [prefix + 'function(' + b.params.output_params() + ')' + bstart];
-  }
-
-  // we don't try to merge the prefix into first line.
-  return arr_flatten([
-    prefix,
-    doc_lines(b.params.output_decls()),
-    'function(' + b.params.output_params() + ')' + bstart
-  ]);
+  return new CodeLine(self._context, line, parsed);
 };
 /*
 First pass line parsing for constructing the block structure.
 */
 
 /**
- * @param {InputLine} input
+ * @param {input.Line} input
  * @constructor
  */
 var LineParser = function(input) {
   var self = this;
   /**
-   * @type {InputLine}
+   * @type {input.Line}
    * @private
    */
   this._input = input;
@@ -1727,7 +1282,7 @@ LineParser.prototype._check_separator = function() {
 };
 /**
  * @param {!context.Context} context
- * @param {InputLine} input
+ * @param {input.Line} input
  * @constructor
  */
 var LineTransformer = function(context, input) {
@@ -1738,7 +1293,7 @@ var LineTransformer = function(context, input) {
    */
   this._context = context;
   /**
-   * @type {InputLine}
+   * @type {input.Line}
    * @private
    */
   this._input = input;
@@ -1799,7 +1354,7 @@ LineTransformer.prototype.parent_call = function(args) {
   }
 };
 /**
- * @param {InputLine} line
+ * @param {input.Line} line
  * @param {string=} opt_msg
  */
 var warn = function(line, opt_msg) {
@@ -1809,7 +1364,7 @@ var warn = function(line, opt_msg) {
 
 /**
  * @param {*} check
- * @param {InputLine=} opt_line
+ * @param {input.Line=} opt_line
  * @param {string=} opt_msg
  */
 var assert = function(check, opt_line, opt_msg) {
@@ -1938,11 +1493,11 @@ Function parameter and / or member declarion.
 /**
  * @param {!context.Context} context
  * @param {boolean} is_ctor
- * @param {InputLine} input
+ * @param {input.Line} inputs
  * @param {parser.Result} parsed
  * @constructor
  */
-var Param = function(context, is_ctor, input, parsed) {
+var Param = function(context, is_ctor, inputs, parsed) {
   var self = this;
   /**
    * @type {!context.Context}
@@ -1987,10 +1542,10 @@ var Param = function(context, is_ctor, input, parsed) {
 
   // sanity check the param consistency.
   if (!is_ctor && self.is_member) {
-    warn(input, 'member param for non-constructor method');
+    warn(inputs, 'member param for non-constructor method');
   }
   if (!self.is_member && self.init_type != '?' && self._value_line) {
-    warn(input, 'initial value for non-member non-optional');
+    warn(inputs, 'initial value for non-member non-optional');
   }
 };
 Param.prototype._classname = 'Param';
@@ -2081,34 +1636,32 @@ Param.prototype.output_init = function(out) {
   var pname;
   pname = self._param_name();
 
-  if (self.is_member) {
-    out.append_prefix_line('/**');
-    if (self._type) {
-      out.append_prefix_line(' * @type {' + self._type.output() + '}');
-    }
-    out.append_prefix_line(' * @private');
-    out.append_prefix_line(' */');
+  if (!self.is_member && !self.has_init) {
+    return;
   }
-  if (self.is_member || self.has_init) {
-    out.line_prefix = [
-      self.is_member ? 'this._' : 'var ',
-      self.name,
-      ' = '
-    ].join('');
-    if (self.init_type != '') {
-      out.line_prefix += pname;
-      if (self.has_init) {
-        out.line_prefix += ' === undefined ? (';
-        out.line_suffix = ') : ' + pname;
-      }
-    }
-    else {
-      out.line_prefix += '(';
-      out.line_suffix = ')';
+
+  if (self.is_member) {
+    out.prefix_lines = out.prefix_lines.concat(doc_lines([
+      '@type {' + self._type.output() + '}',
+      '@private'
+    ]));
+  }
+
+  out.line_prefix = (
+    (self.is_member ? 'this._' : 'var ') +
+    (self.name) +
+    (' = ')
+  );
+  if (self.init_type) {
+    out.line_prefix += pname;
+    if (self.has_init) {
+      out.line_prefix += ' === undefined ? (';
+      out.line_suffix = ') : ' + pname;
     }
   }
   else {
-    out.remove_empty_lines();
+    out.line_prefix += '(';
+    out.line_suffix = ')';
   }
 };
 
@@ -2294,7 +1847,7 @@ ParamSet.prototype.is_decl_empty = function() {
   });
 };
 
-/** @return {Array.<string>} */
+/** @return {!Array.<string>} */
 ParamSet.prototype.output_decls = function() {
   var self = this;
   var result;
@@ -2348,14 +1901,14 @@ ParamSet.prototype.set_argtypes = function(types) {
   });
 };
 /**
- * @param {InputLine} input
- * @param {LineParser} parser
+ * @param {input.Line} input
+ * @param {LineParser} p
  * @constructor
  */
-var SeparatorLine = function(input, parser) {
+var SeparatorLine = function(input, p) {
   var self = this;
   /**
-   * @type {InputLine}
+   * @type {input.Line}
    * @private
    */
   this._input = input;
@@ -2363,10 +1916,10 @@ var SeparatorLine = function(input, parser) {
    * @type {number}
    * @private
    */
-  this._indent = (parser.indent);
+  this._indent = (p.indent);
 };
 SeparatorLine.prototype._classname = 'SeparatorLine';
-/** @type {InputLine} */
+/** @type {input.Line} */
 SeparatorLine.prototype.input;
 SeparatorLine.prototype.__defineGetter__('input', function() {
 return this._input;
@@ -2823,7 +2376,10 @@ var obj_stringify = function(obj, compact, name, opt_level) {
   }
 };
 
-/** @param {Array.<string>} annotations */
+/**
+ * @param {!Array.<string>} annotations
+ * @return {!Array.<string>}
+ */
 var doc_lines = function(annotations) {
   var alist;
   alist = arr_flatten(annotations);
@@ -2833,7 +2389,7 @@ var doc_lines = function(annotations) {
   if (alist.length == 1) {
     return ['/** ' + alist[0] + ' */'];
   }
-  return [
+  return arr_flatten([
     '/**',
     alist.map(
     /** @param {string} annotation */
@@ -2841,7 +2397,7 @@ var doc_lines = function(annotations) {
       return ' * ' + annotation;
     }),
     ' */'
-  ];
+  ]);
 };
 /** @constructor */
 context.Class = function() {
@@ -3162,11 +2718,358 @@ context.Package.prototype.toString = function() {
   var self = this;
   return self._pkg;
 };
+/*
+comment section in a file.
+*/
+/**
+ * @param {Array.<input.Line>} lines
+ * @constructor
+ */
+input.Comment = function(lines) {
+  var self = this;
+  /**
+   * @type {Array.<input.Line>}
+   * @private
+   */
+  this._lines = lines;
+};
+input.Comment.prototype._classname = 'input.Comment';
+
+input.Comment.prototype.output = function() {
+  var self = this;
+  var result;
+  result = [];
+  var buffer;
+  buffer = [];
+  var state;
+  state = 's';
+  self._lines.forEach(
+  /** @param {input.Line} line */
+  function(line) {
+    switch (state) {
+      // starting state -- output all the blank lines as is.
+      case 's':;
+      if (!line.is_blank) {
+        // first non-blank.
+        result.push(buffer);
+        buffer = [];
+        state = 'n';
+      }
+      break;
+
+      // in non-blank line section.
+      case 'n':;
+      if (line.is_blank) {
+        state = 'a';
+      }
+      break;
+
+      // blank line immediately following a non-blank.
+      case 'a':;
+      if (line.is_blank) {
+        // run of blank lines is long enough now. flush the comments.
+        result.push(['/*', buffer.splice(0, buffer.length - 1), '*/']);
+        state = 'b';
+      }
+      else {
+        state = 'n';
+      }
+      break;
+
+      // b: blank line section.
+      case 'b':;
+      if (!line.is_blank) {
+        result.push(buffer);
+        buffer = [];
+        state = 'n';
+      }
+      break;
+    }
+    buffer.push(line.line);
+  });
+
+  switch (state) {
+    // still in the starting state.
+    case 's':;
+    result.push(buffer);
+    break;
+
+    // in non-blank line section.
+    case 'n':;
+    result.push(['/*', buffer, '*/']);
+    break;
+
+    // one blank line immediately following a non-blank.
+    case 'a':;
+    // run of blank lines is long enough now. flush the comments.
+    result.push(['/*', buffer.splice(0, buffer.length - 1), '*/']);
+    result.push(buffer);
+    break;
+
+    // b: blank line section.
+    case 'b':;
+    result.push(buffer);
+    break;
+  }
+
+  return result;
+};
+/*
+Parses input lines into comments and sections.
+'line' is used only during processing.
+*/
+
+/**
+ * @param {Array.<string>} input
+ * @constructor
+ */
+input.File = function(input) {
+  var self = this;
+  /**
+   * @type {Array.<string>}
+   * @private
+   */
+  this._input = input;
+  /**
+   * @type {Array.<input.Comment|input.Section>}
+   * @private
+   */
+  this._result = ([]);
+  /**
+   * @type {Array.<input.Line>}
+   * @private
+   */
+  this._buffer = ([]);
+  /**
+   * @type {number?}
+   * @private
+   */
+  this._last_valid_index = (null);
+};
+input.File.prototype._classname = 'input.File';
+
+/** @return {Array.<input.Comment|input.Section>} */
+input.File.prototype.parse = function() {
+  var self = this;
+  self._input.forEach(
+  /**
+   * @param {string} line
+   * @param {number} index
+   */
+  function(line, index) {
+    line = line.trimRight();
+    self._process_line(new input.Line(line, index));
+  });
+  self._flush_buffer();
+  return self._result;
+};
+
+/**
+ * @param {input.Line} line
+ * @private
+ */
+input.File.prototype._process_line = function(line) {
+  var self = this;
+  if (line.starts_with_colon) {
+    // should be a start of a code section.
+    self._flush_buffer();
+    self._last_valid_index = 0;
+  }
+  else if (line.is_indented) {
+    // indented line -- continues either comment or code section.
+    if (self._last_valid_index !== null) {
+      self._last_valid_index = self._buffer.length;
+    }
+  }
+  else if (!line.is_blank) {
+    // global comment.
+    if (self._last_valid_index !== null) {
+      // close the code section.
+      self._flush_buffer();
+    }
+  }
+  // anything else is invalid line -- continues either comment or code section.
+  self._buffer.push(line);
+};
+
+/** @private */
+input.File.prototype._flush_buffer = function() {
+  var self = this;
+  while (self._buffer.length) {
+    var next_buffer;
+    next_buffer = [];
+    if (self._last_valid_index !== null) {
+      var section;
+      section = new input.Section(self._buffer[0]);
+      self._result.push(section);
+      self._buffer.forEach(
+      /**
+       * @param {input.Line} line
+       * @param {number} index
+       */
+      function(line, index) {
+        if (index == 0) {
+          // we already passed the header line to section.
+          return;
+        }
+        else if (index <= self._last_valid_index) {
+          section.push(line);
+        }
+        else {
+          // end of section invaild lines.
+          next_buffer.push(line);
+        }
+      });
+    }
+    else {
+      // we'll give buffer a new array so no need to clone for global comment.
+      self._result.push(new input.Comment(self._buffer));
+    }
+    self._last_valid_index = null;
+    self._buffer = next_buffer;
+  }
+};
+/*
+a line of input file. keeps track of the row index.
+*/
+/**
+ * @param {string} line
+ * @param {number} row_index
+ * @constructor
+ */
+input.Line = function(line, row_index) {
+  var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._line = line;
+  /**
+   * @type {number}
+   * @private
+   */
+  this._row_index = row_index;
+};
+input.Line.prototype._classname = 'input.Line';
+/** @type {string} */
+input.Line.prototype.line;
+input.Line.prototype.__defineGetter__('line', function() {
+return this._line;
+});
+/** @type {number} */
+input.Line.prototype.row_index;
+input.Line.prototype.__defineGetter__('row_index', function() {
+return this._row_index;
+});
+
+/** @type {number} */
+input.Line.prototype.line_no;
+input.Line.prototype.__defineGetter__('line_no', function() {
+  var self = this;
+  return self._row_index + 1;
+});
+
+/*
+the line contents with indentation stripped off.
+trailing whitespace should have been stripped already.
+*/
+/** @type {string} */
+input.Line.prototype.trim;
+input.Line.prototype.__defineGetter__('trim', function() {
+  var self = this;
+  var re;
+  re = /\S.*/.exec(self._line);
+  return re ? re[0] : '';
+});
+
+/** @type {boolean} */
+input.Line.prototype.starts_with_colon;
+input.Line.prototype.__defineGetter__('starts_with_colon', function() {
+  var self = this;
+  return self._line.substr(0, 1) == ':';
+});
+
+/** @type {boolean} */
+input.Line.prototype.is_blank;
+input.Line.prototype.__defineGetter__('is_blank', function() {
+  var self = this;
+  return /^\s*$/.test(self._line);
+});
+
+/** @type {boolean} */
+input.Line.prototype.is_indented;
+input.Line.prototype.__defineGetter__('is_indented', function() {
+  var self = this;
+  return /^\s/.test(self._line);
+});
+
+/** @type {number} */
+input.Line.prototype.indent;
+input.Line.prototype.__defineGetter__('indent', function() {
+  var self = this;
+  var re;
+  re = /\S/.exec(self._line);
+  return re ? re.index : 0;
+});
+
+  var UnknownInputLine;
+  UnknownInputLine = new input.Line('', -1);
+/*
+Input code section.
+*/
+
+/**
+ * @param {input.Line} header
+ * @constructor
+ */
+input.Section = function(header) {
+  var self = this;
+  /**
+   * @type {input.Line}
+   * @private
+   */
+  this._header = header;
+  /**
+   * @type {Array.<input.Line>}
+   * @private
+   */
+  this._lines = ([]);
+  /**
+   * @type {section.Code}
+   * @private
+   */
+  this._code = (null);
+};
+input.Section.prototype._classname = 'input.Section';
+/** @type {input.Line} */
+input.Section.prototype.header;
+input.Section.prototype.__defineGetter__('header', function() {
+return this._header;
+});
+/** @type {Array.<input.Line>} */
+input.Section.prototype.lines;
+input.Section.prototype.__defineGetter__('lines', function() {
+return this._lines;
+});
+/** @type {section.Code} */
+input.Section.prototype.code;
+input.Section.prototype.__defineGetter__('code', function() {
+return this._code;
+});
+input.Section.prototype.__defineSetter__('code', function(value) {
+this._code = value;
+});
+
+/** @param {input.Line} line */
+input.Section.prototype.push = function(line) {
+  var self = this;
+  self._lines.push(line);
+};
 /** @constructor */
 output.Block = function() {
   var self = this;
   /**
-   * @type {Array.<output.Line>}
+   * @type {!Array.<!output.Line>}
    * @private
    */
   this._lines = ([]);
@@ -3250,17 +3153,95 @@ output.Block.prototype.__defineGetter__('output', function() {
   return lines;
 });
 /*
+Helper for Line to construct the output.
+*/
+
+/**
+ * @param {number} num_indent
+ * @constructor
+ */
+output.IndentedMultiline = function(num_indent) {
+  var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._indent = (whitespaces(num_indent));
+  /**
+   * @type {!Array.<string>}
+   * @private
+   */
+  this._lines = ([]);
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._last_line_open = (false);
+};
+output.IndentedMultiline.prototype._classname = 'output.IndentedMultiline';
+
+/** @type {!Array.<string>} */
+output.IndentedMultiline.prototype.output;
+output.IndentedMultiline.prototype.__defineGetter__('output', function() {
+  var self = this;
+  return self._lines;
+});
+
+/**
+ * @param {string} line
+ * @param {boolean=} opt_end_line
+ * @param {boolean=} opt_insert_blank
+ */
+output.IndentedMultiline.prototype.append_line = function(line, opt_end_line, opt_insert_blank) {
+  var self = this;
+  var end_line = opt_end_line === undefined ? (true) : opt_end_line;
+  var insert_blank = opt_insert_blank === undefined ? (false) : opt_insert_blank;
+  if (line || insert_blank) {
+    if (self._last_line_open) {
+      self._lines[self._lines.length - 1] += line;
+    }
+    else {
+      self._lines.push(line ? self._indent + line : '');
+    }
+    self._last_line_open = !end_line;
+  }
+  else {
+    self._last_line_open = false;
+  }
+};
+
+/** @param {!Array.<string>} lines */
+output.IndentedMultiline.prototype.append_all = function(lines) {
+  var self = this;
+  lines.forEach(
+  /** @param {string} line */
+  function(line) {
+    self.append_line(line);
+  });
+};
+
+/*
+Lines added as is.
+Block does not share its lines with the surrounding lines.
+*/
+/** @param {!Array.<string>} block */
+output.IndentedMultiline.prototype.append_block = function(block) {
+  var self = this;
+  self._lines = self._lines.concat(block);
+  self._last_line_open = false;
+};
+/*
 Output lines corresponds to one input line.
 */
 
 /**
- * @param {InputLine} input
+ * @param {input.Line} input
  * @constructor
  */
 output.Line = function(input) {
   var self = this;
   /**
-   * @type {InputLine}
+   * @type {input.Line}
    * @private
    */
   this._input = input;
@@ -3275,10 +3256,10 @@ output.Line = function(input) {
    */
   this._prefix_lines = ([]);
   /**
-   * @type {Array.<output.Block|string>}
+   * @type {!output.Multiline}
    * @private
    */
-  this._lines = ([]);
+  this._lines = (new output.Multiline());
   /**
    * @type {string}
    * @private
@@ -3303,6 +3284,19 @@ return this._indent;
 });
 output.Line.prototype.__defineSetter__('indent', function(value) {
 this._indent = value;
+});
+/** @type {Array.<string>} */
+output.Line.prototype.prefix_lines;
+output.Line.prototype.__defineGetter__('prefix_lines', function() {
+return this._prefix_lines;
+});
+output.Line.prototype.__defineSetter__('prefix_lines', function(value) {
+this._prefix_lines = value;
+});
+/** @type {!output.Multiline} */
+output.Line.prototype.lines;
+output.Line.prototype.__defineGetter__('lines', function() {
+return this._lines;
 });
 /** @type {string} */
 output.Line.prototype.line_prefix;
@@ -3329,87 +3323,109 @@ output.Line.prototype.__defineSetter__('tail_comment', function(value) {
 this._tail_comment = value;
 });
 
-/** @param {string} line */
-output.Line.prototype.append_prefix_line = function(line) {
+/** @type {boolean} */
+output.Line.prototype.empty;
+output.Line.prototype.__defineGetter__('empty', function() {
   var self = this;
-  self._prefix_lines.push(line);
-};
+  return self._lines.empty && !self._line_prefix && !self._line_suffix;
+});
 
 /** @param {string} line */
 output.Line.prototype.append_line = function(line) {
   var self = this;
-  self._lines.push(line);
-};
-
-/** @param {output.Block} block */
-output.Line.prototype.append_block = function(block) {
-  var self = this;
-  self._lines.push(block);
-};
-
-/** @param {Array.<string>} lines */
-output.Line.prototype.append_lines = function(lines) {
-  var self = this;
-  lines.forEach(
-  /** @param {string} line */
-  function(line) {
-    self._lines.push(line);
-  });
-};
-
-output.Line.prototype.remove_empty_lines = function() {
-  var self = this;
-  self._lines = self._lines.filter(
-  /** @param {output.Block|string} line */
-  function(line) {
-    return line;
-  });
+  self._lines.append_str(line);
+  self._lines.terminate_line();
 };
 
 /** @type {Array.<string>} */
 output.Line.prototype.output;
 output.Line.prototype.__defineGetter__('output', function() {
   var self = this;
-  var result;
-  result = [];
-  var indent;
-  indent = whitespaces(self._indent);
-  self._prefix_lines.forEach(
-  /** @param {string} line */
-  function(line) {
-    result.push(line ? indent + line : '');
-  });
-  self._lines.forEach(
+  var out;
+  out = new output.IndentedMultiline(self._indent);
+  out.append_all(self._prefix_lines);
+  out.append_line(self._line_prefix, false);
+  self._lines.lines.forEach(
   /**
    * @param {string|output.Block} line
    * @param {number} i
    */
   function(line, i) {
     if (line instanceof output.Block) {
-      result = result.concat(line.output);
+      out.append_block(line.output);
     }
     else {
-      var to_add;
-      to_add = line;
-      if (i == 0 && self._line_prefix) {
-        to_add = self._line_prefix + to_add;
-      }
-      if (i == self._lines.length - 1 && self._line_suffix) {
-        to_add += self._line_suffix;
-      }
-      if (to_add) {
-        to_add = indent + to_add;
-      }
-      result.push(to_add);
+      // line is a string.
+      out.append_line(line, i < self._lines.lines.length - 1, true);
     }
   });
-  self._tail_comment.forEach(
-  /** @param {string} c */
-  function(c) {
-    result.push(indent + c);
-  });
-  return result;
+  // This closes the last line even when @line_suffix is ''.
+  out.append_line(self._line_suffix);
+  out.append_all(self._tail_comment);
+  return out.output;
 });
+/** @constructor */
+output.Multiline = function() {
+  var self = this;
+  /**
+   * @type {!Array.<!output.Block|string>}
+   * @private
+   */
+  this._lines = ([]);
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._last_line_open = (false);
+};
+output.Multiline.prototype._classname = 'output.Multiline';
+/** @type {!Array.<!output.Block|string>} */
+output.Multiline.prototype.lines;
+output.Multiline.prototype.__defineGetter__('lines', function() {
+return this._lines;
+});
+
+/** @type {boolean} */
+output.Multiline.prototype.empty;
+output.Multiline.prototype.__defineGetter__('empty', function() {
+  var self = this;
+  return !self._lines.length;
+});
+
+/** @param {string} line */
+output.Multiline.prototype.append_str = function(line) {
+  var self = this;
+  if (self._last_line_open) {
+    self._lines[self._lines.length - 1] += line;
+  }
+  else {
+    self._lines.push(line);
+  }
+  self._last_line_open = true;
+};
+
+/** @param {!Array.<string>} lines */
+output.Multiline.prototype.append_lines = function(lines) {
+  var self = this;
+  lines.forEach(
+  /** @param {string} line */
+  function(line) {
+    self.append_str(line);
+    self.terminate_line();
+  });
+};
+
+output.Multiline.prototype.terminate_line = function() {
+  var self = this;
+  self._last_line_open = false;
+};
+
+/** @param {!output.Block} block */
+output.Multiline.prototype.append_block = function(block) {
+  var self = this;
+  self._lines.push(block);
+  self._last_line_open = false;
+};
 /*
 Use PEGJS syntax to create a TokenList.
 Container and interface of the TokenList to the rest of the converter.
@@ -3417,7 +3433,7 @@ Container and interface of the TokenList to the rest of the converter.
 
 /**
  * @param {parser.TokenList} tokens
- * @param {!Array.<!InputLine>} input
+ * @param {!Array.<!input.Line>} input
  * @constructor
  */
 parser.Result = function(tokens, input) {
@@ -3428,7 +3444,7 @@ parser.Result = function(tokens, input) {
    */
   this._tokens = tokens;
   /**
-   * @type {!Array.<!InputLine>}
+   * @type {!Array.<!input.Line>}
    * @private
    */
   this._input = input;
@@ -3513,27 +3529,22 @@ parser.Target = function(rule) {
 parser.Target.prototype._classname = 'parser.Target';
 
 /**
- * @param {!Array.<InputLine>|string} input
- * @param {LineTransformer=} opt_xformer
+ * @param {!Array.<input.Line>|string} line
+ * @param {LineTransformer=} xformer
  * @param {boolean=} show_error_line
  * @return {?parser.Result}
  */
-parser.Target.prototype.run = function(input, opt_xformer, show_error_line) {
+parser.Target.prototype.run = function(line, xformer, show_error_line) {
   var self = this;
-  /**
-   * @type {LineTransformer}
-   * @private
-   */
-  this._xformer = opt_xformer === undefined ? (null) : opt_xformer;
-  if (!(input instanceof Array)) {
-    input = [new InputLine(input, 0)];
+  if (!(line instanceof Array)) {
+    line = [new input.Line(line, 0)];
   }
 
   var lines;
-  lines = input.map(
-  /** @param {InputLine} input */
-  function(input) {
-    return input.line;
+  lines = line.map(
+  /** @param {input.Line} l */
+  function(l) {
+    return l.line;
   }).join('\n');
   try {
     var result;
@@ -3558,8 +3569,10 @@ parser.Target.prototype.run = function(input, opt_xformer, show_error_line) {
   }
   var b;
   b = new parser.TokenListBuilder(result);
-  b.xformer = self._xformer;
-  return b.result(input);
+  if (xformer) {
+    b.xformer = xformer;
+  }
+  return b.result(line);
 };
 /**
  * @param {string} type
@@ -3909,13 +3922,13 @@ parser.TokenListBuilder.prototype.build = function() {
 };
 
 /**
- * @param {!Array.<InputLine>} input
+ * @param {!Array.<input.Line>} line
  * @return {parser.Result}
  */
-parser.TokenListBuilder.prototype.result = function(input) {
+parser.TokenListBuilder.prototype.result = function(line) {
   var self = this;
   self.build();
-  return new parser.Result(self._tokens, input);
+  return new parser.Result(self._tokens, line);
 };
 
 /**
@@ -4068,8 +4081,8 @@ section.Generator = function(scope) {
 section.Generator.prototype._classname = 'section.Generator';
 
 /**
- * @param {InputLine} header
- * @param {Array.<InputLine>} lines
+ * @param {input.Line} header
+ * @param {Array.<input.Line>} lines
  * @return {section.Code}
  */
 section.Generator.prototype.generate = function(header, lines) {
@@ -4134,7 +4147,7 @@ section.Generator.prototype._create_ctor = function(line) {
 
 /**
  * @param {string} line
- * @param {InputLine} header
+ * @param {input.Line} header
  * @return {section.Method}
  * @private
  */
@@ -4160,7 +4173,7 @@ section.Generator.prototype._create_method = function(line, header) {
 
 /**
  * @param {string} line
- * @param {InputLine} header
+ * @param {input.Line} header
  * @return {section.Accessor}
  * @private
  */
@@ -4316,7 +4329,7 @@ var self = this;
 
 /**
  * @param {!context.Context} context
- * @param {InputLine} input
+ * @param {input.Line} input
  * @param {LineParser} line_parsed
  * @constructor
  * @extends {section.Head}
@@ -4329,7 +4342,7 @@ var CodeLine = function(context, input, line_parsed) {
    */
   this._context = context;
   /**
-   * @type {InputLine}
+   * @type {input.Line}
    * @private
    */
   this._input = input;
@@ -4362,7 +4375,7 @@ var CodeLine = function(context, input, line_parsed) {
 };
 CodeLine.prototype = Object.create(section.Head.prototype);
 CodeLine.prototype._classname = 'CodeLine';
-/** @type {InputLine} */
+/** @type {input.Line} */
 CodeLine.prototype.input;
 CodeLine.prototype.__defineGetter__('input', function() {
 return this._input;
@@ -4448,21 +4461,12 @@ CodeLine.prototype.output = function() {
     return out;
   }
 
-  out.append_lines(self.parsed.prev_lines.map(
+  out.lines.append_lines(self.parsed.prev_lines.map(
   /** @param {string} line */
   function(line) {
     return line + ';';
   }));
-  out.append_lines(self._matcher.first_line());
-  self._matcher.each_fragment(
-  /**
-   * @param {IndentBlock} block
-   * @param {Array.<string>} tail_code
-   */
-  function(block, tail_code) {
-    out.append_block(block.output());
-    out.append_lines(tail_code);
-  });
+  self._matcher.output(out);
   if (self._param) {
     self._param.output_init(out);
   }
@@ -4480,7 +4484,7 @@ CodeLine.prototype.output = function() {
 section.Code = function() {
   var self = this;
   /**
-   * @type {Array.<InputLine>}
+   * @type {Array.<input.Line>}
    * @private
    */
   this._lines = ([]);
@@ -4488,7 +4492,7 @@ section.Code = function() {
 };
 section.Code.prototype = Object.create(section.Head.prototype);
 section.Code.prototype._classname = 'section.Code';
-/** @type {Array.<InputLine>} */
+/** @type {Array.<input.Line>} */
 section.Code.prototype.lines;
 section.Code.prototype.__defineGetter__('lines', function() {
 return this._lines;
@@ -4524,7 +4528,7 @@ section.Native.prototype._classname = 'section.Native';
 section.Native.prototype.output = function() {
   var self = this;
   return self.lines.map(
-  /** @param {InputLine} line */
+  /** @param {input.Line} line */
   function(line) {
     var out;
     out = new output.Line(line);
@@ -4616,7 +4620,7 @@ section.Str.prototype.strlines = function() {
   var result;
   result = [];
   self.lines.forEach(
-  /** @param {InputLine} line */
+  /** @param {input.Line} line */
   function(line) {
     if (line.is_blank) {
       // empty line is fine.
@@ -4787,7 +4791,7 @@ section.Typedef.prototype.output = function() {
   var out;
   out = new output.Line(self.lines[0]);
   out.indent = 0;
-  out.append_lines([
+  out.lines.append_lines([
     doc_lines(['@typedef {' + decoder.output() + '}']),
     self.context.name.decl() + ';'
   ]);
