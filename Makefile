@@ -47,11 +47,15 @@ CLOSURE_ARGS+=--jscomp_error=unknownDefines
 CLOSURE_ARGS+=--jscomp_error=uselessCode
 CLOSURE_ARGS+=--jscomp_error=visibility
 
+compiled/%.js: src/%.ir
+	@mkdir -p `dirname $@`
+	@$(NODE_SAVED) --basedir=src $^ $@
+
 
 ############################################################
 # Converter targets.
 
-test: dir compiled/parser/syntax.js compiled/ir2js_test.js
+test: compiled/parser/syntax.js compiled/ir2js_test.js
 	@echo '===== TEST'
 	$(NODE_TEST) compiled/ir2js_test.js $(TESTS)
 
@@ -87,10 +91,10 @@ PARSER_TEST_SRCS=\
 $(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
 PARSER_TEST_SRCS+=compiled/input/line.js
 
-test_parse: dir compiled/parser/syntax.js compiled/parser_main.js
+test_parse: compiled/parser/syntax.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -p src/*.ir | grep '^X|'
 
-parser_test: dir compiled/parser/syntax.js compiled/parser_main.js
+parser_test: compiled/parser/syntax.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -t src/parser/data/*
 
 compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js
@@ -98,27 +102,13 @@ compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js
 	cat $(BASE_SRC) $^ > $@
 
 compiled/parser/syntax.js: src/parser/syntax.pegjs
+	@echo '===== PEGJS syntax'
+	@mkdir -p compiled/parser
 	pegjs src/parser/syntax.pegjs $@
 
 
 ############################################################
-# Basic rules.
-
-compiled/%.js: src/%.ir
-	@$(NODE_SAVED) --basedir=src $^ $@
-
-# TODO: Make compiler create these dirs automatically.
-dir:
-	mkdir -p compiled
-	mkdir -p compiled/context
-	mkdir -p compiled/input
-	mkdir -p compiled/output
-	mkdir -p compiled/parser
-	mkdir -p compiled/section
-
-
-############################################################
-# Non-build commands.
+# Misc.
 
 update:
 	make clean
