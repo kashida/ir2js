@@ -1,5 +1,4 @@
-# TODO: Auto-generate this file.
-BASE_SRC=packages.js
+PACKAGES_FILE=compiled/packages.js
 
 NODE=nodejs
 NODE_TEST=NODE_PATH=compiled/parser $(NODE)
@@ -59,31 +58,31 @@ test: compiled/parser/syntax.js compiled/ir2js_test.js
 	@echo '===== TEST'
 	$(NODE_TEST) compiled/ir2js_test.js $(TESTS)
 
-compiled/ir2js_test.js: compiled/_ir2js_test.js
+compiled/ir2js_test.js: compiled/_ir2js_test.js $(PACKAGES_FILE)
 	@echo '===== CAT ir2js_test'
-	cat $(BASE_SRC) node/imports.js `$(SORTJS) $(JS_SRCS)` $(TEST_JS_SRC) > $@
+	cat $(PACKAGES_FILE) node/imports.js `$(SORTJS) $(JS_SRCS)` $(TEST_JS_SRC) > $@
 
 
 converter: compiled/ir2js.js compiled/parser/syntax.js
 
-compiled/ir2js.js: compiled/_ir2js.js
+compiled/ir2js.js: compiled/_ir2js.js $(PACKAGES_FILE)
 	@echo '===== CAT ir2js'
-	cat $(BASE_SRC) node/imports.js `$(SORTJS) $(JS_SRCS)` $(CNVT_JS_SRC) >$@
+	cat $(PACKAGES_FILE) node/imports.js `$(SORTJS) $(JS_SRCS)` $(CNVT_JS_SRC) >$@
 
 
-compiled/_ir2js_test.js: $(JS_SRCS) $(TEST_JS_SRC)
+compiled/_ir2js_test.js: $(JS_SRCS) $(TEST_JS_SRC) $(PACKAGES_FILE)
 	@echo '===== VERIFY ir2js_test: compiling'
-	java $(CLOSURE_ARGS) --js_output_file $@ --js $(BASE_SRC) \
+	java $(CLOSURE_ARGS) --js_output_file $@ --js $(PACKAGES_FILE) \
 	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS))) \
 	--js $(TEST_JS_SRC)
 
-compiled/_ir2js.js: $(JS_SRCS) $(CNVT_JS_SRC)
+compiled/_ir2js.js: $(JS_SRCS) $(CNVT_JS_SRC) $(PACKAGES_FILE)
 	@echo '===== VERIFY ir2js: compiling'
-	java $(CLOSURE_ARGS) --js_output_file $@ --js $(BASE_SRC) \
+	java $(CLOSURE_ARGS) --js_output_file $@ --js $(PACKAGES_FILE) \
 	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS))) \
 	--js $(CNVT_JS_SRC)
 
-compiled/packages.js:
+$(PACKAGES_FILE):
 	$(NODE_SAVED) --pkglist --basedir=src $(ALL_IR_SRCS) > $@
 
 
@@ -100,9 +99,9 @@ test_parse: compiled/parser/syntax.js compiled/parser_main.js
 parser_test: compiled/parser/syntax.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -t src/parser/data/*
 
-compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js
+compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js $(PACKAGES_FILE)
 	@echo '===== CAT parser_main'
-	cat $(BASE_SRC) $^ > $@
+	cat $(PACKAGES_FILE) $^ > $@
 
 compiled/parser/syntax.js: src/parser/syntax.pegjs
 	@echo '===== PEGJS syntax'
