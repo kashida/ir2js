@@ -1,7 +1,9 @@
 # TODO: Auto-generate this file.
 BASE_SRC=packages.js
 
-NODE=NODE_PATH=compiled/parser nodejs
+NODE=nodejs
+NODE_TEST=NODE_PATH=compiled/parser $(NODE)
+NODE_SAVED=NODE_PATH=saved $(NODE) saved/ir2js.js
 
 SRCS=$(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/*.ir)))
 SRCS+=$(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/*/*.ir)))
@@ -11,7 +13,7 @@ TEST_JS_SRC=compiled/test.js
 
 TESTS=$(wildcard test/*)
 
-SORTJS=$(NODE) saved/ir2js.js --stdout --sort
+SORTJS=$(NODE_SAVED) --stdout --sort
 
 CLOSURE_ARGS=
 CLOSURE_ARGS+=-jar closure/compiler.jar
@@ -51,7 +53,7 @@ CLOSURE_ARGS+=--jscomp_error=visibility
 
 test: dir compiled/parser/syntax.js compiled/ir2js_test.js
 	@echo '===== TEST'
-	$(NODE) compiled/ir2js_test.js $(TESTS)
+	$(NODE_TEST) compiled/ir2js_test.js $(TESTS)
 
 compiled/ir2js_test.js: compiled/_ir2js_test.js
 	@echo '===== CAT ir2js_test'
@@ -86,10 +88,10 @@ $(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
 PARSER_TEST_SRCS+=compiled/input/line.js
 
 test_parse: dir compiled/parser/syntax.js compiled/parser_main.js
-	@$(NODE) compiled/parser_main.js -p src/*.ir | grep '^X|'
+	@$(NODE_TEST) compiled/parser_main.js -p src/*.ir | grep '^X|'
 
 parser_test: dir compiled/parser/syntax.js compiled/parser_main.js
-	@$(NODE) compiled/parser_main.js -t src/parser/data/*
+	@$(NODE_TEST) compiled/parser_main.js -t src/parser/data/*
 
 compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js
 	@echo '===== CAT parser_main'
@@ -103,7 +105,7 @@ compiled/parser/syntax.js: src/parser/syntax.pegjs
 # Basic rules.
 
 compiled/%.js: src/%.ir
-	@$(NODE) saved/ir2js.js --basedir=src $^ $@
+	@$(NODE_SAVED) --basedir=src $^ $@
 
 # TODO: Make compiler create these dirs automatically.
 dir:
@@ -122,7 +124,8 @@ update:
 	make clean
 	make test
 	make converter
-	cp compiled/ir2js.js saved/ir2js.js
+	cp compiled/ir2js.js saved
+	cp compiled/parser/syntax.js saved
 	make clean
 	make test
 	make converter
