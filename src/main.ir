@@ -4,6 +4,7 @@
     COMPILE: 0
     SORT: 1
     ARGTYPE: 2
+    PKGLIST: 3
 
   // TODO: @type {ExecModes}
   mode := ExecModes.COMPILE
@@ -16,7 +17,7 @@
 
 
   // extract only the input / output file names.
-  basedir := ''
+  base_dir := ''
   inout_filenames := process.argv.filter(##)
     arg\s\$
     i\n\$
@@ -29,11 +30,13 @@
     opt_name := option_re[1]
     opt_param := option_re[3]
     if opt_name == 'basedir'
-      basedir = opt_param
+      base_dir = opt_param
     else if opt_name == 'sort'
       mode = ExecModes.SORT
     else if opt_name == 'argtypes'
       mode = ExecModes.ARGTYPE
+    else if opt_name == 'pkglist'
+      mode = ExecModes.PKGLIST
     else if opt_name == 'stdout'
       reply = ReplyModes.STDOUT
     else
@@ -42,7 +45,7 @@
 
   switch mode
     case ExecModes.COMPILE
-    compile_files(basedir, inout_filenames)
+    compile_files(base_dir, inout_filenames)
     break
 
     case ExecModes.SORT
@@ -58,6 +61,11 @@
     break
 
     case ExecModes.ARGTYPE
-    create_argtypes(basedir, inout_filenames)
+    create_argtypes(base_dir, inout_filenames)
+    break
+
+    case ExecModes.PKGLIST
+    pkgs := create_package_list(base_dir, inout_filenames)
+    console.log(pkgs.join('\n'))
     break
   process.exit(0)

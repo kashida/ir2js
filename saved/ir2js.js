@@ -1901,6 +1901,47 @@ ParamSet.prototype.set_argtypes = function(types) {
   });
 };
 /**
+ * @param {string} basedir
+ * @param {Array.<string>} files
+ * @return {Array.<string>}
+ */
+var create_package_list = function(basedir, files) {
+  var pkgs;
+  pkgs = {};
+  files.forEach(
+  /** @param {string} file */
+  function(file) {
+    var pkg_name;
+    pkg_name = file.replace(/[\/\\][^\/\\]*$/, '');
+    if (basedir && pkg_name.indexOf(basedir) == 0) {
+      // strip off the basedir.
+      pkg_name = pkg_name.substr(basedir.length);
+    }
+    pkg_name = pkg_name.replace(/^[\/\\]*/, '').replace(/[\/\\]/, '.');
+    if (!pkg_name) {
+      return;
+    }
+
+    var name;
+    name = '';
+    pkg_name.split(/[\/\\]/).forEach(
+    /** @param {string} segment */
+    function(segment) {
+      if (name) {
+        name += '.';
+      }
+      name += segment;
+      pkgs[name] = true;
+    });
+  });
+
+  return Object.keys(pkgs).sort().map(
+  /** @param {string} pkg */
+  function(pkg) {
+    return ('var ' + pkg + ' = {};');
+  });
+};
+/**
  * @param {input.Line} input
  * @param {LineParser} p
  * @constructor
@@ -5010,7 +5051,8 @@ section.Method.prototype.set_type = function(types) {
   ExecModes = {
     COMPILE: 0,
     SORT: 1,
-    ARGTYPE: 2
+    ARGTYPE: 2,
+    PKGLIST: 3
   };
 
   // TODO: @type {ExecModes}
@@ -5028,8 +5070,8 @@ section.Method.prototype.set_type = function(types) {
 
 
   // extract only the input / output file names.
-  var basedir;
-  basedir = '';
+  var base_dir;
+  base_dir = '';
   var inout_filenames;
   inout_filenames = process.argv.filter(
   /**
@@ -5051,13 +5093,16 @@ section.Method.prototype.set_type = function(types) {
     var opt_param;
     opt_param = option_re[3];
     if (opt_name == 'basedir') {
-      basedir = opt_param;
+      base_dir = opt_param;
     }
     else if (opt_name == 'sort') {
       mode = ExecModes.SORT;
     }
     else if (opt_name == 'argtypes') {
       mode = ExecModes.ARGTYPE;
+    }
+    else if (opt_name == 'pkglist') {
+      mode = ExecModes.PKGLIST;
     }
     else if (opt_name == 'stdout') {
       reply = ReplyModes.STDOUT;
@@ -5070,7 +5115,7 @@ section.Method.prototype.set_type = function(types) {
 
   switch (mode) {
     case ExecModes.COMPILE:;
-    compile_files(basedir, inout_filenames);
+    compile_files(base_dir, inout_filenames);
     break;
 
     case ExecModes.SORT:;
@@ -5088,7 +5133,13 @@ section.Method.prototype.set_type = function(types) {
     break;
 
     case ExecModes.ARGTYPE:;
-    create_argtypes(basedir, inout_filenames);
+    create_argtypes(base_dir, inout_filenames);
+    break;
+
+    case ExecModes.PKGLIST:;
+    var pkgs;
+    pkgs = create_package_list(base_dir, inout_filenames);
+    console.log(pkgs.join('\n'));
     break;
   }
   process.exit(0);

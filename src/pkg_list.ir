@@ -1,0 +1,25 @@
+:=create_package_list ##\A.<s>\
+  basedir\s\$
+  files\A.<s>\$
+  pkgs := {}
+  files.forEach(##)
+    file\s\$
+    pkg_name := file.replace(/[\/\\][^\/\\]*$/, '')
+    if basedir && pkg_name.indexOf(basedir) == 0
+      // strip off the basedir.
+      pkg_name = pkg_name.substr(basedir.length)
+    pkg_name = pkg_name.replace(/^[\/\\]*/, '').replace(/[\/\\]/, '.')
+    if !pkg_name
+      =>
+
+    name := ''
+    pkg_name.split(/[\/\\]/).forEach(##)
+      segment\s\$
+      if name
+        name += '.'
+      name += segment
+      pkgs[name] = true
+
+  => Object.keys(pkgs).sort().map(##)
+    pkg\s\$
+    => ('var ' + pkg + ' = {};')

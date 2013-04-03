@@ -5,9 +5,9 @@ NODE=nodejs
 NODE_TEST=NODE_PATH=compiled/parser $(NODE)
 NODE_SAVED=NODE_PATH=saved $(NODE) saved/ir2js.js
 
-SRCS=$(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/*.ir)))
-SRCS+=$(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/*/*.ir)))
-JS_SRCS=$(filter-out %/test.js,$(filter-out %/main.js,$(SRCS)))
+ALL_IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
+IR_SRCS=$(filter-out %/test.ir,$(filter-out %/main.ir,$(ALL_IR_SRCS)))
+JS_SRCS=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))
 CNVT_JS_SRC=compiled/main.js
 TEST_JS_SRC=compiled/test.js
 
@@ -64,7 +64,7 @@ compiled/ir2js_test.js: compiled/_ir2js_test.js
 	cat $(BASE_SRC) node/imports.js `$(SORTJS) $(JS_SRCS)` $(TEST_JS_SRC) > $@
 
 
-converter: compiled/ir2js.js
+converter: compiled/ir2js.js compiled/parser/syntax.js
 
 compiled/ir2js.js: compiled/_ir2js.js
 	@echo '===== CAT ir2js'
@@ -82,6 +82,9 @@ compiled/_ir2js.js: $(JS_SRCS) $(CNVT_JS_SRC)
 	java $(CLOSURE_ARGS) --js_output_file $@ --js $(BASE_SRC) \
 	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS))) \
 	--js $(CNVT_JS_SRC)
+
+compiled/packages.js:
+	$(NODE_SAVED) --pkglist --basedir=src $(ALL_IR_SRCS) > $@
 
 
 ############################################################
