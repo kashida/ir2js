@@ -1,23 +1,36 @@
 :=transform_to_js ##
-  basedir\s\$
-  infile\s\$
-  outfile\s\$
-  pkg_name := infile.replace(/[\/\\][^\/\\]*$/, '')
-  if basedir && pkg_name.indexOf(basedir) == 0
-    // strip off the basedir.
-    pkg_name = pkg_name.substr(basedir.length)
-  pkg_name = pkg_name.replace(/^[\/\\]*/, '').replace(/[\/\\]/, '.')
+  base_dir\s\$
+  in_file\s\$
+  out_file\s\$
+  pkg_name := relative_file_name(#).replace(/[\/\\]/, '.')
+    base_dir
+    in_file.replace(/[\/\\][^\/\\]*$/, '')
 
   c := new FileScope(pkg_name)
-  c.process_lines(_fs.readFileSync(infile, 'utf-8').split('\n'))
+  c.process_lines(_fs.readFileSync(in_file, 'utf-8').split('\n'))
   _fs.writeFileSync(#)
-    outfile
+    out_file
     c.output().join('\n')
     'utf-8'
   _fs.writeFileSync(#)
-    outfile.replace(/\.js$/, '.tk')
+    out_file.replace(/\.js$/, '.tk')
     JSON.stringify(c.types.extract())
     'utf-8'
+
+:=relative_file_name ##
+  base_dir\s\$
+  file_name\s\$
+  if base_dir && file_name.indexOf(base_dir) == 0
+    // strip off the base_dir.
+    => file_name.substr(base_dir.length).replace(/^[\/\\]*/, '')
+  => file_name
+
+:=output_file_name ##
+  base_dir\s\$
+  in_file\s\$
+  out_dir\s\$
+  => out_dir + '/' + relative_file_name(base_dir, #)
+    in_file.replace(/\.ir$/, '.js')
 
 :=need_compile  ##
   src\s\$
@@ -29,18 +42,22 @@
   => src_stat.mtime.getTime() > dst_stat.mtime.getTime()
 
 :=compile_files ##
-  basedir\s\$
-  inout_filenames\A.<s>\$
-  i := 0
-  while i < inout_filenames.length
-    infile := inout_filenames[i++]
-    outfile := inout_filenames[i++]
+  base_dir\s\$
+  in_files\A.<s>\$
+  out_dir\s\$
+  in_files.forEach(##)
+    in_file\s\$
 
-    logstr := '[' + infile + ' => ' + outfile + '] '
-    if !_path.existsSync(infile)
+    out_file := output_file_name(base_dir, in_file, out_dir)
+    logstr := '[' + in_file + ' => ' + out_file + '] '
+
+    if !_path.existsSync(in_file)
       console.error(logstr + 'input not found')
-    else if need_compile(infile, outfile)
-      console.log(logstr + 'compiling')
-      transform_to_js(basedir, infile, outfile)
-    else
+      =>
+
+    if !need_compile(in_file, out_file)
       console.log(logstr + 'skipping')
+      =>
+
+    console.log(logstr + 'compiling')
+    transform_to_js(base_dir, in_file, out_file)

@@ -18,7 +18,8 @@
 
   // extract only the input / output file names.
   base_dir := ''
-  inout_filenames := process.argv.filter(##)
+  out_dir := ''
+  input_files := process.argv.filter(##)
     arg\s\$
     i\n\$
     // argv[0] is node binary and argv[1] is the executing js.
@@ -31,6 +32,8 @@
     opt_param := option_re[3]
     if opt_name == 'basedir'
       base_dir = opt_param
+    else if opt_name == 'outdir'
+      out_dir = opt_param
     else if opt_name == 'sort'
       mode = ExecModes.SORT
     else if opt_name == 'argtypes'
@@ -45,11 +48,11 @@
 
   switch mode
     case ExecModes.COMPILE
-    compile_files(base_dir, inout_filenames)
+    compile_files(base_dir, input_files, out_dir)
     break
 
     case ExecModes.SORT
-    list := create_sorted_list(inout_filenames)
+    list := create_sorted_list(input_files)
     switch reply
       case ReplyModes.MSG
       process.send(list)
@@ -61,11 +64,11 @@
     break
 
     case ExecModes.ARGTYPE
-    create_argtypes(base_dir, inout_filenames)
+    create_argtypes(base_dir, input_files)
     break
 
     case ExecModes.PKGLIST
-    pkgs := create_package_list(base_dir, inout_filenames)
+    pkgs := create_package_list(base_dir, input_files)
     console.log(pkgs.join('\n'))
     break
   process.exit(0)

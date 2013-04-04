@@ -48,7 +48,7 @@ CLOSURE_ARGS+=--jscomp_error=visibility
 
 compiled/%.js: src/%.ir
 	@mkdir -p `dirname $@`
-	@$(NODE_SAVED) --basedir=src $^ $@
+	@$(NODE_SAVED) --basedir=src --outdir=compiled $^
 
 
 ############################################################

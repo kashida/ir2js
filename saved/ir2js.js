@@ -741,32 +741,53 @@ CodeScope.prototype.output = function() {
   });
 };
 /**
- * @param {string} basedir
- * @param {string} infile
- * @param {string} outfile
+ * @param {string} base_dir
+ * @param {string} in_file
+ * @param {string} out_file
  */
-var transform_to_js = function(basedir, infile, outfile) {
+var transform_to_js = function(base_dir, in_file, out_file) {
   var pkg_name;
-  pkg_name = infile.replace(/[\/\\][^\/\\]*$/, '');
-  if (basedir && pkg_name.indexOf(basedir) == 0) {
-    // strip off the basedir.
-    pkg_name = pkg_name.substr(basedir.length);
-  }
-  pkg_name = pkg_name.replace(/^[\/\\]*/, '').replace(/[\/\\]/, '.');
+  pkg_name = relative_file_name(
+    base_dir,
+    in_file.replace(/[\/\\][^\/\\]*$/, '')
+  ).replace(/[\/\\]/, '.');
 
   var c;
   c = new FileScope(pkg_name);
-  c.process_lines(_fs.readFileSync(infile, 'utf-8').split('\n'));
+  c.process_lines(_fs.readFileSync(in_file, 'utf-8').split('\n'));
   _fs.writeFileSync(
-    outfile,
+    out_file,
     c.output().join('\n'),
     'utf-8'
   );
   _fs.writeFileSync(
-    outfile.replace(/\.js$/, '.tk'),
+    out_file.replace(/\.js$/, '.tk'),
     JSON.stringify(c.types.extract()),
     'utf-8'
   );
+};
+
+/**
+ * @param {string} base_dir
+ * @param {string} file_name
+ */
+var relative_file_name = function(base_dir, file_name) {
+  if (base_dir && file_name.indexOf(base_dir) == 0) {
+    // strip off the base_dir.
+    return file_name.substr(base_dir.length).replace(/^[\/\\]*/, '');
+  }
+  return file_name;
+};
+
+/**
+ * @param {string} base_dir
+ * @param {string} in_file
+ * @param {string} out_dir
+ */
+var output_file_name = function(base_dir, in_file, out_dir) {
+  return out_dir + '/' + relative_file_name(base_dir, (
+    in_file.replace(/\.ir$/, '.js')
+  ));
 };
 
 /**
@@ -785,31 +806,33 @@ var need_compile = function(src, dst) {
 };
 
 /**
- * @param {string} basedir
- * @param {Array.<string>} inout_filenames
+ * @param {string} base_dir
+ * @param {Array.<string>} in_files
+ * @param {string} out_dir
  */
-var compile_files = function(basedir, inout_filenames) {
-  var i;
-  i = 0;
-  while (i < inout_filenames.length) {
-    var infile;
-    infile = inout_filenames[i++];
-    var outfile;
-    outfile = inout_filenames[i++];
+var compile_files = function(base_dir, in_files, out_dir) {
+  in_files.forEach(
+  /** @param {string} in_file */
+  function(in_file) {
 
+    var out_file;
+    out_file = output_file_name(base_dir, in_file, out_dir);
     var logstr;
-    logstr = '[' + infile + ' => ' + outfile + '] ';
-    if (!_path.existsSync(infile)) {
+    logstr = '[' + in_file + ' => ' + out_file + '] ';
+
+    if (!_path.existsSync(in_file)) {
       console.error(logstr + 'input not found');
+      return;
     }
-    else if (need_compile(infile, outfile)) {
-      console.log(logstr + 'compiling');
-      transform_to_js(basedir, infile, outfile);
-    }
-    else {
+
+    if (!need_compile(in_file, out_file)) {
       console.log(logstr + 'skipping');
+      return;
     }
-  }
+
+    console.log(logstr + 'compiling');
+    transform_to_js(base_dir, in_file, out_file);
+  });
 };
 /*
 parse file scope and separate code sections from comments.
@@ -5072,8 +5095,10 @@ section.Method.prototype.set_type = function(types) {
   // extract only the input / output file names.
   var base_dir;
   base_dir = '';
-  var inout_filenames;
-  inout_filenames = process.argv.filter(
+  var out_dir;
+  out_dir = '';
+  var input_files;
+  input_files = process.argv.filter(
   /**
    * @param {string} arg
    * @param {number} i
@@ -5095,6 +5120,9 @@ section.Method.prototype.set_type = function(types) {
     if (opt_name == 'basedir') {
       base_dir = opt_param;
     }
+    else if (opt_name == 'outdir') {
+      out_dir = opt_param;
+    }
     else if (opt_name == 'sort') {
       mode = ExecModes.SORT;
     }
@@ -5115,12 +5143,12 @@ section.Method.prototype.set_type = function(types) {
 
   switch (mode) {
     case ExecModes.COMPILE:;
-    compile_files(base_dir, inout_filenames);
+    compile_files(base_dir, input_files, out_dir);
     break;
 
     case ExecModes.SORT:;
     var list;
-    list = create_sorted_list(inout_filenames);
+    list = create_sorted_list(input_files);
     switch (reply) {
       case ReplyModes.MSG:;
       process.send(list);
@@ -5133,12 +5161,12 @@ section.Method.prototype.set_type = function(types) {
     break;
 
     case ExecModes.ARGTYPE:;
-    create_argtypes(base_dir, inout_filenames);
+    create_argtypes(base_dir, input_files);
     break;
 
     case ExecModes.PKGLIST:;
     var pkgs;
-    pkgs = create_package_list(base_dir, inout_filenames);
+    pkgs = create_package_list(base_dir, input_files);
     console.log(pkgs.join('\n'));
     break;
   }
