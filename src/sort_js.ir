@@ -75,31 +75,33 @@ depends -- maps file name to array of required class names.
     => !provided_files.has(@where[dep])
 
 
-:=create_sorted_list ##\A.<s>\
-  files\A.<s>\$
-  deps := new ClassDeps()
-  deps.load(files)
+:
+  exports.create_sorted_list = ##
+    \A.<s>\
+    files\A.<s>\$
+    deps := new ClassDeps()
+    deps.load(files)
 
-  // sort the files in inheritance order.
-  all := files.concat()
-  sorted := new StringSet()
-  while all.length
-    found := new StringSet()
-    all.forEach(##)
-      f\s\$
-      // remove the dependencies already satisfied.
-      deps.remove_deps(f, sorted)
+    // sort the files in inheritance order.
+    all := files.concat()
+    sorted := new StringSet()
+    while all.length
+      found := new StringSet()
+      all.forEach(##)
+        f\s\$
+        // remove the dependencies already satisfied.
+        deps.remove_deps(f, sorted)
 
-      if !deps.has_deps(f)
-        found.add(f)
+        if !deps.has_deps(f)
+          found.add(f)
 
-    if !found.size()
-      // no progress. something's wrong.
-      console.log('remaining deps: ' + deps)
-      throw 'circular inheritance dependencies'
+      if !found.size()
+        // no progress. something's wrong.
+        console.log('remaining deps: ' + deps)
+        throw 'circular inheritance dependencies'
 
-    sorted.add_all(found.list())
+      sorted.add_all(found.list())
 
-    // remove all the found files.
-    all = found.filter_out(all)
-  => sorted.list()
+      // remove all the found files.
+      all = found.filter_out(all)
+    => sorted.list()

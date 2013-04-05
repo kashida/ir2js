@@ -221,6 +221,7 @@ process.exit = function(exit_code) {};
 
 var console;
 var require;
+var exports;
 
 ////////////////////////////////////////////////////////////
 // wacom.

@@ -63,11 +63,11 @@ compiled/ir2js_test.js: compiled/_ir2js_test.js $(PACKAGES_FILE)
 	cat $(PACKAGES_FILE) node/imports.js `$(SORTJS) $(JS_SRCS)` $(TEST_JS_SRC) > $@
 
 
-converter: compiled/ir2js.js compiled/parser/syntax.js
+converter: compiled/ir2js.js compiled/parser/syntax.js $(CNVT_JS_SRC)
 
 compiled/ir2js.js: compiled/_ir2js.js $(PACKAGES_FILE)
 	@echo '===== CAT ir2js'
-	cat $(PACKAGES_FILE) node/imports.js `$(SORTJS) $(JS_SRCS)` $(CNVT_JS_SRC) >$@
+	cat $(PACKAGES_FILE) node/imports.js `$(SORTJS) $(JS_SRCS)` >$@
 
 
 compiled/_ir2js_test.js: $(JS_SRCS) $(TEST_JS_SRC) $(PACKAGES_FILE)

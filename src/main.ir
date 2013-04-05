@@ -1,4 +1,6 @@
 :
+  ir2js := require('ir2js')
+
   // TODO: @enum
   ExecModes := {#}
     COMPILE: 0
@@ -48,11 +50,11 @@
 
   switch mode
     case ExecModes.COMPILE
-    compile_files(base_dir, input_files, out_dir)
+    ir2js.compile_files(base_dir, input_files, out_dir)
     break
 
     case ExecModes.SORT
-    list := create_sorted_list(input_files)
+    list := ir2js.create_sorted_list(input_files)
     switch reply
       case ReplyModes.MSG
       process.send(list)
@@ -64,11 +66,11 @@
     break
 
     case ExecModes.ARGTYPE
-    create_argtypes(base_dir, input_files)
+    ir2js.create_argtypes(base_dir, input_files)
     break
 
     case ExecModes.PKGLIST
-    pkgs := create_package_list(base_dir, input_files)
+    pkgs := ir2js.create_package_list(base_dir, input_files)
     console.log(pkgs.join('\n'))
     break
   process.exit(0)

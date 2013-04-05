@@ -41,23 +41,24 @@
   dst_stat := _fs.statSync(dst)
   => src_stat.mtime.getTime() > dst_stat.mtime.getTime()
 
-:=compile_files ##
-  base_dir\s\$
-  in_files\A.<s>\$
-  out_dir\s\$
-  in_files.forEach(##)
-    in_file\s\$
+:
+  exports.compile_files = ##
+    base_dir\s\$
+    in_files\A.<s>\$
+    out_dir\s\$
+    in_files.forEach(##)
+      in_file\s\$
 
-    out_file := output_file_name(base_dir, in_file, out_dir)
-    logstr := '[' + in_file + ' => ' + out_file + '] '
+      out_file := output_file_name(base_dir, in_file, out_dir)
+      logstr := '[' + in_file + ' => ' + out_file + '] '
 
-    if !_path.existsSync(in_file)
-      console.error(logstr + 'input not found')
-      =>
+      if !_path.existsSync(in_file)
+        console.error(logstr + 'input not found')
+        =>
 
-    if !need_compile(in_file, out_file)
-      console.log(logstr + 'skipping')
-      =>
+      if !need_compile(in_file, out_file)
+        console.log(logstr + 'skipping')
+        =>
 
-    console.log(logstr + 'compiling')
-    transform_to_js(base_dir, in_file, out_file)
+      console.log(logstr + 'compiling')
+      transform_to_js(base_dir, in_file, out_file)
