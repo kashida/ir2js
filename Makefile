@@ -2,7 +2,7 @@ PACKAGES_FILE=compiled/packages.js
 
 NODE=nodejs
 NODE_TEST=NODE_PATH=compiled/parser $(NODE)
-NODE_SAVED=NODE_PATH=saved $(NODE) saved/ir2js.js
+NODE_SAVED=NODE_PATH=saved $(NODE) saved/convert.js
 
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
 JS_SRCS=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))

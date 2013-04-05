@@ -6,36 +6,37 @@ var section = {};
 var _fs = require('fs');
 var _path = require('path');
 var _util = require('util');
-/**
- * @param {string} basedir
- * @param {Array.<string>} files
- */
-var create_argtypes = function(basedir, files) {
-  var output;
-  output = [];
-  files.forEach(
-  /** @param {string} file */
-  function(file) {
-    var tk;
-    tk = JSON.parse(_fs.readFileSync(file.replace(/\.js/, '.tk'), 'utf-8'));
-    tk['cls'].forEach(
-    /** @param {*} cls */
-    function(cls) {
-      output.push(cls.name + '._argtypes = [' + cls['args'].join(', ') + '];');
-      cls.methods.forEach(
-      /** @param {*} method */
-      function(method) {
-        output.push(cls.name + '.prototype.' + method.name + '._argtypes = [' + method['args'].join(', ') + '];');
+  exports.create_argtypes = 
+  /**
+   * @param {string} basedir
+   * @param {Array.<string>} files
+   */
+  function(basedir, files) {
+    var output;
+    output = [];
+    files.forEach(
+    /** @param {string} file */
+    function(file) {
+      var tk;
+      tk = JSON.parse(_fs.readFileSync(file.replace(/\.js/, '.tk'), 'utf-8'));
+      tk['cls'].forEach(
+      /** @param {*} cls */
+      function(cls) {
+        output.push(cls.name + '._argtypes = [' + cls['args'].join(', ') + '];');
+        cls.methods.forEach(
+        /** @param {*} method */
+        function(method) {
+          output.push(cls.name + '.prototype.' + method.name + '._argtypes = [' + method['args'].join(', ') + '];');
+        });
+      });
+      tk['fns'].forEach(
+      /** @param {*} fn */
+      function(fn) {
+        output.push(fn.name + '._argtypes = [' + fn['args'].join(', ') + '];');
       });
     });
-    tk['fns'].forEach(
-    /** @param {*} fn */
-    function(fn) {
-      output.push(fn.name + '._argtypes = [' + fn['args'].join(', ') + '];');
-    });
-  });
-  _fs.writeFileSync(basedir + '/_argtypes.js', output.join('\n'), 'utf-8');
-};
+    _fs.writeFileSync(basedir + '/_argtypes.js', output.join('\n'), 'utf-8');
+  };
 /*
 Match markers and blocks.
 */
@@ -805,35 +806,36 @@ var need_compile = function(src, dst) {
   return src_stat.mtime.getTime() > dst_stat.mtime.getTime();
 };
 
-/**
- * @param {string} base_dir
- * @param {Array.<string>} in_files
- * @param {string} out_dir
- */
-var compile_files = function(base_dir, in_files, out_dir) {
-  in_files.forEach(
-  /** @param {string} in_file */
-  function(in_file) {
+  exports.compile_files = 
+  /**
+   * @param {string} base_dir
+   * @param {Array.<string>} in_files
+   * @param {string} out_dir
+   */
+  function(base_dir, in_files, out_dir) {
+    in_files.forEach(
+    /** @param {string} in_file */
+    function(in_file) {
 
-    var out_file;
-    out_file = output_file_name(base_dir, in_file, out_dir);
-    var logstr;
-    logstr = '[' + in_file + ' => ' + out_file + '] ';
+      var out_file;
+      out_file = output_file_name(base_dir, in_file, out_dir);
+      var logstr;
+      logstr = '[' + in_file + ' => ' + out_file + '] ';
 
-    if (!_path.existsSync(in_file)) {
-      console.error(logstr + 'input not found');
-      return;
-    }
+      if (!_path.existsSync(in_file)) {
+        console.error(logstr + 'input not found');
+        return;
+      }
 
-    if (!need_compile(in_file, out_file)) {
-      console.log(logstr + 'skipping');
-      return;
-    }
+      if (!need_compile(in_file, out_file)) {
+        console.log(logstr + 'skipping');
+        return;
+      }
 
-    console.log(logstr + 'compiling');
-    transform_to_js(base_dir, in_file, out_file);
-  });
-};
+      console.log(logstr + 'compiling');
+      transform_to_js(base_dir, in_file, out_file);
+    });
+  };
 /*
 parse file scope and separate code sections from comments.
 */
@@ -1923,47 +1925,48 @@ ParamSet.prototype.set_argtypes = function(types) {
     types.add_arg(p.argtype());
   });
 };
-/**
- * @param {string} basedir
- * @param {Array.<string>} files
- * @return {Array.<string>}
- */
-var create_package_list = function(basedir, files) {
-  var pkgs;
-  pkgs = {};
-  files.forEach(
-  /** @param {string} file */
-  function(file) {
-    var pkg_name;
-    pkg_name = file.replace(/[\/\\][^\/\\]*$/, '');
-    if (basedir && pkg_name.indexOf(basedir) == 0) {
-      // strip off the basedir.
-      pkg_name = pkg_name.substr(basedir.length);
-    }
-    pkg_name = pkg_name.replace(/^[\/\\]*/, '').replace(/[\/\\]/, '.');
-    if (!pkg_name) {
-      return;
-    }
-
-    var name;
-    name = '';
-    pkg_name.split(/[\/\\]/).forEach(
-    /** @param {string} segment */
-    function(segment) {
-      if (name) {
-        name += '.';
+  exports.create_package_list = 
+  /**
+   * @param {string} basedir
+   * @param {Array.<string>} files
+   * @return {Array.<string>}
+   */
+  function(basedir, files) {
+    var pkgs;
+    pkgs = {};
+    files.forEach(
+    /** @param {string} file */
+    function(file) {
+      var pkg_name;
+      pkg_name = file.replace(/[\/\\][^\/\\]*$/, '');
+      if (basedir && pkg_name.indexOf(basedir) == 0) {
+        // strip off the basedir.
+        pkg_name = pkg_name.substr(basedir.length);
       }
-      name += segment;
-      pkgs[name] = true;
-    });
-  });
+      pkg_name = pkg_name.replace(/^[\/\\]*/, '').replace(/[\/\\]/, '.');
+      if (!pkg_name) {
+        return;
+      }
 
-  return Object.keys(pkgs).sort().map(
-  /** @param {string} pkg */
-  function(pkg) {
-    return ('var ' + pkg + ' = {};');
-  });
-};
+      var name;
+      name = '';
+      pkg_name.split(/[\/\\]/).forEach(
+      /** @param {string} segment */
+      function(segment) {
+        if (name) {
+          name += '.';
+        }
+        name += segment;
+        pkgs[name] = true;
+      });
+    });
+
+    return Object.keys(pkgs).sort().map(
+    /** @param {string} pkg */
+    function(pkg) {
+      return ('var ' + pkg + ' = {};');
+    });
+  };
 /**
  * @param {input.Line} input
  * @param {LineParser} p
@@ -2165,47 +2168,48 @@ ClassDeps.prototype.remove_deps = function(file, provided_files) {
 };
 
 
-/**
- * @param {Array.<string>} files
- * @return {Array.<string>}
- */
-var create_sorted_list = function(files) {
-  var deps;
-  deps = new ClassDeps();
-  deps.load(files);
+  exports.create_sorted_list = 
+  /**
+   * @param {Array.<string>} files
+   * @return {Array.<string>}
+   */
+  function(files) {
+    var deps;
+    deps = new ClassDeps();
+    deps.load(files);
 
-  // sort the files in inheritance order.
-  var all;
-  all = files.concat();
-  var sorted;
-  sorted = new StringSet();
-  while (all.length) {
-    var found;
-    found = new StringSet();
-    all.forEach(
-    /** @param {string} f */
-    function(f) {
-      // remove the dependencies already satisfied.
-      deps.remove_deps(f, sorted);
+    // sort the files in inheritance order.
+    var all;
+    all = files.concat();
+    var sorted;
+    sorted = new StringSet();
+    while (all.length) {
+      var found;
+      found = new StringSet();
+      all.forEach(
+      /** @param {string} f */
+      function(f) {
+        // remove the dependencies already satisfied.
+        deps.remove_deps(f, sorted);
 
-      if (!deps.has_deps(f)) {
-        found.add(f);
+        if (!deps.has_deps(f)) {
+          found.add(f);
+        }
+      });
+
+      if (!found.size()) {
+        // no progress. something's wrong.
+        console.log('remaining deps: ' + deps);
+        throw 'circular inheritance dependencies';
       }
-    });
 
-    if (!found.size()) {
-      // no progress. something's wrong.
-      console.log('remaining deps: ' + deps);
-      throw 'circular inheritance dependencies';
+      sorted.add_all(found.list());
+
+      // remove all the found files.
+      all = found.filter_out(all);
     }
-
-    sorted.add_all(found.list());
-
-    // remove all the found files.
-    all = found.filter_out(all);
-  }
-  return sorted.list();
-};
+    return sorted.list();
+  };
 /**
  * @param {!context.Package} pkg
  * @param {string} type
@@ -5069,105 +5073,3 @@ section.Method.prototype.set_type = function(types) {
     types.get_current_ctor().add_method(self.context.name.id)
   );
 };
-  // TODO: @enum
-  var ExecModes;
-  ExecModes = {
-    COMPILE: 0,
-    SORT: 1,
-    ARGTYPE: 2,
-    PKGLIST: 3
-  };
-
-  // TODO: @type {ExecModes}
-  var mode;
-  mode = ExecModes.COMPILE;
-
-  var ReplyModes;
-  ReplyModes = {
-    MSG: 0,
-    STDOUT: 1
-  };
-
-  var reply;
-  reply = ReplyModes.MSG;
-
-
-  // extract only the input / output file names.
-  var base_dir;
-  base_dir = '';
-  var out_dir;
-  out_dir = '';
-  var input_files;
-  input_files = process.argv.filter(
-  /**
-   * @param {string} arg
-   * @param {number} i
-   */
-  function(arg, i) {
-    // argv[0] is node binary and argv[1] is the executing js.
-    if (i < 2) {
-      return false;
-    }
-    var option_re;
-    option_re = /--(\w+)(=(.*))?/.exec(arg);
-    if (!option_re) {
-      return true;
-    }
-    var opt_name;
-    opt_name = option_re[1];
-    var opt_param;
-    opt_param = option_re[3];
-    if (opt_name == 'basedir') {
-      base_dir = opt_param;
-    }
-    else if (opt_name == 'outdir') {
-      out_dir = opt_param;
-    }
-    else if (opt_name == 'sort') {
-      mode = ExecModes.SORT;
-    }
-    else if (opt_name == 'argtypes') {
-      mode = ExecModes.ARGTYPE;
-    }
-    else if (opt_name == 'pkglist') {
-      mode = ExecModes.PKGLIST;
-    }
-    else if (opt_name == 'stdout') {
-      reply = ReplyModes.STDOUT;
-    }
-    else {
-      throw 'unknown command option: ' + opt_name;
-    }
-    return false;
-  });
-
-  switch (mode) {
-    case ExecModes.COMPILE:;
-    compile_files(base_dir, input_files, out_dir);
-    break;
-
-    case ExecModes.SORT:;
-    var list;
-    list = create_sorted_list(input_files);
-    switch (reply) {
-      case ReplyModes.MSG:;
-      process.send(list);
-      break;
-
-      case ReplyModes.STDOUT:;
-      console.log(list.join(' '));
-      break;
-    }
-    break;
-
-    case ExecModes.ARGTYPE:;
-    create_argtypes(base_dir, input_files);
-    break;
-
-    case ExecModes.PKGLIST:;
-    var pkgs;
-    pkgs = create_package_list(base_dir, input_files);
-    console.log(pkgs.join('\n'));
-    break;
-  }
-  process.exit(0);
