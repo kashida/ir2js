@@ -4,19 +4,18 @@ NODE=nodejs
 NODE_TEST=NODE_PATH=compiled/parser $(NODE)
 NODE_SAVED=NODE_PATH=saved $(NODE) saved/ir2js.js
 
-ALL_IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
-IR_SRCS=$(filter-out %/test.ir,$(filter-out %/main.ir,$(ALL_IR_SRCS)))
+IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
 JS_SRCS=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))
-CNVT_JS_SRC=compiled/main.js
+CNVT_JS_SRC=compiled/convert.js
 TEST_JS_SRC=compiled/test.js
 
-TESTS=$(wildcard test/*)
+TESTS=$(wildcard test/*.test)
 
 SORTJS=$(NODE_SAVED) --stdout --sort
 
 CLOSURE_ARGS=
 CLOSURE_ARGS+=-jar closure/compiler.jar
-CLOSURE_ARGS+=--externs node/externs.js
+CLOSURE_ARGS+=--externs misc/externs.js
 CLOSURE_ARGS+=--formatting PRETTY_PRINT
 CLOSURE_ARGS+=--compilation_level ADVANCED_OPTIMIZATIONS
 CLOSURE_ARGS+=--summary_detail_level 3
@@ -50,6 +49,14 @@ compiled/%.js: src/%.ir
 	@mkdir -p `dirname $@`
 	@$(NODE_SAVED) --basedir=src --outdir=compiled $^
 
+compiled/convert.js: misc/convert.ir
+	@mkdir -p `dirname $@`
+	@$(NODE_SAVED) --basedir=misc --outdir=compiled $^
+
+compiled/test.js: test/test.ir
+	@mkdir -p `dirname $@`
+	@$(NODE_SAVED) --basedir=test --outdir=compiled $^
+
 
 ############################################################
 # Converter targets.
@@ -60,14 +67,14 @@ test: compiled/parser/syntax.js compiled/ir2js_test.js
 
 compiled/ir2js_test.js: compiled/_ir2js_test.js $(PACKAGES_FILE)
 	@echo '===== CAT ir2js_test'
-	cat $(PACKAGES_FILE) node/imports.js `$(SORTJS) $(JS_SRCS)` $(TEST_JS_SRC) > $@
+	cat $(PACKAGES_FILE) misc/imports.js `$(SORTJS) $(JS_SRCS)` $(TEST_JS_SRC) > $@
 
 
 converter: compiled/ir2js.js compiled/parser/syntax.js $(CNVT_JS_SRC)
 
 compiled/ir2js.js: compiled/_ir2js.js $(PACKAGES_FILE)
 	@echo '===== CAT ir2js'
-	cat $(PACKAGES_FILE) node/imports.js `$(SORTJS) $(JS_SRCS)` >$@
+	cat $(PACKAGES_FILE) misc/imports.js `$(SORTJS) $(JS_SRCS)` >$@
 
 
 compiled/_ir2js_test.js: $(JS_SRCS) $(TEST_JS_SRC) $(PACKAGES_FILE)
@@ -83,7 +90,7 @@ compiled/_ir2js.js: $(JS_SRCS) $(CNVT_JS_SRC) $(PACKAGES_FILE)
 	--js $(CNVT_JS_SRC)
 
 $(PACKAGES_FILE):
-	$(NODE_SAVED) --pkglist --basedir=src $(ALL_IR_SRCS) > $@
+	$(NODE_SAVED) --pkglist --basedir=src $(IR_SRCS) > $@
 
 
 ############################################################
@@ -117,6 +124,7 @@ update:
 	make test
 	make converter
 	cp compiled/ir2js.js saved
+	cp compiled/convert.js saved
 	cp compiled/parser/syntax.js saved
 	make clean
 	make test
