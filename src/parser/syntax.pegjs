@@ -334,7 +334,7 @@ CurrentPackage
     }
 
 BinaryOpBlockMarker
-  = '#' op:('*' / '+' / '&&' / '||') {
+  = '#' op:('.' / '*' / '+' / '&&' / '||') {
       return {g: 'm', params: {type: op}};
     }
 

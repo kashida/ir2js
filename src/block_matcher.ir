@@ -51,6 +51,7 @@ Returns true only if matching succeeds.
       p: BlockType.PARAMS
       c: BlockType.COND
       l: BlockType.LINE
+      '.': BlockType.DOT
       '*': BlockType.MULT
       '+': BlockType.ADD
       '&&': BlockType.LOG_AND

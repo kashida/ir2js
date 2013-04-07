@@ -128,6 +128,25 @@ a = (
 );
 #}
 
+#{: dot-op block
+a := #.
+  new SomeClass(#)
+    0
+    abc
+  do_something
+  get_result
+#=
+var a;
+a = (
+  (new SomeClass(
+    0,
+    abc
+  )).
+  (do_something).
+  (get_result)
+);
+#}
+
 #{: single line marker
 a = # + # - (#)
   0
