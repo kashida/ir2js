@@ -1,12 +1,32 @@
 :
-  ir2js := require('ir2js')
+  _fs := require('fs')
+  _ir2js := require('ir2js')
 
+:=merge_to_file ##
+  base_dir\s\$
+  in_files\A.<s>\$
+  out_file\s\$
+  out := _fs.openSync(out_file, 'w')
+
+  pkgs := _ir2js.create_package_list(base_dir, in_files)
+  _fs.writeSync(out, pkgs.join('\n'), null)
+  _fs.writeSync(out, '\n\n', null)
+
+  _ir2js.create_sorted_list(in_files).forEach(##)
+    file\s\$
+    console.log('-- ' + file)
+    _fs.writeSync(out, _fs.readFileSync(file, 'utf8'), null)
+
+  _fs.closeSync(out)
+
+:
   // TODO: @enum
   ExecModes := {#}
     COMPILE: 0
     SORT: 1
     ARGTYPE: 2
     PKGLIST: 3
+    MERGE: 4
 
   // TODO: @type {ExecModes}
   mode := ExecModes.COMPILE
@@ -21,6 +41,7 @@
   // extract only the input / output file names.
   base_dir := ''
   out_dir := ''
+  out_file := ''
   input_files := process.argv.filter(##)
     arg\s\$
     i\n\$
@@ -36,12 +57,16 @@
       base_dir = opt_param
     else if opt_name == 'outdir'
       out_dir = opt_param
+    else if opt_name == 'outfile'
+      out_file = opt_param
     else if opt_name == 'sort'
       mode = ExecModes.SORT
     else if opt_name == 'argtypes'
       mode = ExecModes.ARGTYPE
     else if opt_name == 'pkglist'
       mode = ExecModes.PKGLIST
+    else if opt_name == 'merge'
+      mode = ExecModes.MERGE
     else if opt_name == 'stdout'
       reply = ReplyModes.STDOUT
     else
@@ -50,11 +75,11 @@
 
   switch mode
     case ExecModes.COMPILE
-    ir2js.compile_files(base_dir, input_files, out_dir)
+    _ir2js.compile_files(base_dir, input_files, out_dir)
     break
 
     case ExecModes.SORT
-    list := ir2js.create_sorted_list(input_files)
+    list := _ir2js.create_sorted_list(input_files)
     switch reply
       case ReplyModes.MSG
       process.send(list)
@@ -66,11 +91,15 @@
     break
 
     case ExecModes.ARGTYPE
-    ir2js.create_argtypes(base_dir, input_files)
+    _ir2js.create_argtypes(base_dir, input_files)
     break
 
     case ExecModes.PKGLIST
-    pkgs := ir2js.create_package_list(base_dir, input_files)
+    pkgs := _ir2js.create_package_list(base_dir, input_files)
     console.log(pkgs.join('\n'))
+    break
+
+    case ExecModes.MERGE
+    merge_to_file(base_dir, input_files, out_file)
     break
   process.exit(0)

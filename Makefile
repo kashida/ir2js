@@ -72,14 +72,17 @@ test: compiled/ir2js_test.js compiled/parser/syntax.js compiled/test.js
 
 compiled/ir2js_test.js: compiled/_ir2js.js $(PACKAGES_FILE)
 	@echo '===== CAT ir2js_test'
-	cat $(PACKAGES_FILE) misc/imports.js `$(SORTJS) $(JS_SRCS_WITH_TEST)` > $@
+	cat $(PACKAGES_FILE) `$(SORTJS) $(JS_SRCS_WITH_TEST)` > $@
 
 
 converter: compiled/ir2js.js compiled/parser/syntax.js compiled/convert.js
 
+c: compiled/convert.js compiled/ir2js.js
+	$(NODE_TEST) compiled/convert.js --basedir=src --merge --outfile=compiled/i2j.js $(JS_SRCS)
+
 compiled/ir2js.js: compiled/_ir2js.js $(PACKAGES_FILE)
 	@echo '===== CAT ir2js'
-	cat $(PACKAGES_FILE) misc/imports.js `$(SORTJS) $(JS_SRCS)` >$@
+	cat $(PACKAGES_FILE) `$(SORTJS) $(JS_SRCS)` >$@
 
 
 compiled/_ir2js.js: $(JS_SRCS) $(PACKAGES_FILE)
