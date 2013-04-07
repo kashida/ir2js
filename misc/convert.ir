@@ -14,7 +14,6 @@
 
   _ir2js.create_sorted_list(in_files).forEach(##)
     file\s\$
-    console.log('-- ' + file)
     _fs.writeSync(out, _fs.readFileSync(file, 'utf8'), null)
 
   _fs.closeSync(out)

@@ -70,19 +70,17 @@ test: compiled/ir2js_test.js compiled/parser/syntax.js compiled/test.js
 	@echo '===== TEST'
 	$(NODE_TEST) compiled/test.js $(TESTS)
 
-compiled/ir2js_test.js: compiled/_ir2js.js $(PACKAGES_FILE)
-	@echo '===== CAT ir2js_test'
-	cat $(PACKAGES_FILE) `$(SORTJS) $(JS_SRCS_WITH_TEST)` > $@
+compiled/ir2js_test.js: compiled/_ir2js.js compiled/imports.js
+	@echo '===== MERGE ir2js_test'
+	$(NODE_SAVED) --merge --basedir=compiled --outfile=$@ \
+	compiled/imports.js $(JS_SRCS_WITH_TEST)
 
 
 converter: compiled/ir2js.js compiled/parser/syntax.js compiled/convert.js
 
-c: compiled/convert.js compiled/ir2js.js
-	$(NODE_TEST) compiled/convert.js --basedir=src --merge --outfile=compiled/i2j.js $(JS_SRCS)
-
-compiled/ir2js.js: compiled/_ir2js.js compiled/imports.js $(PACKAGES_FILE)
-	@echo '===== CAT ir2js'
-	cat $(PACKAGES_FILE) compiled/imports.js `$(SORTJS) $(JS_SRCS)` >$@
+compiled/ir2js.js: compiled/_ir2js.js compiled/imports.js
+	@echo '===== MERGE ir2js'
+	$(NODE_SAVED) --merge --basedir=compiled --outfile=$@ compiled/imports.js $(JS_SRCS)
 
 
 compiled/_ir2js.js: $(JS_SRCS) $(PACKAGES_FILE)
