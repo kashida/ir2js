@@ -163,6 +163,7 @@ BlockMatcher.prototype._transform_blocks = function() {
       p: BlockType.PARAMS,
       c: BlockType.COND,
       l: BlockType.LINE,
+      '.': BlockType.DOT,
       '*': BlockType.MULT,
       '+': BlockType.ADD,
       '&&': BlockType.LOG_AND,
@@ -993,24 +994,25 @@ return this._indent;
     PARAMS: 3,
     LINE: 4,
     COND: 5,
-    MULT: 6,
-    ADD: 7,
-    LOG_AND: 8,
-    LOG_OR: 9
+    DOT: 6,
+    MULT: 7,
+    ADD: 8,
+    LOG_AND: 9,
+    LOG_OR: 10
   };
 
   var _BLOCK_OPEN;
-  _BLOCK_OPEN = [' {', '{', '[', '(', '(', '(', '(', '(', '(', '('];
+  _BLOCK_OPEN = [' {', '{', '[', '(', '(', '(', '(', '(', '(', '(', '('];
   var _LINE_PREFIX;
-  _LINE_PREFIX = ['', '', '', '', '', '(', '(', '(', '(', '('];
+  _LINE_PREFIX = ['', '', '', '', '', '(', '(', '(', '(', '(', '('];
   var _LINE_SUFFIX;
-  _LINE_SUFFIX = [';', ',', ',', ',', '', ') :', ') *', ') +', ') &&', ') ||'];
+  _LINE_SUFFIX = [';', ',', ',', ',', '', ') :', ').', ') *', ') +', ') &&', ') ||'];
   var _FIRST_SUFFIX;
-  _FIRST_SUFFIX = [';', ',', ',', ',', '', ') ?', ') *', ') +', ') &&', ') ||'];
+  _FIRST_SUFFIX = [';', ',', ',', ',', '', ') ?', ').', ') *', ') +', ') &&', ') ||'];
   var _END_SUFFIX;
-  _END_SUFFIX = [';', '', '', '', '', ')', ')', ')', ')', ')'];
+  _END_SUFFIX = [';', '', '', '', '', ')', ')', ')', ')', ')', ')'];
   var _BLOCK_CLOSE;
-  _BLOCK_CLOSE = ['}', '}', ']', ')', ')', ')', ')', ')', ')', ')'];
+  _BLOCK_CLOSE = ['}', '}', ']', ')', ')', ')', ')', ')', ')', ')', ')'];
 
 /** @param {SectionLine} line */
 IndentBlock.prototype.add = function(line) {

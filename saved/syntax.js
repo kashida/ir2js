@@ -3486,43 +3486,54 @@ module.exports = (function(){
           }
         }
         if (result0 !== null) {
-          if (input.charCodeAt(pos) === 42) {
-            result1 = "*";
+          if (input.charCodeAt(pos) === 46) {
+            result1 = ".";
             pos++;
           } else {
             result1 = null;
             if (reportFailures === 0) {
-              matchFailed("\"*\"");
+              matchFailed("\".\"");
             }
           }
           if (result1 === null) {
-            if (input.charCodeAt(pos) === 43) {
-              result1 = "+";
+            if (input.charCodeAt(pos) === 42) {
+              result1 = "*";
               pos++;
             } else {
               result1 = null;
               if (reportFailures === 0) {
-                matchFailed("\"+\"");
+                matchFailed("\"*\"");
               }
             }
             if (result1 === null) {
-              if (input.substr(pos, 2) === "&&") {
-                result1 = "&&";
-                pos += 2;
+              if (input.charCodeAt(pos) === 43) {
+                result1 = "+";
+                pos++;
               } else {
                 result1 = null;
                 if (reportFailures === 0) {
-                  matchFailed("\"&&\"");
+                  matchFailed("\"+\"");
                 }
               }
               if (result1 === null) {
-                if (input.substr(pos, 2) === "||") {
-                  result1 = "||";
+                if (input.substr(pos, 2) === "&&") {
+                  result1 = "&&";
                   pos += 2;
                 } else {
                   result1 = null;
                   if (reportFailures === 0) {
-                    matchFailed("\"||\"");
+                    matchFailed("\"&&\"");
+                  }
+                }
+                if (result1 === null) {
+                  if (input.substr(pos, 2) === "||") {
+                    result1 = "||";
+                    pos += 2;
+                  } else {
+                    result1 = null;
+                    if (reportFailures === 0) {
+                      matchFailed("\"||\"");
+                    }
                   }
                 }
               }
