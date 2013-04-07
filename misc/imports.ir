@@ -1,0 +1,4 @@
+:
+  _fs := require('fs')
+  _path := require('path')
+  _util := require('util')

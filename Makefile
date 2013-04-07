@@ -54,7 +54,7 @@ compiled/%.js: src/%.ir
 	@mkdir -p `dirname $@`
 	@$(NODE_SAVED) --basedir=src --outdir=compiled $^
 
-compiled/convert.js: misc/convert.ir
+compiled/%.js: misc/%.ir
 	@mkdir -p `dirname $@`
 	@$(NODE_SAVED) --basedir=misc --outdir=compiled $^
 
@@ -80,9 +80,9 @@ converter: compiled/ir2js.js compiled/parser/syntax.js compiled/convert.js
 c: compiled/convert.js compiled/ir2js.js
 	$(NODE_TEST) compiled/convert.js --basedir=src --merge --outfile=compiled/i2j.js $(JS_SRCS)
 
-compiled/ir2js.js: compiled/_ir2js.js $(PACKAGES_FILE)
+compiled/ir2js.js: compiled/_ir2js.js compiled/imports.js $(PACKAGES_FILE)
 	@echo '===== CAT ir2js'
-	cat $(PACKAGES_FILE) `$(SORTJS) $(JS_SRCS)` >$@
+	cat $(PACKAGES_FILE) compiled/imports.js `$(SORTJS) $(JS_SRCS)` >$@
 
 
 compiled/_ir2js.js: $(JS_SRCS) $(PACKAGES_FILE)

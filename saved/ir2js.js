@@ -3,9 +3,12 @@ var input = {};
 var output = {};
 var parser = {};
 var section = {};
-var _fs = require('fs');
-var _path = require('path');
-var _util = require('util');
+  var _fs;
+  _fs = require('fs');
+  var _path;
+  _path = require('path');
+  var _util;
+  _util = require('util');
   exports.create_argtypes = 
   /**
    * @param {string} basedir
@@ -2210,6 +2213,166 @@ ClassDeps.prototype.remove_deps = function(file, provided_files) {
     }
     return sorted.list();
   };
+/**
+ * @param {string} name
+ * @param {string} package_name
+ * @param {Array.<string>} input
+ * @param {Array.<string>} output
+ * @param {boolean} is_global
+ * @constructor
+ */
+var TestCase = function(name, package_name, input, output, is_global) {
+  var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._name = name;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._package_name = package_name;
+  /**
+   * @type {Array.<string>}
+   * @private
+   */
+  this._input = input;
+  /**
+   * @type {Array.<string>}
+   * @private
+   */
+  this._output = output;
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._is_global = is_global;
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._failed = (false);
+};
+TestCase.prototype._classname = 'TestCase';
+/** @type {boolean} */
+TestCase.prototype.failed;
+TestCase.prototype.__defineGetter__('failed', function() {
+return this._failed;
+});
+
+TestCase.prototype.run = function() {
+  var self = this;
+  var c;
+  c = self._is_global ? (
+    new FileScope(self._package_name)
+  ) : (
+    new CodeScope(new context.Context(new context.Package('')))
+  );
+
+  var actual_output;
+  actual_output = '';
+  try {
+    c.process_lines(self._input);
+    actual_output = c.output();
+    if (self._is_global) {
+      var type_str;
+      type_str = obj_stringify(c.types.extract(), true);
+      if (type_str) {
+        actual_output = actual_output.concat(type_str.split('\n'));
+      }
+    }
+  }
+  catch (e) {
+    console.log('EXCEPTION: ' + self._name);
+    self._warn_with_indent('input', self._input);
+    self._warn_with_indent('expected', self._output);
+    throw e;
+  }
+
+  if (actual_output.join('\n') == self._output.join('\n')) {
+    console.log('PASS: ' + self._name);
+  }
+  else {
+    console.log('FAIL: ' + self._name);
+    self._warn_with_indent('input', self._input);
+    self._warn_with_indent('expected', self._output);
+    self._warn_with_indent('actual', actual_output);
+    self._warn_with_indent('diff', self._make_diff(self._output, actual_output));
+    self._failed = true;
+  }
+};
+
+/**
+ * @param {string} title
+ * @param {Array.<string>} content
+ * @private
+ */
+TestCase.prototype._warn_with_indent = function(title, content) {
+  var self = this;
+  console.log('  ' + title + ':');
+  var warn_rec;
+  warn_rec = 
+  /**
+   * @param {string|Array} lines
+   * @param {number} level
+   */
+  function(lines, level) {
+    if (typeof(lines) == 'string') {
+      console.log(whitespaces(4 + level * 2) + lines);
+    }
+    else {
+      if (lines instanceof output.Line) {
+        lines = lines.output;
+      }
+      lines.forEach(
+      /** @param {string|Array} line */
+      function(line) {
+        warn_rec(line, level + 1);
+      });
+    }
+  };
+  warn_rec(content, 0);
+};
+
+/**
+ * @param {Array.<string>} lines0
+ * @param {Array.<string>} lines1
+ * @private
+ */
+TestCase.prototype._make_diff = function(lines0, lines1) {
+  var self = this;
+  var result;
+  result = [];
+  lines0.forEach(
+  /**
+   * @param {string} line0
+   * @param {number} i
+   */
+  function(line0, i) {
+    if (lines1.length <= i) {
+      result.push('- ' + line0);
+      return;
+    }
+    var line1;
+    line1 = lines1[i];
+    if (line0 != line1) {
+      result.push('< ' + line0);
+      result.push(' >' + line1);
+    }
+    else {
+      result.push('= ' + line0);
+    }
+  });
+  lines1.slice(lines0.length).forEach(
+  /** @param {string} line */
+  function(line) {
+    result.push('+ ' + line);
+  });
+  return result;
+};
+
+  exports.TestCase = TestCase;
 /**
  * @param {!context.Package} pkg
  * @param {string} type
