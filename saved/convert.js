@@ -20,7 +20,6 @@ var merge_to_file = function(base_dir, in_files, out_file) {
   _ir2js.create_sorted_list(in_files).forEach(
   /** @param {string} file */
   function(file) {
-    console.log('-- ' + file);
     _fs.writeSync(out, _fs.readFileSync(file, 'utf8'), null);
   });
 
