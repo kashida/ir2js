@@ -89,6 +89,7 @@ compiled/_ir2js.js: $(JS_SRCS) $(PACKAGES_FILE)
 	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS)))
 
 $(PACKAGES_FILE):
+	@mkdir -p `dirname $@`
 	$(NODE_SAVED) --pkglist --basedir=src $(IR_SRCS) > $@
 
 
