@@ -30,7 +30,12 @@ var section = {};
         cls.methods.forEach(
         /** @param {*} method */
         function(method) {
-          output.push(cls.name + '.prototype.' + method.name + '._argtypes = [' + method['args'].join(', ') + '];');
+          output.push((
+            (cls.name + '.prototype.' + method.name) +
+            ('._argtypes = [') +
+            (method['args'].join(', ')) +
+            ('];')
+          ));
         });
       });
       tk['fns'].forEach(
@@ -3785,28 +3790,44 @@ parser.Target.prototype.run = function(line, xformer, show_error_line) {
     result = _parser.parse(lines, self._rule);
   }
   catch (e) {
-    if (show_error_line) {
-      // TODO: make this display multi-line right.
-      console.error('[FAIL] error for ' + self._rule);
-      console.error('I: ' + lines);
-      var sp;
-      sp = '   ';
-      var i;
-      i = 0;
-      for (; i < e.offset; i++) {
-        sp += ' ';
-      }
-      console.error(sp + '^');
-      console.error('E: ' + e);
-    }
-    return null;
+    throw self._add_context_lines(e, line);
   }
+
   var b;
   b = new parser.TokenListBuilder(result);
   if (xformer) {
     b.xformer = xformer;
   }
   return b.result(line);
+};
+
+/**
+ * @param {Object} e
+ * @param {!Array.<input.Line>} line
+ * @private
+ */
+parser.Target.prototype._add_context_lines = function(e, line) {
+  var self = this;
+  e.context_lines = [];
+  line.forEach(
+  /**
+   * @param {input.Line} l
+   * @param {number} i
+   */
+  function(l, i) {
+    e.context_lines.push(l.line);
+    if (i == e.line - 1) {
+      var sp;
+      sp = '';
+      var j;
+      j = 0;
+      for (; j < e.offset; j++) {
+        sp += ' ';
+      }
+      e.context_lines.push(sp + '^');
+    }
+  });
+  return e;
 };
 /**
  * @param {string} type
@@ -4668,11 +4689,24 @@ CodeLine.prototype.__defineGetter__('parsed', function() {
   }
   if (!self._parsed) {
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine');
-    self._parsed = CODE_PARSER.run(
-      [self._input].concat(self._continue_lines),
-      new LineTransformer(self._context, self._input),
-      true
-    );
+    var lines;
+    lines = [self._input].concat(self._continue_lines);
+    try {
+      self._parsed = CODE_PARSER.run(
+        lines,
+        new LineTransformer(self._context, self._input)
+      );
+    }
+    catch (e) {
+      warn(self._input, 'syntax error');
+      e.context_lines.forEach(
+      /** @param {string} line */
+      function(line) {
+        console.warn(line);
+      });
+      console.warn(e.message);
+      process.exit(-1);
+    }
   }
   return self._parsed;
 });
