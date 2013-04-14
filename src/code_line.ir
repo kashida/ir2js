@@ -28,10 +28,18 @@
     warn(@input, 'parse requested for cont. line')
   if !@parsed
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine')
-    @parsed = CODE_PARSER.run(#)
-      [@input].concat(@continue_lines)
-      new LineTransformer(@context, @input)
-      true
+    lines := [@input].concat(@continue_lines)
+    try
+      @parsed = CODE_PARSER.run(#)
+        lines
+        new LineTransformer(@context, @input)
+    catch e
+      warn(@input, 'syntax error')
+      e.context_lines.forEach(##)
+        line\s\$
+        console.warn(line)
+      console.warn(e.message)
+      process.exit(-1)
   => @parsed
 
 :transform

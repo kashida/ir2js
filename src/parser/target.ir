@@ -20,18 +20,25 @@ Specific for a particular target (i.e. rule).
   try
     result := _parser.parse(lines, @rule)
   catch e
-    if show_error_line
-      // TODO: make this display multi-line right.
-      console.error('[FAIL] error for ' + @rule)
-      console.error('I: ' + lines)
-      sp := '   '
-      i := 0
-      for ; i < e.offset; i++
-        sp += ' '
-      console.error(sp + '^')
-      console.error('E: ' + e)
-    => null
+    throw @add_context_lines(e, line)
+
   b := new %.TokenListBuilder(result)
   if xformer
     b.xformer = xformer
   => b.result(line)
+
+:@add_context_lines
+  e\O\$
+  line\!A.<input.Line>\$
+  e.context_lines = []
+  line.forEach(##)
+    l\input.Line\$
+    i\n\$
+    e.context_lines.push(l.line)
+    if i == e.line - 1
+      sp := ''
+      j := 0
+      for ; j < e.offset; j++
+        sp += ' '
+      e.context_lines.push(sp + '^')
+  => e

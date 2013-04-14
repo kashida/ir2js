@@ -58,26 +58,34 @@ TestFile.prototype.run_if_ready = function() {
 
 TestFile.prototype.run_test = function(line, expected) {
   var target = new parser.Target(this.rule_name);
-  var result = target.run(
-      line.replace(/\s*\/\|\/\s*/, '\n'), undefined, !this.expect_error);
-  if (result) {
-    var result_str = result.rendered().join(' /|/ ');
-    if (this.expect_error) {
-      console.error('[FAIL] error expected');
-      console.error('I: ' + line);
-      console.error('O: ' + result_str);
-      console.error(result);
-      process.exit(-1);
-    } else if (result_str != expected) {
-      console.error('[FAIL]');
-      console.error('I: ' + line);
-      console.error('T: ' + expected);
-      console.error('O: ' + result_str);
-      console.error(result);
+  lines = line.replace(/\s*\/\|\/\s*/, '\n')
+  try {
+    var result = target.run(lines)
+  } catch(e) {
+    if (!this.expect_error) {
+      console.error('[FAIL] error for ' + this.rule_name);
+      e.context_lines.forEach(function(line, i) {
+        console.error((i == 0 ? 'I: ' : '   ') + line)
+      });
+      console.error('E: ' + e.message)
       process.exit(-1);
     }
-  } else {
-    if (!this.expect_error) { process.exit(-1); }
+    return;
+  }
+  var result_str = result.rendered().join(' /|/ ');
+  if (this.expect_error) {
+    console.error('[FAIL] error expected');
+    console.error('I: ' + line);
+    console.error('O: ' + result_str);
+    console.error(result);
+    process.exit(-1);
+  } else if (result_str != expected) {
+    console.error('[FAIL]');
+    console.error('I: ' + line);
+    console.error('T: ' + expected);
+    console.error('O: ' + result_str);
+    console.error(result);
+    process.exit(-1);
   }
 };
 
