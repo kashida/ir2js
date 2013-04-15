@@ -669,6 +669,7 @@ CodeParser.prototype._continuation = function(line, i) {
   }
   else {
     last_line.continue_lines.push(new input.Line(
+      self._context.file_name,
       line.input.line.replace(/\|/, ' '),
       line.input.row_index
     ));
@@ -732,7 +733,7 @@ CodeScope.prototype.process_lines = function(lines) {
   self.process(lines.map(
   /** @param {string} line */
   function(line) {
-    return new input.Line(line, i++);
+    return new input.Line(self._context.file_name, line, i++);
   }));
 };
 
@@ -764,7 +765,7 @@ var transform_to_js = function(base_dir, in_file, out_file) {
   ).replace(/[\/\\]/, '.');
 
   var c;
-  c = new FileScope(pkg_name);
+  c = new FileScope(in_file, pkg_name);
   c.process_lines(_fs.readFileSync(in_file, 'utf-8').split('\n'));
   _fs.writeFileSync(
     out_file,
@@ -853,16 +854,20 @@ parse file scope and separate code sections from comments.
 var OutputSection;
 
 /**
+ * @param {string} file_name
  * @param {string} pkg_name
  * @constructor
  */
-var FileScope = function(pkg_name) {
+var FileScope = function(file_name, pkg_name) {
   var self = this;
   /**
    * @type {!context.Context}
    * @private
    */
-  this._context = (new context.Context(new context.Package(pkg_name)));
+  this._context = (new context.Context(
+    file_name,
+    new context.Package(pkg_name)
+  ));
   /**
    * @type {TypeSet}
    * @private
@@ -894,7 +899,7 @@ FileScope.prototype.process_lines = function(line) {
   var gen;
   gen = new section.Generator(self);
   var input_list;
-  input_list = new input.File(line).parse();
+  input_list = new input.File(self._context.file_name, line).parse();
   self._list = input_list.map(
   /**
    * @param {input.Comment|input.Section} section
@@ -1392,10 +1397,22 @@ LineTransformer.prototype.parent_call = function(args) {
 /**
  * @param {input.Line} line
  * @param {string=} opt_msg
+ * @param {Array.<string>=} additional_lines
  */
-var warn = function(line, opt_msg) {
+var warn = function(line, opt_msg, additional_lines) {
   var msg = opt_msg === undefined ? ('*warning*') : opt_msg;
-  console.warn(msg + ' (line ' + line.line_no + '): ' + line.line);
+  console.error(msg + ' (line ' + line.line_no + '): ' + line.line);
+  console.error(line.file + ':' + line.line_no + ': ERROR - ' + msg);
+  if (additional_lines) {
+    additional_lines.forEach(
+    /** @param {string} additional_line */
+    function(additional_line) {
+      console.error(additional_line);
+    });
+  }
+  else {
+    console.error(line.line);
+  }
 };
 
 /**
@@ -2273,9 +2290,9 @@ TestCase.prototype.run = function() {
   var self = this;
   var c;
   c = self._is_global ? (
-    new FileScope(self._package_name)
+    new FileScope(self._name, self._package_name)
   ) : (
-    new CodeScope(new context.Context(new context.Package('')))
+    new CodeScope(new context.Context(self._name, new context.Package('')))
   );
 
   var actual_output;
@@ -2720,11 +2737,17 @@ context.Class.prototype.output_accessors = function() {
   });
 };
 /**
+ * @param {string} file_name
  * @param {!context.Package} pkg
  * @constructor
  */
-context.Context = function(pkg) {
+context.Context = function(file_name, pkg) {
   var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._file_name = file_name;
   /**
    * @type {!context.Package}
    * @private
@@ -2757,6 +2780,11 @@ context.Context = function(pkg) {
   this._is_file_scope = (false);
 };
 context.Context.prototype._classname = 'context.Context';
+/** @type {string} */
+context.Context.prototype.file_name;
+context.Context.prototype.__defineGetter__('file_name', function() {
+return this._file_name;
+});
 /** @type {!context.Package} */
 context.Context.prototype.pkg;
 context.Context.prototype.__defineGetter__('pkg', function() {
@@ -2810,7 +2838,7 @@ this._is_file_scope = value;
 context.Context.prototype.clone = function() {
   var self = this;
   var c;
-  c = new context.Context(self._pkg);
+  c = new context.Context(self._file_name, self._pkg);
   var p;
   for (p in self) {
     if (self.hasOwnProperty(p)) {
@@ -3059,11 +3087,17 @@ Parses input lines into comments and sections.
 */
 
 /**
+ * @param {string} name
  * @param {Array.<string>} input
  * @constructor
  */
-input.File = function(input) {
+input.File = function(name, input) {
   var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._name = name;
   /**
    * @type {Array.<string>}
    * @private
@@ -3097,7 +3131,7 @@ input.File.prototype.parse = function() {
    */
   function(line, index) {
     line = line.trimRight();
-    self._process_line(new input.Line(line, index));
+    self._process_line(new input.Line(self._name, line, index));
   });
   self._flush_buffer();
   return self._result;
@@ -3172,12 +3206,18 @@ input.File.prototype._flush_buffer = function() {
 a line of input file. keeps track of the row index.
 */
 /**
+ * @param {string} file
  * @param {string} line
  * @param {number} row_index
  * @constructor
  */
-input.Line = function(line, row_index) {
+input.Line = function(file, line, row_index) {
   var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._file = file;
   /**
    * @type {string}
    * @private
@@ -3190,6 +3230,11 @@ input.Line = function(line, row_index) {
   this._row_index = row_index;
 };
 input.Line.prototype._classname = 'input.Line';
+/** @type {string} */
+input.Line.prototype.file;
+input.Line.prototype.__defineGetter__('file', function() {
+return this._file;
+});
 /** @type {string} */
 input.Line.prototype.line;
 input.Line.prototype.__defineGetter__('line', function() {
@@ -3252,7 +3297,7 @@ input.Line.prototype.__defineGetter__('indent', function() {
 });
 
   var UnknownInputLine;
-  UnknownInputLine = new input.Line('', -1);
+  UnknownInputLine = new input.Line('(unknown)', '', -1);
 /*
 Input code section.
 */
@@ -3776,7 +3821,7 @@ parser.Target.prototype._classname = 'parser.Target';
 parser.Target.prototype.run = function(line, xformer, show_error_line) {
   var self = this;
   if (!(line instanceof Array)) {
-    line = [new input.Line(line, 0)];
+    line = [new input.Line('', line, 0)];
   }
 
   var lines;
@@ -4365,7 +4410,7 @@ section.Generator.prototype.generate = function(header, lines) {
     section = self[method].call(self, header_line, header);
     if (section) {
       section.lines = lines;
-      section.close(self._scope.context.pkg);
+      section.close(self._scope.context.file_name, self._scope.context.pkg);
       section.set_type(self._scope.types);
     }
     return !!section;
@@ -4698,13 +4743,7 @@ CodeLine.prototype.__defineGetter__('parsed', function() {
       );
     }
     catch (e) {
-      warn(self._input, 'syntax error');
-      e.context_lines.forEach(
-      /** @param {string} line */
-      function(line) {
-        console.warn(line);
-      });
-      console.warn(e.message);
+      warn(self._input, 'syntax error ' + e.message, e.context_lines);
       process.exit(-1);
     }
   }
@@ -4772,9 +4811,12 @@ this._lines = value;
 /*
 abstract method.
 */
-/** @param {!context.Package=} pkg */
-section.Code.prototype.close = function(pkg) {
- var self = this;
+/**
+ * @param {string} file_name
+ * @param {!context.Package=} pkg
+ */
+section.Code.prototype.close = function(file_name, pkg) {
+  var self = this;
 };
 
 /** @param {TypeSet} types */
@@ -4816,10 +4858,13 @@ section.Runnable.prototype = Object.create(section.Code.prototype);
 section.Runnable.prototype._classname = 'section.Runnable';
 
 /** @override */
-section.Runnable.prototype.close = function(pkg) {
+section.Runnable.prototype.close = function(file_name, pkg) {
   var self = this;
   var c;
-  c = new CodeScope(new context.Context(pkg || new context.Package('')), self);
+  c = new CodeScope(new context.Context(
+    file_name,
+    pkg || new context.Package('')
+  ), self);
   c.process(self.lines);
 };
 
