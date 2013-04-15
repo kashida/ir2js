@@ -7,7 +7,7 @@
   i := 0
   @.process(lines.map(##))
     line\s\$
-    => new input.Line(line, i++)
+    => new input.Line(@context.file_name, line, i++)
 
 :process
   input_lines\A.<input.Line>\$

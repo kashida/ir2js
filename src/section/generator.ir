@@ -24,7 +24,7 @@
     section = @[method].call(@, header_line, header)
     if section
       section.lines = lines
-      section.close(@scope.context.pkg)
+      section.close(@scope.context.file_name, @scope.context.pkg)
       section.set_type(@scope.types)
     => !!section
     --

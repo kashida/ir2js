@@ -2,6 +2,7 @@ Parses input lines into comments and sections.
 'line' is used only during processing.
 
 ::File
+  @name\s\$
   @input\A.<s>\$
   @result\A.<%.Comment|%.Section>\ []
   @buffer\A.<%.Line>\ []
@@ -12,7 +13,7 @@ Parses input lines into comments and sections.
     line\s\$
     index\n\$
     line = line.trimRight()
-    @process_line(new %.Line(line, index))
+    @process_line(new %.Line(@name, line, index))
   @flush_buffer()
   => @result
 

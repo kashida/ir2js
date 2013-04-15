@@ -3,8 +3,11 @@ parse file scope and separate code sections from comments.
   input.Comment|section.Code
 
 ::FileScope
+  file_name\s\$
   pkg_name\s\$
-  @context+\!context.Context\ new context.Context(new context.Package(pkg_name))
+  @context+\!context.Context\ new context.Context(#)
+    file_name
+    new context.Package(pkg_name)
   @types+\TypeSet\ new TypeSet()
   @list\A.<OutputSection>\
 
@@ -13,7 +16,7 @@ parse file scope and separate code sections from comments.
 :process_lines
   line\A.<s>\$
   gen := new section.Generator(@)
-  input_list := new input.File(line).parse()
+  input_list := new input.File(@context.file_name, line).parse()
   @list = input_list.map(##)
     section\input.Comment|input.Section\$
     index\n\$

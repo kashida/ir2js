@@ -34,11 +34,7 @@
         lines
         new LineTransformer(@context, @input)
     catch e
-      warn(@input, 'syntax error')
-      e.context_lines.forEach(##)
-        line\s\$
-        console.warn(line)
-      console.warn(e.message)
+      warn(@input, 'syntax error ' + e.message, e.context_lines)
       process.exit(-1)
   => @parsed
 

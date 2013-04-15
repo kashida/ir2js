@@ -1,5 +1,6 @@
 a line of input file. keeps track of the row index.
 ::Line
+  @file+\s\$
   @line+\s\$
   @row_index+\n\$
 
@@ -26,4 +27,4 @@ trailing whitespace should have been stripped already.
   => re ? re.index : 0
 
 :
-  UnknownInputLine := new %.Line('', -1)
+  UnknownInputLine := new %.Line('(unknown)', '', -1)

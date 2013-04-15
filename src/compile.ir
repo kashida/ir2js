@@ -6,7 +6,7 @@
     base_dir
     in_file.replace(/[\/\\][^\/\\]*$/, '')
 
-  c := new FileScope(pkg_name)
+  c := new FileScope(in_file, pkg_name)
   c.process_lines(_fs.readFileSync(in_file, 'utf-8').split('\n'))
   _fs.writeFileSync(#)
     out_file

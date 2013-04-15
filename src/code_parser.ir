@@ -102,6 +102,7 @@
     warn(line.input, 'continuation as a first line of block')
   else
     last_line.continue_lines.push(new input.Line(#))
+      @context.file_name
       line.input.line.replace(/\|/, ' ')
       line.input.row_index
   @last_valid_line = \CodeLine\(line)

@@ -12,7 +12,7 @@ Specific for a particular target (i.e. rule).
   xformer\LineTransformer\?
   show_error_line\b\?
   if !(line instanceof Array)
-    line = [new input.Line(line, 0)]
+    line = [new input.Line('', line, 0)]
 
   lines := line.map(##).join('\n')
     l\input.Line\$

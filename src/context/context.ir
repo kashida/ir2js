@@ -1,4 +1,5 @@
 ::Context
+  @file_name+\s\$
   @pkg&\!%.Package\$
   @name&\!%.Name\ new %.Name(@pkg, '')
   @cls&\%.Class\
@@ -7,7 +8,7 @@
   @is_file_scope&\b\ false
 
 :clone\!%.Context\
-  c := new %.Context(@pkg)
+  c := new %.Context(@file_name, @pkg)
   each p in @
     if @.hasOwnProperty(p)
       c[p] = @[p]

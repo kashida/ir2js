@@ -8,9 +8,9 @@
 
 :run
   c := @is_global ? (#) : (#)
-    new FileScope(@package_name)
+    new FileScope(@name, @package_name)
     --
-    new CodeScope(new context.Context(new context.Package('')))
+    new CodeScope(new context.Context(@name, new context.Package('')))
 
   actual_output := ''
   try

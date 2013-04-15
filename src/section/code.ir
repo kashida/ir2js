@@ -4,7 +4,8 @@
 
 abstract method.
 :close
- pkg\!context.Package\?
+  file_name\s\$
+  pkg\!context.Package\?
 
 :set_type
   types\TypeSet\$
