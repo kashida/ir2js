@@ -83,7 +83,7 @@
       line.input
       'stack size zero (line ' + (i + 1) + '): ' + line.str
   if line.indent > @top_block().indent
-    warn(line.input, 'indent level does not match')
+    error(line.input, 'indent level does not match')
 
 :@separator
   line\SectionLine\$
@@ -99,7 +99,7 @@
   i\n\$
   last_line := @top_block().last_line()
   if !last_line
-    warn(line.input, 'continuation as a first line of block')
+    error(line.input, 'continuation as a first line of block')
   else
     last_line.continue_lines.push(new input.Line(#))
       @context.file_name

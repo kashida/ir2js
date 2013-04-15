@@ -28,7 +28,7 @@
       section.set_type(@scope.types)
     => !!section
     --
-    warn(header, 'line starts with colon and not a code section marker')
+    error(header, 'line starts with colon and not a code section marker')
   => section
 
 :@create_ctor\%.Constructor\
@@ -55,7 +55,7 @@
 
   // we should have seen a ctor.
   if !@scope.context.cls
-    warn(header, 'method marker w/o class')
+    error(header, 'method marker w/o class')
     => null
   => new %.Method(#)
       @scope.copy_context(@scope.context.cls.method_name((re[2] ? '_' : '') + re[3]))
@@ -71,7 +71,7 @@
 
   // we should have seen a ctor.
   if !@scope.context.cls
-    warn(header, 'accessor marker w/o class')
+    error(header, 'accessor marker w/o class')
     => null
   type := re[1]
   name := re[2]

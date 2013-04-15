@@ -28,5 +28,5 @@
       '.call(this'
       end_str
   else
-    warn(@input, 'parent call appeared in non-ctor / non-method.')
+    error(@input, 'parent call appeared in non-ctor / non-method.')
     => '%(' + args + ')'

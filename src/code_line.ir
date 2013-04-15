@@ -25,7 +25,7 @@
 
 :+parsed\parser.Result\
   if @.is_continuation
-    warn(@input, 'parse requested for cont. line')
+    error(@input, 'parse requested for cont. line')
   if !@parsed
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine')
     lines := [@input].concat(@continue_lines)
@@ -34,8 +34,7 @@
         lines
         new LineTransformer(@context, @input)
     catch e
-      warn(@input, '(syntax error) ' + e.message, e.context_lines)
-      process.exit(-1)
+      error(@input, '(syntax error) ' + e.message, e.context_lines)
   => @parsed
 
 :transform

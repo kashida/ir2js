@@ -15,7 +15,7 @@ same number of strings as @.lines.
     if @indent < 0
       @indent = line.indent
     else if line.indent < @indent
-      warn(line, 'inconsistent indentation')
+      error(line, 'inconsistent indentation')
       =>
     result.push(line.line.substr(@indent))
   => result

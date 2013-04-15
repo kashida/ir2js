@@ -1,4 +1,7 @@
-:=warn ##
+:
+  error_count := 0
+
+:=error ##
   line\input.Line\$
   msg\s\? '*warning*'
   additional_lines\A.<s>\?
@@ -9,6 +12,7 @@
       console.error(additional_line)
   else
     console.error(line.line)
+  error_count++
 
 :=assert ##
   check\*\$

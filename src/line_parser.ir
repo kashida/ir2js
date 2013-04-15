@@ -25,10 +25,10 @@ First pass line parsing for constructing the block structure.
 
   @indent = spaces_re[1].length
   if !/ */.test(spaces_re[1])
-    warn(@input, 'non-ascii 0x20 space for indentation')
+    error(@input, 'non-ascii 0x20 space for indentation')
 
   if spaces_re[3] != ''
-    warn(@input, 'trailing space')
+    error(@input, 'trailing space')
 
 :@check_continuation
   cont_re := /^\s*\|/.exec(@input.line)
