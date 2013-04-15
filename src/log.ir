@@ -1,6 +1,3 @@
-:
-  error_count := 0
-
 :=error ##
   line\input.Line\$
   msg\s\? '*warning*'
@@ -12,7 +9,7 @@
       console.error(additional_line)
   else
     console.error(line.line)
-  error_count++
+  process.exit(-1)
 
 :=assert ##
   check\*\$

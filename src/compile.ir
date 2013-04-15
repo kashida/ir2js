@@ -16,9 +16,6 @@
     out_file.replace(/\.js$/, '.tk')
     JSON.stringify(c.types.extract())
     'utf-8'
-  if error_count > 0
-    console.error(error_count + ' error(s)')
-    process.exit(-1)
 
 :=relative_file_name ##
   base_dir\s\$

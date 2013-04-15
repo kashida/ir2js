@@ -777,10 +777,6 @@ var transform_to_js = function(base_dir, in_file, out_file) {
     JSON.stringify(c.types.extract()),
     'utf-8'
   );
-  if (error_count > 0) {
-    console.error(error_count + ' error(s)');
-    process.exit(-1);
-  }
 };
 
 /**
@@ -1398,9 +1394,6 @@ LineTransformer.prototype.parent_call = function(args) {
     return '%(' + args + ')';
   }
 };
-  var error_count;
-  error_count = 0;
-
 /**
  * @param {input.Line} line
  * @param {string=} opt_msg
@@ -1419,7 +1412,7 @@ var error = function(line, opt_msg, additional_lines) {
   else {
     console.error(line.line);
   }
-  error_count++;
+  process.exit(-1);
 };
 
 /**
