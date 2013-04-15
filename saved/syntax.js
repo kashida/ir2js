@@ -2381,6 +2381,7 @@ module.exports = (function(){
       function parse_PostfixOperator() {
         var result0;
         
+        reportFailures++;
         if (input.substr(pos, 2) === "++") {
           result0 = "++";
           pos += 2;
@@ -2401,12 +2402,17 @@ module.exports = (function(){
             }
           }
         }
+        reportFailures--;
+        if (reportFailures === 0 && result0 === null) {
+          matchFailed("postfix_opr");
+        }
         return result0;
       }
       
       function parse_UnaryOperator() {
         var result0;
         
+        reportFailures++;
         if (input.substr(pos, 6) === "delete") {
           result0 = "delete";
           pos += 6;
@@ -2482,6 +2488,10 @@ module.exports = (function(){
             }
           }
         }
+        reportFailures--;
+        if (reportFailures === 0 && result0 === null) {
+          matchFailed("unary_opr");
+        }
         return result0;
       }
       
@@ -2489,6 +2499,7 @@ module.exports = (function(){
         var result0, result1;
         var pos0, pos1, pos2;
         
+        reportFailures++;
         pos0 = pos;
         pos1 = pos;
         if (input.charCodeAt(pos) === 42) {
@@ -2557,6 +2568,10 @@ module.exports = (function(){
         if (result0 === null) {
           pos = pos0;
         }
+        reportFailures--;
+        if (reportFailures === 0 && result0 === null) {
+          matchFailed("multiplicative_opr");
+        }
         return result0;
       }
       
@@ -2564,6 +2579,7 @@ module.exports = (function(){
         var result0, result1;
         var pos0, pos1, pos2;
         
+        reportFailures++;
         pos0 = pos;
         pos1 = pos;
         if (input.charCodeAt(pos) === 43) {
@@ -2680,12 +2696,17 @@ module.exports = (function(){
             pos = pos0;
           }
         }
+        reportFailures--;
+        if (reportFailures === 0 && result0 === null) {
+          matchFailed("additive_opr");
+        }
         return result0;
       }
       
       function parse_RelationalOperator() {
         var result0;
         
+        reportFailures++;
         if (input.substr(pos, 2) === "<=") {
           result0 = "<=";
           pos += 2;
@@ -2750,6 +2771,10 @@ module.exports = (function(){
             }
           }
         }
+        reportFailures--;
+        if (reportFailures === 0 && result0 === null) {
+          matchFailed("relational_opr");
+        }
         return result0;
       }
       
@@ -2801,7 +2826,7 @@ module.exports = (function(){
         }
         reportFailures--;
         if (reportFailures === 0 && result0 === null) {
-          matchFailed("equality operator");
+          matchFailed("equality_opr");
         }
         return result0;
       }
@@ -2916,6 +2941,7 @@ module.exports = (function(){
         var result0, result1;
         var pos0, pos1, pos2;
         
+        reportFailures++;
         pos0 = pos;
         pos1 = pos;
         if (input.charCodeAt(pos) === 61) {
@@ -3016,6 +3042,10 @@ module.exports = (function(){
               }
             }
           }
+        }
+        reportFailures--;
+        if (reportFailures === 0 && result0 === null) {
+          matchFailed("assignment_opr");
         }
         return result0;
       }

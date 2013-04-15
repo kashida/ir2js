@@ -433,7 +433,7 @@ CodeBlockItr.prototype.run = function() {
 
   // There may be one extra block.
   if (self._bidx > self._blocks.length || self._bidx + 1 < self._blocks.length) {
-    warn(self._input, '# blocks does not match #markers.');
+    error(self._input, '# blocks does not match #markers.');
     return false;
   }
 
@@ -635,7 +635,7 @@ CodeParser.prototype._shallower_indent = function(line, i) {
     );
   }
   if (line.indent > self._top_block().indent) {
-    warn(line.input, 'indent level does not match');
+    error(line.input, 'indent level does not match');
   }
 };
 
@@ -665,7 +665,7 @@ CodeParser.prototype._continuation = function(line, i) {
   var last_line;
   last_line = self._top_block().last_line();
   if (!last_line) {
-    warn(line.input, 'continuation as a first line of block');
+    error(line.input, 'continuation as a first line of block');
   }
   else {
     last_line.continue_lines.push(new input.Line(
@@ -777,6 +777,10 @@ var transform_to_js = function(base_dir, in_file, out_file) {
     JSON.stringify(c.types.extract()),
     'utf-8'
   );
+  if (error_count > 0) {
+    console.error(error_count + ' error(s)');
+    process.exit(-1);
+  }
 };
 
 /**
@@ -1300,11 +1304,11 @@ LineParser.prototype._check_spaces = function() {
 
   self._indent = spaces_re[1].length;
   if (!/ */.test(spaces_re[1])) {
-    warn(self._input, 'non-ascii 0x20 space for indentation');
+    error(self._input, 'non-ascii 0x20 space for indentation');
   }
 
   if (spaces_re[3] != '') {
-    warn(self._input, 'trailing space');
+    error(self._input, 'trailing space');
   }
 };
 
@@ -1390,16 +1394,19 @@ LineTransformer.prototype.parent_call = function(args) {
     ].join('');
   }
   else {
-    warn(self._input, 'parent call appeared in non-ctor / non-method.');
+    error(self._input, 'parent call appeared in non-ctor / non-method.');
     return '%(' + args + ')';
   }
 };
+  var error_count;
+  error_count = 0;
+
 /**
  * @param {input.Line} line
  * @param {string=} opt_msg
  * @param {Array.<string>=} additional_lines
  */
-var warn = function(line, opt_msg, additional_lines) {
+var error = function(line, opt_msg, additional_lines) {
   var msg = opt_msg === undefined ? ('*warning*') : opt_msg;
   console.error(line.file + ':' + line.line_no + ': ERROR - ' + msg);
   if (additional_lines) {
@@ -1412,6 +1419,7 @@ var warn = function(line, opt_msg, additional_lines) {
   else {
     console.error(line.line);
   }
+  error_count++;
 };
 
 /**
@@ -1594,10 +1602,10 @@ var Param = function(context, is_ctor, inputs, parsed) {
 
   // sanity check the param consistency.
   if (!is_ctor && self.is_member) {
-    warn(inputs, 'member param for non-constructor method');
+    error(inputs, 'member param for non-constructor method');
   }
   if (!self.is_member && self.init_type != '?' && self._value_line) {
-    warn(inputs, 'initial value for non-member non-optional');
+    error(inputs, 'initial value for non-member non-optional');
   }
 };
 Param.prototype._classname = 'Param';
@@ -4414,7 +4422,7 @@ section.Generator.prototype.generate = function(header, lines) {
     }
     return !!section;
   })) {
-    warn(header, 'line starts with colon and not a code section marker');
+    error(header, 'line starts with colon and not a code section marker');
   }
   return section;
 };
@@ -4460,7 +4468,7 @@ section.Generator.prototype._create_method = function(line, header) {
 
   // we should have seen a ctor.
   if (!self._scope.context.cls) {
-    warn(header, 'method marker w/o class');
+    error(header, 'method marker w/o class');
     return null;
   }
   return new section.Method(
@@ -4486,7 +4494,7 @@ section.Generator.prototype._create_accessor = function(line, header) {
 
   // we should have seen a ctor.
   if (!self._scope.context.cls) {
-    warn(header, 'accessor marker w/o class');
+    error(header, 'accessor marker w/o class');
     return null;
   }
   var type;
@@ -4729,7 +4737,7 @@ CodeLine.prototype.parsed;
 CodeLine.prototype.__defineGetter__('parsed', function() {
   var self = this;
   if (self.is_continuation) {
-    warn(self._input, 'parse requested for cont. line');
+    error(self._input, 'parse requested for cont. line');
   }
   if (!self._parsed) {
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine');
@@ -4742,8 +4750,7 @@ CodeLine.prototype.__defineGetter__('parsed', function() {
       );
     }
     catch (e) {
-      warn(self._input, 'syntax error ' + e.message, e.context_lines);
-      process.exit(-1);
+      error(self._input, '(syntax error) ' + e.message, e.context_lines);
     }
   }
   return self._parsed;
@@ -4943,7 +4950,7 @@ section.Str.prototype.strlines = function() {
       self._indent = line.indent;
     }
     else if (line.indent < self._indent) {
-      warn(line, 'inconsistent indentation');
+      error(line, 'inconsistent indentation');
       return;
     }
     result.push(line.line.substr(self._indent));
