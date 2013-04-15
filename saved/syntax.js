@@ -2756,6 +2756,7 @@ module.exports = (function(){
       function parse_EqualityOperator() {
         var result0;
         
+        reportFailures++;
         if (input.substr(pos, 3) === "===") {
           result0 = "===";
           pos += 3;
@@ -2797,6 +2798,10 @@ module.exports = (function(){
               }
             }
           }
+        }
+        reportFailures--;
+        if (reportFailures === 0 && result0 === null) {
+          matchFailed("equality operator");
         }
         return result0;
       }

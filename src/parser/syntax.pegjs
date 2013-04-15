@@ -248,11 +248,11 @@ Zs = [\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u
 ////////////////////////////////////////////////////////////
 // Basic tokens.
 
-PostfixOperator
+PostfixOperator 'postfix_opr'
   = '++'
   / '--'
 
-UnaryOperator
+UnaryOperator 'unary_opr'
   = 'delete'
   / 'typeof'
   / '++'
@@ -261,14 +261,14 @@ UnaryOperator
   / '-'
   / '!'
 
-MultiplicativeOperator
+MultiplicativeOperator 'multiplicative_opr'
   = op:('*' / '/' / '%') !'=' { return op; }
 
-AdditiveOperator
+AdditiveOperator 'additive_opr'
   = '+' !('+' / '=') { return '+'; }
   / '-' !('-' / '=') { return '-'; }
 
-RelationalOperator
+RelationalOperator 'relational_opr'
   = '<='
   / '>='
   / '<'
@@ -276,7 +276,7 @@ RelationalOperator
   / 'instanceof'
   / 'in'
 
-EqualityOperator
+EqualityOperator 'equality_opr'
   = '==='
   / '!=='
   / '=='
@@ -288,7 +288,7 @@ LogicalANDOperator
 LogicalOROperator
   = '||' !'=' { return '||'; }
 
-AssignmentOperator
+AssignmentOperator 'assignment_opr'
   = '=' (!'=') { return '='; }
   / '*='
   / '/='

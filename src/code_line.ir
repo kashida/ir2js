@@ -34,7 +34,7 @@
         lines
         new LineTransformer(@context, @input)
     catch e
-      warn(@input, 'syntax error ' + e.message, e.context_lines)
+      warn(@input, '(syntax error) ' + e.message, e.context_lines)
       process.exit(-1)
   => @parsed
 
