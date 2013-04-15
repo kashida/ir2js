@@ -1401,7 +1401,6 @@ LineTransformer.prototype.parent_call = function(args) {
  */
 var warn = function(line, opt_msg, additional_lines) {
   var msg = opt_msg === undefined ? ('*warning*') : opt_msg;
-  console.error(msg + ' (line ' + line.line_no + '): ' + line.line);
   console.error(line.file + ':' + line.line_no + ': ERROR - ' + msg);
   if (additional_lines) {
     additional_lines.forEach(
