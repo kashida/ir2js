@@ -1,7 +1,7 @@
 :ObjectLiteral
 {}
 {abc:a + b}
-  {abc: a + b}
+  {'abc': a + b}
 
 :!
 {expr,}

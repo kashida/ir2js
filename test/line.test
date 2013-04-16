@@ -12,23 +12,23 @@ a := {#}
 #=
 var a;
 a = {
-  x: line1,
-  y: line2,
-  z: line3
+  'x': line1,
+  'y': line2,
+  'z': line3
 };
 #}
 
 #{: multiline object 2
 a := {#} + x
-  x: line1
-  y: line2
-  z: line3
+  'x': line1
+  'y': line2
+  'z': line3
 #=
 var a;
 a = {
-  x: line1,
-  y: line2,
-  z: line3
+  'x': line1,
+  'y': line2,
+  'z': line3
 } + x;
 #}
 
@@ -325,8 +325,8 @@ a = [
   arr0,
   arr1
 ] + {
-  abc: def,
-  ghi: jkl
+  'abc': def,
+  'ghi': jkl
 } +
 /**
  * @param {boolean} param0

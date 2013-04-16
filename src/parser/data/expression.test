@@ -45,7 +45,7 @@ null
 102.3
 [expr, expr, expr]
 { abc: expr ,  def:0 }
-  {abc: expr, def: 0}
+  {'abc': expr, 'def': 0}
 expr
 (expr)
 

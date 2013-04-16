@@ -395,7 +395,9 @@ PropertyAssignment
     }
 
 PropertyName
-  = IdentifierName
+  = name:IdentifierName {
+    return ["'", name, "'"]
+  }
   / StringLiteral
   / NumericLiteral
 
