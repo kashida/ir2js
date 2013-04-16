@@ -1,6 +1,6 @@
 ::Callable <%.Runnable
   @context+\!context.Context\$
-  @return_type+\s\$
+  @returnType+\s\$
   @params&\ParamSet\
   %()
 
@@ -14,13 +14,13 @@
 
 :<transform
   assert(#)
-    @.num_blocks() == 1
+    @.numBlocks() == 1
     @.lines[0]
-    'callable takes 1 block -- found ' + @.num_blocks()
+    'callable takes 1 block -- found ' + @.numBlocks()
   @params = new ParamSet(@context, @.block(0))
   @params.transform()
-  @params.set_return_type(@return_type)
+  @params.setReturnType(@returnType)
   @.block(0).transform()
 
-:output_func\s\
-  => @context.name.decl() + ' = function(' + @params.output_params() + ') {'
+:outputFunc\s\
+  => @context.name.decl() + ' = function(' + @params.outputParams() + ') {'

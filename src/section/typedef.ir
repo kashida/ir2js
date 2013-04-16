@@ -6,7 +6,7 @@
   decoder := new TypeDecoder(@.context.pkg, @.strlines().join(''))
   out := new output.Line(@.lines[0])
   out.indent = 0
-  out.lines.append_lines([#])
-    doc_lines(['@typedef {' + decoder.output() + '}'])
+  out.lines.appendLines([#])
+    docLines(['@typedef {' + decoder.output() + '}'])
     @.context.name.decl() + ';'
   => [out]

@@ -1,5 +1,5 @@
 :
-  exports.create_argtypes = ##
+  exports.createArgTypes = ##
     basedir\s\$
     files\A.<s>\$
     output := []

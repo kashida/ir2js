@@ -6,39 +6,39 @@ Parses input lines into comments and sections.
   @input\A.<s>\$
   @result\A.<%.Comment|%.Section>\ []
   @buffer\A.<%.Line>\ []
-  @last_valid_index\n?\
+  @lastValidIndex\n?\
 
 :parse\A.<%.Comment|%.Section>\
   @input.forEach(##)
     line\s\$
     index\n\$
     line = line.trimRight()
-    @process_line(new %.Line(@name, line, index))
-  @flush_buffer()
+    @processLine(new %.Line(@name, line, index))
+  @flushBuffer()
   => @result
 
-:@process_line
+:@processLine
   line\%.Line\$
-  if line.starts_with_colon
+  if line.startsWithColon
     // should be a start of a code section.
-    @flush_buffer()
-    @last_valid_index = 0
-  else if line.is_indented
+    @flushBuffer()
+    @lastValidIndex = 0
+  else if line.isIndented
     // indented line -- continues either comment or code section.
-    if @last_valid_index !== null
-      @last_valid_index = @buffer.length
-  else if !line.is_blank
+    if @lastValidIndex !== null
+      @lastValidIndex = @buffer.length
+  else if !line.isBlank
     // global comment.
-    if @last_valid_index !== null
+    if @lastValidIndex !== null
       // close the code section.
-      @flush_buffer()
+      @flushBuffer()
   // anything else is invalid line -- continues either comment or code section.
   @buffer.push(line)
 
-:@flush_buffer
+:@flushBuffer
   while @buffer.length
     next_buffer := []
-    if @last_valid_index !== null
+    if @lastValidIndex !== null
       section := new %.Section(@buffer[0])
       @result.push(section)
       @buffer.forEach(##)
@@ -47,7 +47,7 @@ Parses input lines into comments and sections.
         if index == 0
           // we already passed the header line to section.
           =>
-        else if index <= @last_valid_index
+        else if index <= @lastValidIndex
           section.push(line)
         else
           // end of section invaild lines.
@@ -55,5 +55,5 @@ Parses input lines into comments and sections.
     else
       // we'll give buffer a new array so no need to clone for global comment.
       @result.push(new %.Comment(@buffer))
-    @last_valid_index = null
+    @lastValidIndex = null
     @buffer = next_buffer

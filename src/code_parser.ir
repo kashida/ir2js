@@ -2,8 +2,8 @@
   @context\!context.Context\$
   @head\section.Head\$
   @blocks\A.<IndentBlock>\ []
-  @last_valid_line\CodeLine\
-  @invalid_lines\A.<SectionLine>\ []
+  @lastValidLine\CodeLine\
+  @invalidLines\A.<SectionLine>\ []
 
 :parse
   input_lines\A.<input.Line>\$
@@ -20,7 +20,7 @@
   @head.lines = input_lines
 
   first_line_indent := 0
-  code_lines := @make_code_lines(input_lines)
+  code_lines := @makeCodeLines(input_lines)
   code_lines.some(##)
     line\SectionLine\$
     if !(line instanceof InvalidLine)
@@ -28,61 +28,61 @@
       => true
     => false
   @blocks = [new IndentBlock(0, first_line_indent, @head)]
-  @head.add_block(@blocks[0])
+  @head.addBlock(@blocks[0])
   
   code_lines.forEach(##)
     line\SectionLine\$
     i\n\$
     // create blocks and assign lines to them.
     if line instanceof InvalidLine
-      @invalid_lines.push(line)
+      @invalidLines.push(line)
       =>
 
-    prev_indent := @top_block().indent
+    prev_indent := @topBlock().indent
     indent := line.indent
 
     if indent > prev_indent
-      @deeper_indent(i, indent)
+      @deeperIndent(i, indent)
     else if indent < prev_indent
-      @shallower_indent(line, i)
+      @shallowerIndent(line, i)
 
-    @add_invalid_lines()
-    if line.is_continuation
+    @addInvalidLines()
+    if line.isContinuation
       @continuation(line, i)
     else if line instanceof SeparatorLine
       @separator(line, indent, i)
     else
-      @last_valid_line = \CodeLine\(line)
-      @top_block().add(line)
-  @add_invalid_lines()
-  @pop_rest()
+      @lastValidLine = \CodeLine\(line)
+      @topBlock().add(line)
+  @addInvalidLines()
+  @popRest()
 
-:@make_code_lines\A.<SectionLine>\
+:@makeCodeLines\A.<SectionLine>\
   input_lines\A.<input.Line>\$
   cat := new LineCategorizer(@context)
   => input_lines.map(##)
     line\input.Line\$
-    => cat.create_line(line)
+    => cat.createLine(line)
 
-:@deeper_indent
+:@deeperIndent
   i\n\$
   indent\n\$
   // push a new block in the stack.
-  b := new IndentBlock(i, indent, @last_valid_line)
-  @last_valid_line.add_block(b)
+  b := new IndentBlock(i, indent, @lastValidLine)
+  @lastValidLine.addBlock(b)
   @blocks.push(b)
 
-:@shallower_indent
+:@shallowerIndent
   line\SectionLine\$
   i\n\$
   // back up levels.
-  while line.indent < @top_block().indent
+  while line.indent < @topBlock().indent
     @blocks.pop()
     assert(#)
       @blocks.length >= 1
       line.input
       'stack size zero (line ' + (i + 1) + '): ' + line.str
-  if line.indent > @top_block().indent
+  if line.indent > @topBlock().indent
     error(line.input, 'indent level does not match')
 
 :@separator
@@ -91,34 +91,34 @@
   i\n\$
   prev_b := @blocks.pop()
   b := new IndentBlock(i, indent, prev_b.head())
-  prev_b.head().add_block(b)
+  prev_b.head().addBlock(b)
   @blocks.push(b)
 
 :@continuation
   line\SectionLine\$
   i\n\$
-  last_line := @top_block().last_line()
+  last_line := @topBlock().lastLine()
   if !last_line
     error(line.input, 'continuation as a first line of block')
   else
-    last_line.continue_lines.push(new input.Line(#))
-      @context.file_name
+    last_line.continueLines.push(new input.Line(#))
+      @context.fileName
       line.input.line.replace(/\|/, ' ')
-      line.input.row_index
-  @last_valid_line = \CodeLine\(line)
+      line.input.rowIndex
+  @lastValidLine = \CodeLine\(line)
 
-:@add_invalid_lines
-  top_block := @top_block()
-  @invalid_lines.forEach(##)
+:@addInvalidLines
+  top_block := @topBlock()
+  @invalidLines.forEach(##)
     line\SectionLine\$
     top_block.add(line)
-  @invalid_lines = []
+  @invalidLines = []
 
-:@pop_rest
+:@popRest
   // pop all the rest of blocks except one.
   while @blocks.length > 1
     @blocks.pop()
 
-:@top_block
+:@topBlock
   // there should be at least the root block.
   => @blocks[@blocks.length - 1]

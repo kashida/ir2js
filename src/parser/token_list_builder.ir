@@ -6,7 +6,7 @@
 :build\%.TokenList\
   if !@tokens
     @tokens = new %.TokenList()
-    @build_rec(@parsed)
+    @buildRec(@parsed)
   => @tokens
 
 :result\%.Result\
@@ -14,46 +14,46 @@
   @.build()
   => new %.Result(@tokens, line)
 
-:@build_rec
+:@buildRec
   data\%.TokenList|A|O|s\$
   if data instanceof %.TokenList
-    @add_tokens(data)
+    @addTokens(data)
     =>
 
   if data instanceof Array
-    @add_array(data)
+    @addArray(data)
     =>
 
   if data instanceof Object
-    @add_object(data)
+    @addObject(data)
     =>
 
   // Must be a string.
   if data
     @tokens.add(data)
 
-:@add_tokens
+:@addTokens
   data\%.TokenList\$
   @tokens.add(data)
 
-:@add_array
+:@addArray
   data\A\$
   data.forEach(##)
     elem\%.TokenList|A|O|s\$
-    @build_rec(elem)
+    @buildRec(elem)
 
-:@add_object
+:@addObject
   data\O\$
   if data.g
     p := data.params
     switch data.g
       case 'c' // Current package ref.
       str := p['percents'] + '.' + p.name
-      @tokens.add(@.xformer ? @.xformer.pkg_ref(str) : str)
+      @tokens.add(@.xformer ? @.xformer.pkgRef(str) : str)
       break
 
       case 'e' // Parent call.
-      @tokens.add(@.xformer ? @.xformer.parent_call(#) : ['%(', p.args, ')'])
+      @tokens.add(@.xformer ? @.xformer.parentCall(#) : ['%(', p.args, ')'])
         new %.TokenListBuilder(p.args, @.xformer).build().toString()
       break
 
@@ -78,7 +78,7 @@
       break
 
       case 't' // Type literal.
-      @.add_type_object(p)
+      @.addTypeObject(p)
       break
 
   if data.t
@@ -88,7 +88,7 @@
   if data.a
     @tokens.append(new %.TokenListBuilder(data.a, @.xformer).build())
 
-:add_type_object
+:addTypeObject
   params\O\$
   @tokens.add(@.xformer ? @.xformer.cast(params.type) : params.tokens)
 
@@ -98,6 +98,6 @@
   xformer&\LineTransformer\?
   %(parsed, xformer)
 
-:add_type_object
+:addTypeObject
   params\O\$
   @tokens.add(@.xformer ? @.xformer.type(params.type) : params.tokens)

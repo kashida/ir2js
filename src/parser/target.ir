@@ -20,25 +20,25 @@ Specific for a particular target (i.e. rule).
   try
     result := _parser.parse(lines, @rule)
   catch e
-    throw @add_context_lines(e, line)
+    throw @addContextLines(e, line)
 
   b := new %.TokenListBuilder(result)
   if xformer
     b.xformer = xformer
   => b.result(line)
 
-:@add_context_lines
+:@addContextLines
   e\O\$
   line\!A.<input.Line>\$
-  e.context_lines = []
+  e.contextLines = []
   line.forEach(##)
     l\input.Line\$
     i\n\$
-    e.context_lines.push(l.line)
+    e.contextLines.push(l.line)
     if i == e.line - 1
       sp := ''
       j := 0
       for ; j < e.offset; j++
         sp += ' '
-      e.context_lines.push(sp + '^')
+      e.contextLines.push(sp + '^')
   => e

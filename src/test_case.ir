@@ -1,42 +1,42 @@
 ::TestCase
   @name\s\$
-  @package_name\s\$
+  @packageName\s\$
   @input\A.<s>\$
   @output\A.<s>\$
-  @is_global\b\$
+  @isGlobal\b\$
   @failed+\b\ false
 
 :run
-  c := @is_global ? (#) : (#)
-    new FileScope(@name, @package_name)
+  c := @isGlobal ? (#) : (#)
+    new FileScope(@name, @packageName)
     --
     new CodeScope(new context.Context(@name, new context.Package('')))
 
   actual_output := ''
   try
-    c.process_lines(@input)
+    c.processLines(@input)
     actual_output = c.output()
-    if @is_global
-      type_str := obj_stringify(c.types.extract(), true)
+    if @isGlobal
+      type_str := objStringify(c.types.extract(), true)
       if type_str
         actual_output = actual_output.concat(type_str.split('\n'))
   catch e
     console.log('EXCEPTION: ' + @name)
-    @warn_with_indent('input', @input)
-    @warn_with_indent('expected', @output)
+    @warnWithIndent('input', @input)
+    @warnWithIndent('expected', @output)
     throw e
 
   if actual_output.join('\n') == @output.join('\n')
     console.log('PASS: ' + @name)
   else
     console.log('FAIL: ' + @name)
-    @warn_with_indent('input', @input)
-    @warn_with_indent('expected', @output)
-    @warn_with_indent('actual', actual_output)
-    @warn_with_indent('diff', @make_diff(@output, actual_output))
+    @warnWithIndent('input', @input)
+    @warnWithIndent('expected', @output)
+    @warnWithIndent('actual', actual_output)
+    @warnWithIndent('diff', @makeDiff(@output, actual_output))
     @failed = true
 
-:@warn_with_indent
+:@warnWithIndent
   title\s\$
   content\A.<s>\$
   console.log('  ' + title + ':')
@@ -53,7 +53,7 @@
         warn_rec(line, level + 1)
   warn_rec(content, 0)
 
-:@make_diff
+:@makeDiff
   lines0\A.<s>\$
   lines1\A.<s>\$
   result := []

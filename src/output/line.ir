@@ -3,33 +3,33 @@ Output lines corresponds to one input line.
 ::Line
   @input\input.Line\$
   @indent&\n\ input.indent
-  @prefix_lines&\A.<s>\ []
+  @prefixLines&\A.<s>\ []
   @lines+\!%.Multiline\ new %.Multiline()
-  @line_prefix&\s\ ''
-  @line_suffix&\s\ ''
-  @tail_comment&\A.<s>\ []
+  @linePrefix&\s\ ''
+  @lineSuffix&\s\ ''
+  @tailComment&\A.<s>\ []
 
 :+empty\b\
-  => @lines.empty && !@line_prefix && !@line_suffix
+  => @lines.empty && !@linePrefix && !@lineSuffix
 
-:append_line
+:appendLine
   line\s\$
-  @lines.append_str(line)
-  @lines.terminate_line()
+  @lines.appendStr(line)
+  @lines.terminateLine()
 
 :+output\A.<s>\
   out := new %.IndentedMultiline(@indent)
-  out.append_all(@prefix_lines)
-  out.append_line(@line_prefix, false)
+  out.appendAll(@prefixLines)
+  out.appendLine(@linePrefix, false)
   @lines.lines.forEach(##)
     line\s|%.Block\$
     i\n\$
     if line instanceof %.Block
-      out.append_block(line.output)
+      out.appendBlock(line.output)
     else
       // line is a string.
-      out.append_line(line, i < @lines.lines.length - 1, true)
-  // This closes the last line even when @line_suffix is ''.
-  out.append_line(@line_suffix)
-  out.append_all(@tail_comment)
+      out.appendLine(line, i < @lines.lines.length - 1, true)
+  // This closes the last line even when @lineSuffix is ''.
+  out.appendLine(@lineSuffix)
+  out.appendAll(@tailComment)
   => out.output

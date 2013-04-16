@@ -25,7 +25,7 @@ package name.
     connector\s\$
     => pkg ? pkg + connector : ''
 
-:replace_str\s\
+:replaceStr\s\
   str\s\$
   => str.replace(/\%+(\:\:|\.)/g, ##)
     ref\s\$

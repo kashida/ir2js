@@ -9,16 +9,16 @@
   name\s\$
   => @members[name]
 
-:set_member
+:setMember
   name\s\$
   member\Member\$
   @members[name] = member
 
-:method_name\!%.Name\
+:methodName\!%.Name\
   method_name\s\$
   => @.name().property(method_name)
 
-:add_member\Member\
+:addMember\Member\
   name\s\$
   type\TypeDecoder\$
   access_type\s\$
@@ -27,8 +27,8 @@
   @members[name] = m
   => m
 
-:output_accessors\A\
+:outputAccessors\A\
   class_name := @.name()
   => Object.keys(@members).map(##)
     name\s\$
-    => @members[name].output_accessors(class_name)
+    => @members[name].outputAccessors(class_name)

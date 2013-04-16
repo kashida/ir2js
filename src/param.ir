@@ -9,7 +9,7 @@ Function parameter and / or member declarion.
   @line\parser.ParamLine\
   @success+\b\ false
   @type+\TypeDecoder\
-  @value_line+\A.<parser.BlockMarker|s>\
+  @valueLine+\A.<parser.BlockMarker|s>\
 
   if !(parsed.tokens instanceof parser.ParamLine)
     =>
@@ -18,73 +18,73 @@ Function parameter and / or member declarion.
   @success = true
   @type = new TypeDecoder(@context.pkg, @line.type)
 
-  @value_line = @line.init && !@line.init.is_empty ? @line.init.list : null
-  if @.is_member && @.init_type != '$' && !@value_line
+  @valueLine = @line.init && !@line.init.isEmpty ? @line.init.list : null
+  if @.isMember && @.initType != '$' && !@valueLine
     // member with no initializer or optional param init.
-    @value_line = ['null']
+    @valueLine = ['null']
 
   // sanity check the param consistency.
-  if !is_ctor && @.is_member
+  if !is_ctor && @.isMember
     error(inputs, 'member param for non-constructor method')
-  if !@.is_member && @.init_type != '?' && @value_line
+  if !@.isMember && @.initType != '?' && @valueLine
     error(inputs, 'initial value for non-member non-optional')
 
-:+is_member\b\
-  => @line.is_member
+:+isMember\b\
+  => @line.isMember
 
 :+name\s\
   => @line.name
 
-:+access_type\s\
+:+accessType\s\
   => @line.access
 
-:+init_type\s\
+:+initType\s\
   => @line.marker
 
-:+has_init\b\
-  => !!@value_line
+:+hasInit\b\
+  => !!@valueLine
 
-:@param_name\s\
-  => (@.has_init ? 'opt_' : '') + @.name
+:@paramName\s\
+  => (@.hasInit ? 'opt_' : '') + @.name
 
-:output_decl\s\
-  => @type && @.init_type != '' ? ([#].join('')) : ''
+:outputDecl\s\
+  => @type && @.initType != '' ? ([#].join('')) : ''
     '@param {'
     @type.output()
-    @.init_type == '?' ? '=' : ''
+    @.initType == '?' ? '=' : ''
     '} '
-    @param_name()
+    @paramName()
 
-:output_param\s\
-  => @.init_type == '' ? '' : @param_name()
+:outputParam\s\
+  => @.initType == '' ? '' : @paramName()
 
 Variable initialization output as first statements of function body.
-:output_init
+:outputInit
   out\output.Line\$
-  pname := @param_name()
+  pname := @paramName()
 
-  if !@.is_member && !@.has_init
+  if !@.isMember && !@.hasInit
     =>
 
-  if @.is_member
-    out.prefix_lines = out.prefix_lines.concat(doc_lines([#]))
+  if @.isMember
+    out.prefixLines = out.prefixLines.concat(docLines([#]))
       '@type {' + @type.output() + '}'
       '@private'
 
-  out.line_prefix = #+
-    @.is_member ? 'this._' : 'var '
+  out.linePrefix = #+
+    @.isMember ? 'this._' : 'var '
     @.name
     ' = '
-  if @.init_type
-    out.line_prefix += pname
-    if @.has_init
-      out.line_prefix += ' === undefined ? ('
-      out.line_suffix = ') : ' + pname
+  if @.initType
+    out.linePrefix += pname
+    if @.hasInit
+      out.linePrefix += ' === undefined ? ('
+      out.lineSuffix = ') : ' + pname
   else
-    out.line_prefix += '('
-    out.line_suffix = ')'
+    out.linePrefix += '('
+    out.lineSuffix = ')'
 
-:output_argtype\s\
+:outputArgType\s\
   type := @type.output()
   re := /^\!?([a-zA-Z][\w\.]*)$/.exec(type)
   if !re

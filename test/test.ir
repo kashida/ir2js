@@ -30,10 +30,11 @@ or
   @filename\s\$
   @state\s\ ''
   @name\s\ ''
+  @packageName\s\ ''
   @input\A.<s>\ []
   @output\A.<s>\ []
   @tests\A.<ir2js.TestCase>\ []
-  @is_global\b\ false
+  @isGlobal\b\ false
   @failed+\b\ false
 
 :parse
@@ -41,20 +42,20 @@ or
   inputs.split('\n').forEach(##)
     line\s\$
     index\n\$
-    @check_line(line, index)
+    @checkLine(line, index)
 
   if @state != ''
     console.warn(@filename + ': last test did not terminate?')
 
-:@check_line
+:@checkLine
   line\s\$
   index\n\$
   input_re := /^#\{((:)|\[(.*)\])?\s*(.*\S)\s*$/.exec(line)
   if input_re
     @state = 'i'
     @name = input_re[4]
-    @package_name = input_re[3] || ''
-    @is_global = !input_re[2]
+    @packageName = input_re[3] || ''
+    @isGlobal = !input_re[2]
     =>
     
   if /^#\=\s*$/.test(line)
@@ -65,14 +66,14 @@ or
     @state = ''
     @tests.push(new ir2js.TestCase(#))
       @name
-      @package_name
+      @packageName
       @input
       @output
-      @is_global
+      @isGlobal
     @name = ''
     @input = []
     @output = []
-    @is_global = true
+    @isGlobal = true
     =>
 
   switch @state

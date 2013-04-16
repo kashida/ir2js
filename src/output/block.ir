@@ -3,15 +3,15 @@
   // the suffix, if assigned a value, will be inserted after the last nonblank line.
   @suffix&\s?\
 
-:append_line
+:appendLine
   line\%.Line\$
   @lines.push(line)
 
-:+is_empty\b\
+:+isEmpty\b\
   => !@lines.length && !@suffix
 
 inserts the suffix line to the array passed as a parameter.
-:@add_suffix
+:@addSuffix
   lines\A.<s>\$
   // find the last non-blank line.
   last_nonblank := -1
@@ -32,5 +32,5 @@ inserts the suffix line to the array passed as a parameter.
     i\n\$
     => prev.concat(line.output)
   if @suffix
-    @add_suffix(lines)
+    @addSuffix(lines)
   => lines

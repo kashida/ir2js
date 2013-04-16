@@ -8,7 +8,7 @@ same number of strings as @.lines.
   result := []
   @.lines.forEach(##)
     line\input.Line\$
-    if line.is_blank
+    if line.isBlank
       // empty line is fine.
       result.push('')
       =>
@@ -29,5 +29,5 @@ same number of strings as @.lines.
       i\n\$
       out := new output.Line(@.lines[i])
       out.indent = @indent
-      out.append_line("'" + line + "\\n'" + (i == lines.length - 1 ? ';' : ' +'))
+      out.appendLine("'" + line + "\\n'" + (i == lines.length - 1 ? ';' : ' +'))
       => out

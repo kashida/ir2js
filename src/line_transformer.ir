@@ -2,7 +2,7 @@
   @context\!context.Context\$
   @input\input.Line\$
 
-:pkg_ref\s\
+:pkgRef\s\
   name\s\$
   // relative package reference.
   => @context.pkg.replace(name)
@@ -15,14 +15,14 @@
   type\s\$
   => new TypeDecoder(@context.pkg, type).output()
 
-:parent_call\s\
+:parentCall\s\
   args\s\$
   end_str := args ? ', ' + args + ')' : ')'
-  if @context.is_ctor
-    => @context.cls.ctor.parent_name() + '.call(this' + end_str
-  else if @context.is_method
+  if @context.isCtor
+    => @context.cls.ctor.parentName() + '.call(this' + end_str
+  else if @context.isMethod
     => [#].join('')
-      @context.cls.ctor.parent_name()
+      @context.cls.ctor.parentName()
       '.prototype.'
       @context.name.id
       '.call(this'

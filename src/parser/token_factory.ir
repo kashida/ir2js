@@ -13,8 +13,8 @@
 ::TokenList
   orig\%.TokenList\?
   @list+\A.<%.BlockMarker|s>\ orig ? orig.list : []
-  @prev_lines+\A.<s>\ []
-  @next_lines+\A.<s>\ []
+  @prevLines+\A.<s>\ []
+  @nextLines+\A.<s>\ []
   // '' for unknown (or statement).
   // 'c' for current package ref.
   // 'e' for parent call.
@@ -25,8 +25,8 @@
   @grammar&\s\ ''
   @params&\A\
 
-:+is_empty\b\
-  if @prev_lines.length || @next_lines.length
+:+isEmpty\b\
+  if @prevLines.length || @nextLines.length
     => false
   if !@list.length
     => true
@@ -45,12 +45,12 @@
       arg.list.forEach(##)
         token\%.BlockMarker|s\$
         @.add(token)
-      arg.prev_lines.forEach(##)
+      arg.prevLines.forEach(##)
         l\s\$
-        @prev_lines.push(l)
-      arg.next_lines.forEach(##)
+        @prevLines.push(l)
+      arg.nextLines.forEach(##)
         l\s\$
-        @next_lines.push(l)
+        @nextLines.push(l)
       continue
     if arg instanceof Array
       arg.forEach(##)
@@ -74,17 +74,17 @@
 :prepend\%.TokenList\
   line\%.TokenList|s\$
   if line instanceof %.TokenList
-    @prev_lines = @prev_lines.concat(line.prev_lines)
-    @next_lines = @next_lines.concat(line.next_lines)
-  @prev_lines.push(line.toString())
+    @prevLines = @prevLines.concat(line.prevLines)
+    @nextLines = @nextLines.concat(line.nextLines)
+  @prevLines.push(line.toString())
   => @
 
 :append
   line\%.TokenList|s\$
   if line instanceof %.TokenList
-    @prev_lines = @prev_lines.concat(line.prev_lines)
-    @next_lines = @next_lines.concat(line.next_lines)
-  @next_lines.push(line.toString())
+    @prevLines = @prevLines.concat(line.prevLines)
+    @nextLines = @nextLines.concat(line.nextLines)
+  @nextLines.push(line.toString())
   => @
 
 :toString\s\
@@ -93,7 +93,7 @@
 
 ::ParamLine <%.TokenList
   @name+\s\$
-  @is_member+\b\$
+  @isMember+\b\$
   @access+\s\$
   @type+\s\$
   @marker+\s\$
@@ -102,7 +102,7 @@
 
 :toString\s\
   list := [#]
-    @is_member ? '@' : ''
+    @isMember ? '@' : ''
     @name
     @access
     @type

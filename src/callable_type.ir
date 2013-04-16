@@ -5,17 +5,17 @@
   @args\A.<s|null>\ []
 
 TODO: use setter.
-:set_parent
+:setParent
   parent_name\s\$
   @parent = parent_name
 
-:add_method
+:addMethod
   name\s\$
   m := new CallableType(name)
   @methods.push(m)
   => m
 
-:add_arg
+:addArg
   arg\s|null\$
   @args.push(arg)
 

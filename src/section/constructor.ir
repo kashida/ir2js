@@ -1,21 +1,21 @@
 ::Constructor <%.Callable
   context\!context.Context\$
   @parent\s?\?
-  context.is_ctor = true
+  context.isCtor = true
   %(context, '')
   @parent = @parent ? @.context.pkg.replace(@parent) : ''
 
-:parent_name\s\
+:parentName\s\
   => \s\(@parent)
 
 :<transform
-  assert(@.num_blocks() == 1, @.lines[0])
+  assert(@.numBlocks() == 1, @.lines[0])
   @.params = new ParamSet(@.context, @.block(0), true)
   @.params.transform()
   @.block(0).transform()
 
 :output\A\
-  decl := @.params.output_decls()
+  decl := @.params.outputDecls()
   decl.push('@constructor')
   inherit := []
   if @parent
@@ -26,18 +26,18 @@
       @parent
       '.prototype);'
   => [#]
-    doc_lines(decl)
-    @.output_func()
+    docLines(decl)
+    @.outputFunc()
     whitespaces(@.block(0).indent) + 'var self = this;'
-    @.output_body('};')
+    @.outputBody('};')
     inherit
     [#].join('')
       @.context.name.property('_classname').decl()
       " = '"
       @.context.name.ref()
       "';"
-    @.context.cls.output_accessors()
+    @.context.cls.outputAccessors()
 
-:<set_type
+:<setType
   types\s\$
-  @.params.set_argtypes(types.get_current_ctor())
+  @.params.setArgTypes(types.getCurrentCtor())

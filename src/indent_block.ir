@@ -1,5 +1,5 @@
 ::IndentBlock
-  @line_no+\n\$
+  @lineNo+\n\$
   @indent+\n\$
   @head\section.Head\$
   @lines\A.<SectionLine>\ []
@@ -38,10 +38,10 @@
   line\SectionLine\$
   @lines.push(line)
 
-:last_line
+:lastLine
   => @lines[@lines.length - 1]
 
-:each_line
+:eachLine
   cb\function(SectionLine, n)\$
   ctxt\O\$
   @lines.forEach(cb, ctxt)
@@ -59,11 +59,11 @@ TODO: change marker's type to BlockType when it's enum.
     if !(line instanceof InvalidLine)
       line.transform()
 
-:+start_str\s\
+:+startStr\s\
   // string to open the block.
   => _BLOCK_OPEN[@marker]
 
-:+end_str\s\
+:+endStr\s\
   => _BLOCK_CLOSE[@marker]
 
 :output\!output.Block\
@@ -92,15 +92,15 @@ TODO: change marker's type to BlockType when it's enum.
       =>
     out_line := line.output()
     if line instanceof InvalidLine || out_line.empty
-      accum_suffix += out_line.line_suffix
-      out_line.line_suffix = ''
+      accum_suffix += out_line.lineSuffix
+      out_line.lineSuffix = ''
     else
-      out_line.line_suffix = accum_suffix + out_line.line_suffix
-      if !line.is_block_statement
-        out_line.line_prefix += _LINE_PREFIX[@marker]
-        out_line.line_suffix += (#)
+      out_line.lineSuffix = accum_suffix + out_line.lineSuffix
+      if !line.isBlockStatement
+        out_line.linePrefix += _LINE_PREFIX[@marker]
+        out_line.lineSuffix += (#)
           i == last_index ? _END_SUFFIX[@marker] : (#)
             i == 0 ? _FIRST_SUFFIX[@marker] : _LINE_SUFFIX[@marker]
       accum_suffix = ''
-    out.append_line(out_line)
+    out.appendLine(out_line)
   => out

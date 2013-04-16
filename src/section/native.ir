@@ -5,5 +5,5 @@
   => @.lines.map(##)
     line\input.Line\$
     out := new output.Line(line)
-    out.append_line(line.trim)
+    out.appendLine(line.trim)
     => out

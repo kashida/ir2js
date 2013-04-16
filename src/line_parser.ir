@@ -3,10 +3,10 @@ First pass line parsing for constructing the block structure.
 ::LineParser
   @input\input.Line\$
 
-  @is_valid+\b\ false
+  @isValid+\b\ false
   @indent+\n\ 0
-  @is_continuation+\b\ false
-  @is_separator+\b\ false
+  @isContinuation+\b\ false
+  @isSeparator+\b\ false
 
   @process()
 
@@ -14,13 +14,13 @@ First pass line parsing for constructing the block structure.
   if /^\s*$/.test(@input.line) || /^\s*\/\//.test(@input.line)
     // blank or comment line. Nothing to be done.
     =>
-  @is_valid = true
+  @isValid = true
 
-  @check_spaces()
-  @check_continuation()
-  @check_separator()
+  @checkSpaces()
+  @checkContinuation()
+  @checkSeparator()
 
-:@check_spaces
+:@checkSpaces
   spaces_re := /^(\s*)(.*[\S])(\s*)$/.exec(@input.line)
 
   @indent = spaces_re[1].length
@@ -30,9 +30,9 @@ First pass line parsing for constructing the block structure.
   if spaces_re[3] != ''
     error(@input, 'trailing space')
 
-:@check_continuation
+:@checkContinuation
   cont_re := /^\s*\|/.exec(@input.line)
-  @is_continuation = !!cont_re
+  @isContinuation = !!cont_re
 
-:@check_separator
-  @is_separator = /^\s*--\s*$/.test(@input.line)
+:@checkSeparator
+  @isSeparator = /^\s*--\s*$/.test(@input.line)

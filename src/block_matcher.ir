@@ -6,30 +6,30 @@ Match markers and blocks.
   @code\A.<!parser.BlockMarker|s>\$
   @blocks\A.<!IndentBlock>\$
   @params\A.<!ParamSet>\ []
-  @is_block_statement+\b\ false
+  @isBlockStatement+\b\ false
 
 :transform
-  if @match_blocks()
-    @transform_blocks()
+  if @matchBlocks()
+    @transformBlocks()
 
 Returns true only if matching succeeds.
-:@match_blocks\b\
+:@matchBlocks\b\
   itr := new CodeBlockItr(@input, @code, @blocks)
-  itr.block_cb = ##
+  itr.blockCb = ##
     type\s\$
     with_param\b\$
     if with_param
       sub_context := @context.clone()
-      sub_context.is_file_scope = false
+      sub_context.isFileScope = false
       param := new ParamSet(sub_context, @blocks[itr.bidx])
       @params.push(param)
   success := itr.run()
-  @is_block_statement = itr.extra_block
+  @isBlockStatement = itr.extraBlock
   => success
 
-:@transform_blocks
+:@transformBlocks
   itr := new CodeBlockItr(@input, @code, @blocks)
-  itr.block_cb = ##
+  itr.blockCb = ##
     type\s\$
     with_param\b\$
     // transform the blocks.
@@ -61,26 +61,26 @@ Returns true only if matching succeeds.
 :output
   out\output.Line\$
   itr := new CodeBlockItr(@input, @code, @blocks)
-  itr.block_cb = ##
+  itr.blockCb = ##
     type\s\$
     with_param\b\$
     block := @blocks[itr.bidx]
     if with_param
-      @output_params(out, @params[itr.pidx])
-    out.lines.append_str(block.start_str)
-    out.lines.append_block(block.output(type == 'l' ? itr.lidx : undefined))
-    out.lines.append_str(block.end_str)
-  itr.code_cb = ##
-    out.lines.append_str(\s\ (@code[itr.cidx]))
+      @outputParams(out, @params[itr.pidx])
+    out.lines.appendStr(block.startStr)
+    out.lines.appendBlock(block.output(type == 'l' ? itr.lidx : undefined))
+    out.lines.appendStr(block.endStr)
+  itr.codeCb = ##
+    out.lines.appendStr(\s\ (@code[itr.cidx]))
   itr.run()
 
-:@output_params
+:@outputParams
   out\output.Line\$
   param\ParamSet\$
-  if param.is_decl_empty()
-    out.lines.append_str('function(' + param.output_params() + ')')
+  if param.isDeclEmpty()
+    out.lines.appendStr('function(' + param.outputParams() + ')')
   else
     // we don't try to merge the frg into first line.
-    out.lines.terminate_line()
-    out.lines.append_lines(doc_lines(param.output_decls()))
-    out.lines.append_str('function(' + param.output_params() + ')')
+    out.lines.terminateLine()
+    out.lines.appendLines(docLines(param.outputDecls()))
+    out.lines.appendStr('function(' + param.outputParams() + ')')

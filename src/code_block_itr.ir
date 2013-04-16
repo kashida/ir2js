@@ -2,20 +2,20 @@
   @input\input.Line\$
   @code\A.<parser.BlockMarker|s>\$
   @blocks\A.<IndentBlock>\$
-  @block_cb&\?f(s, b)\
-  @code_cb&\?f()\
+  @blockCb&\?f(s, b)\
+  @codeCb&\?f()\
   @cidx+\n\ 0
   @bidx+\n\ 0
   @lidx+\n\ 0
   @pidx+\n\ 0
-  @extra_block+\b\ false
+  @extraBlock+\b\ false
 
 Valid only after run call.
-:+ends_with_code\b\
+:+endsWithCode\b\
   => #&&
     @code.length
     !(@code[@code.length - 1] instanceof parser.BlockMarker)
-    !@extra_block
+    !@extraBlock
 
 :run
   @code.forEach(##)
@@ -23,10 +23,10 @@ Valid only after run call.
     i\n\$
     @cidx = i
     if frg instanceof parser.BlockMarker
-      @handle_marker(frg)
+      @handleMarker(frg)
     else
-      if @code_cb
-        @code_cb()
+      if @codeCb
+        @codeCb()
 
   if @lidx > 0
     @lidx = 0
@@ -38,22 +38,22 @@ Valid only after run call.
     => false
 
   if @bidx < @blocks.length
-    @extra_block = true
+    @extraBlock = true
     @cidx++
-    if @block_cb
-      @block_cb('f', false)
+    if @blockCb
+      @blockCb('f', false)
     @bidx++
   => true
 
-:@handle_marker
+:@handleMarker
   marker\parser.BlockMarker\$
   if marker.type != 'l'
     if @lidx > 0
       @lidx = 0
       @bidx++
 
-  if @block_cb
-    @block_cb(marker.type, marker.type == 'f')
+  if @blockCb
+    @blockCb(marker.type, marker.type == 'f')
 
   if marker.type != 'l'
     @bidx++

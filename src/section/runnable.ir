@@ -11,17 +11,17 @@
 
 :<transform
   assert(#)
-    @.num_blocks() == 1
+    @.numBlocks() == 1
     @.lines[0]
-    'Runnable has ' + @.num_blocks() + ' blocks'
+    'Runnable has ' + @.numBlocks() + ' blocks'
   @.block(0).transform()
 
-:output_body\A.<output.Line>\
+:outputBody\A.<output.Line>\
   block_suffix\s\$
   lines := []
-  body_lines := @.last_block().output()
+  body_lines := @.lastBlock().output()
   if block_suffix
     body_lines.suffix = block_suffix
-  if !body_lines.is_empty
+  if !body_lines.isEmpty
     lines.push(body_lines)
   => lines

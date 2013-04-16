@@ -3,26 +3,26 @@
   @classes\A\ []
   @functs\A\ []
 
-:add_ctor\CallableType\
+:addCtor\CallableType\
   name\s\$
   @ctor = new CallableType(name)
   @classes.push(@ctor)
   => @ctor
 
-:add_funct\CallableType\
+:addFunct\CallableType\
   name\s\$
   fn := new CallableType(name)
   @functs.push(fn)
   => fn
 
-:get_current_ctor\CallableType\
+:getCurrentCtor\CallableType\
   => @ctor
 
-:set_parent
+:setParent
   parent_name\s\$
   if !@ctor
     throw 'set parent called w/o ctor.'
-  @ctor.set_parent(parent_name)
+  @ctor.setParent(parent_name)
 
 :extract\O\
   obj := {}

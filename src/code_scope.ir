@@ -2,12 +2,12 @@
   @context\!context.Context\$
   @head\section.Head\? new section.Global()
 
-:process_lines
+:processLines
   lines\A.<s>\$
   i := 0
   @.process(lines.map(##))
     line\s\$
-    => new input.Line(@context.file_name, line, i++)
+    => new input.Line(@context.fileName, line, i++)
 
 :process
   input_lines\A.<input.Line>\$
@@ -15,6 +15,6 @@
   @head.transform()
 
 :output
-  => arr_flatten(@head.output()).map(##)
+  => arrFlatten(@head.output()).map(##)
     line\s\$
     => line.replace(/\s*$/, '')

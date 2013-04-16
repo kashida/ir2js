@@ -1,18 +1,18 @@
 ::Head
   @blocks+\A.<IndentBlock>}\ []
 
-:add_block
+:addBlock
   block\IndentBlock\$
   @blocks.push(block)
 
-:num_blocks\number\
+:numBlocks\number\
   => @blocks.length
 
 :block\IndentBlock\
   index\number\$
   => @blocks[index]
 
-:last_block\IndentBlock\
+:lastBlock\IndentBlock\
   => @blocks[@blocks.length - 1]
 
 do all the work necessary to produce code output.

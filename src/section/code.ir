@@ -7,5 +7,5 @@ abstract method.
   file_name\s\$
   pkg\!context.Package\?
 
-:set_type
+:setType
   types\TypeSet\$

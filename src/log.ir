@@ -2,7 +2,7 @@
   line\input.Line\$
   msg\s\? '*warning*'
   additional_lines\A.<s>\?
-  console.error(line.file + ':' + line.line_no + ': ERROR - ' + msg)
+  console.error(line.file + ':' + line.lineNo + ': ERROR - ' + msg)
   if additional_lines
     additional_lines.forEach(##)
       additional_line\s\$
@@ -17,4 +17,4 @@
   msg\s\? '*assertion*'
   console.assert(#)
     check
-    msg + (line ? ' (line ' + line.line_no + '): ' + line.line : '')
+    msg + (line ? ' (line ' + line.lineNo + '): ' + line.line : '')

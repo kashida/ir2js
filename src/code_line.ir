@@ -4,9 +4,9 @@
 ::CodeLine <section.Head
   @context\!context.Context\$
   @input+\input.Line\$
-  @line_parsed\LineParser\$
+  @lineParsed\LineParser\$
   @parsed\parser.Result\
-  @continue_lines&\!A.<!CodeLine>\ []
+  @continueLines&\!A.<!CodeLine>\ []
   @param&\Param|b\
   @matcher\BlockMatcher\
   %()
@@ -15,30 +15,30 @@
   => @input.line
 
 :+indent\n\
-  => @line_parsed.indent
+  => @lineParsed.indent
 
-:+is_continuation\b\
-  => @line_parsed.is_continuation
+:+isContinuation\b\
+  => @lineParsed.isContinuation
 
-:+is_block_statement\b\
-  => @matcher.is_block_statement
+:+isBlockStatement\b\
+  => @matcher.isBlockStatement
 
 :+parsed\parser.Result\
-  if @.is_continuation
+  if @.isContinuation
     error(@input, 'parse requested for cont. line')
   if !@parsed
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine')
-    lines := [@input].concat(@continue_lines)
+    lines := [@input].concat(@continueLines)
     try
       @parsed = CODE_PARSER.run(#)
         lines
         new LineTransformer(@context, @input)
     catch e
-      error(@input, '(syntax error) ' + e.message, e.context_lines)
+      error(@input, '(syntax error) ' + e.message, e.contextLines)
   => @parsed
 
 :transform
-  code := (@param && @param !== true && @param.value_line) || @.parsed.code
+  code := (@param && @param !== true && @param.valueLine) || @.parsed.code
 
   @matcher = new BlockMatcher(@context, @input, code, @.blocks)
   @matcher.transform()
@@ -48,13 +48,13 @@
   if @param === true
     => out
 
-  out.lines.append_lines(@.parsed.prev_lines.map(##))
+  out.lines.appendLines(@.parsed.prevLines.map(##))
     line\s\$
     => line + ';'
   @matcher.output(out)
   if @param
-    @param.output_init(out)
-  @.parsed.tail_comment.forEach(##)
+    @param.outputInit(out)
+  @.parsed.tailComment.forEach(##)
     comment\s\$
-    out.tail_comment.push(comment)
+    out.tailComment.push(comment)
   => out

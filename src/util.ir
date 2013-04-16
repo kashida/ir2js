@@ -1,4 +1,4 @@
-:=arr_flatten ##
+:=arrFlatten ##
   lines\s|A\$
   if typeof(lines) == 'string'
     => [lines]
@@ -6,11 +6,11 @@
     lines = lines.output
   console.assert(#)
     lines instanceof Array
-    'input to arr_flatten should be a string or an array'
+    'input to arrFlatten should be a string or an array'
   => lines.reduce(##, [])
     arr\A\$
     line\s|A\$
-    => arr.concat(arr_flatten(line))
+    => arr.concat(arrFlatten(line))
 
 :=check ##
   obj\O\$
@@ -24,7 +24,7 @@
     s += ' '
   => s
 
-:=obj_stringify ##\s\
+:=objStringify ##\s\
   obj\O\$
   compact\b\?
   name\s\?
@@ -36,7 +36,7 @@
   if obj instanceof Array
     children := obj.map(##).filter(##)
       c\O\$
-      => obj_stringify(c, compact, undefined, level + 1)
+      => objStringify(c, compact, undefined, level + 1)
       --
       c\s\$
       => !!c
@@ -50,7 +50,7 @@
       keys.push(key)
     children := keys.map(##).filter(##)
       k\s\$
-      => obj_stringify(obj[k], compact, k, level + 1)
+      => objStringify(obj[k], compact, k, level + 1)
       --
       c\s\$
       => !!c
@@ -61,14 +61,14 @@
   else
     => start_str + obj + '\n'
 
-:=doc_lines ##\!A.<s>\
+:=docLines ##\!A.<s>\
   annotations\!A.<s>\$
-  alist := arr_flatten(annotations)
+  alist := arrFlatten(annotations)
   if alist.length == 0
     => []
   if alist.length == 1
     => ['/** ' + alist[0] + ' */']
-  => arr_flatten([#])
+  => arrFlatten([#])
     '/**'
     alist.map(##)
       annotation\s\$

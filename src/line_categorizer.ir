@@ -4,11 +4,11 @@
 ::LineCategorizer
   @context\!context.Context\$
 
-:create_line\SectionLine\
+:createLine\SectionLine\
   line\input.Line\$
   parsed := new LineParser(line)
-  if !parsed.is_valid
+  if !parsed.isValid
     => new InvalidLine(line)
-  if parsed.is_separator
+  if parsed.isSeparator
     => new SeparatorLine(line, parsed)
   => new CodeLine(@context, line, parsed)

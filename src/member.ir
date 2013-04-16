@@ -4,13 +4,13 @@ are accessors for.
 ::Member
   @name\s\$
   @type\TypeDecoder\$
-  @access_type\s\$
-  @is_pseudo\b\$
+  @accessType\s\$
+  @isPseudo\b\$
   @declared\b\ false
 
 returns an array with member declaration if it hasn't been output already.
 returns an empty array otherwise.
-:output_decl\A.<s>\
+:outputDecl\A.<s>\
   class_name\!context.Name\$
   if @declared
     => []
@@ -22,12 +22,12 @@ returns an empty array otherwise.
     class_name.property(@name).decl() + ';'
 
 output a getter or a setter.
-:output_accessor\A\
+:outputAccessor\A\
   class_name\!context.Name\$
   is_getter\b\$
   body\A\$
   params\ParamSet\?
-  p := @is_pseudo && params ? params.output_params() : 'value'
+  p := @isPseudo && params ? params.outputParams() : 'value'
   => [#]
     is_getter ? (#) : (#)
       class_name.property('__defineGetter__').decl() + "('" + @name + "', function() {"
@@ -37,13 +37,13 @@ output a getter or a setter.
     '});'
 
 produce necessary accessor methods based on the access type specification.
-:output_accessors\A\
+:outputAccessors\A\
   class_name\!context.Name\$
-  if !@access_type || @is_pseudo
+  if !@accessType || @isPseudo
     => []
-  result := [@.output_decl(class_name)]
-  if '+&'.indexOf(@access_type) >= 0
-    result.push(@.output_accessor(class_name, true, ['return this._' + @name + ';']))
-  if '*&'.indexOf(@access_type) >= 0
-    result.push(@.output_accessor(class_name, false, ['this._' + @name + ' = value;']))
+  result := [@.outputDecl(class_name)]
+  if '+&'.indexOf(@accessType) >= 0
+    result.push(@.outputAccessor(class_name, true, ['return this._' + @name + ';']))
+  if '*&'.indexOf(@accessType) >= 0
+    result.push(@.outputAccessor(class_name, false, ['this._' + @name + ' = value;']))
   => result

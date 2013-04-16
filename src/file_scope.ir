@@ -11,12 +11,12 @@ parse file scope and separate code sections from comments.
   @types+\TypeSet\ new TypeSet()
   @list\A.<OutputSection>\
 
-  @context.is_file_scope = true
+  @context.isFileScope = true
 
-:process_lines
+:processLines
   line\A.<s>\$
   gen := new section.Generator(@)
-  input_list := new input.File(@context.file_name, line).parse()
+  input_list := new input.File(@context.fileName, line).parse()
   @list = input_list.map(##)
     section\input.Comment|input.Section\$
     index\n\$
@@ -25,20 +25,20 @@ parse file scope and separate code sections from comments.
       section.header
       section.lines
 
-:copy_context\!context.Context\
+:copyContext\!context.Context\
   name\!context.Name\$
   ctxt := @context.clone()
   ctxt.name = name
   ctxt.cls = @context.cls
-  ctxt.is_file_scope = @context.is_file_scope
+  ctxt.isFileScope = @context.isFileScope
   => ctxt
 
-:copy_context_with_name\!context.Context\
+:copyContextWithName\!context.Context\
   name\string\$
   fullname := new context.Name(@context.pkg, name)
-  => @.copy_context(fullname)
+  => @.copyContext(fullname)
 
 :output\A.<s>\
-  => arr_flatten(@list.map(##))
+  => arrFlatten(@list.map(##))
     elem\OutputSection\$
     => elem.output()

@@ -11,13 +11,13 @@
 ::ParamSet
   @context\!context.Context\$
   @block\IndentBlock\$
-  @is_ctor\b\? false
+  @isCtor\b\? false
   @params\A.<!Param>\ []
-  @return_type\TypeDecoder\
+  @returnType\TypeDecoder\
 
 :transform
   param_done := false
-  @block.each_line(##, @context)
+  @block.eachLine(##, @context)
     line\SectionLine\$
     i\n\$
     if param_done
@@ -25,82 +25,82 @@
     if line instanceof SeparatorLine
       param_done = true
       =>
-    if line instanceof CodeLine && !line.is_continuation
-      p := @add_line(\CodeLine\(line), i)
+    if line instanceof CodeLine && !line.isContinuation
+      p := @addLine(\CodeLine\(line), i)
       if p
         line.param = p
       else
         param_done = true
     // skip invalid lines and continuation lines.
 
-:@add_line\Param|b\
+:@addLine\Param|b\
   line\CodeLine\$
   index\n\$
-  p := new Param(@context, @is_ctor, line.input, line.parsed)
+  p := new Param(@context, @isCtor, line.input, line.parsed)
   if !p.success
-    if index != 0 || @context.is_file_scope
+    if index != 0 || @context.isFileScope
       => null
     // could be the return type.
-    => @try_return_type(line.str)
+    => @tryReturnType(line.str)
 
   @params.push(p)
-  if p.is_member
-    @context.cls.add_member(p.name, p.type, p.access_type)
+  if p.isMember
+    @context.cls.addMember(p.name, p.type, p.accessType)
   => p
 
-:@try_return_type\b\
+:@tryReturnType\b\
   line\s\$
   re := /^\s*\\(.*)\\\s*$/.exec(line)
   if !re
     => false
-  @return_type = new TypeDecoder(@context.pkg, re[1])
+  @returnType = new TypeDecoder(@context.pkg, re[1])
   => true
 
-:set_return_type
+:setReturnType
   return_type\s\$
   if return_type
-    @return_type = new TypeDecoder(@context.pkg, return_type)
+    @returnType = new TypeDecoder(@context.pkg, return_type)
 
-:is_empty\b\
+:isEmpty\b\
   => @params.length == 0
 
-:is_init_empty\b\
+:isInitEmpty\b\
   => !@params.some(##)
     p\Param\$
-    => p.is_member || p.init_type == '?'
+    => p.isMember || p.initType == '?'
 
-:is_decl_empty\b\
-  => !@return_type && !@params.some(##)
+:isDeclEmpty\b\
+  => !@returnType && !@params.some(##)
     p\Param\$
     => !!p.type
 
-:output_decls\!A.<s>\
+:outputDecls\!A.<s>\
   result := @params.map(##).filter(##)
     p\Param\$
-    => p.output_decl()
+    => p.outputDecl()
     --
     s\s\$
     => !!s
-  if @return_type
-    result.push('@return {' + @return_type.output() + '}')
+  if @returnType
+    result.push('@return {' + @returnType.output() + '}')
   => result
 
-:output_params\s\
+:outputParams\s\
   // function parameter output.
   => @params.map(##).filter(##).join(', ')
     p\Param\$
-    => p.output_param()
+    => p.outputParam()
     --
     s\s\$
     => !!s
 
-:output_argtypes\s\
+:outputArgTypes\s\
   => '[' + @params.map(##).join(', ') + ']'
     p\Param\$
-    => p.output_argtype()
+    => p.outputArgType()
 
-:set_argtypes
+:setArgTypes
   types\CallableType\$
   @params.forEach(##)
     p\!Param\$
-    types.add_arg(p.argtype())
+    types.addArg(p.argtype())

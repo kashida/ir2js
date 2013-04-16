@@ -5,10 +5,10 @@
 
 :output\A\
   => [#]
-    doc_lines(@.params.output_decls())
-    @.output_func()
-    @.output_body('};')
+    docLines(@.params.outputDecls())
+    @.outputFunc()
+    @.outputBody('};')
 
-:<set_type
+:<setType
   types\s\$
-  @.params.set_argtypes(types.add_funct(@.context.name.ref()))
+  @.params.setArgTypes(types.addFunct(@.context.name.ref()))

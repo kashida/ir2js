@@ -2,10 +2,10 @@ a line of input file. keeps track of the row index.
 ::Line
   @file+\s\$
   @line+\s\$
-  @row_index+\n\$
+  @rowIndex+\n\$
 
-:+line_no\n\
-  => @row_index + 1
+:+lineNo\n\
+  => @rowIndex + 1
 
 the line contents with indentation stripped off.
 trailing whitespace should have been stripped already.
@@ -13,13 +13,13 @@ trailing whitespace should have been stripped already.
   re := /\S.*/.exec(@line)
   => re ? re[0] : ''
 
-:+starts_with_colon\b\
+:+startsWithColon\b\
   => @line.substr(0, 1) == ':'
 
-:+is_blank\b\
+:+isBlank\b\
   => /^\s*$/.test(@line)
   
-:+is_indented\b\
+:+isIndented\b\
   => /^\s/.test(@line)
 
 :+indent\n\
