@@ -6,7 +6,7 @@ NODE_SAVED=NODE_PATH=saved $(NODE) saved/convert.js
 
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
 JS_SRCS_WITH_TEST=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))
-JS_SRCS=$(filter-out */test_case.ir,$(JS_SRCS_WITH_TEST))
+JS_SRCS=$(filter-out */TestCase.ir,$(JS_SRCS_WITH_TEST))
 
 TESTS=$(wildcard test/*.test)
 
@@ -98,7 +98,7 @@ $(PACKAGES_FILE):
 
 PARSER_TEST_SRCS=\
 $(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
-PARSER_TEST_SRCS+=compiled/input/line.js
+PARSER_TEST_SRCS+=compiled/input/Line.js
 
 test_parse: compiled/parser/syntax.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -p src/*.ir | grep '^X|'

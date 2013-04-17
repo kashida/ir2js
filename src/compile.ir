@@ -42,7 +42,7 @@
   => src_stat.mtime.getTime() > dst_stat.mtime.getTime()
 
 :
-  exports.CompileFiles = ##
+  exports.compileFiles = ##
     base_dir\s\$
     in_files\A.<s>\$
     out_dir\s\$

@@ -8,16 +8,16 @@
  * @param {Array.<string>} in_files
  * @param {string} out_file
  */
-var merge_to_file = function(base_dir, in_files, out_file) {
+var mergeToFile = function(base_dir, in_files, out_file) {
   var out;
   out = _fs.openSync(out_file, 'w');
 
   var pkgs;
-  pkgs = _ir2js.create_package_list(base_dir, in_files);
+  pkgs = _ir2js.createPackageList(base_dir, in_files);
   _fs.writeSync(out, pkgs.join('\n'), null);
   _fs.writeSync(out, '\n\n', null);
 
-  _ir2js.create_sorted_list(in_files).forEach(
+  _ir2js.createSortedList(in_files).forEach(
   /** @param {string} file */
   function(file) {
     _fs.writeSync(out, _fs.readFileSync(file, 'utf8'), null);
@@ -29,11 +29,11 @@ var merge_to_file = function(base_dir, in_files, out_file) {
   // TODO: @enum
   var ExecModes;
   ExecModes = {
-    COMPILE: 0,
-    SORT: 1,
-    ARGTYPE: 2,
-    PKGLIST: 3,
-    MERGE: 4
+    'COMPILE': 0,
+    'SORT': 1,
+    'ARGTYPE': 2,
+    'PKGLIST': 3,
+    'MERGE': 4
   };
 
   // TODO: @type {ExecModes}
@@ -42,8 +42,8 @@ var merge_to_file = function(base_dir, in_files, out_file) {
 
   var ReplyModes;
   ReplyModes = {
-    MSG: 0,
-    STDOUT: 1
+    'MSG': 0,
+    'STDOUT': 1
   };
 
   var reply;
@@ -109,12 +109,12 @@ var merge_to_file = function(base_dir, in_files, out_file) {
 
   switch (mode) {
     case ExecModes.COMPILE:;
-    _ir2js.compile_files(base_dir, input_files, out_dir);
+    _ir2js.compileFiles(base_dir, input_files, out_dir);
     break;
 
     case ExecModes.SORT:;
     var list;
-    list = _ir2js.create_sorted_list(input_files);
+    list = _ir2js.createSortedList(input_files);
     switch (reply) {
       case ReplyModes.MSG:;
       process.send(list);
@@ -127,17 +127,17 @@ var merge_to_file = function(base_dir, in_files, out_file) {
     break;
 
     case ExecModes.ARGTYPE:;
-    _ir2js.create_argtypes(base_dir, input_files);
+    _ir2js.createArgTypes(base_dir, input_files);
     break;
 
     case ExecModes.PKGLIST:;
     var pkgs;
-    pkgs = _ir2js.create_package_list(base_dir, input_files);
+    pkgs = _ir2js.createPackageList(base_dir, input_files);
     console.log(pkgs.join('\n'));
     break;
 
     case ExecModes.MERGE:;
-    merge_to_file(base_dir, input_files, out_file);
+    mergeToFile(base_dir, input_files, out_file);
     break;
   }
   process.exit(0);

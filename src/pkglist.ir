@@ -1,5 +1,5 @@
 :
-  exports.CreatePackageList = ##
+  exports.createPackageList = ##
     \A.<s>\
     basedir\s\$
     files\A.<s>\$
