@@ -2,7 +2,7 @@
   context\!context.Context\$
   @parent\s?\?
   context.isCtor = true
-  %(context, '')
+  ^(context, '')
   @parent = @parent ? @.context.pkg.replace(@parent) : ''
 
 :parentName\s\

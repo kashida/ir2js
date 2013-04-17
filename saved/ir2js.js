@@ -1260,7 +1260,7 @@ LineTransformer.prototype.parentCall = function(args) {
   }
   else {
     error(self._input, 'parent call appeared in non-ctor / non-method.');
-    return '%(' + args + ')';
+    return '^(' + args + ')';
   }
 };
 /*
@@ -4299,7 +4299,7 @@ parser.TokenListBuilder.prototype._addObject = function(data) {
       case 'e':;
       self._tokens.add(self.xformer ? self.xformer.parentCall(
         new parser.TokenListBuilder(p.args, self.xformer).build().toString()
-      ) : ['%(', p.args, ')']);
+      ) : ['^(', p.args, ')']);
       break;
 
       case 'm':;

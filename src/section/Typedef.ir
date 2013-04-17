@@ -1,6 +1,6 @@
 ::Typedef <%.Str
   context\!context.Context\$
-  %(context)
+  ^(context)
 
 :output\A.<output.Line>\
   decoder := new TypeDecoder(@.context.pkg, @.strlines().join(''))

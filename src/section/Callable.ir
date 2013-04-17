@@ -2,7 +2,7 @@
   @context+\!context.Context\$
   @returnType+\s\$
   @params&\ParamSet\
-  %()
+  ^()
 
 :name\s\
   => @context.name.ref()

@@ -1,7 +1,7 @@
 ::Function <%.Callable
   context\!context.Context\$
   return_type\s\$
-  %(context, return_type)
+  ^(context, return_type)
 
 :output\A\
   => [#]

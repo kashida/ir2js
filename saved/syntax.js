@@ -4744,13 +4744,13 @@ module.exports = (function(){
         if (result0 === null) {
           pos0 = pos;
           pos1 = pos;
-          if (input.charCodeAt(pos) === 37) {
-            result0 = "%";
+          if (input.charCodeAt(pos) === 94) {
+            result0 = "^";
             pos++;
           } else {
             result0 = null;
             if (reportFailures === 0) {
-              matchFailed("\"%\"");
+              matchFailed("\"^\"");
             }
           }
           if (result0 !== null) {

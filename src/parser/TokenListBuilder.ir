@@ -53,7 +53,7 @@
       break
 
       case 'e' // Parent call.
-      @tokens.add(@.xformer ? @.xformer.parentCall(#) : ['%(', p.args, ')'])
+      @tokens.add(@.xformer ? @.xformer.parentCall(#) : ['^(', p.args, ')'])
         new %.TokenListBuilder(p.args, @.xformer).build().toString()
       break
 
@@ -96,7 +96,7 @@
 ::ParamLineBuilder <%.TokenListBuilder
   parsed\%.TokenList|A|O|s\$
   xformer&\LineTransformer\?
-  %(parsed, xformer)
+  ^(parsed, xformer)
 
 :addTypeObject
   params\O\$

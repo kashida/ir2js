@@ -9,7 +9,7 @@
   @continueLines&\!A.<!CodeLine>\ []
   @param&\Param|b\
   @matcher\BlockMatcher\
-  %()
+  ^()
 
 :+str\s\
   => @input.line

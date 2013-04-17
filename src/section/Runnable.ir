@@ -1,5 +1,5 @@
 ::Runnable <%.Code
-  %()
+  ^()
 
 :<close
   file_name\s\$

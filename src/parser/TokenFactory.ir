@@ -98,7 +98,7 @@
   @type+\s\$
   @marker+\s\$
   @init+\%.TokenList\$
-  %()
+  ^()
 
 :toString\s\
   list := [#]

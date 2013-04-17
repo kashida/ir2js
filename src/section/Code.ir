@@ -1,6 +1,6 @@
 ::Code <%.Head
   @lines&\A.<input.Line>\ []
-  %()
+  ^()
 
 abstract method.
 :close

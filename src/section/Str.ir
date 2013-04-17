@@ -1,7 +1,7 @@
 ::Str <%.Code
   @context+\!context.Context\$
   @indent\n\ -1
-  %()
+  ^()
 
 same number of strings as @.lines.
 :strlines\A.<s>\

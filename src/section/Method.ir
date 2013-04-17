@@ -3,7 +3,7 @@
   return_type\s\$
   @overriding\b\$
   context.isMethod = true
-  %(context, return_type)
+  ^(context, return_type)
 
 :output\A\
   decls := []

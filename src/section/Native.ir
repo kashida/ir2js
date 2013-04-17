@@ -1,5 +1,5 @@
 ::Native <%.Code
-  %()
+  ^()
 
 :output\A.<output.Line>\
   => @.lines.map(##)
