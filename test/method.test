@@ -78,7 +78,7 @@ classname.prototype.methodname = function(param_a, opt_param_b) {
 
 #{ overriding method
 ::Classname <Parent
-  %()
+  ^()
 
 :<methodname\n\
   param_a\s\$

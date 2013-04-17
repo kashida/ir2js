@@ -419,7 +419,7 @@ NewExpression
 // too (like Arguments does).
 CallInvocation
   = MemberExpression _ Arguments
-  / '%' _ '(' _ args:ArgumentList? _ ')' {
+  / '^' _ '(' _ args:ArgumentList? _ ')' {
       return {
         g: 'e',
         params: {args: args},

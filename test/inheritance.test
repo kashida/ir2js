@@ -3,7 +3,7 @@
   @param_a\s\$
   @param_b\s\? init_val
   do_something()
-  %(param_b, something_else())
+  ^(param_b, something_else())
 #=
 /**
  * @param {string} param_a
@@ -46,12 +46,12 @@ classname.prototype._classname = 'classname';
 #{ method call parent
 ::classname <parent
   do_something()
-  %(something_else())
+  ^(something_else())
 
 :method
   param\s\$
   do_something()
-  %(param, '')
+  ^(param, '')
 #=
 /**
  * @constructor

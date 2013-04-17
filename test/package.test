@@ -15,12 +15,12 @@
 #{[abc.def] class
 ::classname <%.path.parent
   @param\s\? %.value
-  %(param)
+  ^(param)
 
 :methodname\\
   param\n\$
   a(%.something)
-  %(param, 0)
+  ^(param, 0)
 #=
 /**
  * @param {string=} opt_param
