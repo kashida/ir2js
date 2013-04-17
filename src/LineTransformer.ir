@@ -9,11 +9,11 @@
 
 :cast\s\
   type\s\$
-  => '/** @type {' + new TypeDecoder(@context.pkg, type).output() + '} */'
+  => '/** @type {' + &TypeDecoder(@context.pkg, type).output() + '} */'
 
 :type\s\
   type\s\$
-  => new TypeDecoder(@context.pkg, type).output()
+  => &TypeDecoder(@context.pkg, type).output()
 
 :parentCall\s\
   args\s\$

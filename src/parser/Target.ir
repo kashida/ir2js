@@ -12,7 +12,7 @@ Specific for a particular target (i.e. rule).
   xformer\LineTransformer\?
   show_error_line\b\?
   if !(line instanceof Array)
-    line = [new input.Line('', line, 0)]
+    line = [&input.Line('', line, 0)]
 
   lines := line.map(##).join('\n')
     l\input.Line\$
@@ -22,7 +22,7 @@ Specific for a particular target (i.e. rule).
   catch e
     throw @addContextLines(e, line)
 
-  b := new %.TokenListBuilder(result)
+  b := &%.TokenListBuilder(result)
   if xformer
     b.xformer = xformer
   => b.result(line)

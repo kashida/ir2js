@@ -11,7 +11,7 @@ TODO: use setter.
 
 :addMethod
   name\s\$
-  m := new CallableType(name)
+  m := &CallableType(name)
   @methods.push(m)
   => m
 

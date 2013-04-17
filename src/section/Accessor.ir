@@ -18,7 +18,7 @@ Overriding accessor.
     // accessor with no corresponding member. use the given param and return types.
     member = @.context.cls.addMember(#)
       @name
-      new TypeDecoder(@.context.pkg, @.returnType)
+      &TypeDecoder(@.context.pkg, @.returnType)
       '&'
       true
   class_name := @.context.cls.name()

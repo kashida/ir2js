@@ -27,7 +27,7 @@ same number of strings as @.lines.
     lines.map(##)
       line\s\$
       i\n\$
-      out := new output.Line(@.lines[i])
+      out := &output.Line(@.lines[i])
       out.indent = @indent
       out.appendLine("'" + line + "\\n'" + (i == lines.length - 1 ? ';' : ' +'))
       => out

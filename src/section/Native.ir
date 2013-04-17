@@ -4,6 +4,6 @@
 :output\A.<output.Line>\
   => @.lines.map(##)
     line\input.Line\$
-    out := new output.Line(line)
+    out := &output.Line(line)
     out.appendLine(line.trim)
     => out

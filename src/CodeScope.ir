@@ -1,17 +1,17 @@
 ::CodeScope
   @context\!context.Context\$
-  @head\section.Head\? new section.Global()
+  @head\section.Head\? &section.Global()
 
 :processLines
   lines\A.<s>\$
   i := 0
   @.process(lines.map(##))
     line\s\$
-    => new input.Line(@context.fileName, line, i++)
+    => &input.Line(@context.fileName, line, i++)
 
 :process
   input_lines\A.<input.Line>\$
-  new CodeParser(@context, @head).parse(input_lines)
+  &CodeParser(@context, @head).parse(input_lines)
   @head.transform()
 
 :output

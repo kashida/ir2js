@@ -64,7 +64,7 @@ or
 
   if /^#\}\s*$/.test(line)
     @state = ''
-    @tests.push(new ir2js.TestCase(#))
+    @tests.push(&ir2js.TestCase(#))
       @name
       @packageName
       @input
@@ -110,7 +110,7 @@ argv[0] is node binary and argv[1] is the executing js.
     contents := _fs.readFileSync(infile, 'utf-8')
     console.log(' [ ' + infile + ' ] ')
 
-    test := new TestFile(infile)
+    test := &TestFile(infile)
     test.parse(contents)
     test.run()
     if test.failed

@@ -6,9 +6,9 @@
 
 :createLine\SectionLine\
   line\input.Line\$
-  parsed := new LineParser(line)
+  parsed := &LineParser(line)
   if !parsed.isValid
-    => new InvalidLine(line)
+    => &InvalidLine(line)
   if parsed.isSeparator
-    => new SeparatorLine(line, parsed)
-  => new CodeLine(@context, line, parsed)
+    => &SeparatorLine(line, parsed)
+  => &CodeLine(@context, line, parsed)

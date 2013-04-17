@@ -5,13 +5,13 @@
 
 :addCtor\CallableType\
   name\s\$
-  @ctor = new CallableType(name)
+  @ctor = &CallableType(name)
   @classes.push(@ctor)
   => @ctor
 
 :addFunct\CallableType\
   name\s\$
-  fn := new CallableType(name)
+  fn := &CallableType(name)
   @functs.push(fn)
   => fn
 

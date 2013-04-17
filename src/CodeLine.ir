@@ -27,12 +27,12 @@
   if @.isContinuation
     error(@input, 'parse requested for cont. line')
   if !@parsed
-    CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine')
+    CODE_PARSER = CODE_PARSER || &parser.Target('ParseLine')
     lines := [@input].concat(@continueLines)
     try
       @parsed = CODE_PARSER.run(#)
         lines
-        new LineTransformer(@context, @input)
+        &LineTransformer(@context, @input)
     catch e
       error(@input, '(syntax error) ' + e.message, e.contextLines)
   => @parsed
@@ -40,11 +40,11 @@
 :transform
   code := (@param && @param !== true && @param.valueLine) || @.parsed.code
 
-  @matcher = new BlockMatcher(@context, @input, code, @.blocks)
+  @matcher = &BlockMatcher(@context, @input, code, @.blocks)
   @matcher.transform()
 
 :output\output.Line\
-  out := new output.Line(@input)
+  out := &output.Line(@input)
   if @param === true
     => out
 

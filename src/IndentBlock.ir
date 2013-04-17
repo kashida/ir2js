@@ -80,7 +80,7 @@ TODO: change marker's type to BlockType when it's enum.
     @lines.length ? @lines[0].input : UnknownInputLine
     'block with no valid lines: ' + @
 
-  out := new output.Block()
+  out := &output.Block()
   accum_suffix := ''
   valid_line_count := 0
   @lines.forEach(##)

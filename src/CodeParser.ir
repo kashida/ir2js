@@ -27,7 +27,7 @@
       first_line_indent = line.indent
       => true
     => false
-  @blocks = [new IndentBlock(0, first_line_indent, @head)]
+  @blocks = [&IndentBlock(0, first_line_indent, @head)]
   @head.addBlock(@blocks[0])
   
   code_lines.forEach(##)
@@ -59,7 +59,7 @@
 
 :@makeCodeLines\A.<SectionLine>\
   input_lines\A.<input.Line>\$
-  cat := new LineCategorizer(@context)
+  cat := &LineCategorizer(@context)
   => input_lines.map(##)
     line\input.Line\$
     => cat.createLine(line)
@@ -68,7 +68,7 @@
   i\n\$
   indent\n\$
   // push a new block in the stack.
-  b := new IndentBlock(i, indent, @lastValidLine)
+  b := &IndentBlock(i, indent, @lastValidLine)
   @lastValidLine.addBlock(b)
   @blocks.push(b)
 
@@ -90,7 +90,7 @@
   indent\n\$
   i\n\$
   prev_b := @blocks.pop()
-  b := new IndentBlock(i, indent, prev_b.head())
+  b := &IndentBlock(i, indent, prev_b.head())
   prev_b.head().addBlock(b)
   @blocks.push(b)
 
@@ -101,7 +101,7 @@
   if !last_line
     error(line.input, 'continuation as a first line of block')
   else
-    last_line.continueLines.push(new input.Line(#))
+    last_line.continueLines.push(&input.Line(#))
       @context.fileName
       line.input.line.replace(/\|/, ' ')
       line.input.rowIndex

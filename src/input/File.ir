@@ -13,7 +13,7 @@ Parses input lines into comments and sections.
     line\s\$
     index\n\$
     line = line.trimRight()
-    @processLine(new %.Line(@name, line, index))
+    @processLine(&%.Line(@name, line, index))
   @flushBuffer()
   => @result
 
@@ -39,7 +39,7 @@ Parses input lines into comments and sections.
   while @buffer.length
     next_buffer := []
     if @lastValidIndex !== null
-      section := new %.Section(@buffer[0])
+      section := &%.Section(@buffer[0])
       @result.push(section)
       @buffer.forEach(##)
         line\%.Line\$
@@ -54,6 +54,6 @@ Parses input lines into comments and sections.
           next_buffer.push(line)
     else
       // we'll give buffer a new array so no need to clone for global comment.
-      @result.push(new %.Comment(@buffer))
+      @result.push(&%.Comment(@buffer))
     @lastValidIndex = null
     @buffer = next_buffer

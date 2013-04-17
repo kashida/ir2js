@@ -9,7 +9,7 @@
 
 :<close
   pkg\!context.Package\?
-  c := new CodeScope(@context, @)
+  c := &CodeScope(@context, @)
   c.process(@.lines)
 
 :<transform
@@ -17,7 +17,7 @@
     @.numBlocks() == 1
     @.lines[0]
     'callable takes 1 block -- found ' + @.numBlocks()
-  @params = new ParamSet(@context, @.block(0))
+  @params = &ParamSet(@context, @.block(0))
   @params.transform()
   @params.setReturnType(@returnType)
   @.block(0).transform()

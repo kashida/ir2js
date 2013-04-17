@@ -38,8 +38,8 @@
     => null
 
   // need to keep this in a member var too.
-  @scope.context.cls = new context.Class()
-  ctor := new %.Constructor(@scope.copyContextWithName(re[1]), re[3])
+  @scope.context.cls = &context.Class()
+  ctor := &%.Constructor(@scope.copyContextWithName(re[1]), re[3])
   @scope.context.cls.ctor = ctor
   @scope.types.addCtor(ctor.name())
   if re[3]
@@ -57,7 +57,7 @@
   if !@scope.context.cls
     error(header, 'method marker w/o class')
     => null
-  => new %.Method(#)
+  => &%.Method(#)
       @scope.copyContext(@scope.context.cls.methodName((re[2] ? '_' : '') + re[3]))
       re[5]
       !!re[1]
@@ -77,37 +77,37 @@
   name := re[2]
   ret_type := re[4]
   ctx := @scope.copyContext(@scope.context.cls.methodName(name))
-  => new %.Accessor(ctx, name, ret_type, type == '+')
+  => &%.Accessor(ctx, name, ret_type, type == '+')
 
 :@createGlobalFunction\%.Function\
   line\s\$
   re := /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line)
   if !re
     => null
-  => new %.Function(@scope.copyContextWithName(re[1]), re[3])
+  => &%.Function(@scope.copyContextWithName(re[1]), re[3])
 
 :@createMultiLineStr\%.Str\
   line\s\$
   re := /^'\s*(\w+)$/.exec(line)
   if !re
     => null
-  => new %.Str(@scope.copyContextWithName(re[1]))
+  => &%.Str(@scope.copyContextWithName(re[1]))
 
 :@createGlobalCode\%.Global\
   line\s\$
-  => line == '' ? new %.Global() : null
+  => line == '' ? &%.Global() : null
 
 :@createNativeCode\%.Native\
   line\s\$
-  => line == '~' ? new %.Native() : null
+  => line == '~' ? &%.Native() : null
 
 :@createAnonymousScope\%.Scope\
   line\s\$
-  => line == '{' ? new %.Scope() : null
+  => line == '{' ? &%.Scope() : null
 
 :@createTypedef\%.Typedef\
   line\s\$
   re := /^\!\s*(\w+)$/.exec(line)
   if !re
     => null
-  => new %.Typedef(@scope.copyContextWithName(re[1]))
+  => &%.Typedef(@scope.copyContextWithName(re[1]))

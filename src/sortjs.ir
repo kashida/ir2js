@@ -79,14 +79,14 @@ depends -- maps file name to array of required class names.
   exports.createSortedList = ##
     \A.<s>\
     files\A.<s>\$
-    deps := new ClassDeps()
+    deps := &ClassDeps()
     deps.load(files)
 
     // sort the files in inheritance order.
     all := files.concat()
-    sorted := new StringSet()
+    sorted := &StringSet()
     while all.length
-      found := new StringSet()
+      found := &StringSet()
       all.forEach(##)
         f\s\$
         // remove the dependencies already satisfied.

@@ -4,9 +4,9 @@
 :<close
   file_name\s\$
   pkg\!context.Package\?
-  c := new CodeScope(new context.Context(#), @)
+  c := &CodeScope(&context.Context(#), @)
     file_name
-    pkg || new context.Package('')
+    pkg || &context.Package('')
   c.process(@.lines)
 
 :<transform

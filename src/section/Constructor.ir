@@ -10,7 +10,7 @@
 
 :<transform
   assert(@.numBlocks() == 1, @.lines[0])
-  @.params = new ParamSet(@.context, @.block(0), true)
+  @.params = &ParamSet(@.context, @.block(0), true)
   @.params.transform()
   @.block(0).transform()
 

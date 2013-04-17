@@ -27,4 +27,4 @@ trailing whitespace should have been stripped already.
   => re ? re.index : 0
 
 :
-  UnknownInputLine := new %.Line('(unknown)', '', -1)
+  UnknownInputLine := &%.Line('(unknown)', '', -1)

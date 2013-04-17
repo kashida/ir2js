@@ -5,18 +5,18 @@ parse file scope and separate code sections from comments.
 ::FileScope
   file_name\s\$
   pkg_name\s\$
-  @context+\!context.Context\ new context.Context(#)
+  @context+\!context.Context\ &context.Context(#)
     file_name
-    new context.Package(pkg_name)
-  @types+\TypeSet\ new TypeSet()
+    &context.Package(pkg_name)
+  @types+\TypeSet\ &TypeSet()
   @list\A.<OutputSection>\
 
   @context.isFileScope = true
 
 :processLines
   line\A.<s>\$
-  gen := new section.Generator(@)
-  input_list := new input.File(@context.fileName, line).parse()
+  gen := &section.Generator(@)
+  input_list := &input.File(@context.fileName, line).parse()
   @list = input_list.map(##)
     section\input.Comment|input.Section\$
     index\n\$
@@ -35,7 +35,7 @@ parse file scope and separate code sections from comments.
 
 :copyContextWithName\!context.Context\
   name\string\$
-  fullname := new context.Name(@context.pkg, name)
+  fullname := &context.Name(@context.pkg, name)
   => @.copyContext(fullname)
 
 :output\A.<s>\

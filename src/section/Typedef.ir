@@ -3,8 +3,8 @@
   ^(context)
 
 :output\A.<output.Line>\
-  decoder := new TypeDecoder(@.context.pkg, @.strlines().join(''))
-  out := new output.Line(@.lines[0])
+  decoder := &TypeDecoder(@.context.pkg, @.strlines().join(''))
+  out := &output.Line(@.lines[0])
   out.indent = 0
   out.lines.appendLines([#])
     docLines(['@typedef {' + decoder.output() + '}'])

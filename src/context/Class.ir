@@ -23,7 +23,7 @@
   type\TypeDecoder\$
   access_type\s\$
   is_pseudo\b\? false
-  m := new Member(name, type, access_type, is_pseudo)
+  m := &Member(name, type, access_type, is_pseudo)
   @members[name] = m
   => m
 

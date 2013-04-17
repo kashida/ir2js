@@ -16,7 +16,7 @@
     ['\\bO\\b', 'Object']
     --
     re_type\s\$
-    @decoded = @decoded.replace(new RegExp(re_type[0], 'g'), re_type[1])
+    @decoded = @decoded.replace(&RegExp(re_type[0], 'g'), re_type[1])
 
 :output\s\
   => @decoded

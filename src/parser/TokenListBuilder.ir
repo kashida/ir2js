@@ -5,14 +5,14 @@
 
 :build\%.TokenList\
   if !@tokens
-    @tokens = new %.TokenList()
+    @tokens = &%.TokenList()
     @buildRec(@parsed)
   => @tokens
 
 :result\%.Result\
   line\!A.<input.Line>\$
   @.build()
-  => new %.Result(@tokens, line)
+  => &%.Result(@tokens, line)
 
 :@buildRec
   data\%.TokenList|A|O|s\$
@@ -54,22 +54,22 @@
 
       case 'e' // Parent call.
       @tokens.add(@.xformer ? @.xformer.parentCall(#) : ['^(', p.args, ')'])
-        new %.TokenListBuilder(p.args, @.xformer).build().toString()
+        &%.TokenListBuilder(p.args, @.xformer).build().toString()
       break
 
       case 'm' // Marker.
-      @tokens.add(new %.BlockMarker(p.type))
+      @tokens.add(&%.BlockMarker(p.type))
       break
 
       case 'p' // Param line.
       t := @tokens
-      @tokens = new %.ParamLine(#)
+      @tokens = &%.ParamLine(#)
         p.name
         p.member
         p.access
-        new %.ParamLineBuilder(p.type, @.xformer).build().toString()
+        &%.ParamLineBuilder(p.type, @.xformer).build().toString()
         p.marker
-        new %.TokenListBuilder(p.init, @.xformer).build()
+        &%.TokenListBuilder(p.init, @.xformer).build()
       @tokens.add(t)
       break
 
@@ -82,11 +82,11 @@
       break
 
   if data.t
-    @tokens.add(new %.TokenListBuilder(data.t, @.xformer).build())
+    @tokens.add(&%.TokenListBuilder(data.t, @.xformer).build())
   if data.p
-    @tokens.prepend(new %.TokenListBuilder(data.p, @.xformer).build())
+    @tokens.prepend(&%.TokenListBuilder(data.p, @.xformer).build())
   if data.a
-    @tokens.append(new %.TokenListBuilder(data.a, @.xformer).build())
+    @tokens.append(&%.TokenListBuilder(data.a, @.xformer).build())
 
 :addTypeObject
   params\O\$

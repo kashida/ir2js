@@ -16,7 +16,7 @@ Function parameter and / or member declarion.
 
   @line = parsed.tokens
   @success = true
-  @type = new TypeDecoder(@context.pkg, @line.type)
+  @type = &TypeDecoder(@context.pkg, @line.type)
 
   @valueLine = @line.init && !@line.init.isEmpty ? @line.init.list : null
   if @.isMember && @.initType != '$' && !@valueLine

@@ -6,6 +6,6 @@ either blank line or comment only line.
   => @input.line
 
 :output\output.Line\
-  out := new output.Line(@input)
+  out := &output.Line(@input)
   out.appendLine(@input.trim)
   => out

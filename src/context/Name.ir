@@ -12,7 +12,7 @@ Name in file scope.
 
 :property\!%.Name\
   id\s\$
-  => new %.Name(new %.Package(@.ref() + '.prototype'), id)
+  => &%.Name(&%.Package(@.ref() + '.prototype'), id)
 
 :oString\s\
   => '[' + @pkg + ':' + @id + ']'

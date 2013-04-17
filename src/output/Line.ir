@@ -4,7 +4,7 @@ Output lines corresponds to one input line.
   @input\input.Line\$
   @indent&\n\ input.indent
   @prefixLines&\A.<s>\ []
-  @lines+\!%.Multiline\ new %.Multiline()
+  @lines+\!%.Multiline\ &%.Multiline()
   @linePrefix&\s\ ''
   @lineSuffix&\s\ ''
   @tailComment&\A.<s>\ []
@@ -18,7 +18,7 @@ Output lines corresponds to one input line.
   @lines.terminateLine()
 
 :+output\A.<s>\
-  out := new %.IndentedMultiline(@indent)
+  out := &%.IndentedMultiline(@indent)
   out.appendAll(@prefixLines)
   out.appendLine(@linePrefix, false)
   @lines.lines.forEach(##)

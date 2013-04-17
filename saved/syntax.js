@@ -100,6 +100,7 @@ module.exports = (function(){
         "LogicalANDOperator": parse_LogicalANDOperator,
         "LogicalOROperator": parse_LogicalOROperator,
         "AssignmentOperator": parse_AssignmentOperator,
+        "NewOperator": parse_NewOperator,
         "IdentifierName": parse_IdentifierName,
         "Identifier": parse_Identifier,
         "NullLiteral": parse_NullLiteral,
@@ -3050,6 +3051,34 @@ module.exports = (function(){
         return result0;
       }
       
+      function parse_NewOperator() {
+        var result0;
+        var pos0;
+        
+        reportFailures++;
+        pos0 = pos;
+        if (input.charCodeAt(pos) === 38) {
+          result0 = "&";
+          pos++;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"&\"");
+          }
+        }
+        if (result0 !== null) {
+          result0 = (function(offset) { return 'new'; })(pos0);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        reportFailures--;
+        if (reportFailures === 0 && result0 === null) {
+          matchFailed("new_opr");
+        }
+        return result0;
+      }
+      
       function parse_IdentifierName() {
         var result0, result1, result2;
         var pos0, pos1;
@@ -4441,15 +4470,7 @@ module.exports = (function(){
         result0 = parse_PrimaryExpression();
         if (result0 === null) {
           pos1 = pos;
-          if (input.substr(pos, 3) === "new") {
-            result0 = "new";
-            pos += 3;
-          } else {
-            result0 = null;
-            if (reportFailures === 0) {
-              matchFailed("\"new\"");
-            }
-          }
+          result0 = parse_NewOperator();
           if (result0 !== null) {
             result1 = parse___();
             if (result1 !== null) {
@@ -4686,15 +4707,7 @@ module.exports = (function(){
         result0 = parse_MemberExpression();
         if (result0 === null) {
           pos0 = pos;
-          if (input.substr(pos, 3) === "new") {
-            result0 = "new";
-            pos += 3;
-          } else {
-            result0 = null;
-            if (reportFailures === 0) {
-              matchFailed("\"new\"");
-            }
-          }
+          result0 = parse_NewOperator();
           if (result0 !== null) {
             result1 = parse___();
             if (result1 !== null) {
