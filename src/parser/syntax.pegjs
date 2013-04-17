@@ -296,6 +296,9 @@ AssignmentOperator 'assignment_opr'
   / '+='
   / '-='
 
+NewOperator 'new_opr'
+  = '&' { return 'new'; }
+
 IdentifierName 'identifier'
   = start:IdentifierStart part:IdentifierPart* {
       return start + part.join('');
@@ -404,7 +407,7 @@ PropertyName
 MemberExpression
   = (
         PrimaryExpression
-      / 'new' __ MemberExpression _ Arguments
+      / NewOperator __ MemberExpression _ Arguments
     )
     (
         _ '[' _ Expression _ ']'
@@ -413,7 +416,7 @@ MemberExpression
 
 NewExpression
   = MemberExpression
-  / 'new' __ NewExpression
+  / NewOperator __ NewExpression
 
 // TODO: allow % to take ParameterBlockMarker as an argument
 // too (like Arguments does).

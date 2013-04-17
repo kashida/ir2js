@@ -8,7 +8,7 @@ if ('') {
 #}
 
 #{: string with escape
-if !new RegExp('^[\\\'\\"]').test(seg)
+if !&RegExp('^[\\\'\\"]').test(seg)
   =>
 #=
 if (!new RegExp('^[\\\'\\"]').test(seg)) {

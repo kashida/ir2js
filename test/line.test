@@ -130,7 +130,7 @@ a = (
 
 #{: dot-op block
 a := #.
-  new SomeClass(#)
+  &SomeClass(#)
     0
     abc
   do_something
