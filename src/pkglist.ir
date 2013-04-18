@@ -24,4 +24,4 @@
 
     => Object.keys(pkgs).sort().map(##)
       pkg\s\$
-      => ('var ' + pkg + ' = {};')
+      => (pkg.indexOf('.') >= 0 ? '' : 'var ') + pkg + ' = {};'
