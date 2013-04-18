@@ -5150,6 +5150,9 @@ section.Accessor.prototype.output = function() {
   // and return type do not match. also error if the setter takes more than one param.
   if (!member) {
     // accessor with no corresponding member. use the given param and return types.
+    if (self._isGetter && !self.returnType) {
+      error(self.lines[0], 'getter with no return type');
+    }
     member = self.context.cls.addMember(
       self._name,
       new TypeDecoder(self.context.pkg, self.returnType),
