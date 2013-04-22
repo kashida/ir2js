@@ -59,11 +59,11 @@ TODO: change marker's type to BlockType when it's enum.
     if !(line instanceof InvalidLine)
       line.transform()
 
-:+startStr\s\
+:startStr+\s\
   // string to open the block.
   => _BLOCK_OPEN[@marker]
 
-:+endStr\s\
+:endStr+\s\
   => _BLOCK_CLOSE[@marker]
 
 :output\!output.Block\

@@ -29,19 +29,19 @@ Function parameter and / or member declarion.
   if !@.isMember && @.initType != '?' && @valueLine
     error(inputs, 'initial value for non-member non-optional')
 
-:+isMember\b\
+:isMember+\b\
   => @line.isMember
 
-:+name\s\
+:name+\s\
   => @line.name
 
-:+accessType\s\
+:accessType+\s\
   => @line.access
 
-:+initType\s\
+:initType+\s\
   => @line.marker
 
-:+hasInit\b\
+:hasInit+\b\
   => !!@valueLine
 
 :@paramName\s\

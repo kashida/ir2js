@@ -6,7 +6,7 @@ Helper for Line to construct the output.
   @lines\!A.<s>\ []
   @lastLineOpen\b\ false
 
-:+output\!A.<s>\
+:output+\!A.<s>\
   => @lines
 
 :appendLine

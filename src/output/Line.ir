@@ -9,7 +9,7 @@ Output lines corresponds to one input line.
   @lineSuffix&\s\ ''
   @tailComment&\A.<s>\ []
 
-:+empty\b\
+:empty+\b\
   => @lines.empty && !@linePrefix && !@lineSuffix
 
 :appendLine
@@ -17,7 +17,7 @@ Output lines corresponds to one input line.
   @lines.appendStr(line)
   @lines.terminateLine()
 
-:+output\A.<s>\
+:output+\A.<s>\
   out := &%.IndentedMultiline(@indent)
   out.appendAll(@prefixLines)
   out.appendLine(@linePrefix, false)

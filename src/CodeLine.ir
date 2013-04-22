@@ -11,19 +11,19 @@
   @matcher\BlockMatcher\
   ^()
 
-:+str\s\
+:str+\s\
   => @input.line
 
-:+indent\n\
+:indent+\n\
   => @lineParsed.indent
 
-:+isContinuation\b\
+:isContinuation+\b\
   => @lineParsed.isContinuation
 
-:+isBlockStatement\b\
+:isBlockStatement+\b\
   => @matcher.isBlockStatement
 
-:+parsed\parser.Result\
+:parsed+\parser.Result\
   if @.isContinuation
     error(@input, 'parse requested for cont. line')
   if !@parsed

@@ -4,25 +4,25 @@ a line of input file. keeps track of the row index.
   @line+\s\$
   @rowIndex+\n\$
 
-:+lineNo\n\
+:lineNo+\n\
   => @rowIndex + 1
 
 the line contents with indentation stripped off.
 trailing whitespace should have been stripped already.
-:+trim\s\
+:trim+\s\
   re := /\S.*/.exec(@line)
   => re ? re[0] : ''
 
-:+startsWithColon\b\
+:startsWithColon+\b\
   => @line.substr(0, 1) == ':'
 
-:+isBlank\b\
+:isBlank+\b\
   => /^\s*$/.test(@line)
   
-:+isIndented\b\
+:isIndented+\b\
   => /^\s/.test(@line)
 
-:+indent\n\
+:indent+\n\
   re := /\S/.exec(@line)
   => re ? re.index : 0
 

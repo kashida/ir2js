@@ -25,7 +25,7 @@
   @grammar&\s\ ''
   @params&\A\
 
-:+isEmpty\b\
+:isEmpty+\b\
   if @prevLines.length || @nextLines.length
     => false
   if !@list.length

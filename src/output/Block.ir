@@ -7,7 +7,7 @@
   line\%.Line\$
   @lines.push(line)
 
-:+isEmpty\b\
+:isEmpty+\b\
   => !@lines.length && !@suffix
 
 inserts the suffix line to the array passed as a parameter.
@@ -25,7 +25,7 @@ inserts the suffix line to the array passed as a parameter.
   else
     lines.splice(last_nonblank + 1, 0, @suffix)
 
-:+output\A.<s>\
+:output+\A.<s>\
   lines := @lines.reduce(##, [])
     prev\A.<s>\$
     line\%.Line\$

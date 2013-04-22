@@ -2,7 +2,7 @@
   @lines+\!A.<!%.Block|s>\ []
   @lastLineOpen\b\ false
 
-:+empty\b\
+:empty+\b\
   => !@lines.length
 
 :appendStr

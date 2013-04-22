@@ -11,7 +11,7 @@
   @extraBlock+\b\ false
 
 Valid only after run call.
-:+endsWithCode\b\
+:endsWithCode+\b\
   => #&&
     @code.length
     !(@code[@code.length - 1] instanceof parser.BlockMarker)

@@ -2,7 +2,7 @@ either blank line or comment only line.
 ::InvalidLine
   @input+\input.Line\$
 
-:+str\s\
+:str+\s\
   => @input.line
 
 :output\output.Line\

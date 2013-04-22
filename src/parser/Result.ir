@@ -5,16 +5,16 @@ Container and interface of the TokenList to the rest of the converter.
   @tokens+\%.TokenList\$
   @input\!A.<!input.Line>\$
 
-:+code\A.<%.BlockMarker|s>\
+:code+\A.<%.BlockMarker|s>\
   => @tokens.list
 
-:+prevLines\A.<s>\
+:prevLines+\A.<s>\
   => @tokens.prevLines
 
-:+nextLines\A.<s>\
+:nextLines+\A.<s>\
   => @tokens.nextLines
 
-:+tailComment\A.<s>\
+:tailComment+\A.<s>\
   => @tokens.nextLines
 
 :rendered\A.<s>\

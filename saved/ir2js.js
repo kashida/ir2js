@@ -2324,7 +2324,7 @@ var assert = function(check, opt_line, opt_msg) {
     return Object.keys(pkgs).sort().map(
     /** @param {string} pkg */
     function(pkg) {
-      return ('var ' + pkg + ' = {};');
+      return (pkg.indexOf('.') >= 0 ? '' : 'var ') + pkg + ' = {};';
     });
   };
 /** @constructor */
@@ -4480,7 +4480,7 @@ section.Generator.prototype._createMethod = function(line, header) {
 section.Generator.prototype._createAccessor = function(line, header) {
   var self = this;
   var re;
-  re = /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line);
+  re = /^\s*([a-zA-Z]\w*)\s*([+*])\s*(\\(.*)\\)?$/.exec(line);
   if (!re) {
     return null;
   }
@@ -4490,10 +4490,10 @@ section.Generator.prototype._createAccessor = function(line, header) {
     error(header, 'accessor marker w/o class');
     return null;
   }
-  var type;
-  type = re[1];
   var name;
-  name = re[2];
+  name = re[1];
+  var type;
+  type = re[2];
   var ret_type;
   ret_type = re[4];
   var ctx;
