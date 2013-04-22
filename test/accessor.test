@@ -87,9 +87,9 @@ this._param2 = value;
 #{ overriding getter and setter
 ::classname
   @member\s\
-:+member
+:member+
   => ''
-:*member
+:member*
   do_something_with(value)
 #=
 /** @constructor */
@@ -128,7 +128,7 @@ classname.prototype.__defineSetter__('member', function(value) {
 #{ overriding getter only
 ::classname
   @member*\s\
-:+member
+:member+
   do_something()
 #=
 /** @constructor */
@@ -165,9 +165,9 @@ classname.prototype.__defineGetter__('member', function() {
 
 #{ accessor w/o member
 ::classname
-:+member\s\
+:member+\s\
   => ''
-:*member
+:member*
   v\s\$
   do_something_with(v)
 #=

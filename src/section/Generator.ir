@@ -65,7 +65,7 @@
 :@createAccessor\%.Accessor\
   line\s\$
   header\input.Line\$
-  re := /^([+*])\s*([a-zA-Z]\w*)\s*(\\(.*)\\)?$/.exec(line)
+  re := /^\s*([a-zA-Z]\w*)\s*([+*])\s*(\\(.*)\\)?$/.exec(line)
   if !re
     => null
 
@@ -73,8 +73,8 @@
   if !@scope.context.cls
     error(header, 'accessor marker w/o class')
     => null
-  type := re[1]
-  name := re[2]
+  name := re[1]
+  type := re[2]
   ret_type := re[4]
   ctx := @scope.copyContext(@scope.context.cls.methodName(name))
   => &%.Accessor(ctx, name, ret_type, type == '+')
