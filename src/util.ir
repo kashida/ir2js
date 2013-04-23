@@ -1,4 +1,4 @@
-:=arrFlatten ##
+:arrFlatten = ##
   lines\s|A\$
   if typeof(lines) == 'string'
     => [lines]
@@ -12,11 +12,12 @@
     line\s|A\$
     => arr.concat(arrFlatten(line))
 
-:=check ##
+:check = ##
   obj\O\$
   console.log(_util.inspect(obj, false, null))
 
-:=whitespaces ##\s\
+:whitespaces = ##
+  \s\
   num\n\$
   s := ''
   i := 0
@@ -24,7 +25,8 @@
     s += ' '
   => s
 
-:=objStringify ##\s\
+:objStringify = ##
+  \s\
   obj\O\$
   compact\b\?
   name\s\?
@@ -61,7 +63,8 @@
   else
     => start_str + obj + '\n'
 
-:=docLines ##\!A.<s>\
+:docLines = ##
+  \!A.<s>\
   annotations\!A.<s>\$
   alist := arrFlatten(annotations)
   if alist.length == 0

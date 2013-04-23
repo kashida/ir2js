@@ -397,7 +397,12 @@ CodeBlockItr.prototype.run = function() {
 
   // There may be one extra block.
   if (self._bidx > self._blocks.length || self._bidx + 1 < self._blocks.length) {
-    error(self._input, '# blocks does not match #markers.');
+    error(self._input, (
+      ('# blocks does not match #markers: ') +
+      (self._bidx) +
+      (', ') +
+      (self._blocks.length)
+    ));
     return false;
   }
 
@@ -2156,12 +2161,13 @@ TypeSet.prototype.extract = function() {
     });
     _fs.writeFileSync(basedir + '/_argtypes.js', output.join('\n'), 'utf-8');
   };
+var transformToJs =
 /**
  * @param {string} base_dir
  * @param {string} in_file
  * @param {string} out_file
  */
-var transformToJs = function(base_dir, in_file, out_file) {
+function(base_dir, in_file, out_file) {
   var pkg_name;
   pkg_name = relativeFileName(
     base_dir,
@@ -2181,36 +2187,42 @@ var transformToJs = function(base_dir, in_file, out_file) {
     JSON.stringify(c.types.extract()),
     'utf-8'
   );
-};
+}
+;
 
+var relativeFileName =
 /**
  * @param {string} base_dir
  * @param {string} file_name
  */
-var relativeFileName = function(base_dir, file_name) {
+function(base_dir, file_name) {
   if (base_dir && file_name.indexOf(base_dir) == 0) {
     // strip off the base_dir.
     return file_name.substr(base_dir.length).replace(/^[\/\\]*/, '');
   }
   return file_name;
-};
+}
+;
 
+var outputFileName =
 /**
  * @param {string} base_dir
  * @param {string} in_file
  * @param {string} out_dir
  */
-var outputFileName = function(base_dir, in_file, out_dir) {
+function(base_dir, in_file, out_dir) {
   return out_dir + '/' + relativeFileName(base_dir, (
     in_file.replace(/\.ir$/, '.js')
   ));
-};
+}
+;
 
+var needCompile =
 /**
  * @param {string} src
  * @param {string} dst
  */
-var needCompile = function(src, dst) {
+function(src, dst) {
   if (!_path.existsSync(dst)) {
     return true;
   }
@@ -2219,7 +2231,8 @@ var needCompile = function(src, dst) {
   var dst_stat;
   dst_stat = _fs.statSync(dst);
   return src_stat.mtime.getTime() > dst_stat.mtime.getTime();
-};
+}
+;
 
   exports.compileFiles = 
   /**
@@ -2251,12 +2264,13 @@ var needCompile = function(src, dst) {
       transformToJs(base_dir, in_file, out_file);
     });
   };
+var error =
 /**
  * @param {input.Line} line
  * @param {string=} opt_msg
  * @param {Array.<string>=} additional_lines
  */
-var error = function(line, opt_msg, additional_lines) {
+function(line, opt_msg, additional_lines) {
   var msg = opt_msg === undefined ? ('*warning*') : opt_msg;
   console.error(line.file + ':' + line.lineNo + ': ERROR - ' + msg);
   if (additional_lines) {
@@ -2270,21 +2284,24 @@ var error = function(line, opt_msg, additional_lines) {
     console.error(line.line);
   }
   process.exit(-1);
-};
+}
+;
 
+var assert =
 /**
  * @param {*} check
  * @param {input.Line=} opt_line
  * @param {string=} opt_msg
  */
-var assert = function(check, opt_line, opt_msg) {
+function(check, opt_line, opt_msg) {
   var line = opt_line === undefined ? (UnknownInputLine) : opt_line;
   var msg = opt_msg === undefined ? ('*assertion*') : opt_msg;
   console.assert(
     check,
     msg + (line ? ' (line ' + line.lineNo + '): ' + line.line : '')
   );
-};
+}
+;
   exports.createPackageList = 
   /**
    * @param {string} basedir
@@ -2528,8 +2545,9 @@ ClassDeps.prototype.removeDeps = function(file, provided_files) {
     }
     return sorted.list();
   };
+var arrFlatten =
 /** @param {string|Array} lines */
-var arrFlatten = function(lines) {
+function(lines) {
   if (typeof(lines) == 'string') {
     return [lines];
   }
@@ -2548,18 +2566,22 @@ var arrFlatten = function(lines) {
   function(arr, line) {
     return arr.concat(arrFlatten(line));
   }, []);
-};
+}
+;
 
+var check =
 /** @param {Object} obj */
-var check = function(obj) {
+function(obj) {
   console.log(_util.inspect(obj, false, null));
-};
+}
+;
 
+var whitespaces =
 /**
  * @param {number} num
  * @return {string}
  */
-var whitespaces = function(num) {
+function(num) {
   var s;
   s = '';
   var i;
@@ -2568,8 +2590,10 @@ var whitespaces = function(num) {
     s += ' ';
   }
   return s;
-};
+}
+;
 
+var objStringify =
 /**
  * @param {Object} obj
  * @param {boolean=} compact
@@ -2577,7 +2601,7 @@ var whitespaces = function(num) {
  * @param {number=} opt_level
  * @return {string}
  */
-var objStringify = function(obj, compact, name, opt_level) {
+function(obj, compact, name, opt_level) {
   var level = opt_level === undefined ? (0) : opt_level;
   var start_str;
   start_str = whitespaces(level * 2);
@@ -2630,13 +2654,15 @@ var objStringify = function(obj, compact, name, opt_level) {
   else {
     return start_str + obj + '\n';
   }
-};
+}
+;
 
+var docLines =
 /**
  * @param {!Array.<string>} annotations
  * @return {!Array.<string>}
  */
-var docLines = function(annotations) {
+function(annotations) {
   var alist;
   alist = arrFlatten(annotations);
   if (alist.length == 0) {
@@ -2654,7 +2680,8 @@ var docLines = function(annotations) {
     }),
     ' */'
   ]);
-};
+}
+;
 /** @constructor */
 context.Class = function() {
   var self = this;
@@ -3203,7 +3230,7 @@ input.File.prototype._flushBuffer = function() {
   }
 };
 /*
-a line of input file. keeps track of the row index.
+A line of input file. Keeps track of the row index.
 */
 /**
  * @param {string} file
@@ -4392,10 +4419,11 @@ section.Generator.prototype.generate = function(header, lines) {
   var header_line;
   header_line = header.line.substr(1);
   if (![
+    '_createVariable',
     '_createCtor',
     '_createMethod',
     '_createAccessor',
-    '_createGlobalFunction',
+    //'_createGlobalFunction'
     '_createMultiLineStr',
     '_createGlobalCode',
     '_createNativeCode',
@@ -4418,6 +4446,41 @@ section.Generator.prototype.generate = function(header, lines) {
     error(header, 'line starts with colon and not a code section marker');
   }
   return section;
+};
+
+/**
+ * @param {string} line
+ * @param {input.Line} header
+ * @return {section.Variable}
+ * @private
+ */
+section.Generator.prototype._createVariable = function(line, header) {
+  var self = this;
+  var re;
+  re = /^(\:{0,2})(\@?)\s*(\w+)\s*\=\s*(.*)$/.exec(line);
+  if (!re) {
+    return null;
+  }
+
+  var scope_level;
+  scope_level = re[1].length;
+  var is_private;
+  is_private = !!re[2];
+  var name;
+  name = re[3];
+  var rest;
+  rest = re[4];
+
+  if (scope_level == 2 && is_private) {
+    error(header, 'global variable can not be private');
+  }
+  return new section.Variable(
+    self._scope.copyContextWithName(name),
+    header,
+    scope_level,
+    is_private,
+    rest
+  );
 };
 
 /**
@@ -4859,6 +4922,8 @@ section.Runnable.prototype._classname = 'section.Runnable';
 /** @override */
 section.Runnable.prototype.close = function(file_name, pkg) {
   var self = this;
+  // TODO: necessary to create a new instance of context here?
+  // take one in ctor like Callable?
   var c;
   c = new CodeScope(new context.Context(
     file_name,
@@ -4974,6 +5039,84 @@ section.Str.prototype.output = function() {
 };
 /**
  * @param {!context.Context} context
+ * @param {input.Line} line
+ * @param {number} scopeLevel
+ * @param {boolean} isPrivate
+ * @param {string} rhs
+ * @constructor
+ * @extends {section.Code}
+ */
+section.Variable = function(context, line, scopeLevel, isPrivate, rhs) {
+  var self = this;
+  /**
+   * @type {!context.Context}
+   * @private
+   */
+  this._context = context;
+  /**
+   * @type {input.Line}
+   * @private
+   */
+  this._line = line;
+  /**
+   * @type {number}
+   * @private
+   */
+  this._scopeLevel = scopeLevel;
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this._isPrivate = isPrivate;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._rhs = rhs;
+  /**
+   * @type {CodeLine}
+   * @private
+   */
+  this._codeLine = (null);
+
+  section.Code.call(this);
+  var code_input;
+  code_input = new input.Line(self._line.file, self._rhs, self._line.rowIndex);
+  self._codeLine = new CodeLine(self._context, code_input, new LineParser(code_input));
+};
+section.Variable.prototype = Object.create(section.Code.prototype);
+section.Variable.prototype._classname = 'section.Variable';
+
+/** @override */
+section.Variable.prototype.close = function() {
+  var self = this;
+  var c;
+  c = new CodeScope(self._context, self);
+  c.process(self.lines);
+};
+
+/** @override */
+section.Variable.prototype.transform = function() {
+  var self = this;
+  self.blocks.forEach(
+  /** @param {IndentBlock} block */
+  function(block) {
+    self._codeLine.addBlock(block);
+  });
+  self._codeLine.transform();
+};
+
+/** @return {Array} */
+section.Variable.prototype.output = function() {
+  var self = this;
+  return [
+    self._context.name.decl() + ' =',
+    self._codeLine.output().output,
+    ';'
+  ];
+};
+/**
+ * @param {!context.Context} context
  * @param {string} returnType
  * @constructor
  * @extends {section.Runnable}
@@ -5025,7 +5168,7 @@ section.Callable.prototype.name = function() {
 };
 
 /** @override */
-section.Callable.prototype.close = function(pkg) {
+section.Callable.prototype.close = function() {
   var self = this;
   var c;
   c = new CodeScope(self._context, self);

@@ -3,12 +3,13 @@
   var _ir2js;
   _ir2js = require('ir2js');
 
+var mergeToFile =
 /**
  * @param {string} base_dir
  * @param {Array.<string>} in_files
  * @param {string} out_file
  */
-var mergeToFile = function(base_dir, in_files, out_file) {
+function(base_dir, in_files, out_file) {
   var out;
   out = _fs.openSync(out_file, 'w');
 
@@ -24,7 +25,8 @@ var mergeToFile = function(base_dir, in_files, out_file) {
   });
 
   _fs.closeSync(out);
-};
+}
+;
 
   // TODO: @enum
   var ExecModes;

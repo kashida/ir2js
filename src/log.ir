@@ -1,4 +1,4 @@
-:=error ##
+:error = ##
   line\input.Line\$
   msg\s\? '*warning*'
   additional_lines\A.<s>\?
@@ -11,7 +11,7 @@
     console.error(line.line)
   process.exit(-1)
 
-:=assert ##
+:assert = ##
   check\*\$
   line\input.Line\? UnknownInputLine
   msg\s\? '*assertion*'
