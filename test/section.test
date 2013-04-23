@@ -1,0 +1,30 @@
+#{ class scope vars.
+:abc = 3
+  // this comment should not make a block.
+this should be a global comment.
+:def = [#]
+  0
+  ghi
+  # + #
+    xyz
+    xxx
+#=
+var abc =
+3
+  // this comment should not make a block.
+;
+/*
+this should be a global comment.
+*/
+var def =
+[
+  0,
+  ghi,
+  (
+    xyz
+  ) + (
+    xxx
+  )
+]
+;
+#}

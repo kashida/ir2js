@@ -11,14 +11,12 @@
     '_createCtor'
     '_createMethod'
     '_createAccessor'
-    //'_createGlobalFunction'
     '_createMultiLineStr'
     '_createGlobalCode'
     '_createNativeCode'
     '_createAnonymousScope'
     //'_createInterface'
     '_createTypedef'
-    //'_createVar' -- any type including array, map, number, etc.
     //'_createClassContext' -- for adding methods to e.g. Object.
     --
     method\s\$
@@ -100,13 +98,6 @@
   ret_type := re[4]
   ctx := @scope.copyContext(@scope.context.cls.methodName(name))
   => &%.Accessor(ctx, name, ret_type, type == '+')
-
-:@createGlobalFunction\%.Function\
-  line\s\$
-  re := /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line)
-  if !re
-    => null
-  => &%.Function(@scope.copyContextWithName(re[1]), re[3])
 
 :@createMultiLineStr\%.Str\
   line\s\$

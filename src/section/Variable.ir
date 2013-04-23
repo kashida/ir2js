@@ -17,11 +17,15 @@
 :<transform
   @.blocks.forEach(##)
     block\IndentBlock\$
-    @codeLine.addBlock(block)
+    if block.hasValidLine
+      @codeLine.addBlock(block)
   @codeLine.transform()
 
 :output\A\
   => [#]
     @context.name.decl() + ' ='
     @codeLine.output().output
+    @.blocks.map(##)
+      block\IndentBlock\$
+      => block.hasValidLine ? [] : block.output()
     ';'

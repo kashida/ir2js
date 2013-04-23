@@ -66,6 +66,11 @@ TODO: change marker's type to BlockType when it's enum.
 :endStr+\s\
   => _BLOCK_CLOSE[@marker]
 
+:hasValidLine+\b\
+  => @lines.some(##)
+    line\SectionLine\$
+    => !(line instanceof InvalidLine)
+
 :output\!output.Block\
   line_index\n\?
   // find the last valid line.
