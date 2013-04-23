@@ -8,7 +8,6 @@
   => @context.name.ref()
 
 :<close
-  pkg\!context.Package\?
   c := &CodeScope(@context, @)
   c.process(@.lines)
 

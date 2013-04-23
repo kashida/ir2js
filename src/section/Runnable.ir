@@ -4,6 +4,8 @@
 :<close
   file_name\s\$
   pkg\!context.Package\?
+  // TODO: necessary to create a new instance of context here?
+  // take one in ctor like Callable?
   c := &CodeScope(&context.Context(#), @)
     file_name
     pkg || &context.Package('')

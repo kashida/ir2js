@@ -34,7 +34,11 @@ Valid only after run call.
 
   // There may be one extra block.
   if @bidx > @blocks.length || @bidx + 1 < @blocks.length
-    error(@input, '# blocks does not match #markers.')
+    error(@input, #+)
+      '# blocks does not match #markers: '
+      @bidx
+      ', '
+      @blocks.length
     => false
 
   if @bidx < @blocks.length

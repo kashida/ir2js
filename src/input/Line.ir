@@ -1,4 +1,4 @@
-a line of input file. keeps track of the row index.
+A line of input file. Keeps track of the row index.
 ::Line
   @file+\s\$
   @line+\s\$

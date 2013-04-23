@@ -28,40 +28,32 @@
 #}
 
 #{ global function
-:=func_name ##\n\
+:func_name = ##
+  \n\
   param0\b\$
   param1\b\? value
   a := param0
   c := param1
 #=
+var func_name =
 /**
  * @param {boolean} param0
  * @param {boolean=} opt_param1
  * @return {number}
  */
-var func_name = function(param0, opt_param1) {
+function(param0, opt_param1) {
   var param1 = opt_param1 === undefined ? (value) : opt_param1;
   var a;
   a = param0;
   var c;
   c = param1;
-};
-{
-  fns:[
-    {
-      name:func_name
-      args:[
-        Boolean
-        Boolean
-      ]
-    }
-  ]
 }
-
+;
 #}
 
 #{ global function with anonymous function
-:=func_name ##\n\
+:func_name = ##
+  \n\
   param0\b\$
   param1\b\? value
   func(##)
@@ -72,12 +64,13 @@ var func_name = function(param0, opt_param1) {
     a := param0
   c := param1
 #=
+var func_name =
 /**
  * @param {boolean} param0
  * @param {boolean=} opt_param1
  * @return {number}
  */
-var func_name = function(param0, opt_param1) {
+function(param0, opt_param1) {
   var param1 = opt_param1 === undefined ? (value) : opt_param1;
   func(
   /**
@@ -93,19 +86,8 @@ var func_name = function(param0, opt_param1) {
   });
   var c;
   c = param1;
-};
-{
-  fns:[
-    {
-      name:func_name
-      args:[
-        Boolean
-        Boolean
-      ]
-    }
-  ]
 }
-
+;
 #}
 
 #{ block string

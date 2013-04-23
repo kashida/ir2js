@@ -7,10 +7,11 @@
   section := null
   header_line := header.line.substr(1)
   if ![#].some(##)
+    '_createVariable'
     '_createCtor'
     '_createMethod'
     '_createAccessor'
-    '_createGlobalFunction'
+    //'_createGlobalFunction'
     '_createMultiLineStr'
     '_createGlobalCode'
     '_createNativeCode'
@@ -30,6 +31,27 @@
     --
     error(header, 'line starts with colon and not a code section marker')
   => section
+
+:@createVariable\%.Variable\
+  line\s\$
+  header\input.Line\$
+  re := /^(\:{0,2})(\@?)\s*(\w+)\s*\=\s*(.*)$/.exec(line)
+  if !re
+    => null
+
+  scope_level := re[1].length
+  is_private := !!re[2]
+  name := re[3]
+  rest := re[4]
+
+  if scope_level == 2 && is_private
+    error(header, 'global variable can not be private')
+  => &%.Variable(#)
+    @scope.copyContextWithName(name)
+    header
+    scope_level
+    is_private
+    rest
 
 :@createCtor\%.Constructor\
   line\s\$

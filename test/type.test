@@ -43,69 +43,46 @@ function(param0, param1, param2, param3) {
 #}
 
 #{ global function param types
-:=func_name ##
+:func_name = ##
   param0\string\$
   param1\number\? value
   param2\!Test\?
   a := param0
   c := param1
 #=
+var func_name =
 /**
  * @param {string} param0
  * @param {number=} opt_param1
  * @param {!Test=} param2
  */
-var func_name = function(param0, opt_param1, param2) {
+function(param0, opt_param1, param2) {
   var param1 = opt_param1 === undefined ? (value) : opt_param1;
   var a;
   a = param0;
   var c;
   c = param1;
-};
-{
-  fns:[
-    {
-      name:func_name
-      args:[
-        String
-        Number
-        Test
-      ]
-    }
-  ]
 }
-
+;
 #}
 
 #{[some.package] special arg types
-:=func_name ##
+:func_name = ##
   p0\string\$
   p1\!%.SomeClass\?
   p2\!number\?
   p3\RegExp\?
 #=
+some.package.func_name =
 /**
  * @param {string} p0
  * @param {!some.package.SomeClass=} p1
  * @param {!number=} p2
  * @param {RegExp=} p3
  */
-some.package.func_name = function(p0, p1, p2, p3) {
-};
-{
-  fns:[
-    {
-      name:some.package.func_name
-      args:[
-        String
-        some.package.SomeClass
-        Number
-        null
-      ]
-    }
-  ]
+function(p0, p1, p2, p3) {
 }
-
+;
 #}
 
 #{ method param types
