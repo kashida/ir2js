@@ -21,7 +21,7 @@
   if @parent
     decl.push('@extends {' + @parent + '}')
     inherit.push([#].join(''))
-      @.context.name.ref()
+      @.context.name.ref
       '.prototype = Object.create('
       @parent
       '.prototype);'
@@ -32,9 +32,9 @@
     @.outputBody('};')
     inherit
     [#].join('')
-      @.context.name.property('_classname').decl()
+      @.context.name.property('_classname').decl
       " = '"
-      @.context.name.ref()
+      @.context.name.ref
       "';"
     @.context.cls.outputAccessors()
 

@@ -1,23 +1,20 @@
 #{ class scope vars.
-:abc = 3
+:::abc = 3
   // this comment should not make a block.
 this should be a global comment.
-:def = [#]
+:::def = [#]
   0
   ghi
   # + #
     xyz
     xxx
 #=
-var abc =
-3
+var abc = 3;
   // this comment should not make a block.
-;
 /*
 this should be a global comment.
 */
-var def =
-[
+var def = [
   0,
   ghi,
   (
@@ -25,6 +22,53 @@ var def =
   ) + (
     xxx
   )
-]
-;
+];
+#}
+
+#{ scope levels in global
+::Klass
+:abc = 0
+::def = 1
+:::ghi = 2
+#=
+/** @constructor */
+var Klass = function() {
+var self = this;
+};
+Klass.prototype._classname = 'Klass';
+Klass.abc = 0;
+var def = 1;
+var ghi = 2;
+{
+  cls:[
+    {
+      name:Klass
+    }
+  ]
+}
+
+#}
+
+#{[zzz] scope levels in a pacakge
+::Klass
+:abc = 0
+::def = 1
+:::ghi = 2
+#=
+/** @constructor */
+zzz.Klass = function() {
+var self = this;
+};
+zzz.Klass.prototype._classname = 'zzz.Klass';
+zzz.Klass.abc = 0;
+zzz.def = 1;
+var ghi = 2;
+{
+  cls:[
+    {
+      name:zzz.Klass
+    }
+  ]
+}
+
 #}

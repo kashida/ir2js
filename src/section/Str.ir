@@ -23,7 +23,7 @@ same number of strings as @.lines.
 :output\A.<output.Line>\
   lines := @.strlines()
   => [#]
-    @context.name.decl() + ' ='
+    @context.name.decl + ' ='
     lines.map(##)
       line\s\$
       i\n\$

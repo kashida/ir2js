@@ -28,15 +28,14 @@
 #}
 
 #{ global function
-:func_name = ##
+:::func_name = ##
   \n\
   param0\b\$
   param1\b\? value
   a := param0
   c := param1
 #=
-var func_name =
-/**
+var func_name = /**
  * @param {boolean} param0
  * @param {boolean=} opt_param1
  * @return {number}
@@ -47,12 +46,11 @@ function(param0, opt_param1) {
   a = param0;
   var c;
   c = param1;
-}
-;
+};
 #}
 
 #{ global function with anonymous function
-:func_name = ##
+:::func_name = ##
   \n\
   param0\b\$
   param1\b\? value
@@ -64,8 +62,7 @@ function(param0, opt_param1) {
     a := param0
   c := param1
 #=
-var func_name =
-/**
+var func_name = /**
  * @param {boolean} param0
  * @param {boolean=} opt_param1
  * @return {number}
@@ -86,8 +83,7 @@ function(param0, opt_param1) {
   });
   var c;
   c = param1;
-}
-;
+};
 #}
 
 #{ block string

@@ -18,6 +18,10 @@
   method_name\s\$
   => @.name().property(method_name)
 
+:staticName\!%.Name\
+  property_name\s\$
+  => @.name().staticProperty(property_name)
+
 :addMember\Member\
   name\s\$
   type\TypeDecoder\$

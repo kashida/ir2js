@@ -8,5 +8,5 @@
   out.indent = 0
   out.lines.appendLines([#])
     docLines(['@typedef {' + decoder.output() + '}'])
-    @.context.name.decl() + ';'
+    @.context.name.decl + ';'
   => [out]

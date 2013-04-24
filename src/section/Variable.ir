@@ -3,11 +3,10 @@
   @line\input.Line\$
   @scopeLevel\n\$
   @isPrivate\b\$
-  @rhs\s\$
+  rhs\s\$
   @codeLine\CodeLine\
-  
   ^()
-  code_input := &input.Line(@line.file, @rhs, @line.rowIndex)
+  code_input := &input.Line(@line.file, rhs, @line.rowIndex)
   @codeLine = &CodeLine(@context, code_input, &LineParser(code_input))
 
 :<close
@@ -22,10 +21,11 @@
   @codeLine.transform()
 
 :output\A\
-  => [#]
-    @context.name.decl() + ' ='
-    @codeLine.output().output
-    @.blocks.map(##)
-      block\IndentBlock\$
-      => block.hasValidLine ? [] : block.output()
-    ';'
+  if @scopeLevel == 0 && !@context.cls
+    error(@line, 'class scope outside of class.')
+  out := @codeLine.output()
+  out.linePrefix = @context.scopedName(@scopeLevel).decl + ' = ' + out.linePrefix
+  out.lineSuffix += ';'
+  => [out.output, @.blocks.map(##)]
+    block\IndentBlock\$
+    => block.hasValidLine ? [] : block.output()

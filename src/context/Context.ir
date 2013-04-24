@@ -7,6 +7,19 @@
   @isMethod&\b\ false
   @isFileScope&\b\ false
 
+:scopedName\!%.Name\
+  // 0: class, 1: package, 2: global.
+  scopeLevel\n\$
+  switch scopeLevel
+    case 0
+    => @cls.staticName(@name.id)
+
+    case 1
+    => @name
+
+    default
+    => @name.global()
+
 :clone\!%.Context\
   c := &%.Context(@fileName, @pkg)
   each p in @

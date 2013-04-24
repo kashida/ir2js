@@ -19,7 +19,7 @@ returns an empty array otherwise.
   // getter is provided.
   => [#]
     '/** @type {' + @type.output() + '}' + ' */'
-    class_name.property(@name).decl() + ';'
+    class_name.property(@name).decl + ';'
 
 output a getter or a setter.
 :outputAccessor\A\
@@ -28,13 +28,13 @@ output a getter or a setter.
   body\A\$
   params\ParamSet\?
   p := @isPseudo && params ? params.outputParams() : 'value'
-  => [#]
-    is_getter ? (#) : (#)
-      class_name.property('__defineGetter__').decl() + "('" + @name + "', function() {"
-      --
-      class_name.property('__defineSetter__').decl() + "('" + @name + "', function(" + p + ') {'
-    body
-    '});'
+  => [is_getter ? # : #, body, '});']
+    #+
+      class_name.property('__defineGetter__').decl
+      "('" + @name + "', function() {"
+    #+
+      class_name.property('__defineSetter__').decl
+      "('" + @name + "', function(" + p + ') {'
 
 produce necessary accessor methods based on the access type specification.
 :outputAccessors\A\

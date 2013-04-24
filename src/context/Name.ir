@@ -4,15 +4,22 @@ Name in file scope.
   @pkg+\!%.Package\$
   @id+\s\$
 
-:decl\s\
+:decl+\s\
   => (@pkg.empty() ? 'var ' : '') + @pkg.fullname(@id)
 
-:ref\s\
+:ref+\s\
   => @pkg.fullname(@id)
+
+:global\!%.Name\
+  => &%.Name(&%.Package(''), @id)
 
 :property\!%.Name\
   id\s\$
-  => &%.Name(&%.Package(@.ref() + '.prototype'), id)
+  => &%.Name(&%.Package(@.ref + '.prototype'), id)
 
-:oString\s\
+:staticProperty\!%.Name\
+  id\s\$
+  => &%.Name(&%.Package(@.ref), id)
+
+:toString\s\
   => '[' + @pkg + ':' + @id + ']'

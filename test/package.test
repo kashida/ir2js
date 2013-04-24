@@ -68,21 +68,19 @@ abc.def.classname.prototype.methodname = function(param) {
 #}
 
 #{[abc.def] type
-:func = ##
+::func = ##
   \%.some.type\
   p0\%.another.type\$
   p1\A.<%%.yet.another.type>\? %%%%.global.value
 #=
-abc.def.func =
-/**
+abc.def.func = /**
  * @param {abc.def.another.type} p0
  * @param {Array.<abc.yet.another.type>=} opt_p1
  * @return {abc.def.some.type}
  */
 function(p0, opt_p1) {
   var p1 = opt_p1 === undefined ? (global.value) : opt_p1;
-}
-;
+};
 #}
 
 #{[abc.def] package ref member lookup
