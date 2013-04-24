@@ -1,4 +1,4 @@
-:transformToJs = ##
+:::transformToJs = ##
   base_dir\s\$
   in_file\s\$
   out_file\s\$
@@ -17,7 +17,7 @@
     JSON.stringify(c.types.extract())
     'utf-8'
 
-:relativeFileName = ##
+:::relativeFileName = ##
   base_dir\s\$
   file_name\s\$
   if base_dir && file_name.indexOf(base_dir) == 0
@@ -25,14 +25,14 @@
     => file_name.substr(base_dir.length).replace(/^[\/\\]*/, '')
   => file_name
 
-:outputFileName = ##
+:::outputFileName = ##
   base_dir\s\$
   in_file\s\$
   out_dir\s\$
   => out_dir + '/' + relativeFileName(base_dir, #)
     in_file.replace(/\.ir$/, '.js')
 
-:needCompile = ##
+:::needCompile = ##
   src\s\$
   dst\s\$
   if !_path.existsSync(dst)

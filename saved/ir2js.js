@@ -956,6 +956,17 @@ IndentBlock.prototype.__defineGetter__('endStr', function() {
   return _BLOCK_CLOSE[self._marker];
 });
 
+/** @type {boolean} */
+IndentBlock.prototype.hasValidLine;
+IndentBlock.prototype.__defineGetter__('hasValidLine', function() {
+  var self = this;
+  return self._lines.some(
+  /** @param {SectionLine} line */
+  function(line) {
+    return !(line instanceof InvalidLine);
+  });
+});
+
 /**
  * @param {number=} line_index
  * @return {!output.Block}
@@ -1328,7 +1339,7 @@ Member.prototype.outputDecl = function(class_name) {
   // getter is provided.
   return [
     '/** @type {' + self._type.output() + '}' + ' */',
-    class_name.property(self._name).decl() + ';'
+    class_name.property(self._name).decl + ';'
   ];
 };
 
@@ -1346,15 +1357,17 @@ Member.prototype.outputAccessor = function(class_name, is_getter, body, params) 
   var self = this;
   var p;
   p = self._isPseudo && params ? params.outputParams() : 'value';
-  return [
-    is_getter ? (
-      class_name.property('__defineGetter__').decl() + "('" + self._name + "', function() {"
-    ) : (
-      class_name.property('__defineSetter__').decl() + "('" + self._name + "', function(" + p + ') {'
-    ),
-    body,
-    '});'
-  ];
+  return [is_getter ? (
+    (
+      (class_name.property('__defineGetter__').decl) +
+      ("('" + self._name + "', function() {")
+    )
+  ) : (
+    (
+      (class_name.property('__defineSetter__').decl) +
+      ("('" + self._name + "', function(" + p + ') {')
+    )
+  ), body, '});'];
 };
 
 /*
@@ -2161,8 +2174,7 @@ TypeSet.prototype.extract = function() {
     });
     _fs.writeFileSync(basedir + '/_argtypes.js', output.join('\n'), 'utf-8');
   };
-var transformToJs =
-/**
+var transformToJs = /**
  * @param {string} base_dir
  * @param {string} in_file
  * @param {string} out_file
@@ -2187,11 +2199,9 @@ function(base_dir, in_file, out_file) {
     JSON.stringify(c.types.extract()),
     'utf-8'
   );
-}
-;
+};
 
-var relativeFileName =
-/**
+var relativeFileName = /**
  * @param {string} base_dir
  * @param {string} file_name
  */
@@ -2201,11 +2211,9 @@ function(base_dir, file_name) {
     return file_name.substr(base_dir.length).replace(/^[\/\\]*/, '');
   }
   return file_name;
-}
-;
+};
 
-var outputFileName =
-/**
+var outputFileName = /**
  * @param {string} base_dir
  * @param {string} in_file
  * @param {string} out_dir
@@ -2214,11 +2222,9 @@ function(base_dir, in_file, out_dir) {
   return out_dir + '/' + relativeFileName(base_dir, (
     in_file.replace(/\.ir$/, '.js')
   ));
-}
-;
+};
 
-var needCompile =
-/**
+var needCompile = /**
  * @param {string} src
  * @param {string} dst
  */
@@ -2231,8 +2237,7 @@ function(src, dst) {
   var dst_stat;
   dst_stat = _fs.statSync(dst);
   return src_stat.mtime.getTime() > dst_stat.mtime.getTime();
-}
-;
+};
 
   exports.compileFiles = 
   /**
@@ -2264,8 +2269,7 @@ function(src, dst) {
       transformToJs(base_dir, in_file, out_file);
     });
   };
-var error =
-/**
+var error = /**
  * @param {input.Line} line
  * @param {string=} opt_msg
  * @param {Array.<string>=} additional_lines
@@ -2284,11 +2288,9 @@ function(line, opt_msg, additional_lines) {
     console.error(line.line);
   }
   process.exit(-1);
-}
-;
+};
 
-var assert =
-/**
+var assert = /**
  * @param {*} check
  * @param {input.Line=} opt_line
  * @param {string=} opt_msg
@@ -2300,8 +2302,7 @@ function(check, opt_line, opt_msg) {
     check,
     msg + (line ? ' (line ' + line.lineNo + '): ' + line.line : '')
   );
-}
-;
+};
   exports.createPackageList = 
   /**
    * @param {string} basedir
@@ -2545,8 +2546,7 @@ ClassDeps.prototype.removeDeps = function(file, provided_files) {
     }
     return sorted.list();
   };
-var arrFlatten =
-/** @param {string|Array} lines */
+var arrFlatten = /** @param {string|Array} lines */
 function(lines) {
   if (typeof(lines) == 'string') {
     return [lines];
@@ -2566,18 +2566,14 @@ function(lines) {
   function(arr, line) {
     return arr.concat(arrFlatten(line));
   }, []);
-}
-;
+};
 
-var check =
-/** @param {Object} obj */
+var check = /** @param {Object} obj */
 function(obj) {
   console.log(_util.inspect(obj, false, null));
-}
-;
+};
 
-var whitespaces =
-/**
+var whitespaces = /**
  * @param {number} num
  * @return {string}
  */
@@ -2590,11 +2586,9 @@ function(num) {
     s += ' ';
   }
   return s;
-}
-;
+};
 
-var objStringify =
-/**
+var objStringify = /**
  * @param {Object} obj
  * @param {boolean=} compact
  * @param {string=} name
@@ -2654,11 +2648,9 @@ function(obj, compact, name, opt_level) {
   else {
     return start_str + obj + '\n';
   }
-}
-;
+};
 
-var docLines =
-/**
+var docLines = /**
  * @param {!Array.<string>} annotations
  * @return {!Array.<string>}
  */
@@ -2680,8 +2672,7 @@ function(annotations) {
     }),
     ' */'
   ]);
-}
-;
+};
 /** @constructor */
 context.Class = function() {
   var self = this;
@@ -2734,6 +2725,15 @@ context.Class.prototype.setMember = function(name, member) {
 context.Class.prototype.methodName = function(method_name) {
   var self = this;
   return self.name().property(method_name);
+};
+
+/**
+ * @param {string} property_name
+ * @return {!context.Name}
+ */
+context.Class.prototype.staticName = function(property_name) {
+  var self = this;
+  return self.name().staticProperty(property_name);
 };
 
 /**
@@ -2861,6 +2861,25 @@ context.Context.prototype.__defineSetter__('isFileScope', function(value) {
 this._isFileScope = value;
 });
 
+/**
+ * @param {number} scopeLevel
+ * @return {!context.Name}
+ */
+context.Context.prototype.scopedName = function(scopeLevel) {
+  var self = this;
+  // 0: class, 1: package, 2: global.
+  switch (scopeLevel) {
+    case 0:;
+    return self._cls.staticName(self._name.id);
+
+    case 1:;
+    return self._name;
+
+    default:;
+    return self._name.global();
+  }
+};
+
 /** @return {!context.Context} */
 context.Context.prototype.clone = function() {
   var self = this;
@@ -2908,16 +2927,24 @@ context.Name.prototype.__defineGetter__('id', function() {
 return this._id;
 });
 
-/** @return {string} */
-context.Name.prototype.decl = function() {
+/** @type {string} */
+context.Name.prototype.decl;
+context.Name.prototype.__defineGetter__('decl', function() {
   var self = this;
   return (self._pkg.empty() ? 'var ' : '') + self._pkg.fullname(self._id);
-};
+});
 
-/** @return {string} */
-context.Name.prototype.ref = function() {
+/** @type {string} */
+context.Name.prototype.ref;
+context.Name.prototype.__defineGetter__('ref', function() {
   var self = this;
   return self._pkg.fullname(self._id);
+});
+
+/** @return {!context.Name} */
+context.Name.prototype.global = function() {
+  var self = this;
+  return new context.Name(new context.Package(''), self._id);
 };
 
 /**
@@ -2926,11 +2953,20 @@ context.Name.prototype.ref = function() {
  */
 context.Name.prototype.property = function(id) {
   var self = this;
-  return new context.Name(new context.Package(self.ref() + '.prototype'), id);
+  return new context.Name(new context.Package(self.ref + '.prototype'), id);
+};
+
+/**
+ * @param {string} id
+ * @return {!context.Name}
+ */
+context.Name.prototype.staticProperty = function(id) {
+  var self = this;
+  return new context.Name(new context.Package(self.ref), id);
 };
 
 /** @return {string} */
-context.Name.prototype.oString = function() {
+context.Name.prototype.toString = function() {
   var self = this;
   return '[' + self._pkg + ':' + self._id + ']';
 };
@@ -4423,14 +4459,12 @@ section.Generator.prototype.generate = function(header, lines) {
     '_createCtor',
     '_createMethod',
     '_createAccessor',
-    //'_createGlobalFunction'
     '_createMultiLineStr',
     '_createGlobalCode',
     '_createNativeCode',
     '_createAnonymousScope',
     //'_createInterface'
     '_createTypedef'
-    //'_createVar' -- any type including array, map, number, etc.
     //'_createClassContext' -- for adding methods to e.g. Object.
   ].some(
   /** @param {string} method */
@@ -4562,21 +4596,6 @@ section.Generator.prototype._createAccessor = function(line, header) {
   var ctx;
   ctx = self._scope.copyContext(self._scope.context.cls.methodName(name));
   return new section.Accessor(ctx, name, ret_type, type == '+');
-};
-
-/**
- * @param {string} line
- * @return {section.Function}
- * @private
- */
-section.Generator.prototype._createGlobalFunction = function(line) {
-  var self = this;
-  var re;
-  re = /^=\s*(\w+)\s*##(\\(.*)\\)?$/.exec(line);
-  if (!re) {
-    return null;
-  }
-  return new section.Function(self._scope.copyContextWithName(re[1]), re[3]);
 };
 
 /**
@@ -4796,6 +4815,8 @@ CodeLine.prototype.__defineGetter__('parsed', function() {
     error(self._input, 'parse requested for cont. line');
   }
   if (!self._parsed) {
+    // TODO: need to use different parsing targets.
+    // e.g. parameter init and section.Variable need to be parsed as rhs value.
     CODE_PARSER = CODE_PARSER || new parser.Target('ParseLine');
     var lines;
     lines = [self._input].concat(self._continueLines);
@@ -5022,7 +5043,7 @@ section.Str.prototype.output = function() {
   var lines;
   lines = self.strlines();
   return [
-    self._context.name.decl() + ' =',
+    self._context.name.decl + ' =',
     lines.map(
     /**
      * @param {string} line
@@ -5069,19 +5090,13 @@ section.Variable = function(context, line, scopeLevel, isPrivate, rhs) {
    */
   this._isPrivate = isPrivate;
   /**
-   * @type {string}
-   * @private
-   */
-  this._rhs = rhs;
-  /**
    * @type {CodeLine}
    * @private
    */
   this._codeLine = (null);
-
   section.Code.call(this);
   var code_input;
-  code_input = new input.Line(self._line.file, self._rhs, self._line.rowIndex);
+  code_input = new input.Line(self._line.file, rhs, self._line.rowIndex);
   self._codeLine = new CodeLine(self._context, code_input, new LineParser(code_input));
 };
 section.Variable.prototype = Object.create(section.Code.prototype);
@@ -5101,7 +5116,9 @@ section.Variable.prototype.transform = function() {
   self.blocks.forEach(
   /** @param {IndentBlock} block */
   function(block) {
-    self._codeLine.addBlock(block);
+    if (block.hasValidLine) {
+      self._codeLine.addBlock(block);
+    }
   });
   self._codeLine.transform();
 };
@@ -5109,11 +5126,18 @@ section.Variable.prototype.transform = function() {
 /** @return {Array} */
 section.Variable.prototype.output = function() {
   var self = this;
-  return [
-    self._context.name.decl() + ' =',
-    self._codeLine.output().output,
-    ';'
-  ];
+  if (self._scopeLevel == 0 && !self._context.cls) {
+    error(self._line, 'class scope outside of class.');
+  }
+  var out;
+  out = self._codeLine.output();
+  out.linePrefix = self._context.scopedName(self._scopeLevel).decl + ' = ' + out.linePrefix;
+  out.lineSuffix += ';';
+  return [out.output, self.blocks.map(
+  /** @param {IndentBlock} block */
+  function(block) {
+    return block.hasValidLine ? [] : block.output();
+  })];
 };
 /**
  * @param {!context.Context} context
@@ -5164,7 +5188,7 @@ this._params = value;
 /** @return {string} */
 section.Callable.prototype.name = function() {
   var self = this;
-  return self._context.name.ref();
+  return self._context.name.ref;
 };
 
 /** @override */
@@ -5192,7 +5216,7 @@ section.Callable.prototype.transform = function() {
 /** @return {string} */
 section.Callable.prototype.outputFunc = function() {
   var self = this;
-  return self._context.name.decl() + ' = function(' + self._params.outputParams() + ') {';
+  return self._context.name.decl + ' = function(' + self._params.outputParams() + ') {';
 };
 /**
  * @constructor
@@ -5248,7 +5272,7 @@ section.Typedef.prototype.output = function() {
   out.indent = 0;
   out.lines.appendLines([
     docLines(['@typedef {' + decoder.output() + '}']),
-    self.context.name.decl() + ';'
+    self.context.name.decl + ';'
   ]);
   return [out];
 };
@@ -5359,7 +5383,7 @@ section.Constructor.prototype.output = function() {
   if (self._parent) {
     decl.push('@extends {' + self._parent + '}');
     inherit.push([
-      self.context.name.ref(),
+      self.context.name.ref,
       '.prototype = Object.create(',
       self._parent,
       '.prototype);'
@@ -5372,9 +5396,9 @@ section.Constructor.prototype.output = function() {
     self.outputBody('};'),
     inherit,
     [
-      self.context.name.property('_classname').decl(),
+      self.context.name.property('_classname').decl,
       " = '",
-      self.context.name.ref(),
+      self.context.name.ref,
       "';"
     ].join(''),
     self.context.cls.outputAccessors()
@@ -5385,34 +5409,6 @@ section.Constructor.prototype.output = function() {
 section.Constructor.prototype.setType = function(types) {
   var self = this;
   self.params.setArgTypes(types.getCurrentCtor());
-};
-/**
- * @param {!context.Context} context
- * @param {string} return_type
- * @constructor
- * @extends {section.Callable}
- */
-section.Function = function(context, return_type) {
-  var self = this;
-  section.Callable.call(this, context, return_type);
-};
-section.Function.prototype = Object.create(section.Callable.prototype);
-section.Function.prototype._classname = 'section.Function';
-
-/** @return {Array} */
-section.Function.prototype.output = function() {
-  var self = this;
-  return [
-    docLines(self.params.outputDecls()),
-    self.outputFunc(),
-    self.outputBody('};')
-  ];
-};
-
-/** @override */
-section.Function.prototype.setType = function(types) {
-  var self = this;
-  self.params.setArgTypes(types.addFunct(self.context.name.ref()));
 };
 /**
  * @param {!context.Context} context
