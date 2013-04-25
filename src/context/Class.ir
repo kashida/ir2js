@@ -24,7 +24,7 @@
 
 :addMember\Member\
   name\s\$
-  type\TypeDecoder\$
+  type\type.Decoder\$
   access_type\s\$
   is_pseudo\b\? false
   m := &Member(name, type, access_type, is_pseudo)

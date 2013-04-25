@@ -8,7 +8,7 @@ parse file scope and separate code sections from comments.
   @context+\!context.Context\ &context.Context(#)
     file_name
     &context.Package(pkg_name)
-  @types+\TypeSet\ &TypeSet()
+  @types+\type.Set\ &type.Set()
   @list\A.<OutputSection>\
 
   @context.isFileScope = true

@@ -8,12 +8,12 @@
   => @context.pkg.replace(name)
 
 :cast\s\
-  type\s\$
-  => '/** @type {' + &TypeDecoder(@context.pkg, type).output() + '} */'
+  type_name\s\$
+  => '/** @type {' + &type.Decoder(@context.pkg, type_name).output() + '} */'
 
 :type\s\
-  type\s\$
-  => &TypeDecoder(@context.pkg, type).output()
+  type_name\s\$
+  => &type.Decoder(@context.pkg, type_name).output()
 
 :parentCall\s\
   args\s\$

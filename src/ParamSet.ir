@@ -13,7 +13,7 @@
   @block\IndentBlock\$
   @isCtor\b\? false
   @params\A.<!Param>\ []
-  @returnType\TypeDecoder\
+  @returnType\type.Decoder\
 
 :transform
   param_done := false
@@ -53,13 +53,13 @@
   re := /^\s*\\(.*)\\\s*$/.exec(line)
   if !re
     => false
-  @returnType = &TypeDecoder(@context.pkg, re[1])
+  @returnType = &type.Decoder(@context.pkg, re[1])
   => true
 
 :setReturnType
   return_type\s\$
   if return_type
-    @returnType = &TypeDecoder(@context.pkg, return_type)
+    @returnType = &type.Decoder(@context.pkg, return_type)
 
 :isEmpty\b\
   => @params.length == 0
@@ -100,7 +100,7 @@
     => p.outputArgType()
 
 :setArgTypes
-  types\CallableType\$
+  types\type.Callable\$
   @params.forEach(##)
     p\!Param\$
     types.addArg(p.argtype())

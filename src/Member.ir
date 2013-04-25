@@ -3,7 +3,7 @@ are accessors for.
 
 ::Member
   @name\s\$
-  @type\TypeDecoder\$
+  @type\type.Decoder\$
   @accessType\s\$
   @isPseudo\b\$
   @declared\b\ false

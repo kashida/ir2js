@@ -8,7 +8,7 @@ Function parameter and / or member declarion.
 
   @line\parser.ParamLine\
   @success+\b\ false
-  @type+\TypeDecoder\
+  @type+\type.Decoder\
   @valueLine+\A.<parser.BlockMarker|s>\
 
   if !(parsed.tokens instanceof parser.ParamLine)
@@ -16,7 +16,7 @@ Function parameter and / or member declarion.
 
   @line = parsed.tokens
   @success = true
-  @type = &TypeDecoder(@context.pkg, @line.type)
+  @type = &type.Decoder(@context.pkg, @line.type)
 
   @valueLine = @line.init && !@line.init.isEmpty ? @line.init.list : null
   if @.isMember && @.initType != '$' && !@valueLine

@@ -1,37 +1,37 @@
-::TypeSet
-  @ctor\CallableType\
+::Set
+  @ctor\%.Callable\
   @classes\A\ []
   @functs\A\ []
 
-:addCtor\CallableType\
+:addCtor\%.Callable\
   name\s\$
-  @ctor = &CallableType(name)
+  @ctor = &%.Callable(name)
   @classes.push(@ctor)
   => @ctor
 
-:addFunct\CallableType\
+:addFunct\%.Callable\
   name\s\$
-  fn := &CallableType(name)
+  fn := &%.Callable(name)
   @functs.push(fn)
   => fn
 
-:getCurrentCtor\CallableType\
+:getCurrentCtor\%.Callable\
   => @ctor
 
 :setParent
   parent_name\s\$
   if !@ctor
     throw 'set parent called w/o ctor.'
-  @ctor.setParent(parent_name)
+  @ctor.parent = parent_name
 
 :extract\O\
   obj := {}
   if @classes
     obj['cls'] = @classes.map(##)
-      cls\TypeSet\$
+      cls\%.Set\$
       => cls.extract()
   if @functs
     obj['fns'] = @functs.map(##)
-      fn\CallableType\$
+      fn\%.Callable\$
       => fn.extract()
   => obj

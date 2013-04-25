@@ -3,7 +3,7 @@
   ^(context)
 
 :output\A.<output.Line>\
-  decoder := &TypeDecoder(@.context.pkg, @.strlines().join(''))
+  decoder := &type.Decoder(@.context.pkg, @.strlines().join(''))
   out := &output.Line(@.lines[0])
   out.indent = 0
   out.lines.appendLines([#])

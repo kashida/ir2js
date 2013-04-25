@@ -9,6 +9,7 @@
       console.error(additional_line)
   else
     console.error(line.line)
+  console.trace()
   process.exit(-1)
 
 :::assert = ##

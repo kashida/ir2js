@@ -1,4 +1,4 @@
-::TypeDecoder
+::Decoder
   @pkg\!context.Package\$
   @type\s\$
   @decoded\s\''

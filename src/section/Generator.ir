@@ -15,9 +15,7 @@
     '_createGlobalCode'
     '_createNativeCode'
     '_createAnonymousScope'
-    //'_createInterface'
     '_createTypedef'
-    //'_createClassContext' -- for adding methods to e.g. Object.
     --
     method\s\$
     section = @[method].call(@, header_line, header)

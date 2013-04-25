@@ -20,7 +20,7 @@ Overriding accessor.
       error(@.lines[0], 'getter with no return type')
     member = @.context.cls.addMember(#)
       @name
-      &TypeDecoder(@.context.pkg, @.returnType)
+      &type.Decoder(@.context.pkg, @.returnType)
       '&'
       true
   class_name := @.context.cls.name()

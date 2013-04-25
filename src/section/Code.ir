@@ -8,4 +8,4 @@ abstract method.
   pkg\!context.Package\?
 
 :setType
-  types\TypeSet\$
+  types\type.Set\$
