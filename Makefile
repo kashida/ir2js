@@ -122,6 +122,7 @@ compiled/parser/syntax.js: src/parser/syntax.pegjs
 update:
 	make clean
 	make test
+	make parser_test
 	make converter
 	cp compiled/ir2js.js saved
 	cp compiled/convert.js saved

@@ -64,7 +64,7 @@ TestFile.prototype.run_test = function(line, expected) {
   } catch(e) {
     if (!this.expect_error) {
       console.error('[FAIL] error for ' + this.rule_name);
-      e.context_lines.forEach(function(line, i) {
+      e.contextLines.forEach(function(line, i) {
         console.error((i == 0 ? 'I: ' : '   ') + line)
       });
       console.error('E: ' + e.message)
