@@ -1,18 +1,13 @@
-Use PEGJS syntax to create a TokenList.
 Container and interface of the TokenList to the rest of the converter.
 
 ::Result
   @tokens+\%.TokenList\$
-  @input\!A.<!input.Line>\$
 
 :code+\A.<%.BlockMarker|s>\
   => @tokens.list
 
 :prevLines+\A.<s>\
   => @tokens.prevLines
-
-:nextLines+\A.<s>\
-  => @tokens.nextLines
 
 :tailComment+\A.<s>\
   => @tokens.nextLines

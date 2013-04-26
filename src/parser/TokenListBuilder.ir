@@ -12,7 +12,7 @@
 :result\%.Result\
   line\!A.<input.Line>\$
   @.build()
-  => &%.Result(@tokens, line)
+  => &%.Result(@tokens)
 
 :@buildRec
   data\%.TokenList|A|O|s\$

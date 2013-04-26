@@ -1,5 +1,4 @@
-:
-  CODE_PARSER := null
+::CODE_PARSER = null
 
 ::CodeLine <section.Head
   @context\!context.Context\$
