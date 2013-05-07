@@ -1,0 +1,13 @@
+Write data into the specified file. Create the file or its directory If they do
+not exit.
+:::writeFile = ##
+  path\s\$
+  data\s\$
+  dir := _path.dirname(path)
+  if !_path.existsSync(dir)
+    _fs.mkdirSync(dir)
+
+  _fs.writeFileSync(#)
+    path
+    data
+    'utf-8'

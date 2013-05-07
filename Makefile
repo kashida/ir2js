@@ -51,15 +51,12 @@ default: test
 # ir to js targets.
 
 compiled/%.js: src/%.ir
-	@mkdir -p `dirname $@`
 	@$(NODE_SAVED) --basedir=src --outdir=compiled $^
 
 compiled/%.js: misc/%.ir
-	@mkdir -p `dirname $@`
 	@$(NODE_SAVED) --basedir=misc --outdir=compiled $^
 
 compiled/test.js: test/test.ir
-	@mkdir -p `dirname $@`
 	@$(NODE_SAVED) --basedir=test --outdir=compiled $^
 
 

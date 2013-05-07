@@ -8,14 +8,10 @@
 
   c := &FileScope(in_file, pkg_name)
   c.processLines(_fs.readFileSync(in_file, 'utf-8').split('\n'))
-  _fs.writeFileSync(#)
-    out_file
-    c.output().join('\n')
-    'utf-8'
-  _fs.writeFileSync(#)
+  writeFile(out_file, c.output().join('\n'))
+  writeFile(#)
     out_file.replace(/\.js$/, '.tk')
     JSON.stringify(c.types.extract())
-    'utf-8'
 
 :::relativeFileName = ##
   base_dir\s\$

@@ -3,6 +3,7 @@ var input = {};
 var output = {};
 var parser = {};
 var section = {};
+var type = {};
 
   var _fs;
   _fs = require('fs');
@@ -184,76 +185,6 @@ BlockMatcher.prototype._outputParams = function(out, param) {
     out.lines.appendLines(docLines(param.outputDecls()));
     out.lines.appendStr('function(' + param.outputParams() + ')');
   }
-};
-/**
- * @param {string} name
- * @constructor
- */
-var CallableType = function(name) {
-  var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
-  this._name = name;
-  /**
-   * @type {string}
-   * @private
-   */
-  this._parent = ('');
-  /**
-   * @type {Array.<CallableType>}
-   * @private
-   */
-  this._methods = ([]);
-  /**
-   * @type {Array.<string|null>}
-   * @private
-   */
-  this._args = ([]);
-};
-CallableType.prototype._classname = 'CallableType';
-
-/*
-TODO: use setter.
-*/
-/** @param {string} parent_name */
-CallableType.prototype.setParent = function(parent_name) {
-  var self = this;
-  self._parent = parent_name;
-};
-
-/** @param {string} name */
-CallableType.prototype.addMethod = function(name) {
-  var self = this;
-  var m;
-  m = new CallableType(name);
-  self._methods.push(m);
-  return m;
-};
-
-/** @param {string|null} arg */
-CallableType.prototype.addArg = function(arg) {
-  var self = this;
-  self._args.push(arg);
-};
-
-/** @return {Object} */
-CallableType.prototype.extract = function() {
-  var self = this;
-  var obj;
-  obj = {'name': self._name, 'args': self._args};
-  if (self._parent) {
-    obj['parent'] = self._parent;
-  }
-  if (self._methods) {
-    obj['methods'] = self._methods.map(
-    /** @param {CallableType} m */
-    function(m) {
-      return m.extract();
-    });
-  }
-  return obj;
 };
 /**
  * @param {input.Line} input
@@ -743,10 +674,10 @@ var FileScope = function(file_name, pkg_name) {
     new context.Package(pkg_name)
   ));
   /**
-   * @type {TypeSet}
+   * @type {type.Set}
    * @private
    */
-  this._types = (new TypeSet());
+  this._types = (new type.Set());
   /**
    * @type {Array.<OutputSection>}
    * @private
@@ -761,7 +692,7 @@ FileScope.prototype.context;
 FileScope.prototype.__defineGetter__('context', function() {
 return this._context;
 });
-/** @type {TypeSet} */
+/** @type {type.Set} */
 FileScope.prototype.types;
 FileScope.prototype.__defineGetter__('types', function() {
 return this._types;
@@ -1237,21 +1168,21 @@ LineTransformer.prototype.pkgRef = function(name) {
 };
 
 /**
- * @param {string} type
+ * @param {string} type_name
  * @return {string}
  */
-LineTransformer.prototype.cast = function(type) {
+LineTransformer.prototype.cast = function(type_name) {
   var self = this;
-  return '/** @type {' + new TypeDecoder(self._context.pkg, type).output() + '} */';
+  return '/** @type {' + new type.Decoder(self._context.pkg, type_name).output() + '} */';
 };
 
 /**
- * @param {string} type
+ * @param {string} type_name
  * @return {string}
  */
-LineTransformer.prototype.type = function(type) {
+LineTransformer.prototype.type = function(type_name) {
   var self = this;
-  return new TypeDecoder(self._context.pkg, type).output();
+  return new type.Decoder(self._context.pkg, type_name).output();
 };
 
 /**
@@ -1286,7 +1217,7 @@ are accessors for.
 
 /**
  * @param {string} name
- * @param {TypeDecoder} type
+ * @param {type.Decoder} type
  * @param {string} accessType
  * @param {boolean} isPseudo
  * @constructor
@@ -1299,7 +1230,7 @@ var Member = function(name, type, accessType, isPseudo) {
    */
   this._name = name;
   /**
-   * @type {TypeDecoder}
+   * @type {type.Decoder}
    * @private
    */
   this._type = type;
@@ -1422,7 +1353,7 @@ var Param = function(context, is_ctor, inputs, parsed) {
    */
   this._success = (false);
   /**
-   * @type {TypeDecoder}
+   * @type {type.Decoder}
    * @private
    */
   this._type = (null);
@@ -1438,7 +1369,7 @@ var Param = function(context, is_ctor, inputs, parsed) {
 
   self._line = parsed.tokens;
   self._success = true;
-  self._type = new TypeDecoder(self._context.pkg, self._line.type);
+  self._type = new type.Decoder(self._context.pkg, self._line.type);
 
   self._valueLine = self._line.init && !self._line.init.isEmpty ? self._line.init.list : null;
   if (self.isMember && self.initType != '$' && !self._valueLine) {
@@ -1460,7 +1391,7 @@ Param.prototype.success;
 Param.prototype.__defineGetter__('success', function() {
 return this._success;
 });
-/** @type {TypeDecoder} */
+/** @type {type.Decoder} */
 Param.prototype.type;
 Param.prototype.__defineGetter__('type', function() {
 return this._type;
@@ -1640,7 +1571,7 @@ var ParamSet = function(context, block, opt_isCtor) {
    */
   this._params = ([]);
   /**
-   * @type {TypeDecoder}
+   * @type {type.Decoder}
    * @private
    */
   this._returnType = (null);
@@ -1715,7 +1646,7 @@ ParamSet.prototype._tryReturnType = function(line) {
   if (!re) {
     return false;
   }
-  self._returnType = new TypeDecoder(self._context.pkg, re[1]);
+  self._returnType = new type.Decoder(self._context.pkg, re[1]);
   return true;
 };
 
@@ -1723,7 +1654,7 @@ ParamSet.prototype._tryReturnType = function(line) {
 ParamSet.prototype.setReturnType = function(return_type) {
   var self = this;
   if (return_type) {
-    self._returnType = new TypeDecoder(self._context.pkg, return_type);
+    self._returnType = new type.Decoder(self._context.pkg, return_type);
   }
 };
 
@@ -1797,7 +1728,7 @@ ParamSet.prototype.outputArgTypes = function() {
   }).join(', ') + ']';
 };
 
-/** @param {CallableType} types */
+/** @param {type.Callable} types */
 ParamSet.prototype.setArgTypes = function(types) {
   var self = this;
   self._params.forEach(
@@ -2008,136 +1939,6 @@ TestCase.prototype._makeDiff = function(lines0, lines1) {
 };
 
   exports.TestCase = TestCase;
-/**
- * @param {!context.Package} pkg
- * @param {string} type
- * @constructor
- */
-var TypeDecoder = function(pkg, type) {
-  var self = this;
-  /**
-   * @type {!context.Package}
-   * @private
-   */
-  this._pkg = pkg;
-  /**
-   * @type {string}
-   * @private
-   */
-  this._type = type;
-  /**
-   * @type {string}
-   * @private
-   */
-  this._decoded = ('');
-  self._process();
-};
-TypeDecoder.prototype._classname = 'TypeDecoder';
-
-/** @private */
-TypeDecoder.prototype._process = function() {
-  var self = this;
-  self._decoded = self._pkg.replaceStr(self._type);
-  [
-    ['\\bb\\b', 'boolean'],
-    ['\\bf\\b', 'function'],
-    ['\\bn\\b', 'number'],
-    ['\\bs\\b', 'string'],
-    ['\\bA\\b', 'Array'],
-    ['\\bF\\b', 'Function'],
-    ['\\bO\\b', 'Object']
-  ].forEach(
-  /** @param {string} re_type */
-  function(re_type) {
-    self._decoded = self._decoded.replace(new RegExp(re_type[0], 'g'), re_type[1]);
-  });
-};
-
-/** @return {string} */
-TypeDecoder.prototype.output = function() {
-  var self = this;
-  return self._decoded;
-};
-/** @constructor */
-var TypeSet = function() {
-  var self = this;
-  /**
-   * @type {CallableType}
-   * @private
-   */
-  this._ctor = (null);
-  /**
-   * @type {Array}
-   * @private
-   */
-  this._classes = ([]);
-  /**
-   * @type {Array}
-   * @private
-   */
-  this._functs = ([]);
-};
-TypeSet.prototype._classname = 'TypeSet';
-
-/**
- * @param {string} name
- * @return {CallableType}
- */
-TypeSet.prototype.addCtor = function(name) {
-  var self = this;
-  self._ctor = new CallableType(name);
-  self._classes.push(self._ctor);
-  return self._ctor;
-};
-
-/**
- * @param {string} name
- * @return {CallableType}
- */
-TypeSet.prototype.addFunct = function(name) {
-  var self = this;
-  var fn;
-  fn = new CallableType(name);
-  self._functs.push(fn);
-  return fn;
-};
-
-/** @return {CallableType} */
-TypeSet.prototype.getCurrentCtor = function() {
-  var self = this;
-  return self._ctor;
-};
-
-/** @param {string} parent_name */
-TypeSet.prototype.setParent = function(parent_name) {
-  var self = this;
-  if (!self._ctor) {
-    throw 'set parent called w/o ctor.';
-  }
-  self._ctor.setParent(parent_name);
-};
-
-/** @return {Object} */
-TypeSet.prototype.extract = function() {
-  var self = this;
-  var obj;
-  obj = {};
-  if (self._classes) {
-    obj['cls'] = self._classes.map(
-    /** @param {TypeSet} cls */
-    function(cls) {
-      return cls.extract();
-    });
-  }
-  if (self._functs) {
-    obj['fns'] = self._functs.map(
-    /** @param {CallableType} fn */
-    function(fn) {
-      return fn.extract();
-    });
-  }
-  return obj;
-};
   exports.createArgTypes = 
   /**
    * @param {string} basedir
@@ -2189,15 +1990,10 @@ function(base_dir, in_file, out_file) {
   var c;
   c = new FileScope(in_file, pkg_name);
   c.processLines(_fs.readFileSync(in_file, 'utf-8').split('\n'));
-  _fs.writeFileSync(
-    out_file,
-    c.output().join('\n'),
-    'utf-8'
-  );
-  _fs.writeFileSync(
+  writeFile(out_file, c.output().join('\n'));
+  writeFile(
     out_file.replace(/\.js$/, '.tk'),
-    JSON.stringify(c.types.extract()),
-    'utf-8'
+    JSON.stringify(c.types.extract())
   );
 };
 
@@ -2269,6 +2065,27 @@ function(src, dst) {
       transformToJs(base_dir, in_file, out_file);
     });
   };
+/*
+Write data into the specified file. Create the file or its directory If they do
+not exit.
+*/
+var writeFile = /**
+ * @param {string} path
+ * @param {string} data
+ */
+function(path, data) {
+  var dir;
+  dir = _path.dirname(path);
+  if (!_path.existsSync(dir)) {
+    _fs.mkdirSync(dir);
+  }
+
+  _fs.writeFileSync(
+    path,
+    data,
+    'utf-8'
+  );
+};
 var error = /**
  * @param {input.Line} line
  * @param {string=} opt_msg
@@ -2287,6 +2104,7 @@ function(line, opt_msg, additional_lines) {
   else {
     console.error(line.line);
   }
+  console.trace();
   process.exit(-1);
 };
 
@@ -2738,7 +2556,7 @@ context.Class.prototype.staticName = function(property_name) {
 
 /**
  * @param {string} name
- * @param {TypeDecoder} type
+ * @param {type.Decoder} type
  * @param {string} access_type
  * @param {boolean=} opt_is_pseudo
  * @return {Member}
@@ -3774,27 +3592,20 @@ output.Multiline.prototype.appendBlock = function(block) {
   self._lastLineOpen = false;
 };
 /*
-Use PEGJS syntax to create a TokenList.
 Container and interface of the TokenList to the rest of the converter.
 */
 
 /**
  * @param {parser.TokenList} tokens
- * @param {!Array.<!input.Line>} input
  * @constructor
  */
-parser.Result = function(tokens, input) {
+parser.Result = function(tokens) {
   var self = this;
   /**
    * @type {parser.TokenList}
    * @private
    */
   this._tokens = tokens;
-  /**
-   * @type {!Array.<!input.Line>}
-   * @private
-   */
-  this._input = input;
 };
 parser.Result.prototype._classname = 'parser.Result';
 /** @type {parser.TokenList} */
@@ -3815,13 +3626,6 @@ parser.Result.prototype.prevLines;
 parser.Result.prototype.__defineGetter__('prevLines', function() {
   var self = this;
   return self._tokens.prevLines;
-});
-
-/** @type {Array.<string>} */
-parser.Result.prototype.nextLines;
-parser.Result.prototype.__defineGetter__('nextLines', function() {
-  var self = this;
-  return self._tokens.nextLines;
 });
 
 /** @type {Array.<string>} */
@@ -4291,7 +4095,7 @@ parser.TokenListBuilder.prototype.build = function() {
 parser.TokenListBuilder.prototype.result = function(line) {
   var self = this;
   self.build();
-  return new parser.Result(self._tokens, line);
+  return new parser.Result(self._tokens);
 };
 
 /**
@@ -4463,9 +4267,7 @@ section.Generator.prototype.generate = function(header, lines) {
     '_createGlobalCode',
     '_createNativeCode',
     '_createAnonymousScope',
-    //'_createInterface'
     '_createTypedef'
-    //'_createClassContext' -- for adding methods to e.g. Object.
   ].some(
   /** @param {string} method */
   function(method) {
@@ -4706,8 +4508,206 @@ do all the work necessary to produce code output.
 section.Head.prototype.transform = function() {
 var self = this;
 };
-  var CODE_PARSER;
-  CODE_PARSER = null;
+/**
+ * @param {string} name
+ * @constructor
+ */
+type.Callable = function(name) {
+  var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._name = name;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._parent = ('');
+  /**
+   * @type {Array.<type.Callable>}
+   * @private
+   */
+  this._methods = ([]);
+  /**
+   * @type {Array.<string|null>}
+   * @private
+   */
+  this._args = ([]);
+};
+type.Callable.prototype._classname = 'type.Callable';
+/** @type {string} */
+type.Callable.prototype.parent;
+type.Callable.prototype.__defineGetter__('parent', function() {
+return this._parent;
+});
+type.Callable.prototype.__defineSetter__('parent', function(value) {
+this._parent = value;
+});
+
+/** @param {string} name */
+type.Callable.prototype.addMethod = function(name) {
+  var self = this;
+  var m;
+  m = new type.Callable(name);
+  self._methods.push(m);
+  return m;
+};
+
+/** @param {string|null} arg */
+type.Callable.prototype.addArg = function(arg) {
+  var self = this;
+  self._args.push(arg);
+};
+
+/** @return {Object} */
+type.Callable.prototype.extract = function() {
+  var self = this;
+  var obj;
+  obj = {'name': self._name, 'args': self._args};
+  if (self._parent) {
+    obj['parent'] = self._parent;
+  }
+  if (self._methods) {
+    obj['methods'] = self._methods.map(
+    /** @param {type.Callable} m */
+    function(m) {
+      return m.extract();
+    });
+  }
+  return obj;
+};
+/**
+ * @param {!context.Package} pkg
+ * @param {string} type
+ * @constructor
+ */
+type.Decoder = function(pkg, type) {
+  var self = this;
+  /**
+   * @type {!context.Package}
+   * @private
+   */
+  this._pkg = pkg;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._type = type;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._decoded = ('');
+  self._process();
+};
+type.Decoder.prototype._classname = 'type.Decoder';
+
+/** @private */
+type.Decoder.prototype._process = function() {
+  var self = this;
+  self._decoded = self._pkg.replaceStr(self._type);
+  [
+    ['\\bb\\b', 'boolean'],
+    ['\\bf\\b', 'function'],
+    ['\\bn\\b', 'number'],
+    ['\\bs\\b', 'string'],
+    ['\\bA\\b', 'Array'],
+    ['\\bF\\b', 'Function'],
+    ['\\bO\\b', 'Object']
+  ].forEach(
+  /** @param {string} re_type */
+  function(re_type) {
+    self._decoded = self._decoded.replace(new RegExp(re_type[0], 'g'), re_type[1]);
+  });
+};
+
+/** @return {string} */
+type.Decoder.prototype.output = function() {
+  var self = this;
+  return self._decoded;
+};
+/** @constructor */
+type.Set = function() {
+  var self = this;
+  /**
+   * @type {type.Callable}
+   * @private
+   */
+  this._ctor = (null);
+  /**
+   * @type {Array}
+   * @private
+   */
+  this._classes = ([]);
+  /**
+   * @type {Array}
+   * @private
+   */
+  this._functs = ([]);
+};
+type.Set.prototype._classname = 'type.Set';
+
+/**
+ * @param {string} name
+ * @return {type.Callable}
+ */
+type.Set.prototype.addCtor = function(name) {
+  var self = this;
+  self._ctor = new type.Callable(name);
+  self._classes.push(self._ctor);
+  return self._ctor;
+};
+
+/**
+ * @param {string} name
+ * @return {type.Callable}
+ */
+type.Set.prototype.addFunct = function(name) {
+  var self = this;
+  var fn;
+  fn = new type.Callable(name);
+  self._functs.push(fn);
+  return fn;
+};
+
+/** @return {type.Callable} */
+type.Set.prototype.getCurrentCtor = function() {
+  var self = this;
+  return self._ctor;
+};
+
+/** @param {string} parent_name */
+type.Set.prototype.setParent = function(parent_name) {
+  var self = this;
+  if (!self._ctor) {
+    throw 'set parent called w/o ctor.';
+  }
+  self._ctor.parent = parent_name;
+};
+
+/** @return {Object} */
+type.Set.prototype.extract = function() {
+  var self = this;
+  var obj;
+  obj = {};
+  if (self._classes) {
+    obj['cls'] = self._classes.map(
+    /** @param {type.Set} cls */
+    function(cls) {
+      return cls.extract();
+    });
+  }
+  if (self._functs) {
+    obj['fns'] = self._functs.map(
+    /** @param {type.Callable} fn */
+    function(fn) {
+      return fn.extract();
+    });
+  }
+  return obj;
+};
+var CODE_PARSER = null;
 
 /**
  * @param {!context.Context} context
@@ -4902,7 +4902,7 @@ section.Code.prototype.close = function(file_name, pkg) {
   var self = this;
 };
 
-/** @param {TypeSet} types */
+/** @param {type.Set} types */
 section.Code.prototype.setType = function(types) {
   var self = this;
 };
@@ -5266,7 +5266,7 @@ section.Typedef.prototype._classname = 'section.Typedef';
 section.Typedef.prototype.output = function() {
   var self = this;
   var decoder;
-  decoder = new TypeDecoder(self.context.pkg, self.strlines().join(''));
+  decoder = new type.Decoder(self.context.pkg, self.strlines().join(''));
   var out;
   out = new output.Line(self.lines[0]);
   out.indent = 0;
@@ -5322,7 +5322,7 @@ section.Accessor.prototype.output = function() {
     }
     member = self.context.cls.addMember(
       self._name,
-      new TypeDecoder(self.context.pkg, self.returnType),
+      new type.Decoder(self.context.pkg, self.returnType),
       '&',
       true
     );

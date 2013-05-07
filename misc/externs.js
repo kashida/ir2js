@@ -64,6 +64,11 @@ _fs.Stats = function() {};
  */
 _fs.Stats.prototype.isDirectory = function() {};
 
+/**
+ * @return {boolean}
+ */
+_fs.Stats.prototype.isFile = function() {};
+
 /** @type{Date} */
 _fs.Stats.prototype.mtime;
 
@@ -114,6 +119,12 @@ _fs.writeFile = function(filename, data, opt_encoding, opt_callback) {};
  * @return {string}
  */
 _fs.writeFileSync = function(filename, data, opt_encoding) {};
+
+/**
+ * @param {string} path
+ * @param {number=} opt_mode
+ */
+_fs.mkdirSync = function(path, opt_mode) {};
 
 var _http = {};
 
