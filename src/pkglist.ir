@@ -6,7 +6,10 @@
     pkgs := {}
     files.forEach(##)
       file\s\$
+      if !/[\/\\]/.test(file)
+        =>
       pkg_name := file.replace(/[\/\\][^\/\\]*$/, '')
+
       if basedir && pkg_name.indexOf(basedir) == 0
         // strip off the basedir.
         pkg_name = pkg_name.substr(basedir.length)

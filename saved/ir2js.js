@@ -2133,8 +2133,12 @@ function(check, opt_line, opt_msg) {
     files.forEach(
     /** @param {string} file */
     function(file) {
+      if (!/[\/\\]/.test(file)) {
+        return;
+      }
       var pkg_name;
       pkg_name = file.replace(/[\/\\][^\/\\]*$/, '');
+
       if (basedir && pkg_name.indexOf(basedir) == 0) {
         // strip off the basedir.
         pkg_name = pkg_name.substr(basedir.length);
