@@ -109,7 +109,12 @@ function(base_dir, in_files, out_file) {
 
   switch (mode) {
     case ExecModes.COMPILE:;
-    _ir2js.compileFiles(base_dir, input_files, out_dir);
+    try {
+      _ir2js.compileFiles(base_dir, input_files, out_dir);
+    }
+    catch (e) {
+      process.exit(-1);
+    }
     break;
 
     case ExecModes.SORT:;

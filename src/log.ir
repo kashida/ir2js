@@ -10,7 +10,7 @@
   else
     console.error(line.line)
   console.trace()
-  process.exit(-1)
+  throw "Compile Error"
 
 :::assert = ##
   check\*\$

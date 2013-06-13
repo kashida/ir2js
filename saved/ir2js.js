@@ -2104,8 +2104,7 @@ function(line, opt_msg, additional_lines) {
   else {
     console.error(line.line);
   }
-  console.trace();
-  process.exit(-1);
+  throw "Compile Error";
 };
 
 var assert = /**
