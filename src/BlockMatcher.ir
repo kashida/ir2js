@@ -1,6 +1,6 @@
 Match markers and blocks.
 
-::BlockMatcher
+::
   @context\!context.Context\$
   @input\input.Line\$
   @code\A.<!parser.BlockMarker|s>\$

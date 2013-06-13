@@ -1,4 +1,4 @@
-::Code <%.Head
+::<%.Head
   @lines&\A.<input.Line>\ []
   ^()
 

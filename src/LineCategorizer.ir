@@ -1,7 +1,7 @@
 :!SectionLine
   CodeLine|SeparatorLine|InvalidLine
 
-::LineCategorizer
+::
   @context\!context.Context\$
 
 :createLine\SectionLine\

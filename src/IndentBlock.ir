@@ -1,4 +1,4 @@
-::IndentBlock
+::
   @lineNo+\n\$
   @indent+\n\$
   @head\section.Head\$

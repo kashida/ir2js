@@ -1,4 +1,4 @@
-::TestCase
+::
   @name\s\$
   @packageName\s\$
   @input\A.<s>\$

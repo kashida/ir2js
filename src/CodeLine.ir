@@ -1,6 +1,6 @@
 ::CODE_PARSER = null
 
-::CodeLine <section.Head
+::<section.Head
   @context\!context.Context\$
   @input+\input.Line\$
   @lineParsed\LineParser\$

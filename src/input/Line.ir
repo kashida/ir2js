@@ -1,5 +1,5 @@
 A line of input file. Keeps track of the row index.
-::Line
+::
   @file+\s\$
   @line+\s\$
   @rowIndex+\n\$

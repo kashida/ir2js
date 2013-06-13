@@ -1,4 +1,4 @@
-::Scope <%.Runnable
+::<%.Runnable
   ^()
 
 :output\A\

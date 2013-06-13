@@ -1,4 +1,4 @@
-::Block
+::
   @lines\!A.<!%.Line>\ []
   // the suffix, if assigned a value, will be inserted after the last nonblank line.
   @suffix&\s?\

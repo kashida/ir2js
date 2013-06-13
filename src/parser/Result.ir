@@ -1,6 +1,5 @@
 Container and interface of the TokenList to the rest of the converter.
-
-::Result
+::
   @tokens+\%.TokenList\$
 
 :code+\A.<%.BlockMarker|s>\

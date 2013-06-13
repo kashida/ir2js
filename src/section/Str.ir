@@ -1,4 +1,4 @@
-::Str <%.Code
+::<%.Code
   @context+\!context.Context\$
   @indent\n\ -1
   ^()

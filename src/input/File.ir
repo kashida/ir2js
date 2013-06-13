@@ -1,7 +1,6 @@
 Parses input lines into comments and sections.
 'line' is used only during processing.
-
-::File
+::
   @name\s\$
   @input\A.<s>\$
   @result\A.<%.Comment|%.Section>\ []

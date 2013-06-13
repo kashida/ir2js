@@ -1,6 +1,5 @@
 Input code section.
-
-::Section
+::
   @header+\%.Line\$
   @lines+\A.<%.Line>\ []
   @code&\section.Code\

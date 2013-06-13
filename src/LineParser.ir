@@ -1,6 +1,5 @@
 First pass line parsing for constructing the block structure.
-
-::LineParser
+::
   @input\input.Line\$
 
   @isValid+\b\ false

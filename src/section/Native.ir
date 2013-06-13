@@ -1,4 +1,4 @@
-::Native <%.Code
+::<%.Code
   ^()
 
 :output\A.<output.Line>\

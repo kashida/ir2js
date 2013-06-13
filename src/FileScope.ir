@@ -2,7 +2,7 @@ parse file scope and separate code sections from comments.
 :!OutputSection
   input.Comment|section.Code
 
-::FileScope
+::
   file_name\s\$
   pkg_name\s\$
   @defaultClsName\s\$

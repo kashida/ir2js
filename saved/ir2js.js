@@ -1044,7 +1044,6 @@ LineCategorizer.prototype.createLine = function(line) {
 /*
 First pass line parsing for constructing the block structure.
 */
-
 /**
  * @param {input.Line} input
  * @constructor
@@ -1222,7 +1221,6 @@ LineTransformer.prototype.parentCall = function(args) {
 Pseudo member is a place holder for class members that don't exist, but there
 are accessors for.
 */
-
 /**
  * @param {string} name
  * @param {type.Decoder} type
@@ -1334,7 +1332,6 @@ Member.prototype.outputAccessors = function(class_name) {
 /*
 Function parameter and / or member declarion.
 */
-
 /**
  * @param {!context.Context} context
  * @param {boolean} is_ctor
@@ -2728,7 +2725,6 @@ context.Context.prototype.clone = function() {
 /*
 Name in file scope.
 */
-
 /**
  * @param {!context.Package} pkg
  * @param {string} id
@@ -2803,9 +2799,8 @@ context.Name.prototype.toString = function() {
   return '[' + self._pkg + ':' + self._id + ']';
 };
 /*
-package name.
+Package name.
 */
-
 /**
  * @param {string} pkg
  * @constructor
@@ -2881,7 +2876,7 @@ context.Package.prototype.toString = function() {
   return self._pkg;
 };
 /*
-comment section in a file.
+Comment section in a file.
 */
 /**
  * @param {Array.<input.Line>} lines
@@ -2980,7 +2975,6 @@ input.Comment.prototype.output = function() {
 Parses input lines into comments and sections.
 'line' is used only during processing.
 */
-
 /**
  * @param {string} name
  * @param {Array.<string>} input
@@ -3196,7 +3190,6 @@ input.Line.prototype.__defineGetter__('indent', function() {
 /*
 Input code section.
 */
-
 /**
  * @param {input.Line} header
  * @constructor
@@ -3334,7 +3327,6 @@ output.Block.prototype.__defineGetter__('output', function() {
 /*
 Helper for Line to construct the output.
 */
-
 /**
  * @param {number} num_indent
  * @constructor
@@ -3412,7 +3404,6 @@ output.IndentedMultiline.prototype.appendBlock = function(block) {
 /*
 Output lines corresponds to one input line.
 */
-
 /**
  * @param {input.Line} input
  * @constructor
@@ -3608,7 +3599,6 @@ output.Multiline.prototype.appendBlock = function(block) {
 /*
 Container and interface of the TokenList to the rest of the converter.
 */
-
 /**
  * @param {parser.TokenList} tokens
  * @constructor
@@ -5293,7 +5283,6 @@ section.Typedef.prototype.output = function() {
 /*
 Overriding accessor.
 */
-
 /**
  * @param {!context.Context} context
  * @param {string} name

@@ -1,5 +1,5 @@
-comment section in a file.
-::Comment
+Comment section in a file.
+::
   @lines\A.<%.Line>\$
 
 :output

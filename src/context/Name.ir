@@ -1,6 +1,5 @@
 Name in file scope.
-
-::Name
+::
   @pkg+\!%.Package\$
   @id+\s\$
 

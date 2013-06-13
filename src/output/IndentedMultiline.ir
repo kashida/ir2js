@@ -1,6 +1,5 @@
 Helper for Line to construct the output.
-
-::IndentedMultiline
+::
   num_indent\n\$
   @indent\s\ whitespaces(num_indent)
   @lines\!A.<s>\ []

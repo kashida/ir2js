@@ -8,7 +8,7 @@
     // constructor prevents some optimizations.
     'RegExp': 'null'
 
-::ParamSet
+::
   @context\!context.Context\$
   @block\IndentBlock\$
   @isCtor\b\? false

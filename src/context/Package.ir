@@ -1,6 +1,5 @@
-package name.
-
-::Package
+Package name.
+::
   @pkg\s\$
 
 :empty\b\

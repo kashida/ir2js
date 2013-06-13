@@ -1,4 +1,4 @@
-::Method <%.Callable
+::<%.Callable
   context\!context.Context\$
   return_type\s\$
   @overriding\b\$

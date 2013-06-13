@@ -1,5 +1,5 @@
 either blank line or comment only line.
-::InvalidLine
+::
   @input+\input.Line\$
 
 :str+\s\

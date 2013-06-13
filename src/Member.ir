@@ -1,7 +1,6 @@
 Pseudo member is a place holder for class members that don't exist, but there
 are accessors for.
-
-::Member
+::
   @name\s\$
   @type\type.Decoder\$
   @accessType\s\$
