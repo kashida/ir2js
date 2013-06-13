@@ -5,6 +5,7 @@ parse file scope and separate code sections from comments.
 ::FileScope
   file_name\s\$
   pkg_name\s\$
+  @defaultClsName\s\$
   @context+\!context.Context\ &context.Context(#)
     file_name
     &context.Package(pkg_name)
@@ -35,7 +36,8 @@ parse file scope and separate code sections from comments.
 
 :copyContextWithName\!context.Context\
   name\string\$
-  fullname := &context.Name(@context.pkg, name)
+  cls_name := name || @defaultClsName
+  fullname := &context.Name(@context.pkg, cls_name)
   => @.copyContext(fullname)
 
 :output\A.<s>\

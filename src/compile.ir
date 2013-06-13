@@ -5,8 +5,9 @@
   pkg_name := relativeFileName(#).replace(/[\/\\]/, '.')
     base_dir
     in_file.replace(/[\/\\][^\/\\]*$/, '')
+  file_name := in_file.replace(/.*[\/\\]/, '').replace(/\..*$/, '')
 
-  c := &FileScope(in_file, pkg_name)
+  c := &FileScope(in_file, pkg_name, file_name)
   c.processLines(_fs.readFileSync(in_file, 'utf-8').split('\n'))
   writeFile(out_file, c.output().join('\n'))
   writeFile(#)

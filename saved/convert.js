@@ -113,6 +113,7 @@ function(base_dir, in_files, out_file) {
       _ir2js.compileFiles(base_dir, input_files, out_dir);
     }
     catch (e) {
+      console.log(e);
       process.exit(-1);
     }
     break;

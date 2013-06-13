@@ -160,3 +160,21 @@ Class2.prototype._classname = 'Class2';
 }
 
 #}
+
+#{ default class name
+::
+#=
+/** @constructor */
+var FileName = function() {
+var self = this;
+};
+FileName.prototype._classname = 'FileName';
+{
+  cls:[
+    {
+      name:FileName
+    }
+  ]
+}
+
+#}

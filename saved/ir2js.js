@@ -661,10 +661,16 @@ var OutputSection;
 /**
  * @param {string} file_name
  * @param {string} pkg_name
+ * @param {string} defaultClsName
  * @constructor
  */
-var FileScope = function(file_name, pkg_name) {
+var FileScope = function(file_name, pkg_name, defaultClsName) {
   var self = this;
+  /**
+   * @type {string}
+   * @private
+   */
+  this._defaultClsName = defaultClsName;
   /**
    * @type {!context.Context}
    * @private
@@ -739,8 +745,10 @@ FileScope.prototype.copyContext = function(name) {
  */
 FileScope.prototype.copyContextWithName = function(name) {
   var self = this;
+  var cls_name;
+  cls_name = name || self._defaultClsName;
   var fullname;
-  fullname = new context.Name(self._context.pkg, name);
+  fullname = new context.Name(self._context.pkg, cls_name);
   return self.copyContext(fullname);
 };
 
@@ -1831,7 +1839,7 @@ TestCase.prototype.run = function() {
   var self = this;
   var c;
   c = self._isGlobal ? (
-    new FileScope(self._name, self._packageName)
+    new FileScope(self._name, self._packageName, 'FileName')
   ) : (
     new CodeScope(new context.Context(self._name, new context.Package('')))
   );
@@ -1986,9 +1994,11 @@ function(base_dir, in_file, out_file) {
     base_dir,
     in_file.replace(/[\/\\][^\/\\]*$/, '')
   ).replace(/[\/\\]/, '.');
+  var file_name;
+  file_name = in_file.replace(/.*[\/\\]/, '').replace(/\..*$/, '');
 
   var c;
-  c = new FileScope(in_file, pkg_name);
+  c = new FileScope(in_file, pkg_name, file_name);
   c.processLines(_fs.readFileSync(in_file, 'utf-8').split('\n'));
   writeFile(out_file, c.output().join('\n'));
   writeFile(
@@ -2104,6 +2114,7 @@ function(line, opt_msg, additional_lines) {
   else {
     console.error(line.line);
   }
+  console.trace();
   throw "Compile Error";
 };
 
@@ -4330,7 +4341,7 @@ section.Generator.prototype._createVariable = function(line, header) {
 section.Generator.prototype._createCtor = function(line) {
   var self = this;
   var re;
-  re = /^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line);
+  re = /^\:\s*(\w*)\s*(\<\s*(.*\S))?$/.exec(line);
   if (!re) {
     return null;
   }

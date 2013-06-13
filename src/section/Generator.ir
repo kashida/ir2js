@@ -51,7 +51,7 @@
 
 :@createCtor\%.Constructor\
   line\s\$
-  re := /^\:\s*(\w+)\s*(\<\s*(.*\S))?$/.exec(line)
+  re := /^\:\s*(\w*)\s*(\<\s*(.*\S))?$/.exec(line)
   if !re
     => null
 

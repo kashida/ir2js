@@ -8,7 +8,7 @@
 
 :run
   c := @isGlobal ? (#) : (#)
-    &FileScope(@name, @packageName)
+    &FileScope(@name, @packageName, 'FileName')
     --
     &CodeScope(&context.Context(@name, &context.Package('')))
 
