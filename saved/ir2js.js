@@ -64,18 +64,14 @@ return this._isBlockStatement;
 
 BlockMatcher.prototype.transform = function() {
   var self = this;
-  if (self._matchBlocks()) {
-    self._transformBlocks();
-  }
+  self._matchBlocks();
+  self._transformBlocks();
 };
 
 /*
 Returns true only if matching succeeds.
 */
-/**
- * @return {boolean}
- * @private
- */
+/** @private */
 BlockMatcher.prototype._matchBlocks = function() {
   var self = this;
   var itr;
@@ -95,10 +91,8 @@ BlockMatcher.prototype._matchBlocks = function() {
       self._params.push(param);
     }
   };
-  var success;
-  success = itr.run();
-  self._isBlockStatement = itr.extraBlock;
-  return success;
+  itr.run();
+  self._isBlockStatement = itr.isBlockStatement;
 };
 
 /** @private */
@@ -127,7 +121,8 @@ BlockMatcher.prototype._transformBlocks = function() {
       self._params[itr.pidx].transform();
     }
     self._blocks[itr.bidx].transform({
-      'f': BlockType.BLOCK,
+      'b': BlockType.BLOCK,
+      'f': BlockType.FUNCTION,
       'o': BlockType.OBJ,
       'a': BlockType.ARRAY,
       'p': BlockType.PARAMS,
@@ -243,7 +238,7 @@ var CodeBlockItr = function(input, code, blocks) {
    * @type {boolean}
    * @private
    */
-  this._extraBlock = (false);
+  this._isBlockStatement = (false);
 };
 CodeBlockItr.prototype._classname = 'CodeBlockItr';
 /** @type {?function(string, boolean)} */
@@ -283,23 +278,9 @@ CodeBlockItr.prototype.__defineGetter__('pidx', function() {
 return this._pidx;
 });
 /** @type {boolean} */
-CodeBlockItr.prototype.extraBlock;
-CodeBlockItr.prototype.__defineGetter__('extraBlock', function() {
-return this._extraBlock;
-});
-
-/*
-Valid only after run call.
-*/
-/** @type {boolean} */
-CodeBlockItr.prototype.endsWithCode;
-CodeBlockItr.prototype.__defineGetter__('endsWithCode', function() {
-  var self = this;
-  return (
-    (self._code.length) &&
-    (!(self._code[self._code.length - 1] instanceof parser.BlockMarker)) &&
-    (!self._extraBlock)
-  );
+CodeBlockItr.prototype.isBlockStatement;
+CodeBlockItr.prototype.__defineGetter__('isBlockStatement', function() {
+return this._isBlockStatement;
 });
 
 CodeBlockItr.prototype.run = function() {
@@ -327,25 +308,14 @@ CodeBlockItr.prototype.run = function() {
   }
 
   // There may be one extra block.
-  if (self._bidx > self._blocks.length || self._bidx + 1 < self._blocks.length) {
+  if (self._bidx != self._blocks.length) {
     error(self._input, (
-      ('# blocks does not match #markers: ') +
+      ('# of blocks does not match # of markers: ') +
       (self._bidx) +
       (', ') +
       (self._blocks.length)
     ));
-    return false;
   }
-
-  if (self._bidx < self._blocks.length) {
-    self._extraBlock = true;
-    self._cidx++;
-    if (self._blockCb) {
-      self._blockCb('f', false);
-    }
-    self._bidx++;
-  }
-  return true;
 };
 
 /**
@@ -373,6 +343,9 @@ CodeBlockItr.prototype._handleMarker = function(marker) {
   }
   if (marker.type == 'l') {
     self._lidx++;
+  }
+  if (marker.type == 'b') {
+    self._isBlockStatement = true;
   }
 };
 /**
@@ -812,30 +785,31 @@ return this._indent;
   var BlockType;
   BlockType = {
     'BLOCK': 0,
-    'OBJ': 1,
-    'ARRAY': 2,
-    'PARAMS': 3,
-    'LINE': 4,
-    'COND': 5,
-    'DOT': 6,
-    'MULT': 7,
-    'ADD': 8,
-    'LOG_AND': 9,
-    'LOG_OR': 10
+    'FUNCTION': 1,
+    'OBJ': 2,
+    'ARRAY': 3,
+    'PARAMS': 4,
+    'LINE': 5,
+    'COND': 6,
+    'DOT': 7,
+    'MULT': 8,
+    'ADD': 9,
+    'LOG_AND': 10,
+    'LOG_OR': 11
   };
 
   var _BLOCK_OPEN;
-  _BLOCK_OPEN = [' {', '{', '[', '(', '(', '(', '(', '(', '(', '(', '('];
+  _BLOCK_OPEN = [' {', ' {', '{', '[', '(', '(', '(', '(', '(', '(', '(', '('];
   var _LINE_PREFIX;
-  _LINE_PREFIX = ['', '', '', '', '', '(', '(', '(', '(', '(', '('];
+  _LINE_PREFIX = ['', '', '', '', '', '', '(', '(', '(', '(', '(', '('];
   var _LINE_SUFFIX;
-  _LINE_SUFFIX = [';', ',', ',', ',', '', ') :', ').', ') *', ') +', ') &&', ') ||'];
+  _LINE_SUFFIX = [';', ';', ',', ',', ',', '', ') :', ').', ') *', ') +', ') &&', ') ||'];
   var _FIRST_SUFFIX;
-  _FIRST_SUFFIX = [';', ',', ',', ',', '', ') ?', ').', ') *', ') +', ') &&', ') ||'];
+  _FIRST_SUFFIX = [';', ';', ',', ',', ',', '', ') ?', ').', ') *', ') +', ') &&', ') ||'];
   var _END_SUFFIX;
-  _END_SUFFIX = [';', '', '', '', '', ')', ')', ')', ')', ')', ')'];
+  _END_SUFFIX = [';', ';', '', '', '', '', ')', ')', ')', ')', ')', ')'];
   var _BLOCK_CLOSE;
-  _BLOCK_CLOSE = ['}', '}', ']', ')', ')', ')', ')', ')', ')', ')', ')'];
+  _BLOCK_CLOSE = ['}', '}', '}', ']', ')', ')', ')', ')', ')', ')', ')', ')'];
 
 /** @param {SectionLine} line */
 IndentBlock.prototype.add = function(line) {
@@ -926,9 +900,13 @@ IndentBlock.prototype.output = function(line_index) {
     }
   });
   assert(
-    last_index >= 0 || self._marker == BlockType.BLOCK,
+    (
+      (last_index >= 0) ||
+      (self._marker == BlockType.BLOCK) ||
+      (self._marker == BlockType.FUNCTION)
+    ),
     self._lines.length ? self._lines[0].input : UnknownInputLine,
-    'block with no valid lines: ' + self
+    'block with no valid lines.'
   );
 
   var out;
@@ -1790,9 +1768,10 @@ SeparatorLine.prototype.output = function() {
  * @param {Array.<string>} input
  * @param {Array.<string>} output
  * @param {boolean} isGlobal
+ * @param {boolean} expectError
  * @constructor
  */
-var TestCase = function(name, packageName, input, output, isGlobal) {
+var TestCase = function(name, packageName, input, output, isGlobal, expectError) {
   var self = this;
   /**
    * @type {string}
@@ -1823,6 +1802,11 @@ var TestCase = function(name, packageName, input, output, isGlobal) {
    * @type {boolean}
    * @private
    */
+  this._expectError = expectError;
+  /**
+   * @type {boolean}
+   * @private
+   */
   this._failed = (false);
 };
 TestCase.prototype._classname = 'TestCase';
@@ -1843,6 +1827,7 @@ TestCase.prototype.run = function() {
 
   var actual_output;
   actual_output = '';
+  OUTPUT_ERROR = !self._expectError;
   try {
     c.processLines(self._input);
     actual_output = c.output();
@@ -1855,21 +1840,30 @@ TestCase.prototype.run = function() {
     }
   }
   catch (e) {
-    console.log('EXCEPTION: ' + self._name);
-    self._warnWithIndent('input', self._input);
-    self._warnWithIndent('expected', self._output);
-    throw e;
+    if (self._expectError) {
+      console.log('PASS: ' + self._name);
+      return;
+    }
+    else {
+      console.log('EXCEPTION: ' + self._name);
+      self._warnWithIndent('input', self._input);
+      self._warnWithIndent('expected', self._output);
+      self._failed = true;
+      throw e;
+    }
   }
 
-  if (actual_output.join('\n') == self._output.join('\n')) {
+  if (actual_output.join('\n') == self._output.join('\n') && !self._expectError) {
     console.log('PASS: ' + self._name);
   }
   else {
     console.log('FAIL: ' + self._name);
     self._warnWithIndent('input', self._input);
-    self._warnWithIndent('expected', self._output);
+    self._warnWithIndent('expected', self._expectError ? ['<<error>>'] : self._output);
     self._warnWithIndent('actual', actual_output);
-    self._warnWithIndent('diff', self._makeDiff(self._output, actual_output));
+    if (!self._expectError) {
+      self._warnWithIndent('diff', self._makeDiff(self._output, actual_output));
+    }
     self._failed = true;
   }
 };
@@ -2093,6 +2087,8 @@ function(path, data) {
     'utf-8'
   );
 };
+var OUTPUT_ERROR = true;
+
 var error = /**
  * @param {input.Line} line
  * @param {string=} opt_msg
@@ -2100,18 +2096,26 @@ var error = /**
  */
 function(line, opt_msg, additional_lines) {
   var msg = opt_msg === undefined ? ('*warning*') : opt_msg;
-  console.error(line.file + ':' + line.lineNo + ': ERROR - ' + msg);
+  if (OUTPUT_ERROR) {
+    console.error(line.file + ':' + line.lineNo + ': ERROR - ' + msg);
+  }
   if (additional_lines) {
     additional_lines.forEach(
     /** @param {string} additional_line */
     function(additional_line) {
-      console.error(additional_line);
+      if (OUTPUT_ERROR) {
+        console.error(additional_line);
+      }
     });
   }
   else {
-    console.error(line.line);
+    if (OUTPUT_ERROR) {
+      console.error(line.line);
+    }
   }
-  console.trace();
+  if (OUTPUT_ERROR) {
+    console.trace();
+  }
   throw "Compile Error";
 };
 

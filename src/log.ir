@@ -1,15 +1,21 @@
+:::OUTPUT_ERROR = true
+
 :::error = ##
   line\input.Line\$
   msg\s\? '*warning*'
   additional_lines\A.<s>\?
-  console.error(line.file + ':' + line.lineNo + ': ERROR - ' + msg)
+  if OUTPUT_ERROR
+    console.error(line.file + ':' + line.lineNo + ': ERROR - ' + msg)
   if additional_lines
     additional_lines.forEach(##)
       additional_line\s\$
-      console.error(additional_line)
+      if OUTPUT_ERROR
+        console.error(additional_line)
   else
-    console.error(line.line)
-  console.trace()
+    if OUTPUT_ERROR
+      console.error(line.line)
+  if OUTPUT_ERROR
+    console.trace()
   throw "Compile Error"
 
 :::assert = ##

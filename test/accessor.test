@@ -245,15 +245,15 @@ obj._member = a;
 #}
 
 #{: no repeated application of transform with a block
-str.length
+if str.length
   =>
-str.length
+if str.length
   =>
 #=
-str.length {
+if (str.length) {
   return;
 }
-str.length {
+if (str.length) {
   return;
 }
 #}

@@ -9,11 +9,11 @@ Match markers and blocks.
   @isBlockStatement+\b\ false
 
 :transform
-  if @matchBlocks()
-    @transformBlocks()
+  @matchBlocks()
+  @transformBlocks()
 
 Returns true only if matching succeeds.
-:@matchBlocks\b\
+:@matchBlocks
   itr := &CodeBlockItr(@input, @code, @blocks)
   itr.blockCb = ##
     type\s\$
@@ -23,9 +23,8 @@ Returns true only if matching succeeds.
       sub_context.isFileScope = false
       param := &ParamSet(sub_context, @blocks[itr.bidx])
       @params.push(param)
-  success := itr.run()
-  @isBlockStatement = itr.extraBlock
-  => success
+  itr.run()
+  @isBlockStatement = itr.isBlockStatement
 
 :@transformBlocks
   itr := &CodeBlockItr(@input, @code, @blocks)
@@ -45,7 +44,8 @@ Returns true only if matching succeeds.
     if with_param
       @params[itr.pidx].transform()
     @blocks[itr.bidx].transform({#}[type])
-      f: BlockType.BLOCK
+      b: BlockType.BLOCK
+      f: BlockType.FUNCTION
       o: BlockType.OBJ
       a: BlockType.ARRAY
       p: BlockType.PARAMS

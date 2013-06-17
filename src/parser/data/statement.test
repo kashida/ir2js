@@ -4,31 +4,31 @@
   // this is comment
 
 :Statement
-do
 while   expr
-  while (expr)
+  while (expr)|#b|
 while i < inout_filenames.length
-  while (i < inout_filenames.length)
+  while (i < inout_filenames.length)|#b|
 for;;
-  for (;;)
+  for (;;)|#b|
 for i = 0, j := 0; i < j; i++
   var j
   i = 0, j = 0
-  for (; i < j; i++)
+  for (; i < j; i++)|#b|
 for a := &iter(), b := expr; a.has_more(); a.next()
   var a
   var b
   a = new iter(), b = expr
-  for (; a.has_more(); a.next())
+  for (; a.has_more(); a.next())|#b|
 each abc in [0, 1, 2]
   var abc
-  for (abc in [0, 1, 2])
+  for (abc in [0, 1, 2])|#b|
 for 'a' in obj; true;
   'a' in obj
-  for (; true;)
+  for (; true;)|#b|
 else if expr
-  else if (expr)
+  else if (expr)|#b|
 else
+  else|#b|
 continue
 break
 => 0x10
@@ -36,34 +36,36 @@ break
 =>
   return
 switch expr
-  switch (expr)
+  switch (expr)|#b|
 case   'a'
   case 'a':
 default
   default:
 throw expr
 try
+  try|#b|
 catch abc
-  catch (abc)
+  catch (abc)|#b|
 finally
+  finally|#b|
 debugger
 abc()
 if 0 + 0 - /|/ abc
-  if (0 + 0 - abc)
+  if (0 + 0 - abc)|#b|
 if 0 + 0 - /|/ abc // another comment
-  if (0 + 0 - abc)
+  if (0 + 0 - abc)|#b|
   // another comment
 if 0 + 0 - // this is comment /|/ abc
-  if (0 + 0 - abc)
+  if (0 + 0 - abc)|#b|
   // this is comment
 if 0 + 0 - // this is comment /|/ abc // another comment
-  if (0 + 0 - abc)
+  if (0 + 0 - abc)|#b|
   // this is comment
   // another comment
 
 :!
-do;
-while
+do
+while;
 for(var a = expr; expr; expr)
 for var a = expr; expr; expr
 for ( abc ; expr)

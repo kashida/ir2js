@@ -152,10 +152,10 @@ module.exports = (function(){
         "Expression": parse_Expression,
         "Statement": parse_Statement,
         "StatementLine": parse_StatementLine,
+        "BlockStatement": parse_BlockStatement,
         "IfStatement": parse_IfStatement,
         "ElseIfStatement": parse_ElseIfStatement,
         "ElseStatement": parse_ElseStatement,
-        "DoStatement": parse_DoStatement,
         "WhileStatement": parse_WhileStatement,
         "ForStatement": parse_ForStatement,
         "EachStatement": parse_EachStatement,
@@ -721,144 +721,133 @@ module.exports = (function(){
                       }
                     }
                     if (result0 === null) {
-                      if (input.substr(pos, 2) === "do") {
-                        result0 = "do";
-                        pos += 2;
+                      if (input.substr(pos, 4) === "else") {
+                        result0 = "else";
+                        pos += 4;
                       } else {
                         result0 = null;
                         if (reportFailures === 0) {
-                          matchFailed("\"do\"");
+                          matchFailed("\"else\"");
                         }
                       }
                       if (result0 === null) {
-                        if (input.substr(pos, 4) === "else") {
-                          result0 = "else";
-                          pos += 4;
+                        if (input.substr(pos, 7) === "finally") {
+                          result0 = "finally";
+                          pos += 7;
                         } else {
                           result0 = null;
                           if (reportFailures === 0) {
-                            matchFailed("\"else\"");
+                            matchFailed("\"finally\"");
                           }
                         }
                         if (result0 === null) {
-                          if (input.substr(pos, 7) === "finally") {
-                            result0 = "finally";
-                            pos += 7;
+                          if (input.substr(pos, 3) === "for") {
+                            result0 = "for";
+                            pos += 3;
                           } else {
                             result0 = null;
                             if (reportFailures === 0) {
-                              matchFailed("\"finally\"");
+                              matchFailed("\"for\"");
                             }
                           }
                           if (result0 === null) {
-                            if (input.substr(pos, 3) === "for") {
-                              result0 = "for";
-                              pos += 3;
+                            if (input.substr(pos, 4) === "each") {
+                              result0 = "each";
+                              pos += 4;
                             } else {
                               result0 = null;
                               if (reportFailures === 0) {
-                                matchFailed("\"for\"");
+                                matchFailed("\"each\"");
                               }
                             }
                             if (result0 === null) {
-                              if (input.substr(pos, 4) === "each") {
-                                result0 = "each";
-                                pos += 4;
+                              if (input.substr(pos, 2) === "if") {
+                                result0 = "if";
+                                pos += 2;
                               } else {
                                 result0 = null;
                                 if (reportFailures === 0) {
-                                  matchFailed("\"each\"");
+                                  matchFailed("\"if\"");
                                 }
                               }
                               if (result0 === null) {
-                                if (input.substr(pos, 2) === "if") {
-                                  result0 = "if";
-                                  pos += 2;
+                                if (input.substr(pos, 10) === "instanceof") {
+                                  result0 = "instanceof";
+                                  pos += 10;
                                 } else {
                                   result0 = null;
                                   if (reportFailures === 0) {
-                                    matchFailed("\"if\"");
+                                    matchFailed("\"instanceof\"");
                                   }
                                 }
                                 if (result0 === null) {
-                                  if (input.substr(pos, 10) === "instanceof") {
-                                    result0 = "instanceof";
-                                    pos += 10;
+                                  if (input.substr(pos, 2) === "in") {
+                                    result0 = "in";
+                                    pos += 2;
                                   } else {
                                     result0 = null;
                                     if (reportFailures === 0) {
-                                      matchFailed("\"instanceof\"");
+                                      matchFailed("\"in\"");
                                     }
                                   }
                                   if (result0 === null) {
-                                    if (input.substr(pos, 2) === "in") {
-                                      result0 = "in";
-                                      pos += 2;
+                                    if (input.substr(pos, 3) === "new") {
+                                      result0 = "new";
+                                      pos += 3;
                                     } else {
                                       result0 = null;
                                       if (reportFailures === 0) {
-                                        matchFailed("\"in\"");
+                                        matchFailed("\"new\"");
                                       }
                                     }
                                     if (result0 === null) {
-                                      if (input.substr(pos, 3) === "new") {
-                                        result0 = "new";
-                                        pos += 3;
+                                      if (input.substr(pos, 6) === "switch") {
+                                        result0 = "switch";
+                                        pos += 6;
                                       } else {
                                         result0 = null;
                                         if (reportFailures === 0) {
-                                          matchFailed("\"new\"");
+                                          matchFailed("\"switch\"");
                                         }
                                       }
                                       if (result0 === null) {
-                                        if (input.substr(pos, 6) === "switch") {
-                                          result0 = "switch";
-                                          pos += 6;
+                                        if (input.substr(pos, 5) === "throw") {
+                                          result0 = "throw";
+                                          pos += 5;
                                         } else {
                                           result0 = null;
                                           if (reportFailures === 0) {
-                                            matchFailed("\"switch\"");
+                                            matchFailed("\"throw\"");
                                           }
                                         }
                                         if (result0 === null) {
-                                          if (input.substr(pos, 5) === "throw") {
-                                            result0 = "throw";
-                                            pos += 5;
+                                          if (input.substr(pos, 3) === "try") {
+                                            result0 = "try";
+                                            pos += 3;
                                           } else {
                                             result0 = null;
                                             if (reportFailures === 0) {
-                                              matchFailed("\"throw\"");
+                                              matchFailed("\"try\"");
                                             }
                                           }
                                           if (result0 === null) {
-                                            if (input.substr(pos, 3) === "try") {
-                                              result0 = "try";
-                                              pos += 3;
+                                            if (input.substr(pos, 6) === "typeof") {
+                                              result0 = "typeof";
+                                              pos += 6;
                                             } else {
                                               result0 = null;
                                               if (reportFailures === 0) {
-                                                matchFailed("\"try\"");
+                                                matchFailed("\"typeof\"");
                                               }
                                             }
                                             if (result0 === null) {
-                                              if (input.substr(pos, 6) === "typeof") {
-                                                result0 = "typeof";
-                                                pos += 6;
+                                              if (input.substr(pos, 5) === "while") {
+                                                result0 = "while";
+                                                pos += 5;
                                               } else {
                                                 result0 = null;
                                                 if (reportFailures === 0) {
-                                                  matchFailed("\"typeof\"");
-                                                }
-                                              }
-                                              if (result0 === null) {
-                                                if (input.substr(pos, 5) === "while") {
-                                                  result0 = "while";
-                                                  pos += 5;
-                                                } else {
-                                                  result0 = null;
-                                                  if (reportFailures === 0) {
-                                                    matchFailed("\"while\"");
-                                                  }
+                                                  matchFailed("\"while\"");
                                                 }
                                               }
                                             }
@@ -906,193 +895,204 @@ module.exports = (function(){
             }
           }
           if (result0 === null) {
-            if (input.substr(pos, 4) === "enum") {
-              result0 = "enum";
-              pos += 4;
+            if (input.substr(pos, 2) === "do") {
+              result0 = "do";
+              pos += 2;
             } else {
               result0 = null;
               if (reportFailures === 0) {
-                matchFailed("\"enum\"");
+                matchFailed("\"do\"");
               }
             }
             if (result0 === null) {
-              if (input.substr(pos, 6) === "export") {
-                result0 = "export";
-                pos += 6;
+              if (input.substr(pos, 4) === "enum") {
+                result0 = "enum";
+                pos += 4;
               } else {
                 result0 = null;
                 if (reportFailures === 0) {
-                  matchFailed("\"export\"");
+                  matchFailed("\"enum\"");
                 }
               }
               if (result0 === null) {
-                if (input.substr(pos, 7) === "extends") {
-                  result0 = "extends";
-                  pos += 7;
+                if (input.substr(pos, 6) === "export") {
+                  result0 = "export";
+                  pos += 6;
                 } else {
                   result0 = null;
                   if (reportFailures === 0) {
-                    matchFailed("\"extends\"");
+                    matchFailed("\"export\"");
                   }
                 }
                 if (result0 === null) {
-                  if (input.substr(pos, 8) === "function") {
-                    result0 = "function";
-                    pos += 8;
+                  if (input.substr(pos, 7) === "extends") {
+                    result0 = "extends";
+                    pos += 7;
                   } else {
                     result0 = null;
                     if (reportFailures === 0) {
-                      matchFailed("\"function\"");
+                      matchFailed("\"extends\"");
                     }
                   }
                   if (result0 === null) {
-                    if (input.substr(pos, 6) === "import") {
-                      result0 = "import";
-                      pos += 6;
+                    if (input.substr(pos, 8) === "function") {
+                      result0 = "function";
+                      pos += 8;
                     } else {
                       result0 = null;
                       if (reportFailures === 0) {
-                        matchFailed("\"import\"");
+                        matchFailed("\"function\"");
                       }
                     }
                     if (result0 === null) {
-                      if (input.substr(pos, 6) === "return") {
-                        result0 = "return";
+                      if (input.substr(pos, 6) === "import") {
+                        result0 = "import";
                         pos += 6;
                       } else {
                         result0 = null;
                         if (reportFailures === 0) {
-                          matchFailed("\"return\"");
+                          matchFailed("\"import\"");
                         }
                       }
                       if (result0 === null) {
-                        if (input.substr(pos, 5) === "super") {
-                          result0 = "super";
-                          pos += 5;
+                        if (input.substr(pos, 6) === "return") {
+                          result0 = "return";
+                          pos += 6;
                         } else {
                           result0 = null;
                           if (reportFailures === 0) {
-                            matchFailed("\"super\"");
+                            matchFailed("\"return\"");
                           }
                         }
                         if (result0 === null) {
-                          if (input.substr(pos, 3) === "var") {
-                            result0 = "var";
-                            pos += 3;
+                          if (input.substr(pos, 5) === "super") {
+                            result0 = "super";
+                            pos += 5;
                           } else {
                             result0 = null;
                             if (reportFailures === 0) {
-                              matchFailed("\"var\"");
+                              matchFailed("\"super\"");
                             }
                           }
                           if (result0 === null) {
-                            if (input.substr(pos, 4) === "void") {
-                              result0 = "void";
-                              pos += 4;
+                            if (input.substr(pos, 3) === "var") {
+                              result0 = "var";
+                              pos += 3;
                             } else {
                               result0 = null;
                               if (reportFailures === 0) {
-                                matchFailed("\"void\"");
+                                matchFailed("\"var\"");
                               }
                             }
                             if (result0 === null) {
-                              if (input.substr(pos, 4) === "with") {
-                                result0 = "with";
+                              if (input.substr(pos, 4) === "void") {
+                                result0 = "void";
                                 pos += 4;
                               } else {
                                 result0 = null;
                                 if (reportFailures === 0) {
-                                  matchFailed("\"with\"");
+                                  matchFailed("\"void\"");
                                 }
                               }
                               if (result0 === null) {
-                                if (input.substr(pos, 10) === "implements") {
-                                  result0 = "implements";
-                                  pos += 10;
+                                if (input.substr(pos, 4) === "with") {
+                                  result0 = "with";
+                                  pos += 4;
                                 } else {
                                   result0 = null;
                                   if (reportFailures === 0) {
-                                    matchFailed("\"implements\"");
+                                    matchFailed("\"with\"");
                                   }
                                 }
                                 if (result0 === null) {
-                                  if (input.substr(pos, 3) === "let") {
-                                    result0 = "let";
-                                    pos += 3;
+                                  if (input.substr(pos, 10) === "implements") {
+                                    result0 = "implements";
+                                    pos += 10;
                                   } else {
                                     result0 = null;
                                     if (reportFailures === 0) {
-                                      matchFailed("\"let\"");
+                                      matchFailed("\"implements\"");
                                     }
                                   }
                                   if (result0 === null) {
-                                    if (input.substr(pos, 7) === "private") {
-                                      result0 = "private";
-                                      pos += 7;
+                                    if (input.substr(pos, 3) === "let") {
+                                      result0 = "let";
+                                      pos += 3;
                                     } else {
                                       result0 = null;
                                       if (reportFailures === 0) {
-                                        matchFailed("\"private\"");
+                                        matchFailed("\"let\"");
                                       }
                                     }
                                     if (result0 === null) {
-                                      if (input.substr(pos, 6) === "public") {
-                                        result0 = "public";
-                                        pos += 6;
+                                      if (input.substr(pos, 7) === "private") {
+                                        result0 = "private";
+                                        pos += 7;
                                       } else {
                                         result0 = null;
                                         if (reportFailures === 0) {
-                                          matchFailed("\"public\"");
+                                          matchFailed("\"private\"");
                                         }
                                       }
                                       if (result0 === null) {
-                                        if (input.substr(pos, 9) === "interface") {
-                                          result0 = "interface";
-                                          pos += 9;
+                                        if (input.substr(pos, 6) === "public") {
+                                          result0 = "public";
+                                          pos += 6;
                                         } else {
                                           result0 = null;
                                           if (reportFailures === 0) {
-                                            matchFailed("\"interface\"");
+                                            matchFailed("\"public\"");
                                           }
                                         }
                                         if (result0 === null) {
-                                          if (input.substr(pos, 7) === "package") {
-                                            result0 = "package";
-                                            pos += 7;
+                                          if (input.substr(pos, 9) === "interface") {
+                                            result0 = "interface";
+                                            pos += 9;
                                           } else {
                                             result0 = null;
                                             if (reportFailures === 0) {
-                                              matchFailed("\"package\"");
+                                              matchFailed("\"interface\"");
                                             }
                                           }
                                           if (result0 === null) {
-                                            if (input.substr(pos, 9) === "protected") {
-                                              result0 = "protected";
-                                              pos += 9;
+                                            if (input.substr(pos, 7) === "package") {
+                                              result0 = "package";
+                                              pos += 7;
                                             } else {
                                               result0 = null;
                                               if (reportFailures === 0) {
-                                                matchFailed("\"protected\"");
+                                                matchFailed("\"package\"");
                                               }
                                             }
                                             if (result0 === null) {
-                                              if (input.substr(pos, 6) === "static") {
-                                                result0 = "static";
-                                                pos += 6;
+                                              if (input.substr(pos, 9) === "protected") {
+                                                result0 = "protected";
+                                                pos += 9;
                                               } else {
                                                 result0 = null;
                                                 if (reportFailures === 0) {
-                                                  matchFailed("\"static\"");
+                                                  matchFailed("\"protected\"");
                                                 }
                                               }
                                               if (result0 === null) {
-                                                if (input.substr(pos, 5) === "yield") {
-                                                  result0 = "yield";
-                                                  pos += 5;
+                                                if (input.substr(pos, 6) === "static") {
+                                                  result0 = "static";
+                                                  pos += 6;
                                                 } else {
                                                   result0 = null;
                                                   if (reportFailures === 0) {
-                                                    matchFailed("\"yield\"");
+                                                    matchFailed("\"static\"");
+                                                  }
+                                                }
+                                                if (result0 === null) {
+                                                  if (input.substr(pos, 5) === "yield") {
+                                                    result0 = "yield";
+                                                    pos += 5;
+                                                  } else {
+                                                    result0 = null;
+                                                    if (reportFailures === 0) {
+                                                      matchFailed("\"yield\"");
+                                                    }
                                                   }
                                                 }
                                               }
@@ -6377,50 +6377,56 @@ module.exports = (function(){
         
         result0 = parse_Expression();
         if (result0 === null) {
-          result0 = parse_IfStatement();
+          result0 = parse_BlockStatement();
           if (result0 === null) {
-            result0 = parse_ElseIfStatement();
+            result0 = parse_ContinueStatement();
             if (result0 === null) {
-              result0 = parse_ElseStatement();
+              result0 = parse_BreakStatement();
               if (result0 === null) {
-                result0 = parse_DoStatement();
+                result0 = parse_ReturnStatement();
                 if (result0 === null) {
-                  result0 = parse_WhileStatement();
+                  result0 = parse_CaseStatement();
                   if (result0 === null) {
-                    result0 = parse_ForStatement();
+                    result0 = parse_DefaultStatement();
                     if (result0 === null) {
-                      result0 = parse_EachStatement();
+                      result0 = parse_ThrowStatement();
                       if (result0 === null) {
-                        result0 = parse_ContinueStatement();
+                        result0 = parse_DebuggerStatement();
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        return result0;
+      }
+      
+      function parse_BlockStatement() {
+        var result0;
+        var pos0;
+        
+        pos0 = pos;
+        result0 = parse_IfStatement();
+        if (result0 === null) {
+          result0 = parse_ElseIfStatement();
+          if (result0 === null) {
+            result0 = parse_ElseStatement();
+            if (result0 === null) {
+              result0 = parse_WhileStatement();
+              if (result0 === null) {
+                result0 = parse_ForStatement();
+                if (result0 === null) {
+                  result0 = parse_EachStatement();
+                  if (result0 === null) {
+                    result0 = parse_SwitchStatement();
+                    if (result0 === null) {
+                      result0 = parse_TryStatement();
+                      if (result0 === null) {
+                        result0 = parse_CatchStatement();
                         if (result0 === null) {
-                          result0 = parse_BreakStatement();
-                          if (result0 === null) {
-                            result0 = parse_ReturnStatement();
-                            if (result0 === null) {
-                              result0 = parse_SwitchStatement();
-                              if (result0 === null) {
-                                result0 = parse_CaseStatement();
-                                if (result0 === null) {
-                                  result0 = parse_DefaultStatement();
-                                  if (result0 === null) {
-                                    result0 = parse_ThrowStatement();
-                                    if (result0 === null) {
-                                      result0 = parse_TryStatement();
-                                      if (result0 === null) {
-                                        result0 = parse_CatchStatement();
-                                        if (result0 === null) {
-                                          result0 = parse_FinallyStatement();
-                                          if (result0 === null) {
-                                            result0 = parse_DebuggerStatement();
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
+                          result0 = parse_FinallyStatement();
                         }
                       }
                     }
@@ -6429,6 +6435,17 @@ module.exports = (function(){
               }
             }
           }
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, stmt) {
+              return [
+                stmt,
+                {g: 'm', params: {type: 'b'}},
+              ];
+          })(pos0, result0);
+        }
+        if (result0 === null) {
+          pos = pos0;
         }
         return result0;
       }
@@ -6547,21 +6564,6 @@ module.exports = (function(){
           result0 = null;
           if (reportFailures === 0) {
             matchFailed("\"else\"");
-          }
-        }
-        return result0;
-      }
-      
-      function parse_DoStatement() {
-        var result0;
-        
-        if (input.substr(pos, 2) === "do") {
-          result0 = "do";
-          pos += 2;
-        } else {
-          result0 = null;
-          if (reportFailures === 0) {
-            matchFailed("\"do\"");
           }
         }
         return result0;
@@ -7078,9 +7080,7 @@ module.exports = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, identifier) {
-              return ['catch (', identifier, ')'];
-            })(pos0, result0[2]);
+          result0 = (function(offset, identifier) { return ['catch (', identifier, ')']; })(pos0, result0[2]);
         }
         if (result0 === null) {
           pos = pos0;

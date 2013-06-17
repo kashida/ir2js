@@ -229,18 +229,16 @@ if (xyz) {
 #}
 
 #{: block statement 2
-do
+while xyz
   aaa
   bbb
   ccc
-while xyz
 #=
-do {
+while (xyz) {
   aaa;
   bbb;
   ccc;
 }
-while (xyz);
 #}
 
 #{: block statement with comment
@@ -361,4 +359,9 @@ aaa + [#]
 aaa + [
   bbb
 ] * ccc;
+#}
+
+#!{: non-block statement
+func()
+  abc
 #}

@@ -1,4 +1,4 @@
-test input file format.
+Test input file formats are:
 
 #{ test name
 ... file scope ir code ...
@@ -22,6 +22,13 @@ or
 ... corresponding js function code ...
 #}
 
+Also for tests that are supposed to error:
+
+#!{ test name
+... code that should produce compile error ...
+#}
+
+
 :
   _fs := require('fs')
   ir2js := require('ir2js_test')
@@ -35,6 +42,7 @@ or
   @output\A.<s>\ []
   @tests\A.<ir2js.TestCase>\ []
   @isGlobal\b\ false
+  @expectError\b\ false
   @failed+\b\ false
 
 :parse
@@ -50,12 +58,13 @@ or
 :@checkLine
   line\s\$
   index\n\$
-  input_re := /^#\{((:)|\[(.*)\])?\s*(.*\S)\s*$/.exec(line)
+  input_re := /^#(\!)?\{((:)|\[(.*)\])?\s*(.*\S)\s*$/.exec(line)
   if input_re
     @state = 'i'
-    @name = input_re[4]
-    @packageName = input_re[3] || ''
-    @isGlobal = !input_re[2]
+    @name = input_re[5]
+    @packageName = input_re[4] || ''
+    @isGlobal = !input_re[3]
+    @expectError = !!input_re[1]
     =>
     
   if /^#\=\s*$/.test(line)
@@ -70,10 +79,9 @@ or
       @input
       @output
       @isGlobal
-    @name = ''
+      @expectError
     @input = []
     @output = []
-    @isGlobal = true
     =>
 
   switch @state

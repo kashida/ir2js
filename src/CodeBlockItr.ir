@@ -8,14 +8,7 @@
   @bidx+\n\ 0
   @lidx+\n\ 0
   @pidx+\n\ 0
-  @extraBlock+\b\ false
-
-Valid only after run call.
-:endsWithCode+\b\
-  => #&&
-    @code.length
-    !(@code[@code.length - 1] instanceof parser.BlockMarker)
-    !@extraBlock
+  @isBlockStatement+\b\ false
 
 :run
   @code.forEach(##)
@@ -33,21 +26,12 @@ Valid only after run call.
     @bidx++
 
   // There may be one extra block.
-  if @bidx > @blocks.length || @bidx + 1 < @blocks.length
+  if @bidx != @blocks.length
     error(@input, #+)
-      '# blocks does not match #markers: '
+      '# of blocks does not match # of markers: '
       @bidx
       ', '
       @blocks.length
-    => false
-
-  if @bidx < @blocks.length
-    @extraBlock = true
-    @cidx++
-    if @blockCb
-      @blockCb('f', false)
-    @bidx++
-  => true
 
 :@handleMarker
   marker\parser.BlockMarker\$
@@ -65,3 +49,5 @@ Valid only after run call.
     @pidx++
   if marker.type == 'l'
     @lidx++
+  if marker.type == 'b'
+    @isBlockStatement = true

@@ -10,28 +10,29 @@
   // TODO: enum
   BlockType := {#}
     BLOCK: 0
-    OBJ: 1
-    ARRAY: 2
-    PARAMS: 3
-    LINE: 4
-    COND: 5
-    DOT: 6
-    MULT: 7
-    ADD: 8
-    LOG_AND: 9
-    LOG_OR: 10
+    FUNCTION: 1
+    OBJ: 2
+    ARRAY: 3
+    PARAMS: 4
+    LINE: 5
+    COND: 6
+    DOT: 7
+    MULT: 8
+    ADD: 9
+    LOG_AND: 10
+    LOG_OR: 11
 
-  _BLOCK_OPEN   := [' {', '{', '[', '(', '(', '(',
+  _BLOCK_OPEN   := [' {', ' {', '{', '[', '(', '(', '(',
   |'(',  '(',   '(',   '(',    '(']
-  _LINE_PREFIX  := ['',   '',  '',  '',  '',  '(',
+  _LINE_PREFIX  := ['',   '',   '',  '',  '',  '',  '(',
   |'(',  '(',   '(',   '(',    '(']
-  _LINE_SUFFIX  := [';',  ',', ',', ',', '',  ') :',
+  _LINE_SUFFIX  := [';',  ';',  ',', ',', ',', '',  ') :',
   |').', ') *', ') +', ') &&', ') ||']
-  _FIRST_SUFFIX := [';',  ',', ',', ',', '',  ') ?',
+  _FIRST_SUFFIX := [';',  ';',  ',', ',', ',', '',  ') ?',
   |').',  ') *', ') +', ') &&', ') ||']
-  _END_SUFFIX   := [';',  '',  '',  '',  '',  ')',
+  _END_SUFFIX   := [';',  ';',  '',  '',  '',  '',  ')',
   |')',  ')',   ')',   ')',    ')']
-  _BLOCK_CLOSE  := ['}',  '}', ']', ')', ')', ')',
+  _BLOCK_CLOSE  := ['}',  '}',  '}', ']', ')', ')', ')',
   |')',  ')',   ')',   ')',    ')']
 
 :add
@@ -81,9 +82,12 @@ TODO: change marker's type to BlockType when it's enum.
     if !(line instanceof InvalidLine) && !line.param
       last_index = i
   assert(#)
-    last_index >= 0 || @marker == BlockType.BLOCK
+    #||
+      last_index >= 0
+      @marker == BlockType.BLOCK
+      @marker == BlockType.FUNCTION
     @lines.length ? @lines[0].input : UnknownInputLine
-    'block with no valid lines: ' + @
+    'block with no valid lines.'
 
   out := &output.Block()
   accum_suffix := ''

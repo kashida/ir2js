@@ -79,7 +79,6 @@ Keyword
   / 'debugger'
   / 'default'
   / 'delete'
-  / 'do'
   / 'else'
   / 'finally'
   / 'for'
@@ -97,6 +96,7 @@ Keyword
 FutureReservedWord
   = 'class'
   / 'const'
+  / 'do'
   / 'enum'
   / 'export'
   / 'extends'
@@ -529,24 +529,32 @@ Statement
 
 StatementLine
   = ExpressionStatement
-  / IfStatement
-  / ElseIfStatement
-  / ElseStatement
-  / DoStatement
-  / WhileStatement
-  / ForStatement
-  / EachStatement
+  / BlockStatement
   / ContinueStatement
   / BreakStatement
   / ReturnStatement
-  / SwitchStatement
   / CaseStatement
   / DefaultStatement
   / ThrowStatement
+  / DebuggerStatement
+
+BlockStatement
+  = stmt:(
+    IfStatement
+  / ElseIfStatement
+  / ElseStatement
+  / WhileStatement
+  / ForStatement
+  / EachStatement
+  / SwitchStatement
   / TryStatement
   / CatchStatement
-  / FinallyStatement
-  / DebuggerStatement
+  / FinallyStatement) {
+      return [
+        stmt,
+        {g: 'm', params: {type: 'b'}},
+      ];
+  }
 
 ExpressionStatement = Expression
 
@@ -557,7 +565,6 @@ ElseIfStatement
   = 'else' _ 'if' _ cond:Expression { return ['else if (', cond, ')']; }
 
 ElseStatement = 'else'
-DoStatement = 'do'
 WhileStatement = 'while' __ cond:Expression { return ['while (', cond, ')']; }
 
 ForStatement
@@ -602,9 +609,7 @@ ThrowStatement = 'throw' __ Expression
 TryStatement = 'try'
 
 CatchStatement
-  = 'catch' _ identifier:Identifier {
-      return ['catch (', identifier, ')'];
-    }
+  = 'catch' _ identifier:Identifier { return ['catch (', identifier, ')']; }
 
 FinallyStatement = 'finally'
 DebuggerStatement = 'debugger'

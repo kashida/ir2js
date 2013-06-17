@@ -4,6 +4,7 @@
   @input\A.<s>\$
   @output\A.<s>\$
   @isGlobal\b\$
+  @expectError\b\$
   @failed+\b\ false
 
 :run
@@ -13,6 +14,7 @@
     &CodeScope(&context.Context(@name, &context.Package('')))
 
   actual_output := ''
+  OUTPUT_ERROR = !@expectError
   try
     c.processLines(@input)
     actual_output = c.output()
@@ -21,19 +23,25 @@
       if type_str
         actual_output = actual_output.concat(type_str.split('\n'))
   catch e
-    console.log('EXCEPTION: ' + @name)
-    @warnWithIndent('input', @input)
-    @warnWithIndent('expected', @output)
-    throw e
+    if @expectError
+      console.log('PASS: ' + @name)
+      =>
+    else
+      console.log('EXCEPTION: ' + @name)
+      @warnWithIndent('input', @input)
+      @warnWithIndent('expected', @output)
+      @failed = true
+      throw e
 
-  if actual_output.join('\n') == @output.join('\n')
+  if actual_output.join('\n') == @output.join('\n') && !@expectError
     console.log('PASS: ' + @name)
   else
     console.log('FAIL: ' + @name)
     @warnWithIndent('input', @input)
-    @warnWithIndent('expected', @output)
+    @warnWithIndent('expected', @expectError ? ['<<error>>'] : @output)
     @warnWithIndent('actual', actual_output)
-    @warnWithIndent('diff', @makeDiff(@output, actual_output))
+    if !@expectError
+      @warnWithIndent('diff', @makeDiff(@output, actual_output))
     @failed = true
 
 :@warnWithIndent
