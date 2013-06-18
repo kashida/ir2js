@@ -138,12 +138,12 @@ a := #.
 #=
 var a;
 a = (
-  (new SomeClass(
+  new SomeClass(
     0,
     abc
-  )).
-  (do_something).
-  (get_result)
+  ).
+  do_something.
+  get_result
 );
 #}
 
