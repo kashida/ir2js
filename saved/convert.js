@@ -31,7 +31,6 @@ function(base_dir, in_files, out_file) {
     require('optimist').
     // Operation modes.
     boolean('sort').
-    boolean('argtypes').
     boolean('pkglist').
     boolean('merge').
     // Input and output.
@@ -49,9 +48,6 @@ function(base_dir, in_files, out_file) {
     var list;
     list = _ir2js.createSortedList(input_files);
     console.log(list.join(' '));
-  }
-  else if (argv.argtypes) {
-    _ir2js.createArgTypes(base_dir, input_files);
   }
   else if (argv.pkglist) {
     var pkgs;

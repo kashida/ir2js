@@ -1938,42 +1938,6 @@ TestCase.prototype._makeDiff = function(lines0, lines1) {
 };
 
   exports.TestCase = TestCase;
-  exports.createArgTypes = 
-  /**
-   * @param {string} basedir
-   * @param {Array.<string>} files
-   */
-  function(basedir, files) {
-    var output;
-    output = [];
-    files.forEach(
-    /** @param {string} file */
-    function(file) {
-      var tk;
-      tk = JSON.parse(_fs.readFileSync(file.replace(/\.js/, '.tk'), 'utf-8'));
-      tk['cls'].forEach(
-      /** @param {*} cls */
-      function(cls) {
-        output.push(cls.name + '._argtypes = [' + cls['args'].join(', ') + '];');
-        cls.methods.forEach(
-        /** @param {*} method */
-        function(method) {
-          output.push((
-            (cls.name + '.prototype.' + method.name) +
-            ('._argtypes = [') +
-            (method['args'].join(', ')) +
-            ('];')
-          ));
-        });
-      });
-      tk['fns'].forEach(
-      /** @param {*} fn */
-      function(fn) {
-        output.push(fn.name + '._argtypes = [' + fn['args'].join(', ') + '];');
-      });
-    });
-    _fs.writeFileSync(basedir + '/_argtypes.js', output.join('\n'), 'utf-8');
-  };
 var transformToJs = /**
  * @param {string} base_dir
  * @param {string} in_file
