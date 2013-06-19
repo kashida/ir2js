@@ -6,14 +6,14 @@
 #}
 
 #{ non-method scope
-:{
+:##
 #=
 (function() {
 })();
 #}
 
 #{ non-method scope with statements
-:{
+:##
   a := b
 
   c := d

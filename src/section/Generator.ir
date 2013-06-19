@@ -114,7 +114,7 @@
 
 :@createAnonymousScope\%.Scope\
   line\s\$
-  => line == '{' ? &%.Scope() : null
+  => line == '##' ? &%.Scope() : null
 
 :@createTypedef\%.Typedef\
   line\s\$

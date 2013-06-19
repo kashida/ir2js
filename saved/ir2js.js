@@ -4414,7 +4414,7 @@ section.Generator.prototype._createNativeCode = function(line) {
  */
 section.Generator.prototype._createAnonymousScope = function(line) {
   var self = this;
-  return line == '{' ? new section.Scope() : null;
+  return line == '##' ? new section.Scope() : null;
 };
 
 /**
