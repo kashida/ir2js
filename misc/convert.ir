@@ -19,90 +19,36 @@
   _fs.closeSync(out)
 
 :
-  // TODO: @enum
-  ExecModes := {#}
-    COMPILE: 0
-    SORT: 1
-    ARGTYPE: 2
-    PKGLIST: 3
-    MERGE: 4
+  argv := #.
+    require('optimist')
+    // Operation modes.
+    boolean('sort')
+    boolean('argtypes')
+    boolean('pkglist')
+    boolean('merge')
+    // Input and output.
+    string('basedir')
+    string('outfile')
+    string('outdir')
+    argv
 
-  // TODO: @type {ExecModes}
-  mode := ExecModes.COMPILE
-
-  ReplyModes := {#}
-    MSG: 0
-    STDOUT: 1
-
-  reply := ReplyModes.MSG
-
-
-  // extract only the input / output file names.
-  base_dir := ''
-  out_dir := ''
-  out_file := ''
-  input_files := process.argv.filter(##)
-    arg\s\$
-    i\n\$
-    // argv[0] is node binary and argv[1] is the executing js.
-    if i < 2
-      => false
-    option_re := /--(\w+)(=(.*))?/.exec(arg)
-    if !option_re
-      => true
-    opt_name := option_re[1]
-    opt_param := option_re[3]
-    if opt_name == 'basedir'
-      base_dir = opt_param
-    else if opt_name == 'outdir'
-      out_dir = opt_param
-    else if opt_name == 'outfile'
-      out_file = opt_param
-    else if opt_name == 'sort'
-      mode = ExecModes.SORT
-    else if opt_name == 'argtypes'
-      mode = ExecModes.ARGTYPE
-    else if opt_name == 'pkglist'
-      mode = ExecModes.PKGLIST
-    else if opt_name == 'merge'
-      mode = ExecModes.MERGE
-    else if opt_name == 'stdout'
-      reply = ReplyModes.STDOUT
-    else
-      throw 'unknown command option: ' + opt_name
-    => false
-
-  switch mode
-    case ExecModes.COMPILE
+  base_dir := argv.basedir
+  input_files := argv._
+  if argv.sort
+    list := _ir2js.createSortedList(input_files)
+    console.log(list.join(' '))
+  else if argv.argtypes
+    _ir2js.createArgTypes(base_dir, input_files)
+  else if argv.pkglist
+    pkgs := _ir2js.createPackageList(base_dir, input_files)
+    console.log(pkgs.join('\n'))
+  else if argv.merge
+    mergeToFile(base_dir, input_files, argv.outfile)
+  else
+    // Compile mode.
     try
-      _ir2js.compileFiles(base_dir, input_files, out_dir)
+      _ir2js.compileFiles(base_dir, input_files, argv.outdir)
     catch e
       console.log(e)
       process.exit(-1)
-    break
-
-    case ExecModes.SORT
-    list := _ir2js.createSortedList(input_files)
-    switch reply
-      case ReplyModes.MSG
-      process.send(list)
-      break
-
-      case ReplyModes.STDOUT
-      console.log(list.join(' '))
-      break
-    break
-
-    case ExecModes.ARGTYPE
-    _ir2js.createArgTypes(base_dir, input_files)
-    break
-
-    case ExecModes.PKGLIST
-    pkgs := _ir2js.createPackageList(base_dir, input_files)
-    console.log(pkgs.join('\n'))
-    break
-
-    case ExecModes.MERGE
-    mergeToFile(base_dir, input_files, out_file)
-    break
   process.exit(0)

@@ -10,7 +10,7 @@ JS_SRCS=$(filter-out */TestCase.ir,$(JS_SRCS_WITH_TEST))
 
 TESTS=$(wildcard test/*.test)
 
-SORTJS=$(NODE_SAVED) --stdout --sort
+SORTJS=$(NODE_SAVED) --sort
 
 CLOSURE_ARGS=
 CLOSURE_ARGS+=-jar closure/compiler.jar

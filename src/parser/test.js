@@ -123,24 +123,14 @@ ConvertFile.prototype.parse = function(line) {
 
 
 var mode = '';
-process.argv.forEach(function(arg, i) {
-  // First two arguments are node and executing script name.
-  if (i < 2) { return; }
+var argv = require('optimist').argv
 
-  // The third parameter decides execution mode.
-  if (i == 2) {
-    switch(arg) {
-      case '-p': mode = 'p'; break;
-      case '-t': mode = 't'; break;
-      default:
-        console.log('unknown exec mode: ' + arg);
-        process.exit(-1);
-    }
-    return;
-  }
-
-  switch(mode) {
-    case 'p': new ConvertFile(arg).run(); break;
-    case 't': new TestFile(arg).run(); break;
+var process_mode = argv.p
+var test_mode = argv.t
+argv._.forEach(function(input) {
+  if (process_mode) {
+    new ConvertFile(input).run();
+  } else if (test_mode) {
+    new TestFile(input).run();
   }
 });
