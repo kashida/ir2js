@@ -1,6 +1,6 @@
 Write data into the specified file. Create the file or its directory If they do
 not exit.
-:::writeFile = ##
+::writeFile = ##
   path\s\$
   data\s\$
   dir := _path.dirname(path)

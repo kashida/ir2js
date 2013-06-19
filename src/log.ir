@@ -1,6 +1,6 @@
-:::OUTPUT_ERROR = true
+::OUTPUT_ERROR = true
 
-:::error = ##
+::error = ##
   line\input.Line\$
   msg\s\? '*warning*'
   additional_lines\A.<s>\?
@@ -18,7 +18,7 @@
     console.trace()
   throw "Compile Error"
 
-:::assert = ##
+::assert = ##
   check\*\$
   line\input.Line\? input.UnknownInputLine
   msg\s\? '*assertion*'

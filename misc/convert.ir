@@ -2,7 +2,7 @@
   _fs := require('fs')
   _ir2js := require('ir2js')
 
-:::mergeToFile = ##
+::mergeToFile = ##
   base_dir\s\$
   in_files\A.<s>\$
   out_file\s\$
