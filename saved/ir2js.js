@@ -905,7 +905,7 @@ IndentBlock.prototype.output = function(line_index) {
       (self._marker == BlockType.BLOCK) ||
       (self._marker == BlockType.FUNCTION)
     ),
-    self._lines.length ? self._lines[0].input : UnknownInputLine,
+    self._lines.length ? self._lines[0].input : input.UnknownInputLine,
     'block with no valid lines.'
   );
 
@@ -2089,7 +2089,7 @@ var assert = /**
  * @param {string=} opt_msg
  */
 function(check, opt_line, opt_msg) {
-  var line = opt_line === undefined ? (UnknownInputLine) : opt_line;
+  var line = opt_line === undefined ? (input.UnknownInputLine) : opt_line;
   var msg = opt_msg === undefined ? ('*assertion*') : opt_msg;
   console.assert(
     check,
@@ -3153,8 +3153,7 @@ input.Line.prototype.__defineGetter__('indent', function() {
   return re ? re.index : 0;
 });
 
-  var UnknownInputLine;
-  UnknownInputLine = new input.Line('(unknown)', '', -1);
+input.UnknownInputLine = new input.Line('(unknown)', '', -1);
 /*
 Input code section.
 */
@@ -3634,8 +3633,7 @@ Wrapper for the PEGJS's parse method.
 Specific for a particular target (i.e. rule).
 */
 
-  var _parser;
-  _parser = require('syntax');
+parser._parser = require('syntax');
 
 /**
  * @param {string} rule
@@ -3671,7 +3669,7 @@ parser.Target.prototype.run = function(line, xformer, show_error_line) {
   }).join('\n');
   try {
     var result;
-    result = _parser.parse(lines, self._rule);
+    result = parser._parser.parse(lines, self._rule);
   }
   catch (e) {
     throw self._addContextLines(e, line);

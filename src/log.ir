@@ -20,7 +20,7 @@
 
 :::assert = ##
   check\*\$
-  line\input.Line\? UnknownInputLine
+  line\input.Line\? input.UnknownInputLine
   msg\s\? '*assertion*'
   console.assert(#)
     check

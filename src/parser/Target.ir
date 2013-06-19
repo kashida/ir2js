@@ -1,8 +1,7 @@
 Wrapper for the PEGJS's parse method.
 Specific for a particular target (i.e. rule).
 
-:
-  _parser := require('syntax')
+::_parser = require('syntax')
 
 ::
   @rule\s\$
@@ -18,7 +17,7 @@ Specific for a particular target (i.e. rule).
     l\input.Line\$
     => l.line
   try
-    result := _parser.parse(lines, @rule)
+    result := %._parser.parse(lines, @rule)
   catch e
     throw @addContextLines(e, line)
 

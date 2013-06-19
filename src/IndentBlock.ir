@@ -86,7 +86,7 @@ TODO: change marker's type to BlockType when it's enum.
       last_index >= 0
       @marker == BlockType.BLOCK
       @marker == BlockType.FUNCTION
-    @lines.length ? @lines[0].input : UnknownInputLine
+    @lines.length ? @lines[0].input : input.UnknownInputLine
     'block with no valid lines.'
 
   out := &output.Block()
