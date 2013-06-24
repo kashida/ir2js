@@ -75,6 +75,9 @@ compiled/ir2js_test.js: compiled/_ir2js.js compiled/imports.js
 
 converter: compiled/ir2js.js compiled/parser/syntax.js compiled/convert.js
 
+sort:
+	@echo "$(shell $(SORTJS) $(JS_SRCS))"
+
 compiled/ir2js.js: compiled/_ir2js.js compiled/imports.js
 	@echo '===== MERGE ir2js'
 	$(NODE_SAVED) --merge --basedir=compiled --outfile=$@ compiled/imports.js $(JS_SRCS)

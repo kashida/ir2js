@@ -2223,18 +2223,16 @@ StringSet.prototype.filterOut = function(strs) {
 };
 
 
-/*
-where -- maps class name to file name where its defined.
-depends -- maps file name to array of required class names.
-*/
 /** @constructor */
 var ClassDeps = function() {
   var self = this;
+  // Maps class name to file name where its defined.
   /**
    * @type {Object.<string, string>}
    * @private
    */
   this._where = ({});
+  // Maps file name to array of required class names.
   /**
    * @type {Object.<string, Array.<string>>}
    * @private
@@ -2249,7 +2247,9 @@ ClassDeps.prototype.toString = function() {
   return Object.keys(/** @type {!Object} */(self._depends)).map(
   /** @param {string} k */
   function(k) {
-    return '[' + k + ':' + self._depends[k].join('|') + ']';
+    var list;
+    list = self._depends[k];
+    return list.length ? '[' + k + ':' + list.join('|') + ']' : '';
   }).join('');
 };
 

@@ -34,16 +34,17 @@
     => !@map[f]
 
 
-where -- maps class name to file name where its defined.
-depends -- maps file name to array of required class names.
 ::ClassDeps
+  // Maps class name to file name where its defined.
   @where\O.<s, s>\ {}
+  // Maps file name to array of required class names.
   @depends\O.<s, A.<s>>\ {}
 
 :toString\s\
   => Object.keys(\!Object\(@depends)).map(##).join('')
     k\s\$
-    => '[' + k + ':' + @depends[k].join('|') + ']'
+    list := @depends[k]
+    => list.length ? '[' + k + ':' + list.join('|') + ']' : ''
 
 :load
   files\A.<s>\$
