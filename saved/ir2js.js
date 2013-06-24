@@ -2005,8 +2005,10 @@ function(src, dst) {
    * @param {string} base_dir
    * @param {Array.<string>} in_files
    * @param {string} out_dir
+   * @param {boolean=} opt_silent
    */
-  function(base_dir, in_files, out_dir) {
+  function(base_dir, in_files, out_dir, opt_silent) {
+    var silent = opt_silent === undefined ? (false) : opt_silent;
     in_files.forEach(
     /** @param {string} in_file */
     function(in_file) {
@@ -2022,11 +2024,15 @@ function(src, dst) {
       }
 
       if (!needCompile(in_file, out_file)) {
-        console.log(logstr + 'skipping');
+        if (!silent) {
+          console.log(logstr + 'skipping');
+        }
         return;
       }
 
-      console.log(logstr + 'compiling');
+      if (!silent) {
+        console.log(logstr + 'compiling');
+      }
       transformToJs(base_dir, in_file, out_file);
     });
   };

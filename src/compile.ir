@@ -43,6 +43,7 @@
     base_dir\s\$
     in_files\A.<s>\$
     out_dir\s\$
+    silent\b\? false
     in_files.forEach(##)
       in_file\s\$
 
@@ -54,8 +55,10 @@
         =>
 
       if !needCompile(in_file, out_file)
-        console.log(logstr + 'skipping')
+        if !silent
+          console.log(logstr + 'skipping')
         =>
 
-      console.log(logstr + 'compiling')
+      if !silent
+        console.log(logstr + 'compiling')
       transformToJs(base_dir, in_file, out_file)
