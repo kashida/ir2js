@@ -67,7 +67,7 @@ Here also we need to provide Closure library's base.js file.
 The input file name may have a .ir extension (this is not a requirement). Everything in the
 file except code sections are comments. Here is a sample input (file.ir) and output (file.js).
 
----------------------------------------- file.ir
+```ir:file.ir
 This is a comment.
 
 :
@@ -75,8 +75,9 @@ This is a comment.
   // This is a comment in the code section.
 
 This is another comment
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
 /*
 This is a comment.
 */
@@ -86,7 +87,7 @@ This is a comment.
 /*
 This is another comment.
 */
-----------------------------------------
+```
 
 As in this example, a code section starts with a line with a colon (with no indentation),
 followed by an indented block. There are several types of code sections. What is used
@@ -101,19 +102,20 @@ the end of line semicolons are not necessary (";" is automatically provided in t
 js). Writing long lines of code is usually not necessary in ir, but it is always possible to
 split long lines using "|".
 
----------------------------------------- file.ir
+```ir:file.ir
 :
   x := "5"
   y := \number\(x)
   => Math.sqrt(y * y +
   |y * y)
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
   var x = "5";
   var y = /** @type {number} */(x);
   return Math.sqrt(y * y +
     y * y);
-----------------------------------------
+```
 
 The last line of the code illustrates the use of "|". A line starts with "|" is a
 continuation of the previous line. Its indentation has to be the same as the line it is
@@ -130,105 +132,111 @@ are not necessary. This is similar to Python but in ir the concept is extended t
 structures as well. As in Python, using "\t" (tab) for indentations can be confusing, and so
 is not recommended.
 
----------------------------------------- file.ir
+```ir:file.ir
 :
   if (a == b)
     =>
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
   if (a == b){
     return ;
   }
-----------------------------------------
+```
 
 This is similar to how Python indentation works, but ir does not require the if
 line to end with ":".
 
----------------------------------------- file.ir
+```ir:file.ir
 :
   obj := {#}
     attrib0: 'value'
     attrib1: 123
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
   var obj = {
     attrib0: 'value',
     attrib1: 123
   };
-----------------------------------------
+```
 
 In this case, each indented line is an object attribute. The separating commas are
 automatically provided where necessary. Note how the indented block replaces the "#" in
 the first line. The context (i.e. the surrounding strign) of "#" determines how the
 indented block is interpreted.
 
----------------------------------------- file.ir
+```ir:file.ir
 :
   arr := [#]
     'abc'
     'def'
     'ghi'
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
   var arr = [
     'abc',
     'def',
     'ghi'
   ];
-----------------------------------------
+```
 
 Similarly, "#" surrounded by hard brackets introduces an array block.
 
----------------------------------------- file.ir
+```ir:file.ir
 :
   f(#)
     obj
     arr
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
   f(
     obj,
     arr
   );
-----------------------------------------
+```
 
 This is a function call and the block fills the comma separated parameter ilst.
 Note "(#)" can be used for any parenthesized expressions if the indented block has
 only one line.
 
----------------------------------------- file.ir
+```ir:file.ir
 :
   a := 1.0 / (#)
     Math.sqrt(x * x + y * y)
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
   var a = 1.0 / (
     Math.sqrt(x * x + y * y)
   );
-----------------------------------------
+```
 
 Here the indented line simply replaces the "#". This usually makes it unnecessary to use
 "|" to break a line. Using "#" to decompose the line is preferred over "|" because in
 this form the first line shows the overall structure of the expression while the
 following block fills the details of each sub-expressions.
 
----------------------------------------- file.ir
+```ir:file.ir
 :
   arr.forEach(##)
     console.log('---')
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
   arr.forEach(function(){
     console.log('---');
   });
-----------------------------------------
+```
 
 Finally two concective "#"s introduces an anonymous function. Later we describe anonymous
 functions which take parameters.
 
 The indented blocks can nest, and one line can take multiple "#" block markers.
 
----------------------------------------- file.ir
+```ir:file.ir
 :
   f({#}, [#])
     attrib0: 'value'
@@ -238,8 +246,9 @@ The indented blocks can nest, and one line can take multiple "#" block markers.
     'abc'
     'def'
     'ghi'
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
   f({
     attrib0: 'value',
     attrib1: function(){
@@ -250,7 +259,7 @@ The indented blocks can nest, and one line can take multiple "#" block markers.
     'def',
     'ghi'
   ]);
-----------------------------------------
+```
 
 When there is more than one "#"s in a line (as in the first line of the above example),
 the following indented blocks need to be separated by a "--". Note its indentation needs to
@@ -270,19 +279,20 @@ optional parameter) is not necessary and some shorthand type names are allowed:
   A -- Array
   O -- Object
 
----------------------------------------- file.ir
+```ir:file.ir
 :
   a := \A.<n>\(one_to_three(##))
     i\n\$
     => i * i
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
   var a = /** @type {Array.<number>} */(one_to_three(
   /** @param {number} i */
   function(i){
     return i * i;
   }));
-----------------------------------------
+```
 
 Type notations in ir are used in two places:
 
@@ -319,15 +329,16 @@ The second form introduces an optional parameter. Optional parameters can not be
 before any non-optional parameters. When the parameter value is not provided by the caller,
 the parameter gets initialized with the default value. The default value is optional.
 
----------------------------------------- file.ir
+```ir:file.ir
 := one_to_three ##\A\
   fn\f(n):n\$
   => [1, 2, 3].map(##)
     \n\
     i\n\? 0
     => fn(i)
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
 goog.provide('one_to_three');
 
 /**
@@ -345,7 +356,7 @@ one_to_three = function(fn){
     return fn(i);
   });
 };
-----------------------------------------
+```
 
 Here we are introducing the second type of code section -- a global function. Global
 functions (and classes shown later) automatically gets declared with goog.provide.
@@ -365,10 +376,11 @@ it is never utilized). "i" gets the value 0 if the parameter is not provided by 
 [Class]
 The code below shows the smallest class one can write in ir.
 
----------------------------------------- file.ir
+```ir:file.ir
 ::MyClass
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
 goog.provide('MyClass');
 
 /** @constructor */
@@ -376,7 +388,7 @@ var MyClass = function(){
 var _self = this;
 };
 MyClass.prototype._classname = 'MyClass';
-----------------------------------------
+```
 
 As shown, a class definition actually creates a constructor function. Since it is effectively
 a global function, it can have the same set of parameter declarations global functions
@@ -384,12 +396,13 @@ can have (except that a constructor function can not have a return type).
 
 Member variables can also be declared in the class block along with the constructor parameters.
 
----------------------------------------- file.ir
+```ir:file.ir
 ::MyClass
   parameter\s\$
   @member\n\$
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
 goog.provide('MyClass');
 
 /**
@@ -406,7 +419,7 @@ var _self = this;
   this._member = member;
 };
 MyClass.prototype._classname = 'MyClass';
-----------------------------------------
+```
 
 The member declarations always start with a "@". There are 3 forms of member declarations,
 depending on how they are initialized.
@@ -439,12 +452,13 @@ in order to make them available even to sub-classes. ir has simple annotations w
 causes the accessors to be created. This makes it possible to create a data storage class
 (like C's struct) without writing any line of execution code.
 
----------------------------------------- file.ir
+```ir:file.ir
 ::MyClass
   parameter\s\$
   @member&\n\$
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
 goog.provide('MyClass');
 
 /**
@@ -469,7 +483,7 @@ return this._member;
 MyClass.prototype.__defineSetter__('member', function(value) {
 this._member = value;
 });
-----------------------------------------
+```
 
 The "&" after the member name tells ir to create both getter and setter for that member.
 Similarly "+" only creates a getter and "*" only creates a setter. These are JavaScript's
@@ -488,7 +502,7 @@ The point of allowing accessors to be created so easily is not to promote creati
 data classes, but to make it easy to grow classes from static data container to one
 that have behavior. In order to do that, ir also allows you to override the accessors.
 
----------------------------------------- file.ir
+```ir:file.ir
 ::SquareSequence
   @current\n\$
 
@@ -503,8 +517,9 @@ that have behavior. In order to do that, ir also allows you to override the acce
 Reset to zero.
 :reset
   @current = 0
-----------------------------------------
----------------------------------------- file.js
+```
+
+```ir:file.js
 goog.provide('SquareSequence');
 
 /**
@@ -542,7 +557,7 @@ SquareSequence.prototype.reset = function(){
 var _self = this;
   _self._current = 0;
 };
-----------------------------------------
+```
 
 ":+current" and ":*current" shows how one defines getter and setter for a member respectively.
 ":reset" is a regular method. All the accessors and methods belong to the most recently
