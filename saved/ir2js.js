@@ -3639,7 +3639,7 @@ Wrapper for the PEGJS's parse method.
 Specific for a particular target (i.e. rule).
 */
 
-parser._parser = require('syntax');
+parser._parser = require('./syntax');
 
 /**
  * @param {string} rule

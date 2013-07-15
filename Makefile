@@ -1,7 +1,7 @@
 PACKAGES_FILE=compiled/packages.js
 
 NODE=nodejs
-NODE_TEST=NODE_PATH=compiled:compiled/parser $(NODE)
+NODE_TEST=NODE_PATH=compiled $(NODE)
 NODE_SAVED=NODE_PATH=saved $(NODE) saved/convert.js
 
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
@@ -63,7 +63,7 @@ compiled/test.js: test/test.ir
 ############################################################
 # Converter targets.
 
-test: compiled/ir2js_test.js compiled/parser/syntax.js compiled/test.js
+test: compiled/ir2js_test.js compiled/syntax.js compiled/test.js
 	@echo '===== TEST'
 	$(NODE_TEST) compiled/test.js $(TESTS)
 
@@ -73,7 +73,7 @@ compiled/ir2js_test.js: compiled/_ir2js.js compiled/imports.js
 	compiled/imports.js $(JS_SRCS_WITH_TEST)
 
 
-converter: compiled/ir2js.js compiled/parser/syntax.js compiled/convert.js
+converter: compiled/ir2js.js compiled/syntax.js compiled/convert.js
 
 sort:
 	@echo "$(shell $(SORTJS) $(JS_SRCS))"
@@ -100,20 +100,20 @@ PARSER_TEST_SRCS=\
 $(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
 PARSER_TEST_SRCS+=compiled/input/Line.js
 
-test_parse: compiled/parser/syntax.js compiled/parser_main.js
+test_parse: compiled/syntax.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -p src/*.ir | grep '^X|'
 
-parser_test: compiled/parser/syntax.js compiled/parser_main.js
+parser_test: compiled/syntax.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -t src/parser/data/*
 
 compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js $(PACKAGES_FILE)
 	@echo '===== CAT parser_main'
 	cat $(PACKAGES_FILE) $^ > $@
 
-compiled/parser/syntax.js: src/parser/syntax.pegjs
+compiled/syntax.js: src/parser/syntax.pegjs
 	@echo '===== PEGJS syntax'
-	@mkdir -p compiled/parser
-	pegjs src/parser/syntax.pegjs $@
+	@mkdir -p compiled
+	pegjs $^ $@
 
 
 ############################################################
@@ -126,7 +126,7 @@ update:
 	make converter
 	cp compiled/ir2js.js saved
 	cp compiled/convert.js saved
-	cp compiled/parser/syntax.js saved
+	cp compiled/syntax.js saved
 	make clean
 	make test
 	make converter

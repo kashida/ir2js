@@ -1,0 +1,25 @@
+{
+  "author": "Koji Ashida <kojiashida@gmail.com>",
+  "name": "ir2js",
+  "description": "Converter from ir to JavaScript.",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kashida/ir2js.git"
+  },
+  "main": "saved/ir2js",
+  "bin": {
+    "ir2js": "saved/convert.js"
+  },
+  "license" : "BSD",
+  "dependencies": {
+    "optimist": ">= 0.6.0"
+  },
+  "devDependencies": {
+    "pegjs": ">= 0.7.0"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": ">= 0.6.19"
+  }
+}

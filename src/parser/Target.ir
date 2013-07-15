@@ -1,7 +1,7 @@
 Wrapper for the PEGJS's parse method.
 Specific for a particular target (i.e. rule).
 
-::_parser = require('syntax')
+::_parser = require('./syntax')
 
 ::
   @rule\s\$
