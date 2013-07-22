@@ -2,7 +2,7 @@ PACKAGES_FILE=compiled/packages.js
 
 NODE=nodejs
 NODE_TEST=NODE_PATH=compiled $(NODE)
-NODE_SAVED=NODE_PATH=saved $(NODE) saved/convert.js
+NODE_SAVED=NODE_PATH=saved $(NODE) saved/convert
 
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
 JS_SRCS_WITH_TEST=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))
@@ -125,7 +125,8 @@ update:
 	make parser_test
 	make converter
 	cp compiled/ir2js.js saved
-	echo -e '#!/usr/bin/env node\n\n' > saved/convert
+	echo '#!/usr/bin/env node' > saved/convert
+	echo >> saved/convert
 	cat compiled/convert.js >> saved/convert
 	cp compiled/syntax.js saved
 	make clean
