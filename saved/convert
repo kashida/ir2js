@@ -4,6 +4,8 @@
   _fs = require('fs');
   var _ir2js;
   _ir2js = require('ir2js');
+  var _optimist;
+  _optimist = require('optimist');
 
 var mergeToFile = /**
  * @param {string} base_dir
@@ -30,20 +32,41 @@ function(base_dir, in_files, out_file) {
 
   var argv;
   argv = (
-    require('optimist').
+    _optimist.
+    usage((
+      ('\n') +
+      ('Compiles input ir into js files unless one of the mode options ') +
+      ('is provided.\n') +
+      ('Mode options are: sort, pkglist, merge, or help.\n\n') +
+      ('Usage: $0 [mode option] <dir options...> <input files...>\n')
+    )).
     // Operation modes.
-    boolean('sort').
-    boolean('pkglist').
-    boolean('merge').
+    boolean(['sort', 'pkglist', 'merge', 'help']).
+    describe('sort', 'Output js file namess in the dependency order.').
+    describe('pkglist', 'Package initialization code snippet.').
+    describe('merge', 'Merge input js files in the dependency order.').
+    describe('help', 'Show this message.').
+    check(
+    /** @param {Object} argv */
+    function(argv) {
+      // None or only one of the mode options should be provided.
+      return (
+        (argv.sort ? 1 : 0) +
+        (argv.pkglist ? 1 : 0) +
+        (argv.merge ? 1 : 0) +
+        (argv.help ? 1 : 0)
+      ) <= 1;
+    }).
     // Input and output.
-    string('basedir').
-    string('outfile').
-    string('outdir').
+    string(['basedir', 'outdir', 'outfile']).
+    describe('basedir', 'Soure root dir (ignored for sort mode).').
+    describe('outdir', 'Output dir (only used in compile mode).').
+    describe('outfile', 'Output file name (only used in merge mode).').
     argv
   );
 
   var base_dir;
-  base_dir = argv.basedir;
+  base_dir = argv.basedir || '.';
   var input_files;
   input_files = argv._;
   if (argv.sort) {
@@ -57,16 +80,18 @@ function(base_dir, in_files, out_file) {
     console.log(pkgs.join('\n'));
   }
   else if (argv.merge) {
-    mergeToFile(base_dir, input_files, argv.outfile);
+    mergeToFile(base_dir, input_files, argv.outfile || 'outfile.js');
+  }
+  else if (argv.help) {
+    console.log(_optimist.help());
   }
   else {
     // Compile mode.
     try {
-      _ir2js.compileFiles(base_dir, input_files, argv.outdir);
+      _ir2js.compileFiles(base_dir, input_files, argv.outdir || '.');
     }
     catch (e) {
       console.log(e);
       process.exit(-1);
     }
   }
-  process.exit(0);

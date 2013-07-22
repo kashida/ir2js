@@ -1,6 +1,7 @@
 :
   _fs := require('fs')
   _ir2js := require('ir2js')
+  _optimist := require('optimist')
 
 ::mergeToFile = ##
   base_dir\s\$
@@ -20,18 +21,35 @@
 
 :
   argv := #.
-    require('optimist')
+    _optimist
+    usage(#+)
+      '\n'
+      'Compiles input ir into js files unless one of the mode options '
+      'is provided.\n'
+      'Mode options are: sort, pkglist, merge, or help.\n\n'
+      'Usage: $0 [mode option] <dir options...> <input files...>\n'
     // Operation modes.
-    boolean('sort')
-    boolean('pkglist')
-    boolean('merge')
+    boolean(['sort', 'pkglist', 'merge', 'help'])
+    describe('sort', 'Output js file namess in the dependency order.')
+    describe('pkglist', 'Package initialization code snippet.')
+    describe('merge', 'Merge input js files in the dependency order.')
+    describe('help', 'Show this message.')
+    check(##)
+      argv\O\$
+      // None or only one of the mode options should be provided.
+      => #+ <= 1
+        argv.sort ? 1 : 0
+        argv.pkglist ? 1 : 0
+        argv.merge ? 1 : 0
+        argv.help ? 1 : 0
     // Input and output.
-    string('basedir')
-    string('outfile')
-    string('outdir')
+    string(['basedir', 'outdir', 'outfile'])
+    describe('basedir', 'Soure root dir (ignored for sort mode).')
+    describe('outdir', 'Output dir (only used in compile mode).')
+    describe('outfile', 'Output file name (only used in merge mode).')
     argv
 
-  base_dir := argv.basedir
+  base_dir := argv.basedir || '.'
   input_files := argv._
   if argv.sort
     list := _ir2js.createSortedList(input_files)
@@ -40,12 +58,13 @@
     pkgs := _ir2js.createPackageList(base_dir, input_files)
     console.log(pkgs.join('\n'))
   else if argv.merge
-    mergeToFile(base_dir, input_files, argv.outfile)
+    mergeToFile(base_dir, input_files, argv.outfile || 'outfile.js')
+  else if argv.help
+    console.log(_optimist.help())
   else
     // Compile mode.
     try
-      _ir2js.compileFiles(base_dir, input_files, argv.outdir)
+      _ir2js.compileFiles(base_dir, input_files, argv.outdir || '.')
     catch e
       console.log(e)
       process.exit(-1)
-  process.exit(0)

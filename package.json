@@ -2,7 +2,7 @@
   "author": "Koji Ashida <kojiashida@gmail.com>",
   "name": "ir2js",
   "description": "Converter from ir to JavaScript.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/kashida/ir2js.git"
