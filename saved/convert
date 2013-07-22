@@ -1,3 +1,4 @@
+#!/usr/bin/env node
   var _fs;
   _fs = require('fs');
   var _ir2js;

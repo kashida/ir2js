@@ -9,7 +9,7 @@
   },
   "main": "saved/ir2js",
   "bin": {
-    "ir2js": "saved/convert.js"
+    "ir2js": "saved/convert"
   },
   "license" : "BSD",
   "dependencies": {

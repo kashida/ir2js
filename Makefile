@@ -125,7 +125,8 @@ update:
 	make parser_test
 	make converter
 	cp compiled/ir2js.js saved
-	cp compiled/convert.js saved
+	echo -e '#!/usr/bin/env node\n\n' > saved/convert
+	cat compiled/convert.js >> saved/convert
 	cp compiled/syntax.js saved
 	make clean
 	make test
