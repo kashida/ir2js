@@ -13,7 +13,7 @@
   },
   "license" : "BSD",
   "dependencies": {
-    "optimist": ">= 0.6.0"
+    "optimist": "= 0.5.2"
   },
   "devDependencies": {
     "pegjs": ">= 0.7.0"
