@@ -196,6 +196,39 @@ classname.prototype.__defineSetter__('member', function(v) {
 
 #}
 
+#{ accessor w/o member flip order
+::classname
+:member*
+  v\s\$
+  do_something_with(v)
+:member+\s\
+  => ''
+#=
+/** @constructor */
+var classname = function() {
+var self = this;
+};
+classname.prototype._classname = 'classname';
+/** @type {string} */
+classname.prototype.member;
+classname.prototype.__defineSetter__('member', function(v) {
+  var self = this;
+  do_something_with(v);
+});
+classname.prototype.__defineGetter__('member', function() {
+  var self = this;
+  return '';
+});
+{
+  cls:[
+    {
+      name:classname
+    }
+  ]
+}
+
+#}
+
 #{: no method change
 @method()
 obj.method()

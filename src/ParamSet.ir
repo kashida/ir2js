@@ -64,6 +64,13 @@
 :isEmpty\b\
   => @params.length == 0
 
+:numParams+\n\
+  => @params.length
+
+:paramType\type.Decoder\
+  i\n\$
+  => @params[i].type
+
 :isInitEmpty\b\
   => !@params.some(##)
     p\Param\$
