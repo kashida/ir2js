@@ -1647,6 +1647,22 @@ ParamSet.prototype.isEmpty = function() {
   return self._params.length == 0;
 };
 
+/** @type {number} */
+ParamSet.prototype.numParams;
+ParamSet.prototype.__defineGetter__('numParams', function() {
+  var self = this;
+  return self._params.length;
+});
+
+/**
+ * @param {number} i
+ * @return {type.Decoder}
+ */
+ParamSet.prototype.paramType = function(i) {
+  var self = this;
+  return self._params[i].type;
+};
+
 /** @return {boolean} */
 ParamSet.prototype.isInitEmpty = function() {
   var self = this;
@@ -5288,16 +5304,29 @@ section.Accessor.prototype.output = function() {
   member = self.context.cls.member(self._name);
   // TODO: error if there is member and we have param or return type specified to the
   // accessor.
-  // TODO: error if there is no member, but there are both getter and setter, and their param
-  // and return type do not match. also error if the setter takes more than one param.
+  // TODO: error if there is no member, but there are both getter and setter, and
+  // their param and return type do not match. also error if the setter takes more
+  // than one param (currently the check doesn't work if there's getter specified
+  // before setter because getter adds a member and the 'member' var above is non-null
+  // for the setter).
   if (!member) {
     // accessor with no corresponding member. use the given param and return types.
     if (self._isGetter && !self.returnType) {
       error(self.lines[0], 'getter with no return type');
     }
+    if (!self._isGetter && self.params.numParams != 1) {
+      error(self.lines[0], 'non-member setter should have one param');
+    }
+
+    var member_type;
+    member_type = self._isGetter ? (
+      new type.Decoder(self.context.pkg, self.returnType)
+    ) : (
+      self.params.paramType(0)
+    );
     member = self.context.cls.addMember(
       self._name,
-      new type.Decoder(self.context.pkg, self.returnType),
+      member_type,
       '&',
       true
     );
