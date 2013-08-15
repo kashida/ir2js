@@ -9,7 +9,6 @@
  * @param {string} param_a
  * @param {string=} opt_param_b
  * @constructor
- * @struct
  * @extends {parent}
  */
 var classname = function(param_a, opt_param_b) {
@@ -56,7 +55,6 @@ classname.prototype._classname = 'classname';
 #=
 /**
  * @constructor
- * @struct
  * @extends {parent}
  */
 var classname = function() {

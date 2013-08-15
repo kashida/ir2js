@@ -17,7 +17,6 @@
 :output\A\
   decl := @.params.outputDecls()
   decl.push('@constructor')
-  decl.push('@struct')
   inherit := []
   if @parent
     decl.push('@extends {' + @parent + '}')
@@ -26,6 +25,8 @@
       '.prototype = Object.create('
       @parent
       '.prototype);'
+  else
+    decl.push('@struct')
   => [#]
     docLines(decl)
     @.outputFunc()

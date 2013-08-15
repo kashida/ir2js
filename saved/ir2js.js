@@ -5382,7 +5382,6 @@ section.Constructor.prototype.output = function() {
   var decl;
   decl = self.params.outputDecls();
   decl.push('@constructor');
-  decl.push('@struct');
   var inherit;
   inherit = [];
   if (self._parent) {
@@ -5393,6 +5392,8 @@ section.Constructor.prototype.output = function() {
       self._parent,
       '.prototype);'
     ].join(''));
+  } else {
+    decl.push('@struct');
   }
   return [
     docLines(decl),

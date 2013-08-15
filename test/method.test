@@ -96,7 +96,6 @@ classname.prototype.methodname = function(param_a, opt_param_b) {
 #=
 /**
  * @constructor
- * @struct
  * @extends {Parent}
  */
 var Classname = function() {
