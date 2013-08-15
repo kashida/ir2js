@@ -4,7 +4,10 @@
 :methodname
 :@methodname_2
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
 var self = this;
 };
@@ -42,7 +45,10 @@ var self = this;
   param_a\s\$
   param_b\s\? init_val
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
 var self = this;
 };
@@ -90,6 +96,7 @@ classname.prototype.methodname = function(param_a, opt_param_b) {
 #=
 /**
  * @constructor
+ * @struct
  * @extends {Parent}
  */
 var Classname = function() {

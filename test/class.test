@@ -1,7 +1,10 @@
 #{ class
 ::classname
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
 var self = this;
 };
@@ -25,6 +28,7 @@ classname.prototype._classname = 'classname';
  * @param {string} param_a
  * @param {string=} opt_param_b
  * @constructor
+ * @struct
  */
 var classname = function(param_a, opt_param_b) {
   var self = this;
@@ -50,7 +54,10 @@ classname.prototype._classname = 'classname';
   @param_a\s\ init_val
   @param_b\s\
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
   var self = this;
   /**
@@ -90,6 +97,7 @@ classname.prototype._classname = 'classname';
  * @param {string=} opt_param_b
  * @param {string=} opt_param_c
  * @constructor
+ * @struct
  */
 var classname = function(param_a, opt_param_b, opt_param_c) {
   var self = this;
@@ -130,7 +138,10 @@ classname.prototype._classname = 'classname';
 :method
 ::Class2
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var Class1 = function() {
 var self = this;
 };
@@ -138,7 +149,10 @@ Class1.prototype._classname = 'Class1';
 Class1.prototype.method = function() {
 var self = this;
 };
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var Class2 = function() {
 var self = this;
 };
@@ -164,7 +178,10 @@ Class2.prototype._classname = 'Class2';
 #{ default class name
 ::
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var FileName = function() {
 var self = this;
 };

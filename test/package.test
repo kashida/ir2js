@@ -25,6 +25,7 @@
 /**
  * @param {string=} opt_param
  * @constructor
+ * @struct
  * @extends {abc.def.path.parent}
  */
 abc.def.classname = function(opt_param) {

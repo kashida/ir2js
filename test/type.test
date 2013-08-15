@@ -90,7 +90,10 @@ function(p0, p1, p2, p3) {
 
 :@methodname2
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
 var self = this;
 };
@@ -134,7 +137,10 @@ var self = this;
 #{ class
 ::classname
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
 var self = this;
 };
@@ -158,6 +164,7 @@ classname.prototype._classname = 'classname';
  * @param {string} param_a
  * @param {number=} opt_param_b
  * @constructor
+ * @struct
  */
 var classname = function(param_a, opt_param_b) {
   var self = this;
@@ -183,7 +190,10 @@ classname.prototype._classname = 'classname';
   @param_a\string\ init_val
   @param_b\number\
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
   var self = this;
   /**
@@ -221,6 +231,7 @@ classname.prototype._classname = 'classname';
  * @param {string} param_a
  * @param {number=} opt_param_b
  * @constructor
+ * @struct
  */
 var classname = function(param_a, opt_param_b) {
   var self = this;
@@ -254,7 +265,10 @@ classname.prototype._classname = 'classname';
 ::classname
   @param+\string\
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
   var self = this;
   /**
@@ -287,7 +301,10 @@ return this._param;
   @param0&\string\
   @param1&\Test\
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
   var self = this;
   /**

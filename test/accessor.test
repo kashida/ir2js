@@ -2,7 +2,10 @@
 ::classname
   @param\s\
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
   var self = this;
   /**
@@ -31,7 +34,10 @@ classname.prototype._classname = 'classname';
   @param1*\s\
   @param2&\s\
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
   var self = this;
   /**
@@ -92,7 +98,10 @@ this._param2 = value;
 :member*
   do_something_with(value)
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
   var self = this;
   /**
@@ -131,7 +140,10 @@ classname.prototype.__defineSetter__('member', function(value) {
 :member+
   do_something()
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
   var self = this;
   /**
@@ -171,7 +183,10 @@ classname.prototype.__defineGetter__('member', function() {
   v\s\$
   do_something_with(v)
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
 var self = this;
 };
@@ -204,7 +219,10 @@ classname.prototype.__defineSetter__('member', function(v) {
 :member+\s\
   => ''
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var classname = function() {
 var self = this;
 };

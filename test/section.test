@@ -31,7 +31,10 @@ var def = [
 ::def = 1
 :::ghi = 2
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var Klass = function() {
 var self = this;
 };
@@ -55,7 +58,10 @@ var ghi = 2;
 ::def = 1
 :::ghi = 2
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 zzz.Klass = function() {
 var self = this;
 };

@@ -10,6 +10,7 @@
  * @param {boolean} param
  * @param {boolean=} opt_member
  * @constructor
+ * @struct
  */
 var classname = function(param, opt_member) {
   var self = this;
@@ -48,6 +49,7 @@ classname.prototype._classname = 'classname';
  * @param {boolean} param
  * @param {boolean=} opt_member
  * @constructor
+ * @struct
  */
 var classname = function(param, opt_member) {
   var self = this;
@@ -87,6 +89,7 @@ classname.prototype._classname = 'classname';
  * @param {number=} opt_param
  * @param {number=} opt_member
  * @constructor
+ * @struct
  */
 var classname = function(opt_param, opt_member) {
   var self = this;
@@ -122,7 +125,10 @@ classname.prototype._classname = 'classname';
   if /^\s*\/\//.test(@str)
     =>
 #=
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ */
 var Class = function() {
 var self = this;
 };

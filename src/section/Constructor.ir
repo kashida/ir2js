@@ -17,6 +17,7 @@
 :output\A\
   decl := @.params.outputDecls()
   decl.push('@constructor')
+  decl.push('@struct')
   inherit := []
   if @parent
     decl.push('@extends {' + @parent + '}')
