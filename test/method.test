@@ -7,6 +7,7 @@
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
 var self = this;
@@ -48,6 +49,7 @@ var self = this;
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
 var self = this;

@@ -4,6 +4,7 @@
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
 var self = this;
@@ -29,6 +30,7 @@ classname.prototype._classname = 'classname';
  * @param {string=} opt_param_b
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function(param_a, opt_param_b) {
   var self = this;
@@ -57,6 +59,7 @@ classname.prototype._classname = 'classname';
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
   var self = this;
@@ -98,6 +101,7 @@ classname.prototype._classname = 'classname';
  * @param {string=} opt_param_c
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function(param_a, opt_param_b, opt_param_c) {
   var self = this;
@@ -141,6 +145,7 @@ classname.prototype._classname = 'classname';
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var Class1 = function() {
 var self = this;
@@ -152,6 +157,7 @@ var self = this;
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var Class2 = function() {
 var self = this;
@@ -181,6 +187,7 @@ Class2.prototype._classname = 'Class2';
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var FileName = function() {
 var self = this;

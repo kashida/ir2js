@@ -34,6 +34,7 @@ var def = [
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var Klass = function() {
 var self = this;
@@ -61,6 +62,7 @@ var ghi = 2;
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 zzz.Klass = function() {
 var self = this;

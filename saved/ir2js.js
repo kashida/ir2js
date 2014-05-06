@@ -5392,8 +5392,10 @@ section.Constructor.prototype.output = function() {
       self._parent,
       '.prototype);'
     ].join(''));
-  } else {
+  }
+  else {
     decl.push('@struct');
+    decl.push('@suppress {checkStructDictInheritance}');
   }
   return [
     docLines(decl),

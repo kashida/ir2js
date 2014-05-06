@@ -27,6 +27,7 @@
       '.prototype);'
   else
     decl.push('@struct')
+    decl.push('@suppress {checkStructDictInheritance}')
   => [#]
     docLines(decl)
     @.outputFunc()

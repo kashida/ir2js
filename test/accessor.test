@@ -5,6 +5,7 @@
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
   var self = this;
@@ -37,6 +38,7 @@ classname.prototype._classname = 'classname';
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
   var self = this;
@@ -101,6 +103,7 @@ this._param2 = value;
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
   var self = this;
@@ -143,6 +146,7 @@ classname.prototype.__defineSetter__('member', function(value) {
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
   var self = this;
@@ -186,6 +190,7 @@ classname.prototype.__defineGetter__('member', function() {
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
 var self = this;
@@ -222,6 +227,7 @@ classname.prototype.__defineSetter__('member', function(v) {
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
 var self = this;

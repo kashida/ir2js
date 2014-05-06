@@ -11,6 +11,7 @@
  * @param {boolean=} opt_member
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function(param, opt_member) {
   var self = this;
@@ -50,6 +51,7 @@ classname.prototype._classname = 'classname';
  * @param {boolean=} opt_member
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function(param, opt_member) {
   var self = this;
@@ -90,6 +92,7 @@ classname.prototype._classname = 'classname';
  * @param {number=} opt_member
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function(opt_param, opt_member) {
   var self = this;
@@ -128,6 +131,7 @@ classname.prototype._classname = 'classname';
 /**
  * @constructor
  * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var Class = function() {
 var self = this;
