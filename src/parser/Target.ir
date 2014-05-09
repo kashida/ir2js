@@ -1,6 +1,7 @@
 Wrapper for the PEGJS's parse method.
 Specific for a particular target (i.e. rule).
-
+TODO: Make xformer available to the parser so that we don't need to do double
+conversion.
 ::_parser = require('./syntax')
 
 ::

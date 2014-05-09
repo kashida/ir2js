@@ -21,6 +21,10 @@
   0 + |#p|
 a = #? ? true : false
   a = |#c| ? true : false
+^(#)
+  ^(|#p|)
+^(# + #)
+  ^(|#l| + |#l|)
 
 :Statement
 a(#)

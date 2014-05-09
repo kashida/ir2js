@@ -53,8 +53,10 @@
       break
 
       case 'e' // Parent call.
-      @tokens.add(@.xformer ? @.xformer.parentCall(#) : ['^(', p.args, ')'])
-        &%.TokenListBuilder(p.args, @.xformer).build().toString()
+      args_tokens := &%.TokenListBuilder(p.args, @.xformer).build()
+      @tokens.add(@.xformer ? # : #)
+        @.xformer.parentCall(args_tokens)
+        ['^(', args_tokens, ')']
       break
 
       case 'm' // Marker.

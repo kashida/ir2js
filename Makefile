@@ -101,9 +101,11 @@ PARSER_TEST_SRCS=\
 $(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
 PARSER_TEST_SRCS+=compiled/input/Line.js
 
+# Check if the parser can handle the ir2js source code itself.
 test_parse: compiled/syntax.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -p src/*.ir | grep '^X|'
 
+# Run tests for the parser.
 parser_test: compiled/syntax.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -t src/parser/data/*
 

@@ -25,3 +25,10 @@
   console.assert(#)
     check
     msg + (line ? ' (line ' + line.lineNo + '): ' + line.line : '')
+
+::l = ##
+  item\*\$
+  title\s\?
+  if title
+    console.error('>>> ' + title)
+  console.error(item)

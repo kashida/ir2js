@@ -89,3 +89,68 @@ classname.prototype.method = function(param) {
 }
 
 #}
+
+#{ super calls with blocks.
+::classname <parent
+  do_something()
+  ^(#)
+    another_line(##)
+      x\s\$
+      func(x)
+
+:method
+  param\s\$
+  do_something()
+  ^(param, '', #+, #)
+    method()
+    a + b + c
+    --
+    another_method()
+#=
+/**
+ * @constructor
+ * @extends {parent}
+ */
+var classname = function() {
+  var self = this;
+  do_something();
+  parent.call(this, (
+    another_line(
+    /** @param {string} x */
+    function(x) {
+      func(x);
+    })
+  ));
+};
+classname.prototype = Object.create(parent.prototype);
+classname.prototype._classname = 'classname';
+
+/** @param {string} param */
+classname.prototype.method = function(param) {
+  var self = this;
+  do_something();
+  parent.prototype.method.call(this, param, '', (
+    (method()) +
+    (a + b + c)
+  ), (
+    another_method()
+  ));
+};
+{
+  cls:[
+    {
+      name:classname
+      parent:parent
+      methods:[
+        {
+          name:method
+          args:[
+            String
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+#}

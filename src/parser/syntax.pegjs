@@ -421,10 +421,14 @@ NewExpression
   = MemberExpression
   / NewOperator __ NewExpression
 
-// TODO: allow % to take ParameterBlockMarker as an argument
-// too (like Arguments does).
 CallInvocation
   = MemberExpression _ Arguments
+  / '^' _ marker:ParameterBlockMarker {
+      return {
+        g: 'e',
+        params: {args: marker},
+      };
+    }
   / '^' _ '(' _ args:ArgumentList? _ ')' {
       return {
         g: 'e',
