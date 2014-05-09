@@ -1171,28 +1171,27 @@ LineTransformer.prototype.type = function(type_name) {
 };
 
 /**
- * @param {string} args
- * @return {string}
+ * @param {parser.TokenList} args
+ * @return {!Array}
  */
 LineTransformer.prototype.parentCall = function(args) {
   var self = this;
-  var end_str;
-  end_str = args ? ', ' + args + ')' : ')';
+  var end;
+  end = args.isEmpty ? ')' : [', ', args, ')'];
   if (self._context.isCtor) {
-    return self._context.cls.ctor.parentName() + '.call(this' + end_str;
+    return [self._context.cls.ctor.parentName() + '.call(this', end];
   }
   else if (self._context.isMethod) {
-    return [
+    return [[
       self._context.cls.ctor.parentName(),
       '.prototype.',
       self._context.name.id,
-      '.call(this',
-      end_str
-    ].join('');
+      '.call(this'
+    ].join(''), end];
   }
   else {
     error(self._input, 'parent call appeared in non-ctor / non-method.');
-    return '^(' + args + ')';
+    return ['^(', args, ')'];
   }
 };
 /*
@@ -2117,6 +2116,17 @@ function(check, opt_line, opt_msg) {
     check,
     msg + (line ? ' (line ' + line.lineNo + '): ' + line.line : '')
   );
+};
+
+var l = /**
+ * @param {*} item
+ * @param {string=} title
+ */
+function(item, title) {
+  if (title) {
+    console.error('>>> ' + title);
+  }
+  console.error(item);
 };
   exports.createPackageList = 
   /**
@@ -3653,8 +3663,9 @@ parser.Result.prototype.rendered = function() {
 /*
 Wrapper for the PEGJS's parse method.
 Specific for a particular target (i.e. rule).
+TODO: Make xformer available to the parser so that we don't need to do double
+conversion.
 */
-
 parser._parser = require('./syntax');
 
 /**
@@ -4156,9 +4167,13 @@ parser.TokenListBuilder.prototype._addObject = function(data) {
       break;
 
       case 'e':;
-      self._tokens.add(self.xformer ? self.xformer.parentCall(
-        new parser.TokenListBuilder(p.args, self.xformer).build().toString()
-      ) : ['^(', p.args, ')']);
+      var args_tokens;
+      args_tokens = new parser.TokenListBuilder(p.args, self.xformer).build();
+      self._tokens.add(self.xformer ? (
+        self.xformer.parentCall(args_tokens)
+      ) : (
+        ['^(', args_tokens, ')']
+      ));
       break;
 
       case 'm':;

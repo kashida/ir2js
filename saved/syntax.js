@@ -4769,34 +4769,79 @@ module.exports = (function(){
           if (result0 !== null) {
             result1 = parse__();
             if (result1 !== null) {
-              if (input.charCodeAt(pos) === 40) {
-                result2 = "(";
-                pos++;
-              } else {
-                result2 = null;
-                if (reportFailures === 0) {
-                  matchFailed("\"(\"");
-                }
-              }
+              result2 = parse_ParameterBlockMarker();
               if (result2 !== null) {
-                result3 = parse__();
-                if (result3 !== null) {
-                  result4 = parse_ArgumentList();
-                  result4 = result4 !== null ? result4 : "";
-                  if (result4 !== null) {
-                    result5 = parse__();
-                    if (result5 !== null) {
-                      if (input.charCodeAt(pos) === 41) {
-                        result6 = ")";
-                        pos++;
-                      } else {
-                        result6 = null;
-                        if (reportFailures === 0) {
-                          matchFailed("\")\"");
+                result0 = [result0, result1, result2];
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+          if (result0 !== null) {
+            result0 = (function(offset, marker) {
+                return {
+                  g: 'e',
+                  params: {args: marker},
+                };
+              })(pos0, result0[2]);
+          }
+          if (result0 === null) {
+            pos = pos0;
+          }
+          if (result0 === null) {
+            pos0 = pos;
+            pos1 = pos;
+            if (input.charCodeAt(pos) === 94) {
+              result0 = "^";
+              pos++;
+            } else {
+              result0 = null;
+              if (reportFailures === 0) {
+                matchFailed("\"^\"");
+              }
+            }
+            if (result0 !== null) {
+              result1 = parse__();
+              if (result1 !== null) {
+                if (input.charCodeAt(pos) === 40) {
+                  result2 = "(";
+                  pos++;
+                } else {
+                  result2 = null;
+                  if (reportFailures === 0) {
+                    matchFailed("\"(\"");
+                  }
+                }
+                if (result2 !== null) {
+                  result3 = parse__();
+                  if (result3 !== null) {
+                    result4 = parse_ArgumentList();
+                    result4 = result4 !== null ? result4 : "";
+                    if (result4 !== null) {
+                      result5 = parse__();
+                      if (result5 !== null) {
+                        if (input.charCodeAt(pos) === 41) {
+                          result6 = ")";
+                          pos++;
+                        } else {
+                          result6 = null;
+                          if (reportFailures === 0) {
+                            matchFailed("\")\"");
+                          }
                         }
-                      }
-                      if (result6 !== null) {
-                        result0 = [result0, result1, result2, result3, result4, result5, result6];
+                        if (result6 !== null) {
+                          result0 = [result0, result1, result2, result3, result4, result5, result6];
+                        } else {
+                          result0 = null;
+                          pos = pos1;
+                        }
                       } else {
                         result0 = null;
                         pos = pos1;
@@ -4821,20 +4866,17 @@ module.exports = (function(){
               result0 = null;
               pos = pos1;
             }
-          } else {
-            result0 = null;
-            pos = pos1;
-          }
-          if (result0 !== null) {
-            result0 = (function(offset, args) {
-                return {
-                  g: 'e',
-                  params: {args: args},
-                };
-              })(pos0, result0[4]);
-          }
-          if (result0 === null) {
-            pos = pos0;
+            if (result0 !== null) {
+              result0 = (function(offset, args) {
+                  return {
+                    g: 'e',
+                    params: {args: args},
+                  };
+                })(pos0, result0[4]);
+            }
+            if (result0 === null) {
+              pos = pos0;
+            }
           }
         }
         return result0;
