@@ -26,6 +26,8 @@
  * @param {string=} opt_param
  * @constructor
  * @extends {abc.def.path.parent}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 abc.def.classname = function(opt_param) {
   var self = this;
@@ -36,7 +38,7 @@ abc.def.classname = function(opt_param) {
   this._param = opt_param === undefined ? (abc.def.value) : opt_param;
   abc.def.path.parent.call(this, param);
 };
-abc.def.classname.prototype = Object.create(abc.def.path.parent.prototype);
+goog.inherits(abc.def.classname, abc.def.path.parent);
 abc.def.classname.prototype._classname = 'abc.def.classname';
 
 /** @param {number} param */

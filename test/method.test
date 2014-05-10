@@ -99,12 +99,14 @@ classname.prototype.methodname = function(param_a, opt_param_b) {
 /**
  * @constructor
  * @extends {Parent}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var Classname = function() {
   var self = this;
   Parent.call(this);
 };
-Classname.prototype = Object.create(Parent.prototype);
+goog.inherits(Classname, Parent);
 Classname.prototype._classname = 'Classname';
 
 /** @override */

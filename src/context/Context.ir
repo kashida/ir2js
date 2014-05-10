@@ -22,7 +22,9 @@
 
 :clone\!%.Context\
   c := &%.Context(@fileName, @pkg)
-  each p in @
-    if @.hasOwnProperty(p)
-      c[p] = @[p]
+  c.name = @name
+  c.cls = @cls
+  c.isCtor = @isCtor
+  c.isMethod = @isMethod
+  c.isFileScope = @isFileScope
   => c

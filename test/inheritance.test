@@ -10,6 +10,8 @@
  * @param {string=} opt_param_b
  * @constructor
  * @extends {parent}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function(param_a, opt_param_b) {
   var self = this;
@@ -26,7 +28,7 @@ var classname = function(param_a, opt_param_b) {
   do_something();
   parent.call(this, param_b, something_else());
 };
-classname.prototype = Object.create(parent.prototype);
+goog.inherits(classname, parent);
 classname.prototype._classname = 'classname';
 {
   cls:[
@@ -56,13 +58,15 @@ classname.prototype._classname = 'classname';
 /**
  * @constructor
  * @extends {parent}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
   var self = this;
   do_something();
   parent.call(this, something_else());
 };
-classname.prototype = Object.create(parent.prototype);
+goog.inherits(classname, parent);
 classname.prototype._classname = 'classname';
 
 /** @param {string} param */
@@ -110,6 +114,8 @@ classname.prototype.method = function(param) {
 /**
  * @constructor
  * @extends {parent}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var classname = function() {
   var self = this;
@@ -122,7 +128,7 @@ var classname = function() {
     })
   ));
 };
-classname.prototype = Object.create(parent.prototype);
+goog.inherits(classname, parent);
 classname.prototype._classname = 'classname';
 
 /** @param {string} param */

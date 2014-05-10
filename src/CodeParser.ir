@@ -17,8 +17,6 @@
 
 :@process
   input_lines\A.<input.Line>\$
-  @head.lines = input_lines
-
   first_line_indent := 0
   code_lines := @makeCodeLines(input_lines)
   code_lines.some(##)

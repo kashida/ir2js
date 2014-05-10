@@ -7,18 +7,18 @@
   section := null
   header_line := header.line.substr(1)
   if ![#].some(##)
-    '_createVariable'
-    '_createCtor'
-    '_createMethod'
-    '_createAccessor'
-    '_createMultiLineStr'
-    '_createGlobalCode'
-    '_createNativeCode'
-    '_createAnonymousScope'
-    '_createTypedef'
+    @createVariable
+    @createCtor
+    @createMethod
+    @createAccessor
+    @createMultiLineStr
+    @createGlobalCode
+    @createNativeCode
+    @createAnonymousScope
+    @createTypedef
     --
-    method\s\$
-    section = @[method].call(@, header_line, header)
+    method\F\$
+    section = method.call(@, header_line, header)
     if section
       section.lines = lines
       section.close(@scope.context.fileName, @scope.context.pkg)

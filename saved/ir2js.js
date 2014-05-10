@@ -12,6 +12,22 @@ var type = {};
   var _util;
   _util = require('util');
 /*
+Making closure compiler think we are doing inheritance (it doesn't seem to
+understand Object.create).
+Specifically, child class with @struct doesn't see parent's @struct unless we
+use this.
+*/
+  var goog;
+  goog = goog || {};
+  goog.inherits = 
+  /**
+   * @param {Object} childCtor
+   * @param {Object} parentCtor
+   */
+  function(childCtor, parentCtor) {
+    childCtor.prototype = Object.create(parentCtor.prototype);
+  };
+/*
 Match markers and blocks.
 */
 
@@ -21,6 +37,8 @@ Match markers and blocks.
  * @param {Array.<!parser.BlockMarker|string>} code
  * @param {Array.<!IndentBlock>} blocks
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var BlockMatcher = function(context, input, code, blocks) {
   var self = this;
@@ -186,6 +204,8 @@ BlockMatcher.prototype._outputParams = function(out, param) {
  * @param {Array.<parser.BlockMarker|string>} code
  * @param {Array.<IndentBlock>} blocks
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var CodeBlockItr = function(input, code, blocks) {
   var self = this;
@@ -352,6 +372,8 @@ CodeBlockItr.prototype._handleMarker = function(marker) {
  * @param {!context.Context} context
  * @param {section.Head} head
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var CodeParser = function(context, head) {
   var self = this;
@@ -403,8 +425,6 @@ CodeParser.prototype.parse = function(input_lines) {
  */
 CodeParser.prototype._process = function(input_lines) {
   var self = this;
-  self._head.lines = input_lines;
-
   var first_line_indent;
   first_line_indent = 0;
   var code_lines;
@@ -582,6 +602,8 @@ CodeParser.prototype._topBlock = function() {
  * @param {!context.Context} context
  * @param {section.Head=} opt_head
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var CodeScope = function(context, opt_head) {
   var self = this;
@@ -636,6 +658,8 @@ var OutputSection;
  * @param {string} pkg_name
  * @param {string} defaultClsName
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var FileScope = function(file_name, pkg_name, defaultClsName) {
   var self = this;
@@ -739,6 +763,8 @@ FileScope.prototype.output = function() {
  * @param {number} indent
  * @param {section.Head} head
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var IndentBlock = function(lineNo, indent, head) {
   var self = this;
@@ -955,6 +981,8 @@ either blank line or comment only line.
 /**
  * @param {input.Line} input
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var InvalidLine = function(input) {
   var self = this;
@@ -992,6 +1020,8 @@ var SectionLine;
 /**
  * @param {!context.Context} context
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var LineCategorizer = function(context) {
   var self = this;
@@ -1025,6 +1055,8 @@ First pass line parsing for constructing the block structure.
 /**
  * @param {input.Line} input
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var LineParser = function(input) {
   var self = this;
@@ -1126,6 +1158,8 @@ LineParser.prototype._checkSeparator = function() {
  * @param {!context.Context} context
  * @param {input.Line} input
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var LineTransformer = function(context, input) {
   var self = this;
@@ -1204,6 +1238,8 @@ are accessors for.
  * @param {string} accessType
  * @param {boolean} isPseudo
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var Member = function(name, type, accessType, isPseudo) {
   var self = this;
@@ -1315,6 +1351,8 @@ Function parameter and / or member declarion.
  * @param {input.Line} inputs
  * @param {parser.Result} parsed
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var Param = function(context, is_ctor, inputs, parsed) {
   var self = this;
@@ -1529,6 +1567,8 @@ Param.prototype.argtype = function() {
  * @param {IndentBlock} block
  * @param {boolean=} opt_isCtor
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var ParamSet = function(context, block, opt_isCtor) {
   var self = this;
@@ -1739,6 +1779,8 @@ ParamSet.prototype.setArgTypes = function(types) {
  * @param {input.Line} input
  * @param {LineParser} p
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var SeparatorLine = function(input, p) {
   var self = this;
@@ -1785,6 +1827,8 @@ SeparatorLine.prototype.output = function() {
  * @param {boolean} isGlobal
  * @param {boolean} expectError
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var TestCase = function(name, packageName, input, output, isGlobal, expectError) {
   var self = this;
@@ -2174,7 +2218,11 @@ function(item, title) {
       return (pkg.indexOf('.') >= 0 ? '' : 'var ') + pkg + ' = {};';
     });
   };
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
 var StringSet = function() {
   var self = this;
   /**
@@ -2249,7 +2297,11 @@ StringSet.prototype.filterOut = function(strs) {
 };
 
 
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
 var ClassDeps = function() {
   var self = this;
   // Maps class name to file name where its defined.
@@ -2502,7 +2554,11 @@ function(annotations) {
     ' */'
   ]);
 };
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
 context.Class = function() {
   var self = this;
   /**
@@ -2596,6 +2652,8 @@ context.Class.prototype.outputAccessors = function() {
  * @param {string} fileName
  * @param {!context.Package} pkg
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 context.Context = function(fileName, pkg) {
   var self = this;
@@ -2714,12 +2772,11 @@ context.Context.prototype.clone = function() {
   var self = this;
   var c;
   c = new context.Context(self._fileName, self._pkg);
-  var p;
-  for (p in self) {
-    if (self.hasOwnProperty(p)) {
-      c[p] = self[p];
-    }
-  }
+  c.name = self._name;
+  c.cls = self._cls;
+  c.isCtor = self._isCtor;
+  c.isMethod = self._isMethod;
+  c.isFileScope = self._isFileScope;
   return c;
 };
 /*
@@ -2729,6 +2786,8 @@ Name in file scope.
  * @param {!context.Package} pkg
  * @param {string} id
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 context.Name = function(pkg, id) {
   var self = this;
@@ -2804,6 +2863,8 @@ Package name.
 /**
  * @param {string} pkg
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 context.Package = function(pkg) {
   var self = this;
@@ -2881,6 +2942,8 @@ Comment section in a file.
 /**
  * @param {Array.<input.Line>} lines
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 input.Comment = function(lines) {
   var self = this;
@@ -2979,6 +3042,8 @@ Parses input lines into comments and sections.
  * @param {string} name
  * @param {Array.<string>} input
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 input.File = function(name, input) {
   var self = this;
@@ -3099,6 +3164,8 @@ A line of input file. Keeps track of the row index.
  * @param {string} line
  * @param {number} rowIndex
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 input.Line = function(file, line, rowIndex) {
   var self = this;
@@ -3192,6 +3259,8 @@ Input code section.
 /**
  * @param {input.Line} header
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 input.Section = function(header) {
   var self = this;
@@ -3236,7 +3305,11 @@ input.Section.prototype.push = function(line) {
   var self = this;
   self._lines.push(line);
 };
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
 output.Block = function() {
   var self = this;
   /**
@@ -3329,6 +3402,8 @@ Helper for Line to construct the output.
 /**
  * @param {number} num_indent
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 output.IndentedMultiline = function(num_indent) {
   var self = this;
@@ -3406,6 +3481,8 @@ Output lines corresponds to one input line.
 /**
  * @param {input.Line} input
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 output.Line = function(input) {
   var self = this;
@@ -3533,7 +3610,11 @@ output.Line.prototype.__defineGetter__('output', function() {
   out.appendAll(self._tailComment);
   return out.output;
 });
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
 output.Multiline = function() {
   var self = this;
   /**
@@ -3601,6 +3682,8 @@ Container and interface of the TokenList to the rest of the converter.
 /**
  * @param {parser.TokenList} tokens
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 parser.Result = function(tokens) {
   var self = this;
@@ -3671,6 +3754,8 @@ parser._parser = require('./syntax');
 /**
  * @param {string} rule
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 parser.Target = function(rule) {
   var self = this;
@@ -3747,6 +3832,8 @@ parser.Target.prototype._addContextLines = function(e, line) {
 /**
  * @param {string} type
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 parser.BlockMarker = function(type) {
   var self = this;
@@ -3778,6 +3865,8 @@ parser.BlockMarker.prototype.toString = function() {
 /**
  * @param {parser.TokenList=} orig
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 parser.TokenList = function(orig) {
   var self = this;
@@ -3962,6 +4051,8 @@ parser.TokenList.prototype.toString = function() {
  * @param {parser.TokenList} init
  * @constructor
  * @extends {parser.TokenList}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 parser.ParamLine = function(name, isMember, access, type, marker, init) {
   var self = this;
@@ -3997,7 +4088,7 @@ parser.ParamLine = function(name, isMember, access, type, marker, init) {
   this._init = init;
   parser.TokenList.call(this);
 };
-parser.ParamLine.prototype = Object.create(parser.TokenList.prototype);
+goog.inherits(parser.ParamLine, parser.TokenList);
 parser.ParamLine.prototype._classname = 'parser.ParamLine';
 /** @type {string} */
 parser.ParamLine.prototype.name;
@@ -4052,6 +4143,8 @@ parser.ParamLine.prototype.toString = function() {
  * @param {parser.TokenList|Array|Object|string} parsed
  * @param {LineTransformer=} opt_xformer
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 parser.TokenListBuilder = function(parsed, opt_xformer) {
   var self = this;
@@ -4227,12 +4320,14 @@ parser.TokenListBuilder.prototype.addTypeObject = function(params) {
  * @param {LineTransformer=} xformer
  * @constructor
  * @extends {parser.TokenListBuilder}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 parser.ParamLineBuilder = function(parsed, xformer) {
   var self = this;
   parser.TokenListBuilder.call(this, parsed, xformer);
 };
-parser.ParamLineBuilder.prototype = Object.create(parser.TokenListBuilder.prototype);
+goog.inherits(parser.ParamLineBuilder, parser.TokenListBuilder);
 parser.ParamLineBuilder.prototype._classname = 'parser.ParamLineBuilder';
 
 /** @param {Object} params */
@@ -4243,6 +4338,8 @@ parser.ParamLineBuilder.prototype.addTypeObject = function(params) {
 /**
  * @param {FileScope} scope
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Generator = function(scope) {
   var self = this;
@@ -4266,19 +4363,19 @@ section.Generator.prototype.generate = function(header, lines) {
   var header_line;
   header_line = header.line.substr(1);
   if (![
-    '_createVariable',
-    '_createCtor',
-    '_createMethod',
-    '_createAccessor',
-    '_createMultiLineStr',
-    '_createGlobalCode',
-    '_createNativeCode',
-    '_createAnonymousScope',
-    '_createTypedef'
+    self._createVariable,
+    self._createCtor,
+    self._createMethod,
+    self._createAccessor,
+    self._createMultiLineStr,
+    self._createGlobalCode,
+    self._createNativeCode,
+    self._createAnonymousScope,
+    self._createTypedef
   ].some(
-  /** @param {string} method */
+  /** @param {Function} method */
   function(method) {
-    section = self[method].call(self, header_line, header);
+    section = method.call(self, header_line, header);
     if (section) {
       section.lines = lines;
       section.close(self._scope.context.fileName, self._scope.context.pkg);
@@ -4466,7 +4563,11 @@ section.Generator.prototype._createTypedef = function(line) {
   }
   return new section.Typedef(self._scope.copyContextWithName(re[1]));
 };
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
 section.Head = function() {
   var self = this;
   /**
@@ -4510,14 +4611,24 @@ section.Head.prototype.lastBlock = function() {
 };
 
 /*
-do all the work necessary to produce code output.
+Do all the work necessary to produce code output.
 */
 section.Head.prototype.transform = function() {
 var self = this;
 };
+
+/*
+Needs to be overridden.
+*/
+section.Head.prototype.output = function() {
+  var self = this;
+  return [];
+};
 /**
  * @param {string} name
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 type.Callable = function(name) {
   var self = this;
@@ -4588,6 +4699,8 @@ type.Callable.prototype.extract = function() {
  * @param {!context.Package} pkg
  * @param {string} type
  * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 type.Decoder = function(pkg, type) {
   var self = this;
@@ -4634,7 +4747,11 @@ type.Decoder.prototype.output = function() {
   var self = this;
   return self._decoded;
 };
-/** @constructor */
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
 type.Set = function() {
   var self = this;
   /**
@@ -4722,6 +4839,8 @@ var CODE_PARSER = null;
  * @param {LineParser} lineParsed
  * @constructor
  * @extends {section.Head}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 var CodeLine = function(context, input, lineParsed) {
   var self = this;
@@ -4762,7 +4881,7 @@ var CodeLine = function(context, input, lineParsed) {
   this._matcher = (null);
   section.Head.call(this);
 };
-CodeLine.prototype = Object.create(section.Head.prototype);
+goog.inherits(CodeLine, section.Head);
 CodeLine.prototype._classname = 'CodeLine';
 /** @type {input.Line} */
 CodeLine.prototype.input;
@@ -4877,6 +4996,8 @@ CodeLine.prototype.output = function() {
 /**
  * @constructor
  * @extends {section.Head}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Code = function() {
   var self = this;
@@ -4887,7 +5008,7 @@ section.Code = function() {
   this._lines = ([]);
   section.Head.call(this);
 };
-section.Code.prototype = Object.create(section.Head.prototype);
+goog.inherits(section.Code, section.Head);
 section.Code.prototype._classname = 'section.Code';
 /** @type {Array.<input.Line>} */
 section.Code.prototype.lines;
@@ -4916,12 +5037,14 @@ section.Code.prototype.setType = function(types) {
 /**
  * @constructor
  * @extends {section.Code}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Native = function() {
   var self = this;
   section.Code.call(this);
 };
-section.Native.prototype = Object.create(section.Code.prototype);
+goog.inherits(section.Native, section.Code);
 section.Native.prototype._classname = 'section.Native';
 
 /** @return {Array.<output.Line>} */
@@ -4939,12 +5062,14 @@ section.Native.prototype.output = function() {
 /**
  * @constructor
  * @extends {section.Code}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Runnable = function() {
   var self = this;
   section.Code.call(this);
 };
-section.Runnable.prototype = Object.create(section.Code.prototype);
+goog.inherits(section.Runnable, section.Code);
 section.Runnable.prototype._classname = 'section.Runnable';
 
 /** @override */
@@ -4993,6 +5118,8 @@ section.Runnable.prototype.outputBody = function(block_suffix) {
  * @param {!context.Context} context
  * @constructor
  * @extends {section.Code}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Str = function(context) {
   var self = this;
@@ -5008,7 +5135,7 @@ section.Str = function(context) {
   this._indent = (-1);
   section.Code.call(this);
 };
-section.Str.prototype = Object.create(section.Code.prototype);
+goog.inherits(section.Str, section.Code);
 section.Str.prototype._classname = 'section.Str';
 /** @type {!context.Context} */
 section.Str.prototype.context;
@@ -5073,6 +5200,8 @@ section.Str.prototype.output = function() {
  * @param {string} rhs
  * @constructor
  * @extends {section.Code}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Variable = function(context, line, scopeLevel, isPrivate, rhs) {
   var self = this;
@@ -5106,7 +5235,7 @@ section.Variable = function(context, line, scopeLevel, isPrivate, rhs) {
   code_input = new input.Line(self._line.file, rhs, self._line.rowIndex);
   self._codeLine = new CodeLine(self._context, code_input, new LineParser(code_input));
 };
-section.Variable.prototype = Object.create(section.Code.prototype);
+goog.inherits(section.Variable, section.Code);
 section.Variable.prototype._classname = 'section.Variable';
 
 /** @override */
@@ -5151,6 +5280,8 @@ section.Variable.prototype.output = function() {
  * @param {string} returnType
  * @constructor
  * @extends {section.Runnable}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Callable = function(context, returnType) {
   var self = this;
@@ -5171,7 +5302,7 @@ section.Callable = function(context, returnType) {
   this._params = (null);
   section.Runnable.call(this);
 };
-section.Callable.prototype = Object.create(section.Runnable.prototype);
+goog.inherits(section.Callable, section.Runnable);
 section.Callable.prototype._classname = 'section.Callable';
 /** @type {!context.Context} */
 section.Callable.prototype.context;
@@ -5228,12 +5359,14 @@ section.Callable.prototype.outputFunc = function() {
 /**
  * @constructor
  * @extends {section.Runnable}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Global = function() {
   var self = this;
   section.Runnable.call(this);
 };
-section.Global.prototype = Object.create(section.Runnable.prototype);
+goog.inherits(section.Global, section.Runnable);
 section.Global.prototype._classname = 'section.Global';
 
 /** @return {Array} */
@@ -5244,12 +5377,14 @@ section.Global.prototype.output = function() {
 /**
  * @constructor
  * @extends {section.Runnable}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Scope = function() {
   var self = this;
   section.Runnable.call(this);
 };
-section.Scope.prototype = Object.create(section.Runnable.prototype);
+goog.inherits(section.Scope, section.Runnable);
 section.Scope.prototype._classname = 'section.Scope';
 
 /** @return {Array} */
@@ -5261,12 +5396,14 @@ section.Scope.prototype.output = function() {
  * @param {!context.Context} context
  * @constructor
  * @extends {section.Str}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Typedef = function(context) {
   var self = this;
   section.Str.call(this, context);
 };
-section.Typedef.prototype = Object.create(section.Str.prototype);
+goog.inherits(section.Typedef, section.Str);
 section.Typedef.prototype._classname = 'section.Typedef';
 
 /** @return {Array.<output.Line>} */
@@ -5293,6 +5430,8 @@ Overriding accessor.
  * @param {boolean} isGetter
  * @constructor
  * @extends {section.Callable}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Accessor = function(context, name, return_type, isGetter) {
   var self = this;
@@ -5309,7 +5448,7 @@ section.Accessor = function(context, name, return_type, isGetter) {
   context.isMethod = true;
   section.Callable.call(this, context, return_type);
 };
-section.Accessor.prototype = Object.create(section.Callable.prototype);
+goog.inherits(section.Accessor, section.Callable);
 section.Accessor.prototype._classname = 'section.Accessor';
 
 /** @return {Array} */
@@ -5361,6 +5500,8 @@ section.Accessor.prototype.output = function() {
  * @param {string?=} opt_parent
  * @constructor
  * @extends {section.Callable}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Constructor = function(context, opt_parent) {
   var self = this;
@@ -5373,7 +5514,7 @@ section.Constructor = function(context, opt_parent) {
   section.Callable.call(this, context, '');
   self._parent = self._parent ? self.context.pkg.replace(self._parent) : '';
 };
-section.Constructor.prototype = Object.create(section.Callable.prototype);
+goog.inherits(section.Constructor, section.Callable);
 section.Constructor.prototype._classname = 'section.Constructor';
 
 /** @return {string} */
@@ -5402,16 +5543,15 @@ section.Constructor.prototype.output = function() {
   if (self._parent) {
     decl.push('@extends {' + self._parent + '}');
     inherit.push([
+      'goog.inherits(',
       self.context.name.ref,
-      '.prototype = Object.create(',
+      ', ',
       self._parent,
-      '.prototype);'
+      ');'
     ].join(''));
   }
-  else {
-    decl.push('@struct');
-    decl.push('@suppress {checkStructDictInheritance}');
-  }
+  decl.push('@struct');
+  decl.push('@suppress {checkStructDictInheritance}');
   return [
     docLines(decl),
     self.outputFunc(),
@@ -5439,6 +5579,8 @@ section.Constructor.prototype.setType = function(types) {
  * @param {boolean} overriding
  * @constructor
  * @extends {section.Callable}
+ * @struct
+ * @suppress {checkStructDictInheritance}
  */
 section.Method = function(context, return_type, overriding) {
   var self = this;
@@ -5450,7 +5592,7 @@ section.Method = function(context, return_type, overriding) {
   context.isMethod = true;
   section.Callable.call(this, context, return_type);
 };
-section.Method.prototype = Object.create(section.Callable.prototype);
+goog.inherits(section.Method, section.Callable);
 section.Method.prototype._classname = 'section.Method';
 
 /** @return {Array} */

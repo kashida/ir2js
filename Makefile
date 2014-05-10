@@ -54,6 +54,8 @@ default: test
 compiled/%.js: src/%.ir
 	@$(NODE_SAVED) --basedir=src --outdir=compiled $^
 
+# TODO: Just supply js in misc (imports and base). convert command's merge
+# option needs to accept js w/o accompanying tk.
 compiled/%.js: misc/%.ir
 	@$(NODE_SAVED) --basedir=misc --outdir=compiled $^
 
@@ -68,10 +70,10 @@ test: compiled/ir2js_test.js compiled/syntax.js compiled/test.js
 	@echo '===== TEST'
 	$(NODE_TEST) compiled/test.js $(TESTS)
 
-compiled/ir2js_test.js: compiled/_ir2js.js compiled/imports.js
+compiled/ir2js_test.js: compiled/_ir2js.js compiled/imports.js compiled/base.js
 	@echo '===== MERGE ir2js_test'
 	$(NODE_SAVED) --merge --basedir=compiled --outfile=$@ \
-	compiled/imports.js $(JS_SRCS_WITH_TEST)
+	compiled/imports.js compiled/base.js $(JS_SRCS_WITH_TEST)
 
 
 converter: compiled/ir2js.js compiled/syntax.js compiled/convert.js
@@ -79,15 +81,18 @@ converter: compiled/ir2js.js compiled/syntax.js compiled/convert.js
 sort:
 	@echo "$(shell $(SORTJS) $(JS_SRCS))"
 
-compiled/ir2js.js: compiled/_ir2js.js compiled/imports.js
+compiled/ir2js.js: compiled/_ir2js.js compiled/imports.js compiled/base.js
 	@echo '===== MERGE ir2js'
-	$(NODE_SAVED) --merge --basedir=compiled --outfile=$@ compiled/imports.js $(JS_SRCS)
+	$(NODE_SAVED) --merge --basedir=compiled --outfile=$@ \
+	compiled/imports.js compiled/base.js $(JS_SRCS)
 
 
-compiled/_ir2js.js: $(JS_SRCS) $(PACKAGES_FILE)
+compiled/_ir2js.js: $(JS_SRCS) $(PACKAGES_FILE) compiled/base.js
 	@echo '===== VERIFY ir2js: compiling'
 	java $(CLOSURE_ARGS) --js_output_file $@ --js $(PACKAGES_FILE) \
-	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS)))
+	--js compiled/base.js \
+	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS))) || \
+	(rm -f $@ && false)
 
 $(PACKAGES_FILE):
 	@mkdir -p `dirname $@`
@@ -97,7 +102,7 @@ $(PACKAGES_FILE):
 ############################################################
 # Parser targets.
 
-PARSER_TEST_SRCS=\
+PARSER_TEST_SRCS=compiled/base.js \
 $(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
 PARSER_TEST_SRCS+=compiled/input/Line.js
 

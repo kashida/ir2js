@@ -15,5 +15,9 @@
 :lastBlock\IndentBlock\
   => @blocks[@blocks.length - 1]
 
-do all the work necessary to produce code output.
+Do all the work necessary to produce code output.
 :transform
+
+Needs to be overridden.
+:output
+  => []

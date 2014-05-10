@@ -21,13 +21,13 @@
   if @parent
     decl.push('@extends {' + @parent + '}')
     inherit.push([#].join(''))
+      'goog.inherits('
       @.context.name.ref
-      '.prototype = Object.create('
+      ', '
       @parent
-      '.prototype);'
-  else
-    decl.push('@struct')
-    decl.push('@suppress {checkStructDictInheritance}')
+      ');'
+  decl.push('@struct')
+  decl.push('@suppress {checkStructDictInheritance}')
   => [#]
     docLines(decl)
     @.outputFunc()

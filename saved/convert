@@ -3,7 +3,7 @@
   var _fs;
   _fs = require('fs');
   var _ir2js;
-  _ir2js = require('ir2js');
+  _ir2js = require('./ir2js');
   var _optimist;
   _optimist = require('optimist');
 
