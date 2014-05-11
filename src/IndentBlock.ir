@@ -53,7 +53,7 @@
 TODO: change marker's type to BlockType when it's enum.
 :transform
   marker\n\?
-  if marker !== undefined
+  if marker != undefined
     @marker = marker
   @lines.forEach(##)
     line\SectionLine\$
@@ -97,7 +97,7 @@ TODO: change marker's type to BlockType when it's enum.
     i\n\$
     if !(line instanceof InvalidLine) && !line.param
       valid_line_count++
-    if line_index !== undefined && line_index + 1 != valid_line_count
+    if line_index != undefined && line_index + 1 != valid_line_count
       =>
     out_line := line.output()
     if line instanceof InvalidLine || out_line.empty

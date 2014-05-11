@@ -284,7 +284,7 @@ obj.member = a;
 #{: equality should not become set_member
 obj.member == a
 #=
-obj.member == a;
+obj.member === a;
 #}
 
 #{: direct member access -- no more special.

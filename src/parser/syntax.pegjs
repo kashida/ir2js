@@ -280,10 +280,8 @@ RelationalOperator 'relational_opr'
   / 'in'
 
 EqualityOperator 'equality_opr'
-  = '==='
-  / '!=='
-  / '=='
-  / '!='
+  = '==' { return '==='; }
+  / '!=' { return '!=='; }
 
 LogicalANDOperator
   = '&&' !'=' { return '&&'; }

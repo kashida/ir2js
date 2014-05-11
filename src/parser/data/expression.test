@@ -13,7 +13,8 @@ a := b := 0
 abc() && def
 a *= 0 ? 'abc' && @() || true : "def"
   a *= 0 ? 'abc' && self() || true : "def"
-aa == bb && cc === dd
+aa == bb && cc != dd
+  aa === bb && cc !== dd
 0 <= a || 1 instanceof true
 0 + -0
 ++(aa && bb)--

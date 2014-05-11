@@ -39,14 +39,14 @@
   => @parsed
 
 :transform
-  code := (@param && @param !== true && @param.valueLine) || @.parsed.code
+  code := (@param && @param != true && @param.valueLine) || @.parsed.code
 
   @matcher = &BlockMatcher(@context, @input, code, @.blocks)
   @matcher.transform()
 
 :output\output.Line\
   out := &output.Line(@input)
-  if @param === true
+  if @param == true
     => out
 
   out.lines.appendLines(@.parsed.prevLines.map(##))

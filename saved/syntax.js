@@ -2781,48 +2781,41 @@ module.exports = (function(){
       
       function parse_EqualityOperator() {
         var result0;
+        var pos0;
         
         reportFailures++;
-        if (input.substr(pos, 3) === "===") {
-          result0 = "===";
-          pos += 3;
+        pos0 = pos;
+        if (input.substr(pos, 2) === "==") {
+          result0 = "==";
+          pos += 2;
         } else {
           result0 = null;
           if (reportFailures === 0) {
-            matchFailed("\"===\"");
+            matchFailed("\"==\"");
           }
         }
+        if (result0 !== null) {
+          result0 = (function(offset) { return '==='; })(pos0);
+        }
         if (result0 === null) {
-          if (input.substr(pos, 3) === "!==") {
-            result0 = "!==";
-            pos += 3;
+          pos = pos0;
+        }
+        if (result0 === null) {
+          pos0 = pos;
+          if (input.substr(pos, 2) === "!=") {
+            result0 = "!=";
+            pos += 2;
           } else {
             result0 = null;
             if (reportFailures === 0) {
-              matchFailed("\"!==\"");
+              matchFailed("\"!=\"");
             }
           }
+          if (result0 !== null) {
+            result0 = (function(offset) { return '!=='; })(pos0);
+          }
           if (result0 === null) {
-            if (input.substr(pos, 2) === "==") {
-              result0 = "==";
-              pos += 2;
-            } else {
-              result0 = null;
-              if (reportFailures === 0) {
-                matchFailed("\"==\"");
-              }
-            }
-            if (result0 === null) {
-              if (input.substr(pos, 2) === "!=") {
-                result0 = "!=";
-                pos += 2;
-              } else {
-                result0 = null;
-                if (reportFailures === 0) {
-                  matchFailed("\"!=\"");
-                }
-              }
-            }
+            pos = pos0;
           }
         }
         reportFailures--;

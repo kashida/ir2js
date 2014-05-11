@@ -130,7 +130,7 @@ BlockMatcher.prototype._transformBlocks = function() {
     // line markers.
     // TODO: Error check conditional block marker if the block has exactly
     // 3 lines
-    if (type == 'l' && itr.lidx != 0) {
+    if (type === 'l' && itr.lidx !== 0) {
       // Line marker block gets callback for every line.
       // Only need to transform for the first line.
       return;
@@ -173,7 +173,7 @@ BlockMatcher.prototype.output = function(out) {
       self._outputParams(out, self._params[itr.pidx]);
     }
     out.lines.appendStr(block.startStr);
-    out.lines.appendBlock(block.output(type == 'l' ? itr.lidx : undefined));
+    out.lines.appendBlock(block.output(type === 'l' ? itr.lidx : undefined));
     out.lines.appendStr(block.endStr);
   };
   itr.codeCb = function() {
@@ -328,7 +328,7 @@ CodeBlockItr.prototype.run = function() {
   }
 
   // There may be one extra block.
-  if (self._bidx != self._blocks.length) {
+  if (self._bidx !== self._blocks.length) {
     error(self._input, (
       ('# of blocks does not match # of markers: ') +
       (self._bidx) +
@@ -344,7 +344,7 @@ CodeBlockItr.prototype.run = function() {
  */
 CodeBlockItr.prototype._handleMarker = function(marker) {
   var self = this;
-  if (marker.type != 'l') {
+  if (marker.type !== 'l') {
     if (self._lidx > 0) {
       self._lidx = 0;
       self._bidx++;
@@ -352,19 +352,19 @@ CodeBlockItr.prototype._handleMarker = function(marker) {
   }
 
   if (self._blockCb) {
-    self._blockCb(marker.type, marker.type == 'f');
+    self._blockCb(marker.type, marker.type === 'f');
   }
 
-  if (marker.type != 'l') {
+  if (marker.type !== 'l') {
     self._bidx++;
   }
-  if (marker.type == 'f') {
+  if (marker.type === 'f') {
     self._pidx++;
   }
-  if (marker.type == 'l') {
+  if (marker.type === 'l') {
     self._lidx++;
   }
-  if (marker.type == 'b') {
+  if (marker.type === 'b') {
     self._isBlockStatement = true;
   }
 };
@@ -928,8 +928,8 @@ IndentBlock.prototype.output = function(line_index) {
   assert(
     (
       (last_index >= 0) ||
-      (self._marker == BlockType.BLOCK) ||
-      (self._marker == BlockType.FUNCTION)
+      (self._marker === BlockType.BLOCK) ||
+      (self._marker === BlockType.FUNCTION)
     ),
     self._lines.length ? self._lines[0].input : input.UnknownInputLine,
     'block with no valid lines.'
@@ -950,7 +950,7 @@ IndentBlock.prototype.output = function(line_index) {
     if (!(line instanceof InvalidLine) && !line.param) {
       valid_line_count++;
     }
-    if (line_index !== undefined && line_index + 1 != valid_line_count) {
+    if (line_index !== undefined && line_index + 1 !== valid_line_count) {
       return;
     }
     var out_line;
@@ -964,8 +964,8 @@ IndentBlock.prototype.output = function(line_index) {
       if (!line.isBlockStatement) {
         out_line.linePrefix += _LINE_PREFIX[self._marker];
         out_line.lineSuffix += (
-          i == last_index ? _END_SUFFIX[self._marker] : (
-            i == 0 ? _FIRST_SUFFIX[self._marker] : _LINE_SUFFIX[self._marker]
+          i === last_index ? _END_SUFFIX[self._marker] : (
+            i === 0 ? _FIRST_SUFFIX[self._marker] : _LINE_SUFFIX[self._marker]
           )
         );
       }
@@ -1136,7 +1136,7 @@ LineParser.prototype._checkSpaces = function() {
     error(self._input, 'non-ascii 0x20 space for indentation');
   }
 
-  if (spaces_re[3] != '') {
+  if (spaces_re[3] !== '') {
     error(self._input, 'trailing space');
   }
 };
@@ -1392,7 +1392,7 @@ var Param = function(context, is_ctor, inputs, parsed) {
   self._type = new type.Decoder(self._context.pkg, self._line.type);
 
   self._valueLine = self._line.init && !self._line.init.isEmpty ? self._line.init.list : null;
-  if (self.isMember && self.initType != '$' && !self._valueLine) {
+  if (self.isMember && self.initType !== '$' && !self._valueLine) {
     // member with no initializer or optional param init.
     self._valueLine = ['null'];
   }
@@ -1401,7 +1401,7 @@ var Param = function(context, is_ctor, inputs, parsed) {
   if (!is_ctor && self.isMember) {
     error(inputs, 'member param for non-constructor method');
   }
-  if (!self.isMember && self.initType != '?' && self._valueLine) {
+  if (!self.isMember && self.initType !== '?' && self._valueLine) {
     error(inputs, 'initial value for non-member non-optional');
   }
 };
@@ -1469,10 +1469,10 @@ Param.prototype._paramName = function() {
 /** @return {string} */
 Param.prototype.outputDecl = function() {
   var self = this;
-  return self._type && self.initType != '' ? ([
+  return self._type && self.initType !== '' ? ([
     '@param {',
     self._type.output(),
-    self.initType == '?' ? '=' : '',
+    self.initType === '?' ? '=' : '',
     '} ',
     self._paramName()
   ].join('')) : '';
@@ -1481,7 +1481,7 @@ Param.prototype.outputDecl = function() {
 /** @return {string} */
 Param.prototype.outputParam = function() {
   var self = this;
-  return self.initType == '' ? '' : self._paramName();
+  return self.initType === '' ? '' : self._paramName();
 };
 
 /*
@@ -1642,7 +1642,7 @@ ParamSet.prototype._addLine = function(line, index) {
   var p;
   p = new Param(self._context, self._isCtor, line.input, line.parsed);
   if (!p.success) {
-    if (index != 0 || self._context.isFileScope) {
+    if (index !== 0 || self._context.isFileScope) {
       return null;
     }
     // could be the return type.
@@ -1683,7 +1683,7 @@ ParamSet.prototype.setReturnType = function(return_type) {
 /** @return {boolean} */
 ParamSet.prototype.isEmpty = function() {
   var self = this;
-  return self._params.length == 0;
+  return self._params.length === 0;
 };
 
 /** @type {number} */
@@ -1708,7 +1708,7 @@ ParamSet.prototype.isInitEmpty = function() {
   return !self._params.some(
   /** @param {Param} p */
   function(p) {
-    return p.isMember || p.initType == '?';
+    return p.isMember || p.initType === '?';
   });
 };
 
@@ -1912,7 +1912,7 @@ TestCase.prototype.run = function() {
     }
   }
 
-  if (actual_output.join('\n') == self._output.join('\n') && !self._expectError) {
+  if (actual_output.join('\n') === self._output.join('\n') && !self._expectError) {
     console.log('PASS: ' + self._name);
   }
   else {
@@ -1942,7 +1942,7 @@ TestCase.prototype._warnWithIndent = function(title, content) {
    * @param {number} level
    */
   function(lines, level) {
-    if (typeof(lines) == 'string') {
+    if (typeof(lines) === 'string') {
       console.log(whitespaces(4 + level * 2) + lines);
     }
     else {
@@ -1980,7 +1980,7 @@ TestCase.prototype._makeDiff = function(lines0, lines1) {
     }
     var line1;
     line1 = lines1[i];
-    if (line0 != line1) {
+    if (line0 !== line1) {
       result.push('< ' + line0);
       result.push(' >' + line1);
     }
@@ -2026,7 +2026,7 @@ var relativeFileName = /**
  * @param {string} file_name
  */
 function(base_dir, file_name) {
-  if (base_dir && file_name.indexOf(base_dir) == 0) {
+  if (base_dir && file_name.indexOf(base_dir) === 0) {
     // strip off the base_dir.
     return file_name.substr(base_dir.length).replace(/^[\/\\]*/, '');
   }
@@ -2190,7 +2190,7 @@ function(item, title) {
       var pkg_name;
       pkg_name = file.replace(/[\/\\][^\/\\]*$/, '');
 
-      if (basedir && pkg_name.indexOf(basedir) == 0) {
+      if (basedir && pkg_name.indexOf(basedir) === 0) {
         // strip off the basedir.
         pkg_name = pkg_name.substr(basedir.length);
       }
@@ -2352,7 +2352,7 @@ ClassDeps.prototype.load = function(files) {
     self._depends[file] = self._depends[file].filter(
     /** @param {string} dep */
     function(dep) {
-      return self._where[dep] != file;
+      return self._where[dep] !== file;
     });
   });
 };
@@ -2429,7 +2429,7 @@ ClassDeps.prototype.removeDeps = function(file, provided_files) {
   };
 var arrFlatten = /** @param {string|Array} lines */
 function(lines) {
-  if (typeof(lines) == 'string') {
+  if (typeof(lines) === 'string') {
     return [lines];
   }
   if (lines instanceof output.Line || lines instanceof output.Block) {
@@ -2538,10 +2538,10 @@ var docLines = /**
 function(annotations) {
   var alist;
   alist = arrFlatten(annotations);
-  if (alist.length == 0) {
+  if (alist.length === 0) {
     return [];
   }
-  if (alist.length == 1) {
+  if (alist.length === 1) {
     return ['/** ' + alist[0] + ' */'];
   }
   return arrFlatten([
@@ -3135,7 +3135,7 @@ input.File.prototype._flushBuffer = function() {
        * @param {number} index
        */
       function(line, index) {
-        if (index == 0) {
+        if (index === 0) {
           // we already passed the header line to section.
           return;
         }
@@ -3226,7 +3226,7 @@ input.Line.prototype.__defineGetter__('trim', function() {
 input.Line.prototype.startsWithColon;
 input.Line.prototype.__defineGetter__('startsWithColon', function() {
   var self = this;
-  return self._line.substr(0, 1) == ':';
+  return self._line.substr(0, 1) === ':';
 });
 
 /** @type {boolean} */
@@ -3816,7 +3816,7 @@ parser.Target.prototype._addContextLines = function(e, line) {
    */
   function(l, i) {
     e.contextLines.push(l.line);
-    if (i == e.line - 1) {
+    if (i === e.line - 1) {
       var sp;
       sp = '';
       var j;
@@ -3949,7 +3949,7 @@ parser.TokenList.prototype.__defineGetter__('isEmpty', function() {
   if (self._list.length >= 2) {
     return false;
   }
-  return !(self._list[0] instanceof parser.BlockMarker) && self._list[0] == '';
+  return !(self._list[0] instanceof parser.BlockMarker) && self._list[0] === '';
 });
 
 /**
@@ -4411,7 +4411,7 @@ section.Generator.prototype._createVariable = function(line, header) {
   var rest;
   rest = re[4];
 
-  if (scope_level == 2 && is_private) {
+  if (scope_level === 2 && is_private) {
     error(header, 'global variable can not be private');
   }
   return new section.Variable(
@@ -4501,7 +4501,7 @@ section.Generator.prototype._createAccessor = function(line, header) {
   ret_type = re[4];
   var ctx;
   ctx = self._scope.copyContext(self._scope.context.cls.methodName(name));
-  return new section.Accessor(ctx, name, ret_type, type == '+');
+  return new section.Accessor(ctx, name, ret_type, type === '+');
 };
 
 /**
@@ -4526,7 +4526,7 @@ section.Generator.prototype._createMultiLineStr = function(line) {
  */
 section.Generator.prototype._createGlobalCode = function(line) {
   var self = this;
-  return line == '' ? new section.Global() : null;
+  return line === '' ? new section.Global() : null;
 };
 
 /**
@@ -4536,7 +4536,7 @@ section.Generator.prototype._createGlobalCode = function(line) {
  */
 section.Generator.prototype._createNativeCode = function(line) {
   var self = this;
-  return line == '~' ? new section.Native() : null;
+  return line === '~' ? new section.Native() : null;
 };
 
 /**
@@ -4546,7 +4546,7 @@ section.Generator.prototype._createNativeCode = function(line) {
  */
 section.Generator.prototype._createAnonymousScope = function(line) {
   var self = this;
-  return line == '##' ? new section.Scope() : null;
+  return line === '##' ? new section.Scope() : null;
 };
 
 /**
@@ -5089,7 +5089,7 @@ section.Runnable.prototype.close = function(file_name, pkg) {
 section.Runnable.prototype.transform = function() {
   var self = this;
   assert(
-    self.numBlocks() == 1,
+    self.numBlocks() === 1,
     self.lines[0],
     'Runnable has ' + self.numBlocks() + ' blocks'
   );
@@ -5187,7 +5187,7 @@ section.Str.prototype.output = function() {
       var out;
       out = new output.Line(self.lines[i]);
       out.indent = self._indent;
-      out.appendLine("'" + line + "\\n'" + (i == lines.length - 1 ? ';' : ' +'));
+      out.appendLine("'" + line + "\\n'" + (i === lines.length - 1 ? ';' : ' +'));
       return out;
     })
   ];
@@ -5262,7 +5262,7 @@ section.Variable.prototype.transform = function() {
 /** @return {Array} */
 section.Variable.prototype.output = function() {
   var self = this;
-  if (self._scopeLevel == 0 && !self._context.cls) {
+  if (self._scopeLevel === 0 && !self._context.cls) {
     error(self._line, 'class scope outside of class.');
   }
   var out;
@@ -5341,7 +5341,7 @@ section.Callable.prototype.close = function() {
 section.Callable.prototype.transform = function() {
   var self = this;
   assert(
-    self.numBlocks() == 1,
+    self.numBlocks() === 1,
     self.lines[0],
     'callable takes 1 block -- found ' + self.numBlocks()
   );
@@ -5468,7 +5468,7 @@ section.Accessor.prototype.output = function() {
     if (self._isGetter && !self.returnType) {
       error(self.lines[0], 'getter with no return type');
     }
-    if (!self._isGetter && self.params.numParams != 1) {
+    if (!self._isGetter && self.params.numParams !== 1) {
       error(self.lines[0], 'non-member setter should have one param');
     }
 
@@ -5526,7 +5526,7 @@ section.Constructor.prototype.parentName = function() {
 /** @override */
 section.Constructor.prototype.transform = function() {
   var self = this;
-  assert(self.numBlocks() == 1, self.lines[0]);
+  assert(self.numBlocks() === 1, self.lines[0]);
   self.params = new ParamSet(self.context, self.block(0), true);
   self.params.transform();
   self.block(0).transform();

@@ -1,0 +1,10 @@
+Making closure compiler think we are doing inheritance (it doesn't seem to
+understand Object.create).
+Specifically, child class with @struct doesn't see parent's @struct unless we
+use this.
+:
+  goog := goog || {}
+  goog.inherits = ##
+    childCtor\O\$
+    parentCtor\O\$
+    childCtor.prototype = Object.create(parentCtor.prototype)

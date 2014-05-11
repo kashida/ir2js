@@ -24,11 +24,11 @@ Parses input lines into comments and sections.
     @lastValidIndex = 0
   else if line.isIndented
     // indented line -- continues either comment or code section.
-    if @lastValidIndex !== null
+    if @lastValidIndex != null
       @lastValidIndex = @buffer.length
   else if !line.isBlank
     // global comment.
-    if @lastValidIndex !== null
+    if @lastValidIndex != null
       // close the code section.
       @flushBuffer()
   // anything else is invalid line -- continues either comment or code section.
@@ -37,7 +37,7 @@ Parses input lines into comments and sections.
 :@flushBuffer
   while @buffer.length
     next_buffer := []
-    if @lastValidIndex !== null
+    if @lastValidIndex != null
       section := &%.Section(@buffer[0])
       @result.push(section)
       @buffer.forEach(##)
