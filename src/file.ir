@@ -4,7 +4,7 @@ not exit.
   path\s\$
   data\s\$
   dir := _path.dirname(path)
-  if !_path.existsSync(dir)
+  if !_fs.existsSync(dir)
     _fs.mkdirSync(dir)
 
   _fs.writeFileSync(#)

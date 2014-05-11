@@ -32,7 +32,7 @@
 ::needCompile = ##
   src\s\$
   dst\s\$
-  if !_path.existsSync(dst)
+  if !_fs.existsSync(dst)
     => true
   src_stat := _fs.statSync(src)
   dst_stat := _fs.statSync(dst)
@@ -50,7 +50,7 @@
       out_file := outputFileName(base_dir, in_file, out_dir)
       logstr := '[' + in_file + ' => ' + out_file + '] '
 
-      if !_path.existsSync(in_file)
+      if !_fs.existsSync(in_file)
         console.error(logstr + 'input not found')
         =>
 
