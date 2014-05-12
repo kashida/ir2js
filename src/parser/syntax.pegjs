@@ -1,3 +1,12 @@
+{
+  //var $ = options['xformer'];
+  var l = function() {
+    var t = text();
+    console.log('... ' + t);
+    return t;
+  };
+}
+
 ////////////////////////////////////////////////////////////
 // Unicode character sets (string).
 
@@ -124,17 +133,19 @@ DecimalString
     '.'
     after:DecimalDigits?
     exponent:ExponentPart? {
-      return before + '.' + after + exponent;
+      return before + '.' + (after || '') + (exponent || '');
     }
   / '.' after:DecimalDigits exponent:ExponentPart? {
-      return '.' + after + exponent;
+      return '.' + after + (exponent || '');
     }
   / before:DecimalIntegerString exponent:ExponentPart? {
-      return before + exponent;
+      return before + (exponent || '');
     }
 
 DecimalIntegerString
-  = '0' / digit:NonZeroDigit digits:DecimalDigits? { return digit + digits; }
+  = '0' / digit:NonZeroDigit digits:DecimalDigits? {
+      return digit + (digits || '');
+    }
 
 DecimalDigits
   = digits:DecimalDigit+ { return digits.join(''); }
@@ -151,7 +162,7 @@ ExponentPart
 ExponentIndicator = [eE]
 
 SignedInteger
-  = sign:[-+]? digits:DecimalDigits { return sign + digits; }
+  = sign:[-+]? digits:DecimalDigits { return (sign || '') + digits; }
 
 HexIntegerString
   = '0' [xX] digits:HexDigit+ { return '0x' + digits.join(''); }
@@ -335,6 +346,7 @@ Self = '@' _ name:Identifier? { return name ? 'self._' + name : 'self'; }
 CurrentPackage
   = percents:('%'+) _ '.' _ name:Identifier {
       return {g: 'c', params: {name: name, percents: percents.join('')}};
+      //return $.pkgRef(percents.join('') + '.' + name);
     }
 
 BinaryOpBlockMarker
@@ -430,7 +442,7 @@ CallInvocation
   / '^' _ '(' _ args:ArgumentList? _ ')' {
       return {
         g: 'e',
-        params: {args: args},
+        params: {args: args || ''},
       };
     }
 
@@ -629,9 +641,9 @@ ParamLine
         params: {
           name: name,
           member: !!member,
-          access: access,
+          access: access || '',
           type: type,
-          marker: marker,
+          marker: marker || '',
           init: init,
         },
       };

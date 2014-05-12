@@ -4,6 +4,7 @@ NODE=nodejs
 NODE_TEST=NODE_PATH=compiled $(NODE)
 NODE_SAVED=NODE_PATH=saved $(NODE) saved/convert
 PEGJS=node_modules/.bin/pegjs
+TEST_RULES=BlockLine,BlockMarker,ParseLine,FunctionBlockLine,Expression,Statement,Comment,PrimaryExpression,NewExpression,CallExpression,MemberExpression,Identifier,Literal,NumericLiteral,StringLiteral,RegularExpressionLiteral,ObjectLiteral,AdditiveExpression,TypeLiteral,ParamLine
 
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
 JS_SRCS_WITH_TEST=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))
@@ -107,11 +108,11 @@ $(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
 PARSER_TEST_SRCS+=compiled/input/Line.js
 
 # Check if the parser can handle the ir2js source code itself.
-test_parse: compiled/syntax.js compiled/parser_main.js
+parse_src: compiled/syntax_test.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -p src/*.ir | grep '^X|'
 
 # Run tests for the parser.
-parser_test: compiled/syntax.js compiled/parser_main.js
+ptest: compiled/syntax_test.js compiled/parser_main.js
 	@$(NODE_TEST) compiled/parser_main.js -t src/parser/data/*
 
 compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js $(PACKAGES_FILE)
@@ -121,7 +122,12 @@ compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js $(PACKAGES_FILE)
 compiled/syntax.js: src/parser/syntax.pegjs
 	@echo '===== PEGJS syntax'
 	@mkdir -p compiled
-	$(PEGJS) $^ $@
+	$(PEGJS) --allowed-start-rules ParseLine $^ $@
+
+compiled/syntax_test.js: src/parser/syntax.pegjs
+	@echo '===== PEGJS syntax'
+	@mkdir -p compiled
+	$(PEGJS) --allowed-start-rules $(TEST_RULES) $^ $@
 
 
 ############################################################
@@ -130,7 +136,7 @@ compiled/syntax.js: src/parser/syntax.pegjs
 update:
 	make clean
 	make test
-	make parser_test
+	make ptest
 	make converter
 	cp compiled/ir2js.js saved
 	echo '#!/usr/bin/env node' > saved/convert

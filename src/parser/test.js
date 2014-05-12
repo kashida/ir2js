@@ -1,4 +1,8 @@
+// TODO: Write bulk of this in ir.
+
 var _fs = require('fs');
+var _parser = require('./syntax_test')
+
 
 
 var TestFile = function(filename) {
@@ -62,15 +66,18 @@ TestFile.prototype.run_test = function(line, expected) {
   try {
     var result = target.run(lines)
   } catch(e) {
-    if (!this.expect_error) {
-      console.error('[FAIL] error for ' + this.rule_name);
-      e.contextLines.forEach(function(line, i) {
-        console.error((i == 0 ? 'I: ' : '   ') + line)
-      });
-      console.error('E: ' + e.message)
-      process.exit(-1);
+    if (this.expect_error) {
+      return;
     }
-    return;
+
+    console.error('[FAIL] error for ' + this.rule_name);
+    // TODO: contextLines doesn't seem to exist in e...
+    throw e;
+    e.contextLines.forEach(function(line, i) {
+      console.error((i == 0 ? 'I: ' : '   ') + line)
+    });
+    console.error('E: ' + e.message)
+    throw e;
   }
   var result_str = result.rendered().join(' /|/ ');
   if (this.expect_error) {

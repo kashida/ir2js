@@ -1,6 +1,7 @@
 :BlockLine
 annotation\s\$
 @indent\n\ -1
+@param\s\
 --
 // abcd.
 abc: def

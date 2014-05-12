@@ -233,3 +233,7 @@ process.exit = function(exit_code) {};
 var console;
 var require;
 var exports;
+
+/** @type {Object} */
+var _parser = {};
+

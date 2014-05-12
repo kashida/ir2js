@@ -11,6 +11,8 @@ var type = {};
   _path = require('path');
   var _util;
   _util = require('util');
+  var _parser;
+  _parser = require('./syntax');
 /*
 Making closure compiler think we are doing inheritance (it doesn't seem to
 understand Object.create).
@@ -2049,7 +2051,7 @@ var needCompile = /**
  * @param {string} dst
  */
 function(src, dst) {
-  if (!_path.existsSync(dst)) {
+  if (!_fs.existsSync(dst)) {
     return true;
   }
   var src_stat;
@@ -2077,7 +2079,7 @@ function(src, dst) {
       var logstr;
       logstr = '[' + in_file + ' => ' + out_file + '] ';
 
-      if (!_path.existsSync(in_file)) {
+      if (!_fs.existsSync(in_file)) {
         console.error(logstr + 'input not found');
         return;
       }
@@ -2106,7 +2108,7 @@ var writeFile = /**
 function(path, data) {
   var dir;
   dir = _path.dirname(path);
-  if (!_path.existsSync(dir)) {
+  if (!_fs.existsSync(dir)) {
     _fs.mkdirSync(dir);
   }
 
@@ -3749,8 +3751,6 @@ Specific for a particular target (i.e. rule).
 TODO: Make xformer available to the parser so that we don't need to do double
 conversion.
 */
-parser._parser = require('./syntax');
-
 /**
  * @param {string} rule
  * @constructor
@@ -3787,8 +3787,11 @@ parser.Target.prototype.run = function(line, xformer, show_error_line) {
   }).join('\n');
   try {
     var result;
-    result = parser._parser.parse(lines, self._rule);
+    result = _parser.parse(lines, {
+      'startRule': self._rule
+    });
   }
+      //xformer: xformer
   catch (e) {
     throw self._addContextLines(e, line);
   }

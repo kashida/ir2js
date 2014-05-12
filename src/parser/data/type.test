@@ -12,6 +12,7 @@
 ab\number\$
 @ab+\number\?
 @indent\n\ -1
+@param\s\
 
 :!
 @\ab\
