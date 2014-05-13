@@ -1,6 +1,14 @@
 ::
   @context\!context.Context\$
   @input\input.Line\$
+  // TODO: This field is not used -- only 's' is set and LineParser pre-parses 
+  //     for a separator.
+  // '' for unknown (or statement).
+  // 'p' for param line.
+  // 's' for separator.
+  // 't' for type.
+  // 'm' for marker.
+  @grammar&\s\ ''
 
 :pkgRef\s\
   name\s\$

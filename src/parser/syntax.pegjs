@@ -635,7 +635,7 @@ ParamLine
     }
 
 BlockSeparator
-  = '--' { return {g: 's', t: '--'}; }
+  = '--' { $.grammar = 's'; return '--'; }
 
 
 ParseLine = _ BlockLine _

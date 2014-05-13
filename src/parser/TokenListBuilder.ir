@@ -63,10 +63,6 @@
       @tokens.add(t)
       break
 
-      case 's' // Separator line.
-      @tokens.grammar = 's'
-      break
-
   if data.t
     @tokens.add(&%.TokenListBuilder(data.t, @.xformer).build())
   if data.p
