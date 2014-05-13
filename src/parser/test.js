@@ -1,8 +1,6 @@
 // TODO: Write bulk of this in ir.
-
 var _fs = require('fs');
 var _parser = require('./syntax_test')
-
 
 
 var TestFile = function(filename) {
@@ -64,7 +62,7 @@ TestFile.prototype.run_test = function(line, expected) {
   var target = new parser.Target(this.rule_name);
   lines = line.replace(/\s*\/\|\/\s*/, '\n')
   try {
-    var result = target.run(lines)
+    var result = target.run(lines, xformer)
   } catch(e) {
     if (this.expect_error) {
       return;
@@ -116,7 +114,7 @@ ConvertFile.prototype.run = function() {
 ConvertFile.prototype.parse = function(line) {
   try {
     var target = new parser.Target('BlockLine');
-    console.log('O|  ' + target.run(line).rendered().join(' /|/ '));
+    console.log('O|  ' + target.run(line, xformer).rendered().join(' /|/ '));
   } catch (e) {
     console.log('X|  ' + line);
     var sp = '   ';
@@ -127,6 +125,19 @@ ConvertFile.prototype.parse = function(line) {
     console.log('   ' + e);
   }
 };
+
+
+var TestTransformer = function() {};
+
+TestTransformer.prototype.pkgRef = function(str) { return str; };
+TestTransformer.prototype.type = function(t) { return ['\\', t, '\\']; };
+TestTransformer.prototype.cast = function(t) { return ['\\', t, '\\']; };
+TestTransformer.prototype.marker = function(t) { return ['|#', t, '|']; };
+TestTransformer.prototype.parentCall = function(args) {
+  return ['^(', args, ')'];
+};
+
+var xformer = new TestTransformer();
 
 
 var mode = '';

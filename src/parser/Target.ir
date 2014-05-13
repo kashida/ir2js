@@ -18,7 +18,7 @@ conversion.
   try
     result := _parser.parse(lines, {#})
       startRule: @rule
-      //xformer: xformer
+      xformer: xformer
   catch e
     throw @addContextLines(e, line)
 

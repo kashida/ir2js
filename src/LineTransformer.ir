@@ -17,7 +17,7 @@
 
 :parentCall\!A\
   args\parser.TokenList\$
-  end := args.isEmpty ? ')' : [', ', args, ')']
+  end := !args ? ')' : [', ', args, ')']
   if @context.isCtor
     => [@context.cls.ctor.parentName() + '.call(this', end]
   else if @context.isMethod
@@ -29,3 +29,7 @@
   else
     error(@input, 'parent call appeared in non-ctor / non-method.')
     => ['^(', args, ')']
+
+:marker\!parser.BlockMarker\
+  type\s\$
+  => &parser.BlockMarker(type)

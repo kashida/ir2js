@@ -110,6 +110,9 @@ classname.prototype.method = function(param) {
     a + b + c
     --
     another_method()
+
+:method2
+  ^()
 #=
 /**
  * @constructor
@@ -142,6 +145,11 @@ classname.prototype.method = function(param) {
     another_method()
   ));
 };
+
+classname.prototype.method2 = function() {
+  var self = this;
+  parent.prototype.method2.call(this);
+};
 {
   cls:[
     {
@@ -153,6 +161,9 @@ classname.prototype.method = function(param) {
           args:[
             String
           ]
+        }
+        {
+          name:method2
         }
       ]
     }

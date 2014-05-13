@@ -1,5 +1,5 @@
 {
-  //var $ = options['xformer'];
+  var $ = options['xformer'];
   var l = function() {
     var t = text();
     console.log('... ' + t);
@@ -345,21 +345,20 @@ Self = '@' _ name:Identifier? { return name ? 'self._' + name : 'self'; }
 
 CurrentPackage
   = percents:('%'+) _ '.' _ name:Identifier {
-      return {g: 'c', params: {name: name, percents: percents.join('')}};
-      //return $.pkgRef(percents.join('') + '.' + name);
+      return $.pkgRef(percents.join('') + '.' + name);
     }
 
 BinaryOpBlockMarker
   = '#' op:('.' / '*' / '+' / '&&' / '||') {
-      return {g: 'm', params: {type: op}};
+      return $.marker(op);
     }
 
-ArrayBlockMarker = '[' _ '#' _ ']' { return {g: 'm', params: {type: 'a'}}; }
-ObjectBlockMarker = '{' _ '#' _ '}' { return {g: 'm', params: {type: 'o'}}; }
-ParameterBlockMarker = '(' _ '#' _ ')' { return {g: 'm', params: {type: 'p'}}; }
-FunctionBlockMarker = '##' { return {g: 'm', params: {type: 'f'}}; }
-LineBlockMarker = '#' !('#' / '?') { return {g: 'm', params: {type: 'l'}}; }
-ConditionalBlockMarker = '#?' { return {g: 'm', params: {type: 'c'}}; }
+ArrayBlockMarker = '[' _ '#' _ ']' { return $.marker('a'); }
+ObjectBlockMarker = '{' _ '#' _ '}' { return $.marker('o'); }
+ParameterBlockMarker = '(' _ '#' _ ')' { return $.marker('p'); }
+FunctionBlockMarker = '##' { return $.marker('f'); }
+LineBlockMarker = '#' !('#' / '?') { return $.marker('l'); }
+ConditionalBlockMarker = '#?' { return $.marker('c'); }
 
 BlockMarker
   = BinaryOpBlockMarker
@@ -434,16 +433,10 @@ NewExpression
 CallInvocation
   = MemberExpression _ Arguments
   / '^' _ marker:ParameterBlockMarker {
-      return {
-        g: 'e',
-        params: {args: marker},
-      };
+      return $.parentCall(marker);
     }
   / '^' _ '(' _ args:ArgumentList? _ ')' {
-      return {
-        g: 'e',
-        params: {args: args || ''},
-      };
+      return $.parentCall(args);
     }
 
 CallExpression
@@ -461,18 +454,15 @@ ArgumentList
   = AssignmentExpression (_ ',' __ AssignmentExpression)*
 
 CastExpression
-  = TypeLiteral _ '(' _ AssignmentExpression _ ')'
-
-TypeLiteral
-  = '\\' type:TypeExpression '\\' {
-      return {
-        g: 't',
-        params: {type: type.toString(), tokens: ['\\', type, '\\']},
-      };
+  = type:TypeLiteral _ '(' _ expr:AssignmentExpression _ ')' {
+      return [$.cast(type), '(', expr, ')'];
     }
 
+TypeLiteral
+  = '\\' type:TypeExpression '\\' { return type; }
+
 TypeLiteralLine
-  = TypeLiteral _ !.
+  = type:TypeLiteral _ !. { return $.type(type); }
 
 TypeExpression
   = chr:(!'\\' SourceCharacter)* {
@@ -563,12 +553,7 @@ BlockStatement
   / SwitchStatement
   / TryStatement
   / CatchStatement
-  / FinallyStatement) {
-      return [
-        stmt,
-        {g: 'm', params: {type: 'b'}},
-      ];
-  }
+  / FinallyStatement) { return [stmt, $.marker('b')]; }
 
 ExpressionStatement = Expression
 
@@ -642,7 +627,7 @@ ParamLine
           name: name,
           member: !!member,
           access: access || '',
-          type: type,
+          type: $.type(type),
           marker: marker || '',
           init: init,
         },

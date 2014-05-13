@@ -24,6 +24,10 @@
     @addArray(data)
     =>
 
+  if data instanceof %.BlockMarker
+    @tokens.add(data)
+    =>
+
   if data instanceof Object
     @addObject(data)
     =>
@@ -47,29 +51,13 @@
   if data.g
     p := data.params
     switch data.g
-      case 'c' // Current package ref.
-      str := p['percents'] + '.' + p.name
-      @tokens.add(@.xformer ? @.xformer.pkgRef(str) : str)
-      break
-
-      case 'e' // Parent call.
-      args_tokens := &%.TokenListBuilder(p.args, @.xformer).build()
-      @tokens.add(@.xformer ? # : #)
-        @.xformer.parentCall(args_tokens)
-        ['^(', args_tokens, ')']
-      break
-
-      case 'm' // Marker.
-      @tokens.add(&%.BlockMarker(p.type))
-      break
-
       case 'p' // Param line.
       t := @tokens
       @tokens = &%.ParamLine(#)
         p.name
         p.member
         p.access
-        &%.ParamLineBuilder(p.type, @.xformer).build().toString()
+        &%.TokenListBuilder(p.type, @.xformer).build().toString()
         p.marker
         &%.TokenListBuilder(p.init, @.xformer).build()
       @tokens.add(t)
@@ -79,27 +67,9 @@
       @tokens.grammar = 's'
       break
 
-      case 't' // Type literal.
-      @.addTypeObject(p)
-      break
-
   if data.t
     @tokens.add(&%.TokenListBuilder(data.t, @.xformer).build())
   if data.p
     @tokens.prepend(&%.TokenListBuilder(data.p, @.xformer).build())
   if data.a
     @tokens.append(&%.TokenListBuilder(data.a, @.xformer).build())
-
-:addTypeObject
-  params\O\$
-  @tokens.add(@.xformer ? @.xformer.cast(params.type) : params.tokens)
-
-
-::ParamLineBuilder <%.TokenListBuilder
-  parsed\%.TokenList|A|O|s\$
-  xformer&\LineTransformer\?
-  ^(parsed, xformer)
-
-:addTypeObject
-  params\O\$
-  @tokens.add(@.xformer ? @.xformer.type(params.type) : params.tokens)
