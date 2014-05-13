@@ -621,17 +621,8 @@ ParamLine
   = member:'@'? _ name:Identifier _ access:[+*&]?  _
     type:TypeLiteral marker:[$\?]?
     init:(_ ConditionalExpression)? {
-      return {
-        g: 'p',
-        params: {
-          name: name,
-          member: !!member,
-          access: access || '',
-          type: $.type(type),
-          marker: marker || '',
-          init: init,
-        },
-      };
+      return $.paramLine(
+          name, !!member, access || '', type, marker || '', init);
     }
 
 BlockSeparator

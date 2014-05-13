@@ -136,6 +136,11 @@ TestTransformer.prototype.marker = function(t) { return ['|#', t, '|']; };
 TestTransformer.prototype.parentCall = function(args) {
   return ['^(', args, ')'];
 };
+TestTransformer.prototype.paramLine = function(
+    name, member, access, type, marker, init) {
+  return [member ? '@' : '', name, access, '\\', type, '\\', marker,
+      init ? ' ' : '', init];
+};
 
 var xformer = new TestTransformer();
 

@@ -41,3 +41,18 @@
 :marker\!parser.BlockMarker\
   type\s\$
   => &parser.BlockMarker(type)
+
+:paramLine\!parser.ParamLine\
+  name\s\$
+  member\b\$
+  access\s\$
+  type\s\$
+  marker\s\$
+  init\A\$
+  => &parser.ParamLine(#)
+    name
+    member
+    access
+    @.type(type)
+    marker
+    &parser.TokenListBuilder(init, @).build()

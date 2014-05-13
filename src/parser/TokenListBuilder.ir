@@ -16,6 +16,13 @@
 
 :@buildRec
   data\%.TokenList|A|O|s\$
+  if data instanceof %.ParamLine
+    // TODO: Drop this renaming vars if possible.
+    t := @tokens
+    @tokens = data
+    @tokens.add(t)
+    =>
+
   if data instanceof %.TokenList
     @addTokens(data)
     =>
@@ -48,21 +55,6 @@
 
 :@addObject
   data\O\$
-  if data.g
-    p := data.params
-    switch data.g
-      case 'p' // Param line.
-      t := @tokens
-      @tokens = &%.ParamLine(#)
-        p.name
-        p.member
-        p.access
-        &%.TokenListBuilder(p.type, @.xformer).build().toString()
-        p.marker
-        &%.TokenListBuilder(p.init, @.xformer).build()
-      @tokens.add(t)
-      break
-
   if data.t
     @tokens.add(&%.TokenListBuilder(data.t, @.xformer).build())
   if data.p
