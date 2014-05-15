@@ -17,10 +17,7 @@ var classname = function(param, opt_member) {
   var self = this;
   // first comment.
   // second comment.
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._member = opt_member === undefined ? (true) : opt_member;
   // last comment.
 };
@@ -57,10 +54,7 @@ var classname = function(param, opt_member) {
   var self = this;
 
 
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._member = opt_member === undefined ? (true) : opt_member;
 };
 classname.prototype._classname = 'classname';
@@ -97,10 +91,7 @@ classname.prototype._classname = 'classname';
 var classname = function(opt_param, opt_member) {
   var self = this;
   var param = opt_param === undefined ? (a + b + c + d) : opt_param;
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._member = opt_member === undefined ? (func(
     a,
     b,

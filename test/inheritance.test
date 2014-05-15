@@ -15,15 +15,9 @@
  */
 var classname = function(param_a, opt_param_b) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param_a = param_a;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
   do_something();
   parent.call(this, param_b, something_else());

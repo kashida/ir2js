@@ -200,15 +200,9 @@ classname.prototype._classname = 'classname';
  */
 var classname = function() {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param_a = (init_val);
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._param_b = (null);
 };
 classname.prototype._classname = 'classname';
@@ -240,15 +234,9 @@ classname.prototype._classname = 'classname';
  */
 var classname = function(param_a, opt_param_b) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param_a = param_a;
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 classname.prototype._classname = 'classname';
@@ -277,10 +265,7 @@ classname.prototype._classname = 'classname';
  */
 var classname = function() {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param = (null);
 };
 classname.prototype._classname = 'classname';
@@ -314,15 +299,9 @@ return this._param;
  */
 var classname = function() {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param0 = (null);
-  /**
-   * @type {Test}
-   * @private
-   */
+  /** @private {Test} */
   this._param1 = (null);
 };
 classname.prototype._classname = 'classname';

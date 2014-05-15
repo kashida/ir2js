@@ -31,10 +31,7 @@
  */
 abc.def.classname = function(opt_param) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param = opt_param === undefined ? (abc.def.value) : opt_param;
   abc.def.path.parent.call(this, param);
 };

@@ -9,10 +9,7 @@
  */
 var classname = function() {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param = (null);
 };
 classname.prototype._classname = 'classname';
@@ -42,20 +39,11 @@ classname.prototype._classname = 'classname';
  */
 var classname = function() {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param0 = (null);
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param1 = (null);
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param2 = (null);
 };
 classname.prototype._classname = 'classname';
@@ -107,10 +95,7 @@ this._param2 = value;
  */
 var classname = function() {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._member = (null);
 };
 classname.prototype._classname = 'classname';
@@ -150,10 +135,7 @@ classname.prototype.__defineSetter__('member', function(value) {
  */
 var classname = function() {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._member = (null);
 };
 classname.prototype._classname = 'classname';

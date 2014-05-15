@@ -44,35 +44,17 @@ Match markers and blocks.
  */
 var BlockMatcher = function(context, input, code, blocks) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._input = input;
-  /**
-   * @type {Array.<!parser.BlockMarker|string>}
-   * @private
-   */
+  /** @private {Array.<!parser.BlockMarker|string>} */
   this._code = code;
-  /**
-   * @type {Array.<!IndentBlock>}
-   * @private
-   */
+  /** @private {Array.<!IndentBlock>} */
   this._blocks = blocks;
-  /**
-   * @type {Array.<!ParamSet>}
-   * @private
-   */
+  /** @private {Array.<!ParamSet>} */
   this._params = ([]);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isBlockStatement = (false);
 };
 BlockMatcher.prototype._classname = 'BlockMatcher';
@@ -211,55 +193,25 @@ BlockMatcher.prototype._outputParams = function(out, param) {
  */
 var CodeBlockItr = function(input, code, blocks) {
   var self = this;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._input = input;
-  /**
-   * @type {Array.<parser.BlockMarker|string>}
-   * @private
-   */
+  /** @private {Array.<parser.BlockMarker|string>} */
   this._code = code;
-  /**
-   * @type {Array.<IndentBlock>}
-   * @private
-   */
+  /** @private {Array.<IndentBlock>} */
   this._blocks = blocks;
-  /**
-   * @type {?function(string, boolean)}
-   * @private
-   */
+  /** @private {?function(string, boolean)} */
   this._blockCb = (null);
-  /**
-   * @type {?function()}
-   * @private
-   */
+  /** @private {?function()} */
   this._codeCb = (null);
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._cidx = (0);
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._bidx = (0);
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._lidx = (0);
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._pidx = (0);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isBlockStatement = (false);
 };
 CodeBlockItr.prototype._classname = 'CodeBlockItr';
@@ -379,30 +331,15 @@ CodeBlockItr.prototype._handleMarker = function(marker) {
  */
 var CodeParser = function(context, head) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
-  /**
-   * @type {section.Head}
-   * @private
-   */
+  /** @private {section.Head} */
   this._head = head;
-  /**
-   * @type {Array.<IndentBlock>}
-   * @private
-   */
+  /** @private {Array.<IndentBlock>} */
   this._blocks = ([]);
-  /**
-   * @type {CodeLine}
-   * @private
-   */
+  /** @private {CodeLine} */
   this._lastValidLine = (null);
-  /**
-   * @type {Array.<SectionLine>}
-   * @private
-   */
+  /** @private {Array.<SectionLine>} */
   this._invalidLines = ([]);
 };
 CodeParser.prototype._classname = 'CodeParser';
@@ -609,15 +546,9 @@ CodeParser.prototype._topBlock = function() {
  */
 var CodeScope = function(context, opt_head) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
-  /**
-   * @type {section.Head}
-   * @private
-   */
+  /** @private {section.Head} */
   this._head = opt_head === undefined ? (new section.Global()) : opt_head;
 };
 CodeScope.prototype._classname = 'CodeScope';
@@ -665,28 +596,16 @@ var OutputSection;
  */
 var FileScope = function(file_name, pkg_name, defaultClsName) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._defaultClsName = defaultClsName;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = (new context.Context(
     file_name,
     new context.Package(pkg_name)
   ));
-  /**
-   * @type {type.Set}
-   * @private
-   */
+  /** @private {type.Set} */
   this._types = (new type.Set());
-  /**
-   * @type {Array.<OutputSection>}
-   * @private
-   */
+  /** @private {Array.<OutputSection>} */
   this._list = (null);
 
   self._context.isFileScope = true;
@@ -770,31 +689,16 @@ FileScope.prototype.output = function() {
  */
 var IndentBlock = function(lineNo, indent, head) {
   var self = this;
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._lineNo = lineNo;
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._indent = indent;
-  /**
-   * @type {section.Head}
-   * @private
-   */
+  /** @private {section.Head} */
   this._head = head;
-  /**
-   * @type {Array.<SectionLine>}
-   * @private
-   */
+  /** @private {Array.<SectionLine>} */
   this._lines = ([]);
   // TODO: type to BlockType when it's enum.
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._marker = (BlockType.BLOCK);
 };
 IndentBlock.prototype._classname = 'IndentBlock';
@@ -988,10 +892,7 @@ either blank line or comment only line.
  */
 var InvalidLine = function(input) {
   var self = this;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._input = input;
 };
 InvalidLine.prototype._classname = 'InvalidLine';
@@ -1027,10 +928,7 @@ var SectionLine;
  */
 var LineCategorizer = function(context) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
 };
 LineCategorizer.prototype._classname = 'LineCategorizer';
@@ -1062,31 +960,16 @@ First pass line parsing for constructing the block structure.
  */
 var LineParser = function(input) {
   var self = this;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._input = input;
 
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isValid = (false);
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._indent = (0);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isContinuation = (false);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isSeparator = (false);
 
   self._process();
@@ -1165,15 +1048,9 @@ LineParser.prototype._checkSeparator = function() {
  */
 var LineTransformer = function(context, input) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._input = input;
   // TODO: This field is not used -- only 's' is set and LineParser pre-parses
   //     for a separator.
@@ -1182,10 +1059,7 @@ var LineTransformer = function(context, input) {
   // 's' for separator.
   // 't' for type.
   // 'm' for marker.
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._grammar = ('');
 };
 LineTransformer.prototype._classname = 'LineTransformer';
@@ -1323,30 +1197,15 @@ are accessors for.
  */
 var Member = function(name, type, accessType, isPseudo) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._name = name;
-  /**
-   * @type {type.Decoder}
-   * @private
-   */
+  /** @private {type.Decoder} */
   this._type = type;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._accessType = accessType;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isPseudo = isPseudo;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._declared = (false);
 };
 Member.prototype._classname = 'Member';
@@ -1436,31 +1295,16 @@ Function parameter and / or member declarion.
  */
 var Param = function(context, is_ctor, inputs, parsed) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
 
-  /**
-   * @type {parser.ParamLine}
-   * @private
-   */
+  /** @private {parser.ParamLine} */
   this._line = (null);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._success = (false);
-  /**
-   * @type {type.Decoder}
-   * @private
-   */
+  /** @private {type.Decoder} */
   this._type = (null);
-  /**
-   * @type {Array.<parser.BlockMarker|string>}
-   * @private
-   */
+  /** @private {Array.<parser.BlockMarker|string>} */
   this._valueLine = (null);
 
   if (!(parsed.tokens instanceof parser.ParamLine)) {
@@ -1579,9 +1423,7 @@ Param.prototype.outputInit = function(out) {
 
   if (self.isMember) {
     out.prefixLines = out.prefixLines.concat(docLines([
-      // TODO: Change this to @private and drop the line below.
-      '@type {' + self._type.output() + '}',
-      '@private'
+      '@private {' + self._type.output() + '}'
     ]));
   }
 
@@ -1653,30 +1495,15 @@ Param.prototype.argtype = function() {
  */
 var ParamSet = function(context, block, opt_isCtor) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
-  /**
-   * @type {IndentBlock}
-   * @private
-   */
+  /** @private {IndentBlock} */
   this._block = block;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isCtor = opt_isCtor === undefined ? (false) : opt_isCtor;
-  /**
-   * @type {Array.<!Param>}
-   * @private
-   */
+  /** @private {Array.<!Param>} */
   this._params = ([]);
-  /**
-   * @type {type.Decoder}
-   * @private
-   */
+  /** @private {type.Decoder} */
   this._returnType = (null);
 };
 ParamSet.prototype._classname = 'ParamSet';
@@ -1865,15 +1692,9 @@ ParamSet.prototype.setArgTypes = function(types) {
  */
 var SeparatorLine = function(input, p) {
   var self = this;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._input = input;
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._indent = (p.indent);
 };
 SeparatorLine.prototype._classname = 'SeparatorLine';
@@ -1913,40 +1734,19 @@ SeparatorLine.prototype.output = function() {
  */
 var TestCase = function(name, packageName, input, output, isGlobal, expectError) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._name = name;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._packageName = packageName;
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
+  /** @private {Array.<string>} */
   this._input = input;
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
+  /** @private {Array.<string>} */
   this._output = output;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isGlobal = isGlobal;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._expectError = expectError;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._failed = (false);
 };
 TestCase.prototype._classname = 'TestCase';
@@ -2306,15 +2106,9 @@ function(item, title) {
  */
 var StringSet = function() {
   var self = this;
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
+  /** @private {Array.<string>} */
   this._list = ([]);
-  /**
-   * @type {Object.<string, boolean>}
-   * @private
-   */
+  /** @private {Object.<string, boolean>} */
   this._map = ({});
 };
 StringSet.prototype._classname = 'StringSet';
@@ -2386,16 +2180,10 @@ StringSet.prototype.filterOut = function(strs) {
 var ClassDeps = function() {
   var self = this;
   // Maps class name to file name where its defined.
-  /**
-   * @type {Object.<string, string>}
-   * @private
-   */
+  /** @private {Object.<string, string>} */
   this._where = ({});
   // Maps file name to array of required class names.
-  /**
-   * @type {Object.<string, Array.<string>>}
-   * @private
-   */
+  /** @private {Object.<string, Array.<string>>} */
   this._depends = ({});
 };
 ClassDeps.prototype._classname = 'ClassDeps';
@@ -2642,15 +2430,9 @@ function(annotations) {
  */
 context.Class = function() {
   var self = this;
-  /**
-   * @type {section.Constructor}
-   * @private
-   */
+  /** @private {section.Constructor} */
   this._ctor = (null);
-  /**
-   * @type {!Object.<string, Member>}
-   * @private
-   */
+  /** @private {!Object.<string, Member>} */
   this._members = ({});
 };
 context.Class.prototype._classname = 'context.Class';
@@ -2738,40 +2520,19 @@ context.Class.prototype.outputAccessors = function() {
  */
 context.Context = function(fileName, pkg) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._fileName = fileName;
-  /**
-   * @type {!context.Package}
-   * @private
-   */
+  /** @private {!context.Package} */
   this._pkg = pkg;
-  /**
-   * @type {!context.Name}
-   * @private
-   */
+  /** @private {!context.Name} */
   this._name = (new context.Name(self._pkg, ''));
-  /**
-   * @type {context.Class}
-   * @private
-   */
+  /** @private {context.Class} */
   this._cls = (null);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isCtor = (false);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isMethod = (false);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isFileScope = (false);
 };
 context.Context.prototype._classname = 'context.Context';
@@ -2872,15 +2633,9 @@ Name in file scope.
  */
 context.Name = function(pkg, id) {
   var self = this;
-  /**
-   * @type {!context.Package}
-   * @private
-   */
+  /** @private {!context.Package} */
   this._pkg = pkg;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._id = id;
 };
 context.Name.prototype._classname = 'context.Name';
@@ -2949,10 +2704,7 @@ Package name.
  */
 context.Package = function(pkg) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._pkg = pkg;
 };
 context.Package.prototype._classname = 'context.Package';
@@ -3028,10 +2780,7 @@ Comment section in a file.
  */
 input.Comment = function(lines) {
   var self = this;
-  /**
-   * @type {Array.<input.Line>}
-   * @private
-   */
+  /** @private {Array.<input.Line>} */
   this._lines = lines;
 };
 input.Comment.prototype._classname = 'input.Comment';
@@ -3128,30 +2877,15 @@ Parses input lines into comments and sections.
  */
 input.File = function(name, input) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._name = name;
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
+  /** @private {Array.<string>} */
   this._input = input;
-  /**
-   * @type {Array.<input.Comment|input.Section>}
-   * @private
-   */
+  /** @private {Array.<input.Comment|input.Section>} */
   this._result = ([]);
-  /**
-   * @type {Array.<input.Line>}
-   * @private
-   */
+  /** @private {Array.<input.Line>} */
   this._buffer = ([]);
-  /**
-   * @type {number?}
-   * @private
-   */
+  /** @private {number?} */
   this._lastValidIndex = (null);
 };
 input.File.prototype._classname = 'input.File';
@@ -3250,20 +2984,11 @@ A line of input file. Keeps track of the row index.
  */
 input.Line = function(file, line, rowIndex) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._file = file;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._line = line;
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._rowIndex = rowIndex;
 };
 input.Line.prototype._classname = 'input.Line';
@@ -3345,20 +3070,11 @@ Input code section.
  */
 input.Section = function(header) {
   var self = this;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._header = header;
-  /**
-   * @type {Array.<input.Line>}
-   * @private
-   */
+  /** @private {Array.<input.Line>} */
   this._lines = ([]);
-  /**
-   * @type {section.Code}
-   * @private
-   */
+  /** @private {section.Code} */
   this._code = (null);
 };
 input.Section.prototype._classname = 'input.Section';
@@ -3393,16 +3109,10 @@ input.Section.prototype.push = function(line) {
  */
 output.Block = function() {
   var self = this;
-  /**
-   * @type {!Array.<!output.Line>}
-   * @private
-   */
+  /** @private {!Array.<!output.Line>} */
   this._lines = ([]);
   // the suffix, if assigned a value, will be inserted after the last nonblank line.
-  /**
-   * @type {string?}
-   * @private
-   */
+  /** @private {string?} */
   this._suffix = (null);
 };
 output.Block.prototype._classname = 'output.Block';
@@ -3488,20 +3198,11 @@ Helper for Line to construct the output.
  */
 output.IndentedMultiline = function(num_indent) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._indent = (whitespaces(num_indent));
-  /**
-   * @type {!Array.<string>}
-   * @private
-   */
+  /** @private {!Array.<string>} */
   this._lines = ([]);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._lastLineOpen = (false);
 };
 output.IndentedMultiline.prototype._classname = 'output.IndentedMultiline';
@@ -3567,40 +3268,19 @@ Output lines corresponds to one input line.
  */
 output.Line = function(input) {
   var self = this;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._input = input;
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._indent = (input.indent);
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
+  /** @private {Array.<string>} */
   this._prefixLines = ([]);
-  /**
-   * @type {!output.Multiline}
-   * @private
-   */
+  /** @private {!output.Multiline} */
   this._lines = (new output.Multiline());
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._linePrefix = ('');
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._lineSuffix = ('');
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
+  /** @private {Array.<string>} */
   this._tailComment = ([]);
 };
 output.Line.prototype._classname = 'output.Line';
@@ -3698,15 +3378,9 @@ output.Line.prototype.__defineGetter__('output', function() {
  */
 output.Multiline = function() {
   var self = this;
-  /**
-   * @type {!Array.<!output.Block|string>}
-   * @private
-   */
+  /** @private {!Array.<!output.Block|string>} */
   this._lines = ([]);
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._lastLineOpen = (false);
 };
 output.Multiline.prototype._classname = 'output.Multiline';
@@ -3768,10 +3442,7 @@ Container and interface of the TokenList to the rest of the converter.
  */
 parser.Result = function(tokens) {
   var self = this;
-  /**
-   * @type {parser.TokenList}
-   * @private
-   */
+  /** @private {parser.TokenList} */
   this._tokens = tokens;
 };
 parser.Result.prototype._classname = 'parser.Result';
@@ -3838,10 +3509,7 @@ conversion.
  */
 parser.Target = function(rule) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._rule = rule;
 };
 parser.Target.prototype._classname = 'parser.Target';
@@ -3919,10 +3587,7 @@ parser.BlockMarker = function(type) {
   // o: object.
   // p: param list.
   // f: anonymous function.
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._type = type;
 };
 parser.BlockMarker.prototype._classname = 'parser.BlockMarker';
@@ -3946,25 +3611,13 @@ parser.BlockMarker.prototype.toString = function() {
  */
 parser.TokenList = function() {
   var self = this;
-  /**
-   * @type {Array.<!parser.BlockMarker|string>}
-   * @private
-   */
+  /** @private {Array.<!parser.BlockMarker|string>} */
   this._list = ([]);
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
+  /** @private {Array.<string>} */
   this._prevLines = ([]);
-  /**
-   * @type {Array.<string>}
-   * @private
-   */
+  /** @private {Array.<string>} */
   this._nextLines = ([]);
-  /**
-   * @type {Array}
-   * @private
-   */
+  /** @private {Array} */
   this._params = (null);
 };
 parser.TokenList.prototype._classname = 'parser.TokenList';
@@ -4119,35 +3772,17 @@ parser.TokenList.prototype.toString = function() {
  */
 parser.ParamLine = function(name, isMember, access, type, marker, init) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._name = name;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isMember = isMember;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._access = access;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._type = type;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._marker = marker;
-  /**
-   * @type {parser.TokenList}
-   * @private
-   */
+  /** @private {parser.TokenList} */
   this._init = init;
   parser.TokenList.call(this);
 };
@@ -4211,20 +3846,11 @@ parser.ParamLine.prototype.toString = function() {
  */
 parser.TokenListBuilder = function(parsed, xformer) {
   var self = this;
-  /**
-   * @type {parser.TokenList|Array|Object|string}
-   * @private
-   */
+  /** @private {parser.TokenList|Array|Object|string} */
   this._parsed = parsed;
-  /**
-   * @type {LineTransformer}
-   * @private
-   */
+  /** @private {LineTransformer} */
   this._xformer = xformer;
-  /**
-   * @type {parser.TokenList}
-   * @private
-   */
+  /** @private {parser.TokenList} */
   this._tokens = (new parser.TokenList());
 };
 parser.TokenListBuilder.prototype._classname = 'parser.TokenListBuilder';
@@ -4304,10 +3930,7 @@ parser.TokenListBuilder.prototype._addArray = function(data) {
  */
 section.Generator = function(scope) {
   var self = this;
-  /**
-   * @type {FileScope}
-   * @private
-   */
+  /** @private {FileScope} */
   this._scope = scope;
 };
 section.Generator.prototype._classname = 'section.Generator';
@@ -4531,10 +4154,7 @@ section.Generator.prototype._createTypedef = function(line) {
  */
 section.Head = function() {
   var self = this;
-  /**
-   * @type {Array.<IndentBlock>}}
-   * @private
-   */
+  /** @private {Array.<IndentBlock>}} */
   this._blocks = ([]);
 };
 section.Head.prototype._classname = 'section.Head';
@@ -4593,25 +4213,13 @@ section.Head.prototype.output = function() {
  */
 type.Callable = function(name) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._name = name;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._parent = ('');
-  /**
-   * @type {Array.<type.Callable>}
-   * @private
-   */
+  /** @private {Array.<type.Callable>} */
   this._methods = ([]);
-  /**
-   * @type {Array.<string|null>}
-   * @private
-   */
+  /** @private {Array.<string|null>} */
   this._args = ([]);
 };
 type.Callable.prototype._classname = 'type.Callable';
@@ -4665,20 +4273,11 @@ type.Callable.prototype.extract = function() {
  */
 type.Decoder = function(pkg, type) {
   var self = this;
-  /**
-   * @type {!context.Package}
-   * @private
-   */
+  /** @private {!context.Package} */
   this._pkg = pkg;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._type = type;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._decoded = ('');
   self._process();
 };
@@ -4715,20 +4314,11 @@ type.Decoder.prototype.output = function() {
  */
 type.Set = function() {
   var self = this;
-  /**
-   * @type {type.Callable}
-   * @private
-   */
+  /** @private {type.Callable} */
   this._ctor = (null);
-  /**
-   * @type {Array}
-   * @private
-   */
+  /** @private {Array} */
   this._classes = ([]);
-  /**
-   * @type {Array}
-   * @private
-   */
+  /** @private {Array} */
   this._functs = ([]);
 };
 type.Set.prototype._classname = 'type.Set';
@@ -4805,40 +4395,19 @@ var CODE_PARSER = null;
  */
 var CodeLine = function(context, input, lineParsed) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._input = input;
-  /**
-   * @type {LineParser}
-   * @private
-   */
+  /** @private {LineParser} */
   this._lineParsed = lineParsed;
-  /**
-   * @type {parser.Result}
-   * @private
-   */
+  /** @private {parser.Result} */
   this._parsed = (null);
-  /**
-   * @type {!Array.<!CodeLine>}
-   * @private
-   */
+  /** @private {!Array.<!CodeLine>} */
   this._continueLines = ([]);
-  /**
-   * @type {Param|boolean}
-   * @private
-   */
+  /** @private {Param|boolean} */
   this._param = (null);
-  /**
-   * @type {BlockMatcher}
-   * @private
-   */
+  /** @private {BlockMatcher} */
   this._matcher = (null);
   section.Head.call(this);
 };
@@ -4962,10 +4531,7 @@ CodeLine.prototype.output = function() {
  */
 section.Code = function() {
   var self = this;
-  /**
-   * @type {Array.<input.Line>}
-   * @private
-   */
+  /** @private {Array.<input.Line>} */
   this._lines = ([]);
   section.Head.call(this);
 };
@@ -5084,15 +4650,9 @@ section.Runnable.prototype.outputBody = function(block_suffix) {
  */
 section.Str = function(context) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._indent = (-1);
   section.Code.call(this);
 };
@@ -5166,30 +4726,15 @@ section.Str.prototype.output = function() {
  */
 section.Variable = function(context, line, scopeLevel, isPrivate, rhs) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
-  /**
-   * @type {input.Line}
-   * @private
-   */
+  /** @private {input.Line} */
   this._line = line;
-  /**
-   * @type {number}
-   * @private
-   */
+  /** @private {number} */
   this._scopeLevel = scopeLevel;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isPrivate = isPrivate;
-  /**
-   * @type {CodeLine}
-   * @private
-   */
+  /** @private {CodeLine} */
   this._codeLine = (null);
   section.Code.call(this);
   var code_input;
@@ -5246,20 +4791,11 @@ section.Variable.prototype.output = function() {
  */
 section.Callable = function(context, returnType) {
   var self = this;
-  /**
-   * @type {!context.Context}
-   * @private
-   */
+  /** @private {!context.Context} */
   this._context = context;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._returnType = returnType;
-  /**
-   * @type {ParamSet}
-   * @private
-   */
+  /** @private {ParamSet} */
   this._params = (null);
   section.Runnable.call(this);
 };
@@ -5396,15 +4932,9 @@ Overriding accessor.
  */
 section.Accessor = function(context, name, return_type, isGetter) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._name = name;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._isGetter = isGetter;
   context.isMethod = true;
   section.Callable.call(this, context, return_type);
@@ -5466,10 +4996,7 @@ section.Accessor.prototype.output = function() {
  */
 section.Constructor = function(context, opt_parent) {
   var self = this;
-  /**
-   * @type {string?}
-   * @private
-   */
+  /** @private {string?} */
   this._parent = opt_parent === undefined ? (null) : opt_parent;
   context.isCtor = true;
   section.Callable.call(this, context, '');
@@ -5545,10 +5072,7 @@ section.Constructor.prototype.setType = function(types) {
  */
 section.Method = function(context, return_type, overriding) {
   var self = this;
-  /**
-   * @type {boolean}
-   * @private
-   */
+  /** @private {boolean} */
   this._overriding = overriding;
   context.isMethod = true;
   section.Callable.call(this, context, return_type);

@@ -63,15 +63,9 @@ classname.prototype._classname = 'classname';
  */
 var classname = function() {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param_a = (init_val);
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param_b = (null);
 };
 classname.prototype._classname = 'classname';
@@ -105,20 +99,11 @@ classname.prototype._classname = 'classname';
  */
 var classname = function(param_a, opt_param_b, opt_param_c) {
   var self = this;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param_a = param_a;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
-  /**
-   * @type {string}
-   * @private
-   */
+  /** @private {string} */
   this._param_c = opt_param_c === undefined ? (null) : opt_param_c;
 };
 classname.prototype._classname = 'classname';
