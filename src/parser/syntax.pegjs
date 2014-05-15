@@ -243,7 +243,7 @@ RegularExpressionFlags
 
 Comment 'comment'
   = '//' rest:(!LineTerminator SourceCharacter)* {
-      return { a: '//' + rest.map(function(r) { return r[1]; }).join('') };
+      return $.append('//' + rest.map(function(r) { return r[1]; }).join(''));
     }
 
 Blank
@@ -510,10 +510,7 @@ ConditionalExpression
 
 DeclareAssignmentExpression
   = left:Identifier _ ':=' _ right:AssignmentExpression {
-      return {
-        t: [left, ' = ', right],
-        p: ['var ', left],
-      };
+      return [$.prepend(['var ', left]), left, ' = ', right]
     }
 
 AssignmentExpression
@@ -571,24 +568,22 @@ ForStatement
     initializer:Expression? _ ';' _
     test:Expression? _ ';' _
     counter:Expression? {
-      return {
-        t: [
-          'for (;',
-          test ? [' ', test] : null,
-          ';',
-          counter ? [' ', counter] : null,
-          ')',
-        ],
-        p: initializer,
-      };
+      return [
+        $.prepend(initializer),
+        'for (;',
+        test ? [' ', test] : null,
+        ';',
+        counter ? [' ', counter] : null,
+        ')',
+      ];
     }
 
 EachStatement
   = 'each' _ iter:Identifier _ 'in' _ collection:Expression {
-      return {
-        t: ['for (', iter, ' in ', collection, ')'],
-        p: ['var ', iter],
-      };
+      return [
+        $.prepend(['var ', iter]),
+        'for (', iter, ' in ', collection, ')'
+      ];
     }
 
 ContinueStatement = 'continue'

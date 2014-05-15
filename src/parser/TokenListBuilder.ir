@@ -1,16 +1,13 @@
 ::
   @parsed\%.TokenList|A|O|s\$
-  @xformer&\LineTransformer\?
-  @tokens\%.TokenList\
+  @xformer\LineTransformer\$
+  @tokens\%.TokenList\ &%.TokenList()
 
 :build\%.TokenList\
-  if !@tokens
-    @tokens = &%.TokenList()
-    @buildRec(@parsed)
+  @buildRec(@parsed)
   => @tokens
 
 :result\%.Result\
-  line\!A.<input.Line>\$
   @.build()
   => &%.Result(@tokens)
 
@@ -24,7 +21,7 @@
     =>
 
   if data instanceof %.TokenList
-    @addTokens(data)
+    @tokens.add(data)
     =>
 
   if data instanceof Array
@@ -35,29 +32,16 @@
     @tokens.add(data)
     =>
 
-  if data instanceof Object
-    @addObject(data)
+  if data instanceof Function
+    @tokens.add(data(@tokens))
     =>
 
   // Must be a string.
   if data
     @tokens.add(data)
 
-:@addTokens
-  data\%.TokenList\$
-  @tokens.add(data)
-
 :@addArray
   data\A\$
   data.forEach(##)
     elem\%.TokenList|A|O|s\$
     @buildRec(elem)
-
-:@addObject
-  data\O\$
-  if data.t
-    @tokens.add(&%.TokenListBuilder(data.t, @.xformer).build())
-  if data.p
-    @tokens.prepend(&%.TokenListBuilder(data.p, @.xformer).build())
-  if data.a
-    @tokens.append(&%.TokenListBuilder(data.a, @.xformer).build())

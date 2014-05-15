@@ -56,3 +56,17 @@
     @.type(type)
     marker
     &parser.TokenListBuilder(init, @).build()
+
+:prepend\F\
+  line\A|O|s\$
+  => (##)
+    tokens\parser.TokenList\$
+    tokens.prepend(&parser.TokenListBuilder(line, @).build())
+    => ''
+
+:append\F\
+  line\A|O|s\$
+  => (##)
+    tokens\parser.TokenList\$
+    tokens.append(&parser.TokenListBuilder(line, @).build())
+    => ''

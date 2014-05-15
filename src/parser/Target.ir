@@ -7,7 +7,7 @@ conversion.
 
 :run\?%.Result\
   line\!A.<input.Line>|s\$
-  xformer\LineTransformer\?
+  xformer\LineTransformer\$
   show_error_line\b\?
   if !(line instanceof Array)
     line = [&input.Line('', line, 0)]
@@ -22,10 +22,7 @@ conversion.
   catch e
     throw @addContextLines(e, line)
 
-  b := &%.TokenListBuilder(result)
-  if xformer
-    b.xformer = xformer
-  => b.result(line)
+  => &%.TokenListBuilder(result, xformer).result()
 
 :@addContextLines
   e\O\$

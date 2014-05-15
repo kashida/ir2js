@@ -141,6 +141,21 @@ TestTransformer.prototype.paramLine = function(
   return [member ? '@' : '', name, access, '\\', type, '\\', marker,
       init ? ' ' : '', init];
 };
+TestTransformer.prototype.prepend = function(line) {
+  var self = this;
+  return function(tokens) {
+    tokens.prepend(new parser.TokenListBuilder(line, self).build())
+    return '';
+  }
+};
+TestTransformer.prototype.append = function(line) {
+  var self = this;
+  return function(tokens) {
+    tokens.append(new parser.TokenListBuilder(line, self).build())
+    return '';
+  }
+};
+
 
 var xformer = new TestTransformer();
 

@@ -31,6 +31,8 @@
   i := 0
   for ; i < arguments.length; i++
     arg := arguments[i]
+    if !arg
+      continue
 
     // Recursive cases.
     if arg instanceof %.TokenList
@@ -68,7 +70,8 @@
   if line instanceof %.TokenList
     @prevLines = @prevLines.concat(line.prevLines)
     @nextLines = @nextLines.concat(line.nextLines)
-  @prevLines.push(line.toString())
+  str := line.toString()
+  str && @prevLines.push(str)
   => @
 
 :append
@@ -76,7 +79,8 @@
   if line instanceof %.TokenList
     @prevLines = @prevLines.concat(line.prevLines)
     @nextLines = @nextLines.concat(line.nextLines)
-  @nextLines.push(line.toString())
+  str := line.toString()
+  str && @nextLines.push(str)
   => @
 
 :toString\s\

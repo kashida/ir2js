@@ -7,8 +7,8 @@ a := false ? 'abc' || true : "def"
   var a
   a = false ? 'abc' || true : "def"
 a := b := 0
-  var b
   var a
+  var b
   a = b = 0
 abc() && def
 a *= 0 ? 'abc' && @() || true : "def"

@@ -67,6 +67,7 @@ Variable initialization output as first statements of function body.
 
   if @.isMember
     out.prefixLines = out.prefixLines.concat(docLines([#]))
+      // TODO: Change this to @private and drop the line below.
       '@type {' + @type.output() + '}'
       '@private'
 
