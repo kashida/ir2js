@@ -11,8 +11,7 @@
 
 
 ::TokenList
-  orig\%.TokenList\?
-  @list+\A.<%.BlockMarker|s>\ orig ? orig.list : []
+  @list+\A.<!%.BlockMarker|s>\ []
   @prevLines+\A.<s>\ []
   @nextLines+\A.<s>\ []
   @params&\A\

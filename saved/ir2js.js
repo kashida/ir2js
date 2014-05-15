@@ -1175,8 +1175,28 @@ var LineTransformer = function(context, input) {
    * @private
    */
   this._input = input;
+  // TODO: This field is not used -- only 's' is set and LineParser pre-parses
+  //     for a separator.
+  // '' for unknown (or statement).
+  // 'p' for param line.
+  // 's' for separator.
+  // 't' for type.
+  // 'm' for marker.
+  /**
+   * @type {string}
+   * @private
+   */
+  this._grammar = ('');
 };
 LineTransformer.prototype._classname = 'LineTransformer';
+/** @type {string} */
+LineTransformer.prototype.grammar;
+LineTransformer.prototype.__defineGetter__('grammar', function() {
+return this._grammar;
+});
+LineTransformer.prototype.__defineSetter__('grammar', function(value) {
+this._grammar = value;
+});
 
 /**
  * @param {string} name
@@ -1213,7 +1233,7 @@ LineTransformer.prototype.type = function(type_name) {
 LineTransformer.prototype.parentCall = function(args) {
   var self = this;
   var end;
-  end = args.isEmpty ? ')' : [', ', args, ')'];
+  end = !args ? ')' : [', ', args, ')'];
   if (self._context.isCtor) {
     return [self._context.cls.ctor.parentName() + '.call(this', end];
   }
@@ -1229,6 +1249,64 @@ LineTransformer.prototype.parentCall = function(args) {
     error(self._input, 'parent call appeared in non-ctor / non-method.');
     return ['^(', args, ')'];
   }
+};
+
+/**
+ * @param {string} type
+ * @return {!parser.BlockMarker}
+ */
+LineTransformer.prototype.marker = function(type) {
+  var self = this;
+  return new parser.BlockMarker(type);
+};
+
+/**
+ * @param {string} name
+ * @param {boolean} member
+ * @param {string} access
+ * @param {string} type
+ * @param {string} marker
+ * @param {Array} init
+ * @return {!parser.ParamLine}
+ */
+LineTransformer.prototype.paramLine = function(name, member, access, type, marker, init) {
+  var self = this;
+  return new parser.ParamLine(
+    name,
+    member,
+    access,
+    self.type(type),
+    marker,
+    new parser.TokenListBuilder(init, self).build()
+  );
+};
+
+/**
+ * @param {Array|Object|string} line
+ * @return {Function}
+ */
+LineTransformer.prototype.prepend = function(line) {
+  var self = this;
+  return (
+  /** @param {parser.TokenList} tokens */
+  function(tokens) {
+    tokens.prepend(new parser.TokenListBuilder(line, self).build());
+    return '';
+  });
+};
+
+/**
+ * @param {Array|Object|string} line
+ * @return {Function}
+ */
+LineTransformer.prototype.append = function(line) {
+  var self = this;
+  return (
+  /** @param {parser.TokenList} tokens */
+  function(tokens) {
+    tokens.append(new parser.TokenListBuilder(line, self).build());
+    return '';
+  });
 };
 /*
 Pseudo member is a place holder for class members that don't exist, but there
@@ -1501,6 +1579,7 @@ Param.prototype.outputInit = function(out) {
 
   if (self.isMember) {
     out.prefixLines = out.prefixLines.concat(docLines([
+      // TODO: Change this to @private and drop the line below.
       '@type {' + self._type.output() + '}',
       '@private'
     ]));
@@ -3769,7 +3848,7 @@ parser.Target.prototype._classname = 'parser.Target';
 
 /**
  * @param {!Array.<input.Line>|string} line
- * @param {LineTransformer=} xformer
+ * @param {LineTransformer} xformer
  * @param {boolean=} show_error_line
  * @return {?parser.Result}
  */
@@ -3788,20 +3867,15 @@ parser.Target.prototype.run = function(line, xformer, show_error_line) {
   try {
     var result;
     result = _parser.parse(lines, {
-      'startRule': self._rule
+      'startRule': self._rule,
+      'xformer': xformer
     });
   }
-      //xformer: xformer
   catch (e) {
     throw self._addContextLines(e, line);
   }
 
-  var b;
-  b = new parser.TokenListBuilder(result);
-  if (xformer) {
-    b.xformer = xformer;
-  }
-  return b.result(line);
+  return new parser.TokenListBuilder(result, xformer).result();
 };
 
 /**
@@ -3866,18 +3940,17 @@ parser.BlockMarker.prototype.toString = function() {
 
 
 /**
- * @param {parser.TokenList=} orig
  * @constructor
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-parser.TokenList = function(orig) {
+parser.TokenList = function() {
   var self = this;
   /**
-   * @type {Array.<parser.BlockMarker|string>}
+   * @type {Array.<!parser.BlockMarker|string>}
    * @private
    */
-  this._list = (orig ? orig.list : []);
+  this._list = ([]);
   /**
    * @type {Array.<string>}
    * @private
@@ -3888,18 +3961,6 @@ parser.TokenList = function(orig) {
    * @private
    */
   this._nextLines = ([]);
-  // '' for unknown (or statement).
-  // 'c' for current package ref.
-  // 'e' for parent call.
-  // 'p' for param line.
-  // 's' for separator.
-  // 't' for type.
-  // 'm' for marker.
-  /**
-   * @type {string}
-   * @private
-   */
-  this._grammar = ('');
   /**
    * @type {Array}
    * @private
@@ -3907,7 +3968,7 @@ parser.TokenList = function(orig) {
   this._params = (null);
 };
 parser.TokenList.prototype._classname = 'parser.TokenList';
-/** @type {Array.<parser.BlockMarker|string>} */
+/** @type {Array.<!parser.BlockMarker|string>} */
 parser.TokenList.prototype.list;
 parser.TokenList.prototype.__defineGetter__('list', function() {
 return this._list;
@@ -3921,14 +3982,6 @@ return this._prevLines;
 parser.TokenList.prototype.nextLines;
 parser.TokenList.prototype.__defineGetter__('nextLines', function() {
 return this._nextLines;
-});
-/** @type {string} */
-parser.TokenList.prototype.grammar;
-parser.TokenList.prototype.__defineGetter__('grammar', function() {
-return this._grammar;
-});
-parser.TokenList.prototype.__defineSetter__('grammar', function(value) {
-this._grammar = value;
 });
 /** @type {Array} */
 parser.TokenList.prototype.params;
@@ -3966,6 +4019,9 @@ parser.TokenList.prototype.add = function(args) {
   for (; i < arguments.length; i++) {
     var arg;
     arg = arguments[i];
+    if (!arg) {
+      continue;
+    }
 
     // Recursive cases.
     if (arg instanceof parser.TokenList) {
@@ -4023,7 +4079,9 @@ parser.TokenList.prototype.prepend = function(line) {
     self._prevLines = self._prevLines.concat(line.prevLines);
     self._nextLines = self._nextLines.concat(line.nextLines);
   }
-  self._prevLines.push(line.toString());
+  var str;
+  str = line.toString();
+  str && self._prevLines.push(str);
   return self;
 };
 
@@ -4034,7 +4092,9 @@ parser.TokenList.prototype.append = function(line) {
     self._prevLines = self._prevLines.concat(line.prevLines);
     self._nextLines = self._nextLines.concat(line.nextLines);
   }
-  self._nextLines.push(line.toString());
+  var str;
+  str = line.toString();
+  str && self._nextLines.push(str);
   return self;
 };
 
@@ -4144,12 +4204,12 @@ parser.ParamLine.prototype.toString = function() {
 };
 /**
  * @param {parser.TokenList|Array|Object|string} parsed
- * @param {LineTransformer=} opt_xformer
+ * @param {LineTransformer} xformer
  * @constructor
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-parser.TokenListBuilder = function(parsed, opt_xformer) {
+parser.TokenListBuilder = function(parsed, xformer) {
   var self = this;
   /**
    * @type {parser.TokenList|Array|Object|string}
@@ -4160,38 +4220,24 @@ parser.TokenListBuilder = function(parsed, opt_xformer) {
    * @type {LineTransformer}
    * @private
    */
-  this._xformer = opt_xformer === undefined ? (null) : opt_xformer;
+  this._xformer = xformer;
   /**
    * @type {parser.TokenList}
    * @private
    */
-  this._tokens = (null);
+  this._tokens = (new parser.TokenList());
 };
 parser.TokenListBuilder.prototype._classname = 'parser.TokenListBuilder';
-/** @type {LineTransformer} */
-parser.TokenListBuilder.prototype.xformer;
-parser.TokenListBuilder.prototype.__defineGetter__('xformer', function() {
-return this._xformer;
-});
-parser.TokenListBuilder.prototype.__defineSetter__('xformer', function(value) {
-this._xformer = value;
-});
 
 /** @return {parser.TokenList} */
 parser.TokenListBuilder.prototype.build = function() {
   var self = this;
-  if (!self._tokens) {
-    self._tokens = new parser.TokenList();
-    self._buildRec(self._parsed);
-  }
+  self._buildRec(self._parsed);
   return self._tokens;
 };
 
-/**
- * @param {!Array.<input.Line>} line
- * @return {parser.Result}
- */
-parser.TokenListBuilder.prototype.result = function(line) {
+/** @return {parser.Result} */
+parser.TokenListBuilder.prototype.result = function() {
   var self = this;
   self.build();
   return new parser.Result(self._tokens);
@@ -4203,8 +4249,17 @@ parser.TokenListBuilder.prototype.result = function(line) {
  */
 parser.TokenListBuilder.prototype._buildRec = function(data) {
   var self = this;
+  if (data instanceof parser.ParamLine) {
+    // TODO: Drop this renaming vars if possible.
+    var t;
+    t = self._tokens;
+    self._tokens = data;
+    self._tokens.add(t);
+    return;
+  }
+
   if (data instanceof parser.TokenList) {
-    self._addTokens(data);
+    self._tokens.add(data);
     return;
   }
 
@@ -4213,8 +4268,13 @@ parser.TokenListBuilder.prototype._buildRec = function(data) {
     return;
   }
 
-  if (data instanceof Object) {
-    self._addObject(data);
+  if (data instanceof parser.BlockMarker) {
+    self._tokens.add(data);
+    return;
+  }
+
+  if (data instanceof Function) {
+    self._tokens.add(data(self._tokens));
     return;
   }
 
@@ -4222,15 +4282,6 @@ parser.TokenListBuilder.prototype._buildRec = function(data) {
   if (data) {
     self._tokens.add(data);
   }
-};
-
-/**
- * @param {parser.TokenList} data
- * @private
- */
-parser.TokenListBuilder.prototype._addTokens = function(data) {
-  var self = this;
-  self._tokens.add(data);
 };
 
 /**
@@ -4244,99 +4295,6 @@ parser.TokenListBuilder.prototype._addArray = function(data) {
   function(elem) {
     self._buildRec(elem);
   });
-};
-
-/**
- * @param {Object} data
- * @private
- */
-parser.TokenListBuilder.prototype._addObject = function(data) {
-  var self = this;
-  if (data.g) {
-    var p;
-    p = data.params;
-    switch (data.g) {
-      case 'c':;
-      var str;
-      str = p['percents'] + '.' + p.name;
-      self._tokens.add(self.xformer ? self.xformer.pkgRef(str) : str);
-      break;
-
-      case 'e':;
-      var args_tokens;
-      args_tokens = new parser.TokenListBuilder(p.args, self.xformer).build();
-      self._tokens.add(self.xformer ? (
-        self.xformer.parentCall(args_tokens)
-      ) : (
-        ['^(', args_tokens, ')']
-      ));
-      break;
-
-      case 'm':;
-      self._tokens.add(new parser.BlockMarker(p.type));
-      break;
-
-      case 'p':;
-      var t;
-      t = self._tokens;
-      self._tokens = new parser.ParamLine(
-        p.name,
-        p.member,
-        p.access,
-        new parser.ParamLineBuilder(p.type, self.xformer).build().toString(),
-        p.marker,
-        new parser.TokenListBuilder(p.init, self.xformer).build()
-      );
-      self._tokens.add(t);
-      break;
-
-      case 's':;
-      self._tokens.grammar = 's';
-      break;
-
-      case 't':;
-      self.addTypeObject(p);
-      break;
-    }
-  }
-
-  if (data.t) {
-    self._tokens.add(new parser.TokenListBuilder(data.t, self.xformer).build());
-  }
-  if (data.p) {
-    self._tokens.prepend(new parser.TokenListBuilder(data.p, self.xformer).build());
-  }
-  if (data.a) {
-    self._tokens.append(new parser.TokenListBuilder(data.a, self.xformer).build());
-  }
-};
-
-/** @param {Object} params */
-parser.TokenListBuilder.prototype.addTypeObject = function(params) {
-  var self = this;
-  self._tokens.add(self.xformer ? self.xformer.cast(params.type) : params.tokens);
-};
-
-
-/**
- * @param {parser.TokenList|Array|Object|string} parsed
- * @param {LineTransformer=} xformer
- * @constructor
- * @extends {parser.TokenListBuilder}
- * @struct
- * @suppress {checkStructDictInheritance}
- */
-parser.ParamLineBuilder = function(parsed, xformer) {
-  var self = this;
-  parser.TokenListBuilder.call(this, parsed, xformer);
-};
-goog.inherits(parser.ParamLineBuilder, parser.TokenListBuilder);
-parser.ParamLineBuilder.prototype._classname = 'parser.ParamLineBuilder';
-
-/** @param {Object} params */
-parser.ParamLineBuilder.prototype.addTypeObject = function(params) {
-  var self = this;
-  self._tokens.add(self.xformer ? self.xformer.type(params.type) : params.tokens);
 };
 /**
  * @param {FileScope} scope
