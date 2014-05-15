@@ -3,6 +3,17 @@
 => value
 #=
 return;
-return value;
+return (value);
 #}
 
+#{: prevent return in a line by itself
+=> ##
+  p\s\$
+  something()
+#=
+return (
+/** @param {string} p */
+function(p) {
+  something();
+});
+#}

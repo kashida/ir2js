@@ -590,7 +590,13 @@ ContinueStatement = 'continue'
 BreakStatement = 'break'
 
 ReturnStatement
-  = '=>' _ value:Expression? { return value ? ['return ', value] : 'return'; }
+  = '=>' _ value:Expression? {
+      // When there's a value, we need to add parenthesis so that
+      // => ##
+      // pattern will not produce a "return" in a line by itself (which will
+      // be interpreted as no-value return statement).
+      return value ? ['return (', value, ')'] : 'return';
+    }
 
 SwitchStatement
   = 'switch' _ expr:Expression { return ['switch (', expr, ')']; }

@@ -103,7 +103,7 @@ classname.prototype._classname = 'classname';
 classname.prototype.member;
 classname.prototype.__defineGetter__('member', function() {
   var self = this;
-  return '';
+  return ('');
 });
 classname.prototype.__defineSetter__('member', function(value) {
   var self = this;
@@ -182,7 +182,7 @@ classname.prototype._classname = 'classname';
 classname.prototype.member;
 classname.prototype.__defineGetter__('member', function() {
   var self = this;
-  return '';
+  return ('');
 });
 classname.prototype.__defineSetter__('member', function(v) {
   var self = this;
@@ -223,7 +223,7 @@ classname.prototype.__defineSetter__('member', function(v) {
 });
 classname.prototype.__defineGetter__('member', function() {
   var self = this;
-  return '';
+  return ('');
 });
 {
   cls:[
