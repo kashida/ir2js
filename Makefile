@@ -9,6 +9,7 @@ TEST_RULES=BlockLine,BlockMarker,ParseLine,FunctionBlockLine,Expression,Statemen
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
 JS_SRCS_WITH_TEST=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))
 JS_SRCS=$(filter-out */TestCase.ir,$(JS_SRCS_WITH_TEST))
+PEGJS_SRCS=src/parser/init.js $(wildcard src/parser/*.pegjs)
 
 TESTS=$(wildcard test/*.test)
 
@@ -119,14 +120,15 @@ compiled/parser_main.js: $(PARSER_TEST_SRCS) src/parser/test.js $(PACKAGES_FILE)
 	@echo '===== CAT parser_main'
 	cat $(PACKAGES_FILE) $^ > $@
 
-compiled/syntax.js: src/parser/syntax.pegjs
+compiled/syntax.pegjs: $(PEGJS_SRCS)
 	@echo '===== PEGJS syntax'
 	@mkdir -p compiled
+	cat $^ > compiled/syntax.pegjs
+
+compiled/syntax.js: compiled/syntax.pegjs
 	$(PEGJS) --allowed-start-rules ParseLine $^ $@
 
-compiled/syntax_test.js: src/parser/syntax.pegjs
-	@echo '===== PEGJS syntax'
-	@mkdir -p compiled
+compiled/syntax_test.js: compiled/syntax.pegjs
 	$(PEGJS) --allowed-start-rules $(TEST_RULES) $^ $@
 
 
