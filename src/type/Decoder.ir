@@ -6,6 +6,7 @@
 
 :@process
   @decoded = @pkg.replaceStr(@type)
+  // TODO: Drop this.
   [#].forEach(##)
     ['\\bb\\b', 'boolean']
     ['\\bf\\b', 'function']

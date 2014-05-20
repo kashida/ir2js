@@ -69,11 +69,11 @@ TestFile.prototype.run_test = function(line, expected) {
     }
 
     console.error('[FAIL] error for ' + this.rule_name);
-    // TODO: contextLines doesn't seem to exist in e...
-    throw e;
-    e.contextLines.forEach(function(line, i) {
-      console.error((i == 0 ? 'I: ' : '   ') + line)
-    });
+    if (e.contextLines) {
+      e.contextLines.forEach(function(line, i) {
+        console.error((i == 0 ? 'I: ' : '   ') + line)
+      });
+    }
     console.error('E: ' + e.message)
     throw e;
   }

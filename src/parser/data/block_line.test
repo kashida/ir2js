@@ -1,7 +1,10 @@
 :BlockLine
 annotation\s\$
+  annotation\string\$
 @indent\n\ -1
+  @indent\number\ -1
 @param\s\
+  @param\string\
 --
 // abcd.
 abc: def
@@ -11,3 +14,4 @@ abc: def
 
 :FunctionBlockLine
 @param\s\
+  @param\string\

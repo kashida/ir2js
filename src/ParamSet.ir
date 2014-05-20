@@ -13,7 +13,7 @@
   @block\IndentBlock\$
   @isCtor\b\? false
   @params\A.<!Param>\ []
-  @returnType\type.Decoder\
+  @returnType\s\ ''
 
 :transform
   param_done := false
@@ -41,7 +41,7 @@
     if index != 0 || @context.isFileScope
       => null
     // could be the return type.
-    => @tryReturnType(line.str)
+    => @tryReturnType(line)
 
   @params.push(p)
   if p.isMember
@@ -49,17 +49,17 @@
   => p
 
 :@tryReturnType\b\
-  line\s\$
-  re := /^\s*\\(.*)\\\s*$/.exec(line)
+  line\CodeLine\$
+  re := /^\s*\\(.*)\\\s*$/.exec(line.str)
   if !re
     => false
-  @returnType = &type.Decoder(@context.pkg, re[1])
+  @returnType = line.parsed.tokens.str
   => true
 
 :setReturnType
   return_type\s\$
   if return_type
-    @returnType = &type.Decoder(@context.pkg, return_type)
+    @returnType = &type.Decoder(@context.pkg, return_type).output()
 
 :isEmpty\b\
   => @params.length == 0
@@ -89,7 +89,7 @@
     s\s\$
     => !!s
   if @returnType
-    result.push('@return {' + @returnType.output() + '}')
+    result.push('@return {' + @returnType + '}')
   => result
 
 :outputParams\s\

@@ -14,7 +14,6 @@
   @list+\A.<!%.BlockMarker|s>\ []
   @prevLines+\A.<s>\ []
   @nextLines+\A.<s>\ []
-  @params&\A\
 
 :isEmpty+\b\
   if @prevLines.length || @nextLines.length
@@ -84,6 +83,13 @@
 
 :toString\s\
   => @list.join('')
+
+String representation of the token list. Works only if there is no marker.
+:str+\s\
+  => # + # + #
+    @prevLines.join('')
+    @list.join('')
+    @nextLines.join('')
 
 
 ::ParamLine <%.TokenList

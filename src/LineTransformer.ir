@@ -16,12 +16,14 @@
   => @context.pkg.replace(name)
 
 :cast\s\
-  type_name\s\$
-  => '/** @type {' + &type.Decoder(@context.pkg, type_name).output() + '} */'
+  type_name\A\$
+  => '/** @type {' + &type.Decoder(@context.pkg, #).output() + '} */'
+    &parser.TokenListBuilder(type_name, @).build().str
 
 :type\s\
-  type_name\s\$
-  => &type.Decoder(@context.pkg, type_name).output()
+  type_name\A\$
+  => &type.Decoder(@context.pkg, #).output()
+    &parser.TokenListBuilder(type_name, @).build().str
 
 :parentCall\!A\
   args\parser.TokenList\$
@@ -46,14 +48,14 @@
   name\s\$
   member\b\$
   access\s\$
-  type\s\$
+  type\A\$
   marker\s\$
   init\A\$
   => &parser.ParamLine(#)
     name
     member
     access
-    @.type(type)
+    &parser.TokenListBuilder(type, @).build().str
     marker
     &parser.TokenListBuilder(init, @).build()
 

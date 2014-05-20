@@ -3,7 +3,7 @@
 
 ParamLine
   = member:'@'? _ name:Identifier _ access:[+*&]?  _
-    type:TypeLiteral marker:[$\?]?
+    type:TypeLiteral marker:[$?~]?
     init:(_ ConditionalExpression)? {
       return $.paramLine(
           name, !!member, access || '', type, marker || '', init);

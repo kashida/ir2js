@@ -38,5 +38,3 @@ UnicodeLetter = Lu / Ll / Lt / Lm / Lo / Nl
 UnicodeCombiningMark = Mn / Mc
 UnicodeDigit = Nd
 UnicodeConnectorPunctuation = Pc
-
-

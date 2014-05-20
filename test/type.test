@@ -1,8 +1,8 @@
 #{: anonymous function param types
 abc(##)
-  \boolean\
-  param0\string\$
-  param1\number\$
+  \b\
+  param0\s\$
+  param1\n\$
   body0
   body1
 #=
@@ -23,7 +23,7 @@ abc(##)
   \b\
   param0\s\$
   param1\n\$
-  param2\O.<s,s>\?
+  param2\O<s,s>\?
   param3\F\?
   body0
   body1
@@ -32,8 +32,8 @@ abc(
 /**
  * @param {string} param0
  * @param {number} param1
- * @param {Object.<string,string>=} param2
- * @param {Function=} param3
+ * @param {!Object.<string,string>=} param2
+ * @param {!Function=} param3
  * @return {boolean}
  */
 function(param0, param1, param2, param3) {
@@ -44,16 +44,16 @@ function(param0, param1, param2, param3) {
 
 #{ global function param types
 :::func_name = ##
-  param0\string\$
-  param1\number\? value
-  param2\!Test\?
+  param0\s\$
+  param1\n\? value
+  param2\Test|-\?
   a := param0
   c := param1
 #=
 var func_name = /**
  * @param {string} param0
  * @param {number=} opt_param1
- * @param {!Test=} param2
+ * @param {!Test|null=} param2
  */
 function(param0, opt_param1, param2) {
   var param1 = opt_param1 === undefined ? (value) : opt_param1;
@@ -66,16 +66,16 @@ function(param0, opt_param1, param2) {
 
 #{[some.package] special arg types
 ::func_name = ##
-  p0\string\$
-  p1\!%.SomeClass\?
-  p2\!number\?
+  p0\s\$
+  p1\%.SomeClass|-\?
+  p2\n|-\?
   p3\RegExp\?
 #=
 some.package.func_name = /**
  * @param {string} p0
- * @param {!some.package.SomeClass=} p1
- * @param {!number=} p2
- * @param {RegExp=} p3
+ * @param {!some.package.SomeClass|null=} p1
+ * @param {number|null=} p2
+ * @param {!RegExp=} p3
  */
 function(p0, p1, p2, p3) {
 };
@@ -85,7 +85,7 @@ function(p0, p1, p2, p3) {
 ::classname
 
 :methodname1
-  param_a\string\$
+  param_a\s\$
   param_b\Test\? init_val
 
 :@methodname2
@@ -102,7 +102,7 @@ classname.prototype._classname = 'classname';
 
 /**
  * @param {string} param_a
- * @param {Test=} opt_param_b
+ * @param {!Test=} opt_param_b
  */
 classname.prototype.methodname1 = function(param_a, opt_param_b) {
   var self = this;
@@ -159,8 +159,8 @@ classname.prototype._classname = 'classname';
 
 #{ class ctor param types
 ::classname
-  param_a\string\$
-  param_b\number\? init_val
+  param_a\s\$
+  param_b\n\? init_val
 #=
 /**
  * @param {string} param_a
@@ -190,8 +190,8 @@ classname.prototype._classname = 'classname';
 
 #{ member types
 ::classname
-  @param_a\string\ init_val
-  @param_b\number\
+  @param_a\s\ init_val
+  @param_b\n\
 #=
 /**
  * @constructor
@@ -222,8 +222,8 @@ classname.prototype._classname = 'classname';
 
 #{ types with param init members 
 ::classname
-  @param_a\string\$
-  @param_b\number\? init_val
+  @param_a\s\$
+  @param_b\n\? init_val
 #=
 /**
  * @param {string} param_a
@@ -256,7 +256,7 @@ classname.prototype._classname = 'classname';
 
 #{ read only accessor
 ::classname
-  @param+\string\
+  @param+\s\
 #=
 /**
  * @constructor
@@ -289,7 +289,7 @@ return this._param;
 
 #{ read / write
 ::classname
-  @param0&\string\
+  @param0&\s\
   @param1&\Test\
 #=
 /**
@@ -301,7 +301,7 @@ var classname = function() {
   var self = this;
   /** @private {string} */
   this._param0 = (null);
-  /** @private {Test} */
+  /** @private {!Test} */
   this._param1 = (null);
 };
 classname.prototype._classname = 'classname';
@@ -313,7 +313,7 @@ return this._param0;
 classname.prototype.__defineSetter__('param0', function(value) {
 this._param0 = value;
 });
-/** @type {Test} */
+/** @type {!Test} */
 classname.prototype.param1;
 classname.prototype.__defineGetter__('param1', function() {
 return this._param1;
@@ -336,9 +336,9 @@ this._param1 = value;
 #}
 
 #{: cast
-a = \bool\(b)
-a = \funciton(number):string\(b)
+a = \b\(b)
+a = \f(n):s\(b)
 #=
-a = /** @type {bool} */(b);
-a = /** @type {funciton(number):string} */(b);
+a = /** @type {boolean} */(b);
+a = /** @type {function(number):string} */(b);
 #}

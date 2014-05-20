@@ -1,22 +1,67 @@
 :TypeLiteralLine
-\abc\
+\u|b|s|n|*\
+  \undefined|boolean|string|number|*\
+\f\
+  \!Function\
+\f()|f():s\
+  \function()|function():string\
+\f(n)|f(n,b)|f(abc,def):s\
+  \function(number)|function(number,boolean)|function(!abc,!def):string\
+\A|A<n>\
+  \!Array|!Array.<number>\
+\O|O<n>|O<n,s>\
+  \!Object|!Object.<string,number>|!Object.<number,string>\
+\{}|{abc:n}|{abc:n,def:ghi}\
+  \{}|{abc:number}|{abc:number,def:!ghi}\
+\-\
+  \null\
+\f(-, -):-|A<->|O<-,->|{abc:-,def:-}\
+  \function(null,null):null|!Array.<null>|!Object.<null,null>|{abc:null,def:null}\
+\Element|abcdef|abc.def.ghi\
+  \!Element|!abcdef|!abc.def.ghi\
+\Element|abc|n|A|-\
+  \!Element|!abc|number|!Array|null\
+\f()|{}|-\
+  \function()|{}|null\
+\f(a,b?)|f(n?)\
+  \function(!a,boolean=)|function(number=)\
+\f(s,a~)|f(b~)\
+  \function(string,...!a)|function(...boolean)\
 
 :!
+\abc-\
 \ab\cde\
+\Array\
+\Object\
+\boolean\
+\string\
+\number\
+\undefined\
+\function\
+\null\
+\A.<n>\
+\A<>\
+\O.<n,n>\
+\O<n,n,n>\
+\{abc}\
 
 :Expression
-\boolean\ ( 0 )
+\b\ ( 0 )
   \boolean\(0)
 
 :ParamLine
-ab\number\$
-@ab+\number\?
+ab\n\$
+  ab\number\$
+@ab+\n\?
+  @ab+\number\?
 @indent\n\ -1
+  @indent\number\ -1
 @param\s\
+  @param\string\
 
 :!
 @\ab\
 
 :ParseLine
 \s\ (@code.length ? @code[0] : '')
-  \s\(self._code.length ? self._code[0] : '')
+  \string\(self._code.length ? self._code[0] : '')

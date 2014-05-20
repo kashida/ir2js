@@ -57,7 +57,7 @@ function(param0, opt_param1) {
   func(##)
     \s\
     param2\n|s\$
-    param3\A.<s>\? []
+    param3\A<s>\? []
     do_something()
     a := param0
   c := param1
@@ -72,7 +72,7 @@ function(param0, opt_param1) {
   func(
   /**
    * @param {number|string} param2
-   * @param {Array.<string>=} opt_param3
+   * @param {!Array.<string>=} opt_param3
    * @return {string}
    */
   function(param2, opt_param3) {
