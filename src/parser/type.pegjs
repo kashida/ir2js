@@ -7,7 +7,7 @@ UniversalType = '*'
 
 FunctionType = 'f' _
     params:('(' _ TypeParamList? _ ')')? _
-    ret:(':' _ TypeExpression)?
+    ret:(':' _ TypeAtom)?
     {
       if (!params && !ret) { return '!Function'; }
       var f = ['function', params ? params : '()'];
@@ -16,9 +16,9 @@ FunctionType = 'f' _
     }
 
 TypeParameter
-  = t:TypeExpression _ '~' { return ['...', t]; }
-  / t:TypeExpression _ '?' { return [t, '=']; }
-  / TypeExpression
+  = t:TypeExpressionP _ '~' { return ['...[', t, ']']; }
+  / t:TypeExpressionP _ '?' { return [t, '=']; }
+  / TypeExpressionP
 
 TypeParamList = TypeParameter _ (',' _ TypeParameter)*
 
@@ -35,7 +35,7 @@ ObjectType
     }
   / 'O' { return '!Object'; }
 
-RecordType = '{' _ TypePropertyList? _ '}'
+RecordType = '{' _ TypePropertyList _ '}'
 
 TypeProperty = Identifier _ ':' _ TypeExpression
 
@@ -82,3 +82,7 @@ TypeAtom
   / '(' _ TypeExpression _ ')'
 
 TypeExpression = TypeAtom (_ '|' _ TypeAtom)*
+
+TypeExpressionP = a:TypeAtom x:(_ '|' _ TypeAtom)* {
+      return x.length > 0 ? ['(', a, x, ')'] : a;
+    }

@@ -15,6 +15,8 @@ TESTS=$(wildcard test/*.test)
 
 SORTJS=$(NODE_SAVED) --sort
 
+PLAYPEN_TARGET=$(addprefix compiled/,$(wildcard playpen/*.js))
+
 CLOSURE_ARGS=
 CLOSURE_ARGS+=-jar closure/compiler.jar
 CLOSURE_ARGS+=--externs misc/externs.js
@@ -130,6 +132,18 @@ compiled/syntax.js: compiled/syntax.pegjs
 
 compiled/syntax_test.js: compiled/syntax.pegjs
 	$(PEGJS) --allowed-start-rules $(TEST_RULES) $^ $@
+
+
+############################################################
+# Experiments.
+
+pp: $(PLAYPEN_TARGET)
+
+compiled/playpen/%.js: playpen/%.js
+	@echo '===== PLAYPEN ' $@ ' ====='
+	@mkdir -p compiled/playpen
+	java $(CLOSURE_ARGS) --js_output_file $@ --js $^ || \
+	(rm -f $@ && false)
 
 
 ############################################################

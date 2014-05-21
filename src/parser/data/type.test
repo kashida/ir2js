@@ -7,12 +7,14 @@
   \function()|function():string\
 \f(n)|f(n,b)|f(abc,def):s\
   \function(number)|function(number,boolean)|function(!abc,!def):string\
+\f(n|b,s|-):(n|s)\
+  \function((number|boolean),(string|null)):(number|string)\
 \A|A<n>\
   \!Array|!Array.<number>\
 \O|O<n>|O<n,s>\
   \!Object|!Object.<string,number>|!Object.<number,string>\
-\{}|{abc:n}|{abc:n,def:ghi}\
-  \{}|{abc:number}|{abc:number,def:!ghi}\
+\{abc:n}|{abc:n,def:ghi}\
+  \{abc:number}|{abc:number,def:!ghi}\
 \-\
   \null\
 \f(-, -):-|A<->|O<-,->|{abc:-,def:-}\
@@ -21,12 +23,12 @@
   \!Element|!abcdef|!abc.def.ghi\
 \Element|abc|n|A|-\
   \!Element|!abc|number|!Array|null\
-\f()|{}|-\
-  \function()|{}|null\
+\f()|-\
+  \function()|null\
 \f(a,b?)|f(n?)\
   \function(!a,boolean=)|function(number=)\
 \f(s,a~)|f(b~)\
-  \function(string,...!a)|function(...boolean)\
+  \function(string,...[!a])|function(...[boolean])\
 
 :!
 \abc-\
@@ -44,6 +46,7 @@
 \O.<n,n>\
 \O<n,n,n>\
 \{abc}\
+\{}\
 
 :Expression
 \b\ ( 0 )
