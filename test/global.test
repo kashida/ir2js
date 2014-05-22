@@ -3,6 +3,10 @@
   abc
 #=
   abc;
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ non-method scope
@@ -10,6 +14,10 @@
 #=
 (function() {
 })();
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ non-method scope with statements
@@ -25,6 +33,10 @@
   var c;
   c = d;
 })();
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ global function
@@ -47,6 +59,10 @@ function(param0, opt_param1) {
   var c;
   c = param1;
 };
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ global function with anonymous function
@@ -84,6 +100,10 @@ function(param0, opt_param1) {
   var c;
   c = param1;
 };
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ block string
@@ -98,6 +118,10 @@ var str_name =
   '  line1\n' +
   '\n' +
   'line3\n';
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ code section with no blank line btwn
@@ -108,4 +132,8 @@ var str_name =
 #=
   line1;
   line2;
+{
+  "cls": [],
+  "fns": []
+}
 #}

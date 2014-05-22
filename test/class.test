@@ -11,13 +11,15 @@ var self = this;
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
+      "name": "classname",
+      "args": [],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ parameters
@@ -38,17 +40,18 @@ var classname = function(param_a, opt_param_b) {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-        String
-      ]
+      "name": "classname",
+      "args": [
+        "String",
+        "String"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ members
@@ -70,17 +73,18 @@ var classname = function() {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-        String
-      ]
+      "name": "classname",
+      "args": [
+        "String",
+        "String"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ param init members 
@@ -108,18 +112,19 @@ var classname = function(param_a, opt_param_b, opt_param_c) {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-        String
-        String
-      ]
+      "name": "classname",
+      "args": [
+        "String",
+        "String",
+        "String"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ multiple classes
@@ -149,21 +154,26 @@ var self = this;
 };
 Class2.prototype._classname = 'Class2';
 {
-  cls:[
+  "cls": [
     {
-      name:Class1
-      methods:[
+      "name": "Class1",
+      "args": [],
+      "methods": [
         {
-          name:method
+          "name": "method",
+          "args": [],
+          "methods": []
         }
       ]
-    }
+    },
     {
-      name:Class2
+      "name": "Class2",
+      "args": [],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ default class name
@@ -179,11 +189,13 @@ var self = this;
 };
 FileName.prototype._classname = 'FileName';
 {
-  cls:[
+  "cls": [
     {
-      name:FileName
+      "name": "FileName",
+      "args": [],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}

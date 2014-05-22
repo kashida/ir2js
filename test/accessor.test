@@ -14,16 +14,17 @@ var classname = function() {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-      ]
+      "name": "classname",
+      "args": [
+        "String"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ getter and setter
@@ -66,18 +67,19 @@ classname.prototype.__defineSetter__('param2', function(value) {
 this._param2 = value;
 });
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-        String
-        String
-      ]
+      "name": "classname",
+      "args": [
+        "String",
+        "String",
+        "String"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ overriding getter and setter
@@ -110,16 +112,17 @@ classname.prototype.__defineSetter__('member', function(value) {
   do_something_with(value);
 });
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-      ]
+      "name": "classname",
+      "args": [
+        "String"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ overriding getter only
@@ -149,16 +152,17 @@ classname.prototype.__defineGetter__('member', function() {
   do_something();
 });
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-      ]
+      "name": "classname",
+      "args": [
+        "String"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ accessor w/o member
@@ -189,13 +193,15 @@ classname.prototype.__defineSetter__('member', function(v) {
   do_something_with(v);
 });
 {
-  cls:[
+  "cls": [
     {
-      name:classname
+      "name": "classname",
+      "args": [],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ accessor w/o member flip order
@@ -226,13 +232,15 @@ classname.prototype.__defineGetter__('member', function() {
   return ('');
 });
 {
-  cls:[
+  "cls": [
     {
-      name:classname
+      "name": "classname",
+      "args": [],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{: no method change

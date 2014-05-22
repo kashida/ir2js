@@ -18,6 +18,10 @@
 
 #{ empty file
 #=
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{: blank line as a first line of block

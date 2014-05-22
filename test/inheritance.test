@@ -25,18 +25,19 @@ var classname = function(param_a, opt_param_b) {
 goog.inherits(classname, parent);
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-        String
-      ]
-      parent:parent
+      "name": "classname",
+      "args": [
+        "String",
+        "String"
+      ],
+      "parent": "parent",
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ method call parent
@@ -70,22 +71,24 @@ classname.prototype.method = function(param) {
   parent.prototype.method.call(this, param, '');
 };
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      parent:parent
-      methods:[
+      "name": "classname",
+      "args": [],
+      "parent": "parent",
+      "methods": [
         {
-          name:method
-          args:[
-            String
-          ]
+          "name": "method",
+          "args": [
+            "String"
+          ],
+          "methods": []
         }
       ]
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ super calls with blocks.
@@ -145,23 +148,27 @@ classname.prototype.method2 = function() {
   parent.prototype.method2.call(this);
 };
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      parent:parent
-      methods:[
+      "name": "classname",
+      "args": [],
+      "parent": "parent",
+      "methods": [
         {
-          name:method
-          args:[
-            String
-          ]
-        }
+          "name": "method",
+          "args": [
+            "String"
+          ],
+          "methods": []
+        },
         {
-          name:method2
+          "name": "method2",
+          "args": [],
+          "methods": []
         }
       ]
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}

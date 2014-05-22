@@ -62,6 +62,10 @@ function(param0, opt_param1, param2) {
   var c;
   c = param1;
 };
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{[some.package] special arg types
@@ -79,6 +83,10 @@ some.package.func_name = /**
  */
 function(p0, p1, p2, p3) {
 };
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ method param types
@@ -114,25 +122,29 @@ classname.prototype._methodname2 = function() {
 var self = this;
 };
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      methods:[
+      "name": "classname",
+      "args": [],
+      "methods": [
         {
-          name:methodname1
-          args:[
-            String
-            Test
-          ]
-        }
+          "name": "methodname1",
+          "args": [
+            "String",
+            "Test"
+          ],
+          "methods": []
+        },
         {
-          name:_methodname2
+          "name": "_methodname2",
+          "args": [],
+          "methods": []
         }
       ]
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ class
@@ -148,13 +160,15 @@ var self = this;
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
+      "name": "classname",
+      "args": [],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ class ctor param types
@@ -175,17 +189,18 @@ var classname = function(param_a, opt_param_b) {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-        Number
-      ]
+      "name": "classname",
+      "args": [
+        "String",
+        "Number"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ member types
@@ -207,17 +222,18 @@ var classname = function() {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-        Number
-      ]
+      "name": "classname",
+      "args": [
+        "String",
+        "Number"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ types with param init members 
@@ -241,17 +257,18 @@ var classname = function(param_a, opt_param_b) {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-        Number
-      ]
+      "name": "classname",
+      "args": [
+        "String",
+        "Number"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ read only accessor
@@ -275,16 +292,17 @@ classname.prototype.__defineGetter__('param', function() {
 return this._param;
 });
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-      ]
+      "name": "classname",
+      "args": [
+        "String"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ read / write
@@ -322,17 +340,18 @@ classname.prototype.__defineSetter__('param1', function(value) {
 this._param1 = value;
 });
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        String
-        Test
-      ]
+      "name": "classname",
+      "args": [
+        "String",
+        "Test"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{: cast

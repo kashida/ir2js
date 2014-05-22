@@ -3,6 +3,10 @@
   a(%.call_function())
 #=
   a(abc.def.call_function());
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{[abc.def] up reference
@@ -10,6 +14,10 @@
   a(%%.call_function(), %%%.call_function())
 #=
   a(abc.call_function(), call_function());
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{[abc.def] class
@@ -45,25 +53,26 @@ abc.def.classname.prototype.methodname = function(param) {
   abc.def.path.parent.prototype.methodname.call(this, param, 0);
 };
 {
-  cls:[
+  "cls": [
     {
-      name:abc.def.classname
-      args:[
-        String
-      ]
-      parent:abc.def.path.parent
-      methods:[
+      "name": "abc.def.classname",
+      "args": [
+        "String"
+      ],
+      "parent": "abc.def.path.parent",
+      "methods": [
         {
-          name:methodname
-          args:[
-            Number
-          ]
+          "name": "methodname",
+          "args": [
+            "Number"
+          ],
+          "methods": []
         }
       ]
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{[abc.def] type
@@ -80,6 +89,10 @@ abc.def.func = /**
 function(p0, opt_p1) {
   var p1 = opt_p1 === undefined ? (global.value) : opt_p1;
 };
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{[abc.def] package ref member lookup
@@ -89,4 +102,8 @@ function(p0, opt_p1) {
 #=
   abc.def.varname;
   abc.def.varname;
+{
+  "cls": [],
+  "fns": []
+}
 #}

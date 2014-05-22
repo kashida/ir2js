@@ -23,17 +23,18 @@ var classname = function(param, opt_member) {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        Boolean
-        Boolean
-      ]
+      "name": "classname",
+      "args": [
+        "Boolean",
+        "Boolean"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ blank lines
@@ -59,17 +60,18 @@ var classname = function(param, opt_member) {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        Boolean
-        Boolean
-      ]
+      "name": "classname",
+      "args": [
+        "Boolean",
+        "Boolean"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ multi-line init
@@ -100,17 +102,18 @@ var classname = function(opt_param, opt_member) {
 };
 classname.prototype._classname = 'classname';
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      args:[
-        Number
-        Number
-      ]
+      "name": "classname",
+      "args": [
+        "Number",
+        "Number"
+      ],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ re with param format in it
@@ -135,16 +138,19 @@ Class.prototype.method = function() {
   }
 };
 {
-  cls:[
+  "cls": [
     {
-      name:Class
-      methods:[
+      "name": "Class",
+      "args": [],
+      "methods": [
         {
-          name:method
+          "name": "method",
+          "args": [],
+          "methods": []
         }
       ]
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}

@@ -27,6 +27,10 @@ abc
 /*
 ghi
 */
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ blank lines in global
@@ -50,6 +54,10 @@ def
 /*
 ghi
 */
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ two blank lines
@@ -81,4 +89,8 @@ def
 /*
 ghi
 */
+{
+  "cls": [],
+  "fns": []
+}
 #}

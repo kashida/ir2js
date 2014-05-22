@@ -22,21 +22,26 @@ classname.prototype._methodname_2 = function() {
 var self = this;
 };
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      methods:[
+      "name": "classname",
+      "args": [],
+      "methods": [
         {
-          name:methodname
-        }
+          "name": "methodname",
+          "args": [],
+          "methods": []
+        },
         {
-          name:_methodname_2
+          "name": "_methodname_2",
+          "args": [],
+          "methods": []
         }
       ]
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ parameters
@@ -66,22 +71,24 @@ classname.prototype.methodname = function(param_a, opt_param_b) {
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 {
-  cls:[
+  "cls": [
     {
-      name:classname
-      methods:[
+      "name": "classname",
+      "args": [],
+      "methods": [
         {
-          name:methodname
-          args:[
-            String
-            String
-          ]
+          "name": "methodname",
+          "args": [
+            "String",
+            "String"
+          ],
+          "methods": []
         }
       ]
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{ overriding method
@@ -124,28 +131,31 @@ Classname.prototype._methodname2 = function(param_a, opt_param_b) {
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 {
-  cls:[
+  "cls": [
     {
-      name:Classname
-      parent:Parent
-      methods:[
+      "name": "Classname",
+      "args": [],
+      "parent": "Parent",
+      "methods": [
         {
-          name:methodname
-          args:[
-            String
-            String
-          ]
-        }
+          "name": "methodname",
+          "args": [
+            "String",
+            "String"
+          ],
+          "methods": []
+        },
         {
-          name:_methodname2
-          args:[
-            String
-            String
-          ]
+          "name": "_methodname2",
+          "args": [
+            "String",
+            "String"
+          ],
+          "methods": []
         }
       ]
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}

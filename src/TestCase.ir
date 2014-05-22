@@ -19,7 +19,7 @@
     c.processLines(@input)
     actual_output = c.output()
     if @isGlobal
-      type_str := objStringify(c.types.extract(), true)
+      type_str := JSON.stringify(c.types.extract(), undefined, 2)
       if type_str
         actual_output = actual_output.concat(type_str.split('\n'))
   catch e

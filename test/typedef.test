@@ -4,6 +4,10 @@
 #=
 /** @typedef {boolean|Array.<string>} */
 var short_name;
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{[abc.def] with package name
@@ -12,6 +16,10 @@ var short_name;
 #=
 /** @typedef {boolean|Array.<string>|abc.def.MyClass} */
 abc.def.short_name;
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ type name short-hands
@@ -20,6 +28,10 @@ abc.def.short_name;
 #=
 /** @typedef {boolean|Array.<string>} */
 var short_name;
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ mluti-line
@@ -30,4 +42,8 @@ var short_name;
 #=
 /** @typedef {boolean|Array.<string>|number} */
 var short_name;
+{
+  "cls": [],
+  "fns": []
+}
 #}

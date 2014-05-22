@@ -23,6 +23,10 @@ var def = [
     xxx
   )
 ];
+{
+  "cls": [],
+  "fns": []
+}
 #}
 
 #{ scope levels in global
@@ -44,13 +48,15 @@ Klass.abc = 0;
 var def = 1;
 var ghi = 2;
 {
-  cls:[
+  "cls": [
     {
-      name:Klass
+      "name": "Klass",
+      "args": [],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
 
 #{[zzz] scope levels in a pacakge
@@ -72,11 +78,13 @@ zzz.Klass.abc = 0;
 zzz.def = 1;
 var ghi = 2;
 {
-  cls:[
+  "cls": [
     {
-      name:zzz.Klass
+      "name": "zzz.Klass",
+      "args": [],
+      "methods": []
     }
-  ]
+  ],
+  "fns": []
 }
-
 #}
