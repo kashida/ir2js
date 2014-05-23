@@ -61,6 +61,10 @@ ab\n\$
   @indent\number\ -1
 @param\s\
   @param\string\
+@param\\? abc.def.Ghi(#)
+  @param\!abc.def.Ghi\? new abc.def.Ghi|#p|
+param+\\ Abc(0, true)
+  param+\!Abc\ new Abc(0, true)
 
 :!
 @\ab\

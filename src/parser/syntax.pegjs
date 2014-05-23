@@ -2,7 +2,13 @@
 // Entry points
 
 ParamLine
-  = member:'@'? _ name:Identifier _ access:[+*&]?  _
+  = member:'@'? _ name:Identifier _ access:[+*&]?  _ '\\\\' marker:[$?~]? _
+    type:QualifiedTypeId _ args:Arguments {
+      return $.paramLine(
+          name, !!member, access || '', ['!', type], marker || '',
+          ['new ', type, args]);
+    }
+  / member:'@'? _ name:Identifier _ access:[+*&]?  _
     type:TypeLiteral marker:[$?~]?
     init:(_ ConditionalExpression)? {
       return $.paramLine(

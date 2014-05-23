@@ -59,10 +59,10 @@ TypeIdentifier = !TypeReservedWord n:IdentifierName { return n; }
 
 TypePathComponent = Identifier / '%'+
 
-QualifiedTypeId = (TypePathComponent '.')* TypeIdentifier {
-      //return ['!', $.resolveType(id)];
-      return ['!', text()];
-    }
+QualifiedTypeId = (TypePathComponent '.')* TypeIdentifier
+      //return $.resolveType(id);
+
+NonNullableTypeId = QualifiedTypeId { return ['!', text()]; }
 
 TypeName
   = UndefinedType
@@ -75,7 +75,7 @@ TypeName
   / ArrayType
   / ObjectType
   / RecordType
-  / QualifiedTypeId
+  / NonNullableTypeId
 
 TypeAtom
   = TypeName

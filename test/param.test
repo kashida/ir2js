@@ -154,3 +154,43 @@ Class.prototype.method = function() {
   "fns": []
 }
 #}
+
+#{ shorthand ctor call.
+::classname
+  param+\\? ABC(a + b)
+  @member\\ xyz.ABC(#)
+    a
+    b
+    c
+#=
+/**
+ * @param {!ABC=} opt_param
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+var classname = function(opt_param) {
+  var self = this;
+  var param = opt_param === undefined ? (new ABC(a + b)) : opt_param;
+  /** @private {!xyz.ABC} */
+  this._member = (new xyz.ABC(
+    a,
+    b,
+    c
+  ));
+};
+classname.prototype._classname = 'classname';
+{
+  "cls": [
+    {
+      "name": "classname",
+      "args": [
+        "ABC",
+        "xyz.ABC"
+      ],
+      "methods": []
+    }
+  ],
+  "fns": []
+}
+#}
