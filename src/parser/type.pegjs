@@ -5,7 +5,7 @@ StringType = 's' !Identifier { return 'string'; }
 NumberType = 'n' !Identifier { return 'number'; }
 UniversalType = '*'
 
-FunctionType = 'f' _
+FunctionType = 'f' !Identifier _
     params:('(' _ TypeParamList? _ ')')? _
     ret:(':' _ TypeAtom)?
     {
@@ -23,17 +23,19 @@ TypeParameter
 TypeParamList = TypeParameter _ (',' _ TypeParameter)*
 
 ArrayType
-  = 'A' _ '<' _ e:TypeExpression _ '>' { return ['!Array.<', e, '>']; }
-  / 'A' { return '!Array'; }
+  = 'A' !Identifier _ '<' _ e:TypeExpression _ '>' {
+      return ['!Array.<', e, '>'];
+    }
+  / 'A' !Identifier { return '!Array'; }
 
 ObjectType
-  = 'O' _ '<' _ k:TypeExpression _ ',' _ v:TypeExpression _ '>' {
+  = 'O' !Identifier _ '<' _ k:TypeExpression _ ',' _ v:TypeExpression _ '>' {
       return ['!Object.<', k, ',', v, '>'];
     }
-  / 'O' _ '<' _ v:TypeExpression _ '>' {
+  / 'O' !Identifier _ '<' _ v:TypeExpression _ '>' {
       return ['!Object.<string,', v, '>'];
     }
-  / 'O' { return '!Object'; }
+  / 'O' !Identifier { return '!Object'; }
 
 RecordType = '{' _ TypePropertyList _ '}'
 
