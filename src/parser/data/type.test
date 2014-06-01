@@ -1,6 +1,8 @@
 :TypeLiteralLine
 \u|b|s|n|*\
   \undefined|boolean|string|number|*\
+\ubsn.Ubsn\
+  \!ubsn.Ubsn\
 \f\
   \!Function\
 \f()|f():s\

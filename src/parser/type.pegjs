@@ -1,8 +1,8 @@
-UndefinedType = 'u' { return 'undefined'; }
+UndefinedType = 'u' !Identifier { return 'undefined'; }
 NullType = '-' { return 'null'; }
-BooleanType = 'b' { return 'boolean'; }
-StringType = 's' { return 'string'; }
-NumberType = 'n' { return 'number'; }
+BooleanType = 'b' !Identifier { return 'boolean'; }
+StringType = 's' !Identifier { return 'string'; }
+NumberType = 'n' !Identifier { return 'number'; }
 UniversalType = '*'
 
 FunctionType = 'f' _
