@@ -58,3 +58,7 @@ var x14 = function(a, opt_b) {};
 
 /** @type {function(string,...[!Object])|function(...[boolean])} */
 var x15 = function(a, b) {};
+
+/** @param {string=} opt_arg
+    @param {...!Object} varg */
+var x16 = function(opt_arg, varg) {};

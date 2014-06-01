@@ -28,6 +28,7 @@ abc(##)
   \n\
   param0\s\$
   param1\s\$
+  varg\s\~
   body0
   body1
 #=
@@ -35,9 +36,11 @@ abc(
 /**
  * @param {string} param0
  * @param {string} param1
+ * @param {...string} varg
  * @return {number}
  */
-function(param0, param1) {
+function(param0, param1, varg) {
+  varg = Array.prototype.slice.call(arguments, 2);
   body0;
   body1;
 });

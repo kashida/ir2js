@@ -43,6 +43,7 @@
     // could be the return type.
     => @tryReturnType(line)
 
+  p.index = @params.length
   @params.push(p)
   if p.isMember
     @context.cls.addMember(p.name, p.type, p.accessType)

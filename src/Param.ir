@@ -9,6 +9,7 @@ Function parameter and / or member declarion.
   @success+\b\ false
   @type+\type.Decoder\
   @valueLine+\A.<parser.BlockMarker|s>\
+  @index&\n?\
 
   if !(parsed.tokens instanceof parser.ParamLine)
     =>
@@ -47,12 +48,14 @@ Function parameter and / or member declarion.
   => (@.hasInit ? 'opt_' : '') + @.name
 
 :outputDecl\s\
-  => @type && @.initType != '' ? ([#].join('')) : ''
-    '@param {'
-    @type.output()
-    @.initType == '?' ? '=' : ''
-    '} '
-    @paramName()
+  if !@type || !@.initType
+    => ''
+  typestr := @type.output()
+  if @.initType == '?'
+    typestr += '='
+  if @.initType == '~'
+    typestr = '...' + typestr
+  => '@param {' + typestr + '} ' + @paramName()
 
 :outputParam\s\
   => @.initType == '' ? '' : @paramName()
@@ -62,7 +65,7 @@ Variable initialization output as first statements of function body.
   out\output.Line\$
   pname := @paramName()
 
-  if !@.isMember && !@.hasInit
+  if !@.isMember && !@.hasInit && @.initType != '~'
     =>
 
   if @.isMember
@@ -70,15 +73,23 @@ Variable initialization output as first statements of function body.
       '@private {' + @type.output() + '}'
 
   out.linePrefix = #+
-    @.isMember ? 'this._' : 'var '
+    @.isMember ? 'this._' : (@.initType == '~' ? '' : 'var ')
     @.name
     ' = '
-  if @.initType
+  switch @.initType
+    case '?'
+    case '$'
     out.linePrefix += pname
     if @.hasInit
       out.linePrefix += ' === undefined ? ('
       out.lineSuffix = ') : ' + pname
-  else
+    break
+
+    case '~'
+    out.linePrefix += 'Array.prototype.slice.call(arguments, ' + @.index + ')'
+    break
+
+    default
     out.linePrefix += '('
     out.lineSuffix = ')'
 
