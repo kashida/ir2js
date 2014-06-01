@@ -21,7 +21,7 @@
 #}
 
 #{[abc.def] class
-::classname <%.path.parent
+::classname ^%.path.parent
   @param\s\? %.value
   ^(param)
 

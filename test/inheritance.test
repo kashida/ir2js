@@ -1,5 +1,5 @@
 #{ inheritance
-::classname <parent
+::classname ^parent
   @param_a\s\$
   @param_b\s\? init_val
   do_something()
@@ -41,7 +41,7 @@ classname.prototype._classname = 'classname';
 #}
 
 #{ method call parent
-::classname <parent
+::classname ^parent
   do_something()
   ^(something_else())
 
@@ -92,7 +92,7 @@ classname.prototype.method = function(param) {
 #}
 
 #{ super calls with blocks.
-::classname <parent
+::classname ^parent
   do_something()
   ^(#)
     another_line(##)

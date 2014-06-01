@@ -92,14 +92,14 @@ classname.prototype.methodname = function(param_a, opt_param_b) {
 #}
 
 #{ overriding method
-::Classname <Parent
+::Classname^Parent
   ^()
 
-:<methodname\n\
+:methodname^\n\
   param_a\s\$
   param_b\s\? init_val
 
-:<@methodname2\n\
+:@methodname2^\n\
   param_a\s\$
   param_b\s\? init_val
 #=
