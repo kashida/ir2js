@@ -95,10 +95,12 @@
     error(header, 'accessor marker w/o class')
     => null
   name := re[1]
-  type := re[2]
+  access_type := re[2]
   ret_type := re[4]
+  if ret_type
+    ret_type = &type.Parser(@scope.context, header, ret_type).parse()
   ctx := @scope.copyContext(@scope.context.cls.methodName(name))
-  => &%.Accessor(ctx, name, ret_type, type == '+')
+  => &%.Accessor(ctx, name, ret_type, access_type == '+')
 
 :@createMultiLineStr\%.Str\
   line\s\$
