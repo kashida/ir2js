@@ -1,7 +1,7 @@
 ::TYPE_PARSER = null
 
 ::
-  @context\!context.Context\$
+  @context\context.Context\$
   @input\input.Line\$
   @type_str\s\$
 

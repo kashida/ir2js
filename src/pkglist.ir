@@ -1,8 +1,8 @@
 :
   exports.createPackageList = ##
-    \A.<s>\
+    \A<s>\
     basedir\s\$
-    files\A.<s>\$
+    files\A<s>\$
     pkgs := {}
     files.forEach(##)
       file\s\$

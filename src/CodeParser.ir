@@ -1,12 +1,12 @@
 ::
-  @context\!context.Context\$
+  @context\context.Context\$
   @head\section.Head\$
-  @blocks\A.<IndentBlock>\ []
-  @lastValidLine\CodeLine\
-  @invalidLines\A.<SectionLine>\ []
+  @blocks\A<IndentBlock>\ []
+  @lastValidLine\CodeLine|-\
+  @invalidLines\A<SectionLine>|-\ []
 
 :parse
-  input_lines\A.<input.Line>\$
+  input_lines\A<input.Line>\$
   @process(input_lines)
   if !input_lines.length
     =>
@@ -16,11 +16,11 @@
     'block stack depth: ' + @blocks.length
 
 :@process
-  input_lines\A.<input.Line>\$
+  input_lines\A<input.Line>\$
   first_line_indent := 0
   code_lines := @makeCodeLines(input_lines)
   code_lines.some(##)
-    line\SectionLine\$
+    line\SectionLine|-\$
     if !(line instanceof InvalidLine)
       first_line_indent = line.indent
       => true
@@ -29,7 +29,7 @@
   @head.addBlock(@blocks[0])
   
   code_lines.forEach(##)
-    line\SectionLine\$
+    line\SectionLine|-\$
     i\n\$
     // create blocks and assign lines to them.
     if line instanceof InvalidLine
@@ -55,8 +55,8 @@
   @addInvalidLines()
   @popRest()
 
-:@makeCodeLines\A.<SectionLine>\
-  input_lines\A.<input.Line>\$
+:@makeCodeLines\A<SectionLine>\
+  input_lines\A<input.Line>\$
   cat := &LineCategorizer(@context)
   => input_lines.map(##)
     line\input.Line\$

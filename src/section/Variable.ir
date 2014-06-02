@@ -1,19 +1,19 @@
-::<%.Code
-  @context\!context.Context\$
+::^%.Code
+  @context\context.Context\$
   @line\input.Line\$
   @scopeLevel\n\$
   @isPrivate\b\$
   rhs\s\$
-  @codeLine\CodeLine\
+  @codeLine\CodeLine|-\
   ^()
   code_input := &input.Line(@line.file, rhs, @line.rowIndex)
   @codeLine = &CodeLine(@context, code_input, &LineParser(code_input))
 
-:<close
+:close^
   c := &CodeScope(@context, @)
   c.process(@.lines)
 
-:<transform
+:transform^
   @.blocks.forEach(##)
     block\IndentBlock\$
     if block.hasValidLine

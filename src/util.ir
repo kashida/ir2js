@@ -64,8 +64,8 @@
     => start_str + obj + '\n'
 
 ::docLines = ##
-  \!A.<s>\
-  annotations\!A.<s>\$
+  \A<s>\
+  annotations\A<s>\$
   alist := arrFlatten(annotations)
   if alist.length == 0
     => []

@@ -1,8 +1,8 @@
 Input code section.
 ::
   @header+\%.Line\$
-  @lines+\A.<%.Line>\ []
-  @code&\section.Code\
+  @lines+\A<%.Line>\ []
+  @code&\section.Code|-\
 
 :push
   line\%.Line\$

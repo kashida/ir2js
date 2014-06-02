@@ -5,7 +5,7 @@
 
 ::mergeToFile = ##
   base_dir\s\$
-  in_files\A.<s>\$
+  in_files\A<s>\$
   out_file\s\$
   out := _fs.openSync(out_file, 'w')
 

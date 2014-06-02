@@ -3,7 +3,7 @@
 ::error = ##
   line\input.Line\$
   msg\s\? '*warning*'
-  additional_lines\A.<s>\?
+  additional_lines\A<s>\?
   if OUTPUT_ERROR
     console.error(line.file + ':' + line.lineNo + ': ERROR - ' + msg)
   if additional_lines

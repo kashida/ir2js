@@ -1,8 +1,8 @@
 ::
   @lineNo+\n\$
   @indent+\n\$
-  @head\section.Head\$
-  @lines\A.<SectionLine>\ []
+  @head\section.Head|-\$
+  @lines\A<SectionLine>\ []
   // TODO: type to BlockType when it's enum.
   @marker\n\ BlockType.BLOCK
 
@@ -43,7 +43,7 @@
   => @lines[@lines.length - 1]
 
 :eachLine
-  cb\function(SectionLine, n)\$
+  cb\f(SectionLine, n)\$
   ctxt\O\$
   @lines.forEach(cb, ctxt)
 
@@ -72,7 +72,7 @@ TODO: change marker's type to BlockType when it's enum.
     line\SectionLine\$
     => !(line instanceof InvalidLine)
 
-:output\!output.Block\
+:output\output.Block\
   line_index\n\?
   // find the last valid line.
   last_index := -1

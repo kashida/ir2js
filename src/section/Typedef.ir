@@ -1,8 +1,8 @@
-::<%.Str
-  context\!context.Context\$
+::^%.Str
+  context\context.Context\$
   ^(context)
 
-:output\A.<output.Line>\
+:output\A<output.Line>\
   decoder := &type.Decoder(@.context.pkg, @.strlines().join(''))
   out := &output.Line(@.lines[0])
   out.indent = 0

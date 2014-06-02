@@ -20,7 +20,7 @@ Package name.
     str = str.substr(1)
   // replace "%" with the current package name.
   => str.replace(/^\%(\:\:|\.)/, ##)
-    _\A.<s>\$
+    _\A<s>\$
     connector\s\$
     => pkg ? pkg + connector : ''
 

@@ -2,11 +2,11 @@ Output lines corresponds to one input line.
 ::
   @input\input.Line\$
   @indent&\n\ input.indent
-  @prefixLines&\A.<s>\ []
-  @lines+\!%.Multiline\ &%.Multiline()
+  @prefixLines&\A<s>\ []
+  @lines+\%.Multiline\ &%.Multiline()
   @linePrefix&\s\ ''
   @lineSuffix&\s\ ''
-  @tailComment&\A.<s>\ []
+  @tailComment&\A<s>\ []
 
 :empty+\b\
   => @lines.empty && !@linePrefix && !@lineSuffix
@@ -16,7 +16,7 @@ Output lines corresponds to one input line.
   @lines.appendStr(line)
   @lines.terminateLine()
 
-:output+\A.<s>\
+:output+\A<s>\
   out := &%.IndentedMultiline(@indent)
   out.appendAll(@prefixLines)
   out.appendLine(@linePrefix, false)

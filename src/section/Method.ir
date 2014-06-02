@@ -1,5 +1,5 @@
-::<%.Callable
-  context\!context.Context\$
+::^%.Callable
+  context\context.Context\$
   return_type\s\$
   @overriding\b\$
   context.isMethod = true
@@ -19,7 +19,7 @@
     whitespaces(@.block(0).indent) + 'var self = this;'
     @.outputBody('};')
 
-:<setType
+:setType^
   types\s\$
   @.params.setArgTypes(#)
     types.getCurrentCtor().addMethod(@.context.name.id)

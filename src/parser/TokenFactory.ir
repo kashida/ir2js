@@ -11,9 +11,9 @@
 
 
 ::TokenList
-  @list+\A.<!%.BlockMarker|s>\ []
-  @prevLines+\A.<s>\ []
-  @nextLines+\A.<s>\ []
+  @list+\A<%.BlockMarker|s>\ []
+  @prevLines+\A<s>\ []
+  @nextLines+\A<s>\ []
 
 :isEmpty+\b\
   if @prevLines.length || @nextLines.length
@@ -25,12 +25,11 @@
   => !(@list[0] instanceof %.BlockMarker) && @list[0] == ''
 
 :add\%.TokenList\
-  args\...*\$
-  i := 0
-  for ; i < arguments.length; i++
-    arg := arguments[i]
+  args\*\~
+  args.forEach(##)
+    arg\*\$
     if !arg
-      continue
+      =>
 
     // Recursive cases.
     if arg instanceof %.TokenList
@@ -43,23 +42,23 @@
       arg.nextLines.forEach(##)
         l\s\$
         @nextLines.push(l)
-      continue
+      =>
     if arg instanceof Array
       arg.forEach(##)
         token\A\$
         @.add(token)
-      continue
+      =>
 
     // Always append a marker.
     if arg instanceof %.BlockMarker
       @list.push(arg)
-      continue
+      =>
 
     // Should be a string. Append only if we can't add to the last element.
     last := @list.length - 1
     if !@list.length || @list[last] instanceof %.BlockMarker
       @list.push(arg)
-      continue
+      =>
     @list[last] += arg
   => @
 
@@ -92,7 +91,7 @@ String representation of the token list. Works only if there is no marker.
     @nextLines.join('')
 
 
-::ParamLine <%.TokenList
+::ParamLine ^%.TokenList
   @name+\s\$
   @isMember+\b\$
   @access+\s\$

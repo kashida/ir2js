@@ -1,16 +1,16 @@
 ::
-  @context\!context.Context\$
+  @context\context.Context\$
   @head\section.Head\? &section.Global()
 
 :processLines
-  lines\A.<s>\$
+  lines\A<s>\$
   i := 0
   @.process(lines.map(##))
     line\s\$
     => &input.Line(@context.fileName, line, i++)
 
 :process
-  input_lines\A.<input.Line>\$
+  input_lines\A<input.Line>\$
   &CodeParser(@context, @head).parse(input_lines)
   @head.transform()
 

@@ -1,5 +1,5 @@
 ::
-  @context\!context.Context\$
+  @context\context.Context\$
   @input\input.Line\$
   // TODO: This field is not used -- only 's' is set and LineParser pre-parses 
   //     for a separator.
@@ -25,7 +25,7 @@
   => &type.Decoder(@context.pkg, #).output()
     &parser.TokenListBuilder(type_name, @).build().str
 
-:parentCall\!A\
+:parentCall\A\
   args\parser.TokenList\$
   end := !args ? ')' : [', ', args, ')']
   if @context.isCtor
@@ -40,11 +40,11 @@
     error(@input, 'parent call appeared in non-ctor / non-method.')
     => ['^(', args, ')']
 
-:marker\!parser.BlockMarker\
+:marker\parser.BlockMarker\
   type\s\$
   => &parser.BlockMarker(type)
 
-:paramLine\!parser.ParamLine\
+:paramLine\parser.ParamLine\
   name\s\$
   member\b\$
   access\s\$

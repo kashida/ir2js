@@ -1,13 +1,13 @@
 ::CODE_PARSER = null
 
-::<section.Head
-  @context\!context.Context\$
+::^section.Head
+  @context\context.Context\$
   @input+\input.Line\$
   @lineParsed\LineParser\$
-  @parsed\parser.Result\
-  @continueLines&\!A.<!CodeLine>\ []
-  @param&\Param|b\
-  @matcher\BlockMatcher\
+  @parsed\parser.Result|-\
+  @continueLines&\A<CodeLine>\ []
+  @param&\Param|b|-\
+  @matcher\BlockMatcher|-\
   ^()
 
 :str+\s\

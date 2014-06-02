@@ -1,6 +1,6 @@
-::<%.Callable
-  context\!context.Context\$
-  @parent\s?\?
+::^%.Callable
+  context\context.Context\$
+  @parent\s|-\?
   context.isCtor = true
   ^(context, '')
   @parent = @parent ? @.context.pkg.replace(@parent) : ''
@@ -8,7 +8,7 @@
 :parentName\s\
   => \s\(@parent)
 
-:<transform
+:transform^
   assert(@.numBlocks() == 1, @.lines[0])
   @.params = &ParamSet(@.context, @.block(0), true)
   @.params.transform()
@@ -41,6 +41,6 @@
       "';"
     @.context.cls.outputAccessors()
 
-:<setType
-  types\s\$
+:setType^
+  types\type.Set\$
   @.params.setArgTypes(types.getCurrentCtor())

@@ -5,8 +5,8 @@ conversion.
 ::
   @rule\s\$
 
-:run\?%.Result\
-  line\!A.<input.Line>|s\$
+:run\%.Result\
+  line\A<input.Line>|s\$
   xformer\LineTransformer\$
   show_error_line\b\?
   if !(line instanceof Array)
@@ -26,7 +26,7 @@ conversion.
 
 :@addContextLines
   e\O\$
-  line\!A.<input.Line>\$
+  line\A<input.Line>\$
   e.contextLines = []
   line.forEach(##)
     l\input.Line\$

@@ -38,9 +38,9 @@ Also for tests that are supposed to error:
   @state\s\ ''
   @name\s\ ''
   @packageName\s\ ''
-  @input\A.<s>\ []
-  @output\A.<s>\ []
-  @tests\A.<ir2js.TestCase>\ []
+  @input\A<s>\ []
+  @output\A<s>\ []
+  @tests\A<ir2js.TestCase>\ []
   @isGlobal\b\ false
   @expectError\b\ false
   @failed+\b\ false

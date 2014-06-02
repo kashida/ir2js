@@ -2,10 +2,10 @@ Helper for Line to construct the output.
 ::
   num_indent\n\$
   @indent\s\ whitespaces(num_indent)
-  @lines\!A.<s>\ []
+  @lines\A<s>\ []
   @lastLineOpen\b\ false
 
-:output+\!A.<s>\
+:output+\A<s>\
   => @lines
 
 :appendLine
@@ -22,7 +22,7 @@ Helper for Line to construct the output.
     @lastLineOpen = false
 
 :appendAll
-  lines\!A.<s>\$
+  lines\A<s>\$
   lines.forEach(##)
     line\s\$
     @.appendLine(line)
@@ -30,6 +30,6 @@ Helper for Line to construct the output.
 Lines added as is.
 Block does not share its lines with the surrounding lines.
 :appendBlock
-  block\!A.<s>\$
+  block\A<s>\$
   @lines = @lines.concat(block)
   @lastLineOpen = false

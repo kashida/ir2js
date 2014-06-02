@@ -9,16 +9,16 @@
     'RegExp': 'null'
 
 ::
-  @context\!context.Context\$
+  @context\context.Context\$
   @block\IndentBlock\$
   @isCtor\b\? false
-  @params\A.<!Param>\ []
+  @params\A<Param>\ []
   @returnType\s\ ''
 
 :transform
   param_done := false
   @block.eachLine(##, @context)
-    line\SectionLine\$
+    line\SectionLine|-\$
     i\n\$
     if param_done
       =>
@@ -33,7 +33,7 @@
         param_done = true
     // skip invalid lines and continuation lines.
 
-:@addLine\Param|b\
+:@addLine\Param|b|-\
   line\CodeLine\$
   index\n\$
   p := &Param(@context, @isCtor, line.input, line.parsed)
@@ -68,7 +68,7 @@
 :numParams+\n\
   => @params.length
 
-:paramType\type.Decoder\
+:paramType\type.Decoder|-\
   i\n\$
   => @params[i].type
 
@@ -82,7 +82,7 @@
     p\Param\$
     => !!p.type
 
-:outputDecls\!A.<s>\
+:outputDecls\A<s>\
   result := @params.map(##).filter(##)
     p\Param\$
     => p.outputDecl()
@@ -108,7 +108,7 @@
     => p.outputArgType()
 
 :setArgTypes
-  types\type.Callable\$
+  types\type.Callable|-\$
   @params.forEach(##)
-    p\!Param\$
+    p\Param\$
     types.addArg(p.argtype())

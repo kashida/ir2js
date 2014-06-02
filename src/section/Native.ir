@@ -1,7 +1,7 @@
-::<%.Code
+::^%.Code
   ^()
 
-:output\A.<output.Line>\
+:output\A<output.Line>\
   => @.lines.map(##)
     line\input.Line\$
     out := &output.Line(line)

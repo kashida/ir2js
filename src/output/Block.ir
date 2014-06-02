@@ -1,7 +1,7 @@
 ::
-  @lines\!A.<!%.Line>\ []
+  @lines\A<%.Line>\ []
   // the suffix, if assigned a value, will be inserted after the last nonblank line.
-  @suffix&\s?\
+  @suffix&\s|-\
 
 :appendLine
   line\%.Line\$
@@ -12,7 +12,7 @@
 
 inserts the suffix line to the array passed as a parameter.
 :@addSuffix
-  lines\A.<s>\$
+  lines\A<s>\$
   // find the last non-blank line.
   last_nonblank := -1
   lines.forEach(##)
@@ -25,9 +25,9 @@ inserts the suffix line to the array passed as a parameter.
   else
     lines.splice(last_nonblank + 1, 0, @suffix)
 
-:output+\A.<s>\
+:output+\A<s>\
   lines := @lines.reduce(##, [])
-    prev\A.<s>\$
+    prev\A<s>\$
     line\%.Line\$
     i\n\$
     => prev.concat(line.output)

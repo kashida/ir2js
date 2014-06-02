@@ -1,5 +1,5 @@
 ::
-  @lines+\!A.<!%.Block|s>\ []
+  @lines+\A<%.Block|s>\ []
   @lastLineOpen\b\ false
 
 :empty+\b\
@@ -14,7 +14,7 @@
   @lastLineOpen = true
 
 :appendLines
-  lines\!A.<s>\$
+  lines\A<s>\$
   lines.forEach(##)
     line\s\$
     @.appendStr(line)
@@ -24,6 +24,6 @@
   @lastLineOpen = false
 
 :appendBlock
-  block\!%.Block\$
+  block\%.Block\$
   @lines.push(block)
   @lastLineOpen = false

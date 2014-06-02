@@ -1,15 +1,15 @@
 ::
-  @blocks+\A.<IndentBlock>}\ []
+  @blocks+\A<IndentBlock>\ []
 
 :addBlock
   block\IndentBlock\$
   @blocks.push(block)
 
-:numBlocks\number\
+:numBlocks\n\
   => @blocks.length
 
 :block\IndentBlock\
-  index\number\$
+  index\n\$
   => @blocks[index]
 
 :lastBlock\IndentBlock\

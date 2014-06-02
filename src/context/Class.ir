@@ -1,8 +1,8 @@
 ::
-  @ctor&\section.Constructor\
-  @members\!O.<s, Member>\ {}
+  @ctor&\section.Constructor|-\
+  @members\O<s,Member>\ {}
 
-:name\!%.Name\
+:name\%.Name\
   => @ctor.context.name
 
 :member
@@ -14,17 +14,17 @@
   member\Member\$
   @members[name] = member
 
-:methodName\!%.Name\
+:methodName\%.Name\
   method_name\s\$
   => @.name().property(method_name)
 
-:staticName\!%.Name\
+:staticName\%.Name\
   property_name\s\$
   => @.name().staticProperty(property_name)
 
 :addMember\Member\
   name\s\$
-  type\type.Decoder\$
+  type\type.Decoder|-\$
   access_type\s\$
   is_pseudo\b\? false
   m := &Member(name, type, access_type, is_pseudo)

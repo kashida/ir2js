@@ -41,7 +41,7 @@
 :
   exports.compileFiles = ##
     base_dir\s\$
-    in_files\A.<s>\$
+    in_files\A<s>\$
     out_dir\s\$
     silent\b\? false
     in_files.forEach(##)

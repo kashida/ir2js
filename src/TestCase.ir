@@ -1,8 +1,8 @@
 ::
   @name\s\$
   @packageName\s\$
-  @input\A.<s>\$
-  @output\A.<s>\$
+  @input\A<s>\$
+  @output\A<s>\$
   @isGlobal\b\$
   @expectError\b\$
   @failed+\b\ false
@@ -46,7 +46,7 @@
 
 :@warnWithIndent
   title\s\$
-  content\A.<s>\$
+  content\A<s>\$
   console.log('  ' + title + ':')
   warn_rec := ##
     lines\s|A\$
@@ -62,8 +62,8 @@
   warn_rec(content, 0)
 
 :@makeDiff
-  lines0\A.<s>\$
-  lines1\A.<s>\$
+  lines0\A<s>\$
+  lines1\A<s>\$
   result := []
   lines0.forEach(##)
     line0\s\$

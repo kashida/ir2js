@@ -1,11 +1,11 @@
 Match markers and blocks.
 
 ::
-  @context\!context.Context\$
+  @context\context.Context\$
   @input\input.Line\$
-  @code\A.<!parser.BlockMarker|s>\$
-  @blocks\A.<!IndentBlock>\$
-  @params\A.<!ParamSet>\ []
+  @code\A<parser.BlockMarker|s>\$
+  @blocks\A<IndentBlock>\$
+  @params\A<ParamSet>\ []
   @isBlockStatement+\b\ false
 
 :transform

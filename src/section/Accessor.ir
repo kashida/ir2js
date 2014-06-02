@@ -1,6 +1,6 @@
 Overriding accessor.
-::<%.Callable
-  context\!context.Context\$
+::^%.Callable
+  context\context.Context\$
   @name\s\$
   return_type\s\$
   @isGetter\b\$

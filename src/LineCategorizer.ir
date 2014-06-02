@@ -2,7 +2,7 @@
   CodeLine|SeparatorLine|InvalidLine
 
 ::
-  @context\!context.Context\$
+  @context\context.Context\$
 
 :createLine\SectionLine\
   line\input.Line\$

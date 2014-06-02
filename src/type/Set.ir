@@ -1,9 +1,9 @@
 ::
-  @ctor\%.Callable\
+  @ctor\%.Callable|-\
   @classes\A\ []
   @functs\A\ []
 
-:addCtor\%.Callable\
+:addCtor\%.Callable|-\
   name\s\$
   @ctor = &%.Callable(name)
   @classes.push(@ctor)
@@ -15,7 +15,7 @@
   @functs.push(fn)
   => fn
 
-:getCurrentCtor\%.Callable\
+:getCurrentCtor\%.Callable|-\
   => @ctor
 
 :setParent

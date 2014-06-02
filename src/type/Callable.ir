@@ -1,8 +1,8 @@
 ::
   @name\s\$
   @parent&\s\ ''
-  @methods\A.<%.Callable>\ []
-  @args\A.<s|null>\ []
+  @methods\A<%.Callable>\ []
+  @args\A<s|->\ []
 
 :addMethod
   name\s\$
@@ -11,7 +11,7 @@
   => m
 
 :addArg
-  arg\s|null\$
+  arg\s|-\$
   @args.push(arg)
 
 :extract\O\

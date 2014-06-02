@@ -1,6 +1,6 @@
 Comment section in a file.
 ::
-  @lines\A.<%.Line>\$
+  @lines\A<%.Line>\$
 
 :output
   result := []

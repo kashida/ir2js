@@ -3,7 +3,7 @@
 
 :generate\%.Code\
   header\input.Line\$
-  lines\A.<input.Line>\$
+  lines\A<input.Line>\$
   section := null
   header_line := header.line.substr(1)
   if ![#].some(##)
@@ -28,7 +28,7 @@
     error(header, 'line starts with colon and not a code section marker')
   => section
 
-:@createVariable\%.Variable\
+:@createVariable\%.Variable|-\
   line\s\$
   header\input.Line\$
   re := /^(\:{0,2})(\@?)\s*(\w+)\s*\=\s*(.*)$/.exec(line)
@@ -49,7 +49,7 @@
     is_private
     rest
 
-:@createCtor\%.Constructor\
+:@createCtor\%.Constructor|-\
   line\s\$
   re := /^\:\s*(\w*)\s*(\^\s*(.*\S))?$/.exec(line)
   if !re
@@ -64,7 +64,7 @@
     @scope.types.setParent(ctor.parentName())
   => ctor
 
-:@createMethod\%.Method\
+:@createMethod\%.Method|-\
   line\s\$
   header\input.Line\$
   re := /^(\@?)\s*([a-zA-Z]\w*)\s*(\^?)\s*(\\(.*)\\)?$/.exec(line)
@@ -83,7 +83,7 @@
       ret_type
       !!re[3]
 
-:@createAccessor\%.Accessor\
+:@createAccessor\%.Accessor|-\
   line\s\$
   header\input.Line\$
   re := /^\s*([a-zA-Z]\w*)\s*([+*])\s*(\\(.*)\\)?$/.exec(line)
@@ -102,26 +102,26 @@
   ctx := @scope.copyContext(@scope.context.cls.methodName(name))
   => &%.Accessor(ctx, name, ret_type, access_type == '+')
 
-:@createMultiLineStr\%.Str\
+:@createMultiLineStr\%.Str|-\
   line\s\$
   re := /^'\s*(\w+)$/.exec(line)
   if !re
     => null
   => &%.Str(@scope.copyContextWithName(re[1]))
 
-:@createGlobalCode\%.Global\
+:@createGlobalCode\%.Global|-\
   line\s\$
   => line == '' ? &%.Global() : null
 
-:@createNativeCode\%.Native\
+:@createNativeCode\%.Native|-\
   line\s\$
   => line == '~' ? &%.Native() : null
 
-:@createAnonymousScope\%.Scope\
+:@createAnonymousScope\%.Scope|-\
   line\s\$
   => line == '##' ? &%.Scope() : null
 
-:@createTypedef\%.Typedef\
+:@createTypedef\%.Typedef|-\
   line\s\$
   re := /^\!\s*(\w+)$/.exec(line)
   if !re

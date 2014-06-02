@@ -9,7 +9,7 @@
 
 var mergeToFile = /**
  * @param {string} base_dir
- * @param {Array.<string>} in_files
+ * @param {!Array.<string>} in_files
  * @param {string} out_file
  */
 function(base_dir, in_files, out_file) {
@@ -47,15 +47,15 @@ function(base_dir, in_files, out_file) {
     describe('merge', 'Merge input js files in the dependency order.').
     describe('help', 'Show this message.').
     check(
-    /** @param {Object} argv */
+    /** @param {!Object} argv */
     function(argv) {
       // None or only one of the mode options should be provided.
-      return (
+      return ((
         (argv.sort ? 1 : 0) +
         (argv.pkglist ? 1 : 0) +
         (argv.merge ? 1 : 0) +
         (argv.help ? 1 : 0)
-      ) <= 1;
+      ) <= 1);
     }).
     // Input and output.
     string(['basedir', 'outdir', 'outfile']).

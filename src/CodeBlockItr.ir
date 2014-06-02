@@ -1,9 +1,9 @@
 ::
   @input\input.Line\$
-  @code\A.<parser.BlockMarker|s>\$
-  @blocks\A.<IndentBlock>\$
-  @blockCb&\?f(s, b)\
-  @codeCb&\?f()\
+  @code\A<parser.BlockMarker|s>\$
+  @blocks\A<IndentBlock>\$
+  @blockCb&\f(s, b)|-\
+  @codeCb&\f()|-\
   @cidx+\n\ 0
   @bidx+\n\ 0
   @lidx+\n\ 0

@@ -1,10 +1,10 @@
-::<%.Code
-  @context+\!context.Context\$
+::^%.Code
+  @context+\context.Context\$
   @indent\n\ -1
   ^()
 
 same number of strings as @.lines.
-:strlines\A.<s>\
+:strlines\A<s>\
   result := []
   @.lines.forEach(##)
     line\input.Line\$
@@ -20,7 +20,7 @@ same number of strings as @.lines.
     result.push(line.line.substr(@indent))
   => result
 
-:output\A.<output.Line>\
+:output\A<output.Line>\
   lines := @.strlines()
   => [#]
     @context.name.decl + ' ='

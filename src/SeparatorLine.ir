@@ -6,5 +6,5 @@
 :isContinuation+\b\
   => false
 
-:output\output.Line\
+:output\output.Line|-\
   => null

@@ -1,17 +1,17 @@
-::<%.Runnable
-  @context+\!context.Context\$
+::^%.Runnable
+  @context+\context.Context\$
   @returnType+\s\$
-  @params&\ParamSet\
+  @params&\ParamSet|-\
   ^()
 
 :name\s\
   => @context.name.ref
 
-:<close
+:close^
   c := &CodeScope(@context, @)
   c.process(@.lines)
 
-:<transform
+:transform^
   assert(#)
     @.numBlocks() == 1
     @.lines[0]

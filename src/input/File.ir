@@ -2,12 +2,12 @@ Parses input lines into comments and sections.
 'line' is used only during processing.
 ::
   @name\s\$
-  @input\A.<s>\$
-  @result\A.<%.Comment|%.Section>\ []
-  @buffer\A.<%.Line>\ []
-  @lastValidIndex\n?\
+  @input\A<s>\$
+  @result\A<%.Comment|%.Section>\ []
+  @buffer\A<%.Line>\ []
+  @lastValidIndex\n|-\
 
-:parse\A.<%.Comment|%.Section>\
+:parse\A<%.Comment|%.Section>\
   @input.forEach(##)
     line\s\$
     index\n\$
