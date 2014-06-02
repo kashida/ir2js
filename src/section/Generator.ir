@@ -75,9 +75,12 @@
   if !@scope.context.cls
     error(header, 'method marker w/o class')
     => null
+  ret_type := re[5]
+  if ret_type
+    ret_type = &type.Parser(@scope.context, header, ret_type).parse()
   => &%.Method(#)
       @scope.copyContext(@scope.context.cls.methodName((re[1] ? '_' : '') + re[2]))
-      re[5]
+      ret_type
       !!re[3]
 
 :@createAccessor\%.Accessor\

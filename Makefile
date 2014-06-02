@@ -4,6 +4,7 @@ NODE=nodejs
 NODE_TEST=NODE_PATH=compiled $(NODE)
 NODE_SAVED=NODE_PATH=saved $(NODE) saved/convert
 PEGJS=node_modules/.bin/pegjs
+PARSER_RULES=ParseLine,TypeExpression
 TEST_RULES=BlockLine,BlockMarker,ParseLine,FunctionBlockLine,Expression,Statement,Comment,PrimaryExpression,NewExpression,CallExpression,MemberExpression,Identifier,Literal,NumericLiteral,StringLiteral,RegularExpressionLiteral,ObjectLiteral,AdditiveExpression,TypeLiteralLine,ParamLine
 
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
@@ -128,7 +129,7 @@ compiled/syntax.pegjs: $(PEGJS_SRCS)
 	cat $^ > compiled/syntax.pegjs
 
 compiled/syntax.js: compiled/syntax.pegjs
-	$(PEGJS) --allowed-start-rules ParseLine $^ $@
+	$(PEGJS) --allowed-start-rules $(PARSER_RULES) $^ $@
 
 compiled/syntax_test.js: compiled/syntax.pegjs
 	$(PEGJS) --allowed-start-rules $(TEST_RULES) $^ $@

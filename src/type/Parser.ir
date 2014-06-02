@@ -1,0 +1,15 @@
+::TYPE_PARSER = null
+
+::
+  @context\!context.Context\$
+  @input\input.Line\$
+  @type_str\s\$
+
+:parse\s\
+  %.TYPE_PARSER = %.TYPE_PARSER || &parser.Target('TypeExpression')
+  try
+    => %.TYPE_PARSER.run(#).rendered().join('')
+      @type_str
+      &LineTransformer(@context, @input)
+  catch e
+    error(@input, '(syntax error) ' + e.message, e.contextLines)
