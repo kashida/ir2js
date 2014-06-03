@@ -5,6 +5,23 @@
   ^(context, '')
   @parent = @parent ? @.context.pkg.replace(@parent) : ''
 
+:create = ##
+  \%.Constructor|-\
+  scope\FileScope\$
+  line\s\$
+  re := /^\:\s*(\w*)\s*(\^\s*(.*\S))?$/.exec(line)
+  if !re
+    => null
+
+  // need to keep this in a member var too.
+  scope.context.cls = &context.Class()
+  ctor := &%.Constructor(scope.copyContextWithName(re[1]), re[3])
+  scope.context.cls.ctor = ctor
+  scope.types.addCtor(ctor.name())
+  if re[3]
+    scope.types.setParent(ctor.parentName())
+  => ctor
+
 :parentName\s\
   => \s\(@parent)
 

@@ -2,7 +2,7 @@
   @lines&\A<input.Line>\ []
   ^()
 
-abstract method.
+Abstract method.
 :close
   file_name\s\$
   pkg\context.Package\?

@@ -1,5 +1,12 @@
+Anonymous scope.
 ::^%.Runnable
   ^()
+
+:create = ##
+  \%.Scope|-\
+  scope\FileScope\$
+  line\s\$
+  => line == '##' ? &%.Scope() : null
 
 :output\A\
   => ['(function() {', @.outputBody('})();')]

@@ -7,6 +7,27 @@ Overriding accessor.
   context.isMethod = true
   ^(context, return_type)
 
+:create = ##
+  \%.Accessor|-\
+  scope\FileScope\$
+  line\s\$
+  header\input.Line\$
+  re := /^\s*([a-zA-Z]\w*)\s*([+*])\s*(\\(.*)\\)?$/.exec(line)
+  if !re
+    => null
+
+  // we should have seen a ctor.
+  if !scope.context.cls
+    error(header, 'accessor marker w/o class')
+    => null
+  name := re[1]
+  access_type := re[2]
+  ret_type := re[4]
+  if ret_type
+    ret_type = &type.Parser(scope.context, header, ret_type).parse()
+  ctx := scope.copyContext(scope.context.cls.methodName(name))
+  => &%.Accessor(ctx, name, ret_type, access_type == '+')
+
 :output\A\
   member := @.context.cls.member(@name)
   // TODO: error if there is member and we have param or return type specified to the

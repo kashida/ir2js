@@ -5,6 +5,27 @@
   context.isMethod = true
   ^(context, return_type)
 
+:create =##
+  \%.Method|-\
+  scope\FileScope\$
+  line\s\$
+  header\input.Line\$
+  re := /^(\@?)\s*([a-zA-Z]\w*)\s*(\^?)\s*(\\(.*)\\)?$/.exec(line)
+  if !re
+    => null
+
+  // we should have seen a ctor.
+  if !scope.context.cls
+    error(header, 'method marker w/o class')
+    => null
+  ret_type := re[5]
+  if ret_type
+    ret_type = &type.Parser(scope.context, header, ret_type).parse()
+  => &%.Method(#)
+      scope.copyContext(scope.context.cls.methodName((re[1] ? '_' : '') + re[2]))
+      ret_type
+      !!re[3]
+
 :output\A\
   decls := []
   if @overriding

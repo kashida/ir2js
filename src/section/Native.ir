@@ -1,6 +1,12 @@
 ::^%.Code
   ^()
 
+:create = ##
+  \%.Native|-\
+  scope\FileScope\$
+  line\s\$
+  => line == '~' ? &%.Native() : null
+
 :output\A<output.Line>\
   => @.lines.map(##)
     line\input.Line\$

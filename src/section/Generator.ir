@@ -4,126 +4,26 @@
 :generate\%.Code\
   header\input.Line\$
   lines\A<input.Line>\$
-  section := null
+  sec := null
   header_line := header.line.substr(1)
   if ![#].some(##)
-    @createVariable
-    @createCtor
-    @createMethod
-    @createAccessor
-    @createMultiLineStr
-    @createGlobalCode
-    @createNativeCode
-    @createAnonymousScope
-    @createTypedef
+    %.Variable.create
+    %.Constructor.create
+    %.Method.create
+    %.Accessor.create
+    %.Str.create
+    %.Global.create
+    %.Native.create
+    %.Scope.create
+    %.Typedef.create
     --
     method\F\$
-    section = method.call(@, header_line, header)
-    if section
-      section.lines = lines
-      section.close(@scope.context.fileName, @scope.context.pkg)
-      section.setType(@scope.types)
-    => !!section
+    sec = method.call(undefined, @scope, header_line, header)
+    if sec
+      sec.lines = lines
+      sec.close(@scope.context.fileName, @scope.context.pkg)
+      sec.setType(@scope.types)
+    => !!sec
     --
     error(header, 'line starts with colon and not a code section marker')
-  => section
-
-:@createVariable\%.Variable|-\
-  line\s\$
-  header\input.Line\$
-  re := /^(\:{0,2})(\@?)\s*(\w+)\s*\=\s*(.*)$/.exec(line)
-  if !re
-    => null
-
-  scope_level := re[1].length
-  is_private := !!re[2]
-  name := re[3]
-  rest := re[4]
-
-  if scope_level == 2 && is_private
-    error(header, 'global variable can not be private')
-  => &%.Variable(#)
-    @scope.copyContextWithName(name)
-    header
-    scope_level
-    is_private
-    rest
-
-:@createCtor\%.Constructor|-\
-  line\s\$
-  re := /^\:\s*(\w*)\s*(\^\s*(.*\S))?$/.exec(line)
-  if !re
-    => null
-
-  // need to keep this in a member var too.
-  @scope.context.cls = &context.Class()
-  ctor := &%.Constructor(@scope.copyContextWithName(re[1]), re[3])
-  @scope.context.cls.ctor = ctor
-  @scope.types.addCtor(ctor.name())
-  if re[3]
-    @scope.types.setParent(ctor.parentName())
-  => ctor
-
-:@createMethod\%.Method|-\
-  line\s\$
-  header\input.Line\$
-  re := /^(\@?)\s*([a-zA-Z]\w*)\s*(\^?)\s*(\\(.*)\\)?$/.exec(line)
-  if !re
-    => null
-
-  // we should have seen a ctor.
-  if !@scope.context.cls
-    error(header, 'method marker w/o class')
-    => null
-  ret_type := re[5]
-  if ret_type
-    ret_type = &type.Parser(@scope.context, header, ret_type).parse()
-  => &%.Method(#)
-      @scope.copyContext(@scope.context.cls.methodName((re[1] ? '_' : '') + re[2]))
-      ret_type
-      !!re[3]
-
-:@createAccessor\%.Accessor|-\
-  line\s\$
-  header\input.Line\$
-  re := /^\s*([a-zA-Z]\w*)\s*([+*])\s*(\\(.*)\\)?$/.exec(line)
-  if !re
-    => null
-
-  // we should have seen a ctor.
-  if !@scope.context.cls
-    error(header, 'accessor marker w/o class')
-    => null
-  name := re[1]
-  access_type := re[2]
-  ret_type := re[4]
-  if ret_type
-    ret_type = &type.Parser(@scope.context, header, ret_type).parse()
-  ctx := @scope.copyContext(@scope.context.cls.methodName(name))
-  => &%.Accessor(ctx, name, ret_type, access_type == '+')
-
-:@createMultiLineStr\%.Str|-\
-  line\s\$
-  re := /^'\s*(\w+)$/.exec(line)
-  if !re
-    => null
-  => &%.Str(@scope.copyContextWithName(re[1]))
-
-:@createGlobalCode\%.Global|-\
-  line\s\$
-  => line == '' ? &%.Global() : null
-
-:@createNativeCode\%.Native|-\
-  line\s\$
-  => line == '~' ? &%.Native() : null
-
-:@createAnonymousScope\%.Scope|-\
-  line\s\$
-  => line == '##' ? &%.Scope() : null
-
-:@createTypedef\%.Typedef|-\
-  line\s\$
-  re := /^\!\s*(\w+)$/.exec(line)
-  if !re
-    => null
-  => &%.Typedef(@scope.copyContextWithName(re[1]))
+  => sec
