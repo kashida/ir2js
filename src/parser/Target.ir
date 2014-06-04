@@ -4,7 +4,7 @@ TODO: Make xformer available to the parser so that we don't need to do double
 conversion.
 ::
   @rule\s\$
-  @runner\\ parser.ParserRunner()
+  @runner\\ %.ParserRunner()
 
 :run\%.Result\
   lines\A<input.Line>|s\$
