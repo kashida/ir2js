@@ -155,38 +155,38 @@ Class.prototype.method = function() {
 }
 #}
 
-#{ shorthand ctor call.
+#{[aa.bb.cc] shorthand ctor call
 ::classname
-  param+\\? ABC(a + b)
-  @member\\ xyz.ABC(#)
+  param+\\? x.ABC(a + b)
+  @member\\ %.xyz.ABC(#)
     a
     b
     c
 #=
 /**
- * @param {!ABC=} opt_param
+ * @param {!x.ABC=} opt_param
  * @constructor
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function(opt_param) {
+aa.bb.cc.classname = function(opt_param) {
   var self = this;
-  var param = opt_param === undefined ? (new ABC(a + b)) : opt_param;
-  /** @private {!xyz.ABC} */
-  this._member = (new xyz.ABC(
+  var param = opt_param === undefined ? (new x.ABC(a + b)) : opt_param;
+  /** @private {!aa.bb.cc.xyz.ABC} */
+  this._member = (new aa.bb.cc.xyz.ABC(
     a,
     b,
     c
   ));
 };
-classname.prototype._classname = 'classname';
+aa.bb.cc.classname.prototype._classname = 'aa.bb.cc.classname';
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "aa.bb.cc.classname",
       "args": [
-        "ABC",
-        "xyz.ABC"
+        "x.ABC",
+        "aa.bb.cc.xyz.ABC"
       ],
       "methods": []
     }

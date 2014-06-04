@@ -3458,6 +3458,70 @@ output.Multiline.prototype.appendBlock = function(block) {
   self._lines.push(block);
   self._lastLineOpen = false;
 };
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+parser.ParserRunner = function() {
+var self = this;
+};
+parser.ParserRunner.prototype._classname = 'parser.ParserRunner';
+
+/**
+ * @param {!Array.<!input.Line>|string} lines
+ * @param {!Object} params
+ * @return {!parser.TokenList|!Array|!Object|string}
+ */
+parser.ParserRunner.prototype.run = function(lines, params) {
+  var self = this;
+  if (!(lines instanceof Array)) {
+    lines = [new input.Line('', lines, 0)];
+  }
+
+  var input_lines;
+  input_lines = lines.map(
+  /** @param {!input.Line} l */
+  function(l) {
+    return (l.line);
+  }).join('\n');
+
+  try {
+    return (_parser.parse(input_lines, params));
+  }
+  catch (e) {
+    throw self._addContextLines(e, lines);
+  }
+};
+
+/**
+ * @param {!Object} e
+ * @param {!Array.<!input.Line>} line
+ * @private
+ */
+parser.ParserRunner.prototype._addContextLines = function(e, line) {
+  var self = this;
+  e.contextLines = [];
+  line.forEach(
+  /**
+   * @param {!input.Line} l
+   * @param {number} i
+   */
+  function(l, i) {
+    e.contextLines.push(l.line);
+    if (i === e.line - 1) {
+      var sp;
+      sp = '';
+      var j;
+      j = 0;
+      for (; j < e.offset; j++) {
+        sp += ' ';
+      }
+      e.contextLines.push(sp + '^');
+    }
+  });
+  return (e);
+};
 /*
 Container and interface of the TokenList to the rest of the converter.
 */
@@ -3538,68 +3602,24 @@ parser.Target = function(rule) {
   var self = this;
   /** @private {string} */
   this._rule = rule;
+  /** @private {!parser.ParserRunner} */
+  this._runner = (new parser.ParserRunner());
 };
 parser.Target.prototype._classname = 'parser.Target';
 
 /**
- * @param {!Array.<!input.Line>|string} line
+ * @param {!Array.<!input.Line>|string} lines
  * @param {!LineTransformer} xformer
- * @param {boolean=} show_error_line
  * @return {!parser.Result}
  */
-parser.Target.prototype.run = function(line, xformer, show_error_line) {
+parser.Target.prototype.run = function(lines, xformer) {
   var self = this;
-  if (!(line instanceof Array)) {
-    line = [new input.Line('', line, 0)];
-  }
-
-  var lines;
-  lines = line.map(
-  /** @param {!input.Line} l */
-  function(l) {
-    return (l.line);
-  }).join('\n');
-  try {
-    var result;
-    result = _parser.parse(lines, {
+  return (new parser.TokenListBuilder((
+    self._runner.run(lines, {
       'startRule': self._rule,
       'xformer': xformer
-    });
-  }
-  catch (e) {
-    throw self._addContextLines(e, line);
-  }
-
-  return (new parser.TokenListBuilder(result, xformer).result());
-};
-
-/**
- * @param {!Object} e
- * @param {!Array.<!input.Line>} line
- * @private
- */
-parser.Target.prototype._addContextLines = function(e, line) {
-  var self = this;
-  e.contextLines = [];
-  line.forEach(
-  /**
-   * @param {!input.Line} l
-   * @param {number} i
-   */
-  function(l, i) {
-    e.contextLines.push(l.line);
-    if (i === e.line - 1) {
-      var sp;
-      sp = '';
-      var j;
-      j = 0;
-      for (; j < e.offset; j++) {
-        sp += ' ';
-      }
-      e.contextLines.push(sp + '^');
-    }
-  });
-  return (e);
+    })
+  ), xformer).result());
 };
 /**
  * @param {string} type
@@ -3974,219 +3994,38 @@ section.Generator.prototype._classname = 'section.Generator';
  */
 section.Generator.prototype.generate = function(header, lines) {
   var self = this;
-  var section;
-  section = null;
+  var sec;
+  sec = null;
   var header_line;
   header_line = header.line.substr(1);
   if (![
-    self._createVariable,
-    self._createCtor,
-    self._createMethod,
-    self._createAccessor,
-    self._createMultiLineStr,
-    self._createGlobalCode,
-    self._createNativeCode,
-    self._createAnonymousScope,
-    self._createTypedef
+    section.Variable.create,
+    section.Constructor.create,
+    section.Method.create,
+    section.Accessor.create,
+    section.Str.create,
+    section.Global.create,
+    section.Native.create,
+    section.Scope.create,
+    section.Typedef.create
   ].some(
   /** @param {!Function} method */
   function(method) {
-    section = method.call(self, header_line, header);
-    if (section) {
-      section.lines = lines;
-      section.close(self._scope.context.fileName, self._scope.context.pkg);
-      section.setType(self._scope.types);
+    sec = method.call(undefined, self._scope, header_line, header);
+    if (sec) {
+      sec.lines = lines;
+      sec.close(self._scope.context.fileName, self._scope.context.pkg);
+      sec.setType(self._scope.types);
     }
-    return (!!section);
+    return (!!sec);
   })) {
     error(header, 'line starts with colon and not a code section marker');
   }
-  return (section);
+  return (sec);
 };
-
-/**
- * @param {string} line
- * @param {!input.Line} header
- * @return {!section.Variable|null}
- * @private
- */
-section.Generator.prototype._createVariable = function(line, header) {
-  var self = this;
-  var re;
-  re = /^(\:{0,2})(\@?)\s*(\w+)\s*\=\s*(.*)$/.exec(line);
-  if (!re) {
-    return (null);
-  }
-
-  var scope_level;
-  scope_level = re[1].length;
-  var is_private;
-  is_private = !!re[2];
-  var name;
-  name = re[3];
-  var rest;
-  rest = re[4];
-
-  if (scope_level === 2 && is_private) {
-    error(header, 'global variable can not be private');
-  }
-  return (new section.Variable(
-    self._scope.copyContextWithName(name),
-    header,
-    scope_level,
-    is_private,
-    rest
-  ));
-};
-
-/**
- * @param {string} line
- * @return {!section.Constructor|null}
- * @private
- */
-section.Generator.prototype._createCtor = function(line) {
-  var self = this;
-  var re;
-  re = /^\:\s*(\w*)\s*(\^\s*(.*\S))?$/.exec(line);
-  if (!re) {
-    return (null);
-  }
-
-  // need to keep this in a member var too.
-  self._scope.context.cls = new context.Class();
-  var ctor;
-  ctor = new section.Constructor(self._scope.copyContextWithName(re[1]), re[3]);
-  self._scope.context.cls.ctor = ctor;
-  self._scope.types.addCtor(ctor.name());
-  if (re[3]) {
-    self._scope.types.setParent(ctor.parentName());
-  }
-  return (ctor);
-};
-
-/**
- * @param {string} line
- * @param {!input.Line} header
- * @return {!section.Method|null}
- * @private
- */
-section.Generator.prototype._createMethod = function(line, header) {
-  var self = this;
-  var re;
-  re = /^(\@?)\s*([a-zA-Z]\w*)\s*(\^?)\s*(\\(.*)\\)?$/.exec(line);
-  if (!re) {
-    return (null);
-  }
-
-  // we should have seen a ctor.
-  if (!self._scope.context.cls) {
-    error(header, 'method marker w/o class');
-    return (null);
-  }
-  var ret_type;
-  ret_type = re[5];
-  if (ret_type) {
-    ret_type = new type.Parser(self._scope.context, header, ret_type).parse();
-  }
-  return (new section.Method(
-      self._scope.copyContext(self._scope.context.cls.methodName((re[1] ? '_' : '') + re[2])),
-      ret_type,
-      !!re[3]
-  ));
-};
-
-/**
- * @param {string} line
- * @param {!input.Line} header
- * @return {!section.Accessor|null}
- * @private
- */
-section.Generator.prototype._createAccessor = function(line, header) {
-  var self = this;
-  var re;
-  re = /^\s*([a-zA-Z]\w*)\s*([+*])\s*(\\(.*)\\)?$/.exec(line);
-  if (!re) {
-    return (null);
-  }
-
-  // we should have seen a ctor.
-  if (!self._scope.context.cls) {
-    error(header, 'accessor marker w/o class');
-    return (null);
-  }
-  var name;
-  name = re[1];
-  var access_type;
-  access_type = re[2];
-  var ret_type;
-  ret_type = re[4];
-  if (ret_type) {
-    ret_type = new type.Parser(self._scope.context, header, ret_type).parse();
-  }
-  var ctx;
-  ctx = self._scope.copyContext(self._scope.context.cls.methodName(name));
-  return (new section.Accessor(ctx, name, ret_type, access_type === '+'));
-};
-
-/**
- * @param {string} line
- * @return {!section.Str|null}
- * @private
- */
-section.Generator.prototype._createMultiLineStr = function(line) {
-  var self = this;
-  var re;
-  re = /^'\s*(\w+)$/.exec(line);
-  if (!re) {
-    return (null);
-  }
-  return (new section.Str(self._scope.copyContextWithName(re[1])));
-};
-
-/**
- * @param {string} line
- * @return {!section.Global|null}
- * @private
- */
-section.Generator.prototype._createGlobalCode = function(line) {
-  var self = this;
-  return (line === '' ? new section.Global() : null);
-};
-
-/**
- * @param {string} line
- * @return {!section.Native|null}
- * @private
- */
-section.Generator.prototype._createNativeCode = function(line) {
-  var self = this;
-  return (line === '~' ? new section.Native() : null);
-};
-
-/**
- * @param {string} line
- * @return {!section.Scope|null}
- * @private
- */
-section.Generator.prototype._createAnonymousScope = function(line) {
-  var self = this;
-  return (line === '##' ? new section.Scope() : null);
-};
-
-/**
- * @param {string} line
- * @return {!section.Typedef|null}
- * @private
- */
-section.Generator.prototype._createTypedef = function(line) {
-  var self = this;
-  var re;
-  re = /^\!\s*(\w+)$/.exec(line);
-  if (!re) {
-    return (null);
-  }
-  return (new section.Typedef(self._scope.copyContextWithName(re[1])));
-};
+/*
+TODO: Make this an interface.
+*/
 /**
  * @constructor
  * @struct
@@ -4623,7 +4462,7 @@ this._lines = value;
 });
 
 /*
-abstract method.
+Abstract method.
 */
 /**
  * @param {string} file_name
@@ -4649,6 +4488,15 @@ section.Native = function() {
 };
 goog.inherits(section.Native, section.Code);
 section.Native.prototype._classname = 'section.Native';
+
+section.Native.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @return {!section.Native|null}
+ */
+function(scope, line) {
+  return (line === '~' ? new section.Native() : null);
+};
 
 /** @return {!Array.<!output.Line>} */
 section.Native.prototype.output = function() {
@@ -4740,6 +4588,20 @@ section.Str.prototype.__defineGetter__('context', function() {
 return this._context;
 });
 
+section.Str.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @return {!section.Str|null}
+ */
+function(scope, line) {
+  var re;
+  re = /^'\s*(\w+)$/.exec(line);
+  if (!re) {
+    return (null);
+  }
+  return (new section.Str(scope.copyContextWithName(re[1])));
+};
+
 /*
 same number of strings as @.lines.
 */
@@ -4819,6 +4681,40 @@ section.Variable = function(context, line, scopeLevel, isPrivate, rhs) {
 };
 goog.inherits(section.Variable, section.Code);
 section.Variable.prototype._classname = 'section.Variable';
+
+section.Variable.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @param {!input.Line} header
+ * @return {!section.Variable|null}
+ */
+function(scope, line, header) {
+  var re;
+  re = /^(\:{0,2})(\@?)\s*(\w+)\s*\=\s*(.*)$/.exec(line);
+  if (!re) {
+    return (null);
+  }
+
+  var scope_level;
+  scope_level = re[1].length;
+  var is_private;
+  is_private = !!re[2];
+  var name;
+  name = re[3];
+  var rest;
+  rest = re[4];
+
+  if (scope_level === 2 && is_private) {
+    error(header, 'global variable can not be private');
+  }
+  return (new section.Variable(
+    scope.copyContextWithName(name),
+    header,
+    scope_level,
+    is_private,
+    rest
+  ));
+};
 
 /** @override */
 section.Variable.prototype.close = function() {
@@ -4942,11 +4838,23 @@ section.Global = function() {
 goog.inherits(section.Global, section.Runnable);
 section.Global.prototype._classname = 'section.Global';
 
+section.Global.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @return {!section.Global|null}
+ */
+function(scope, line) {
+  return (line === '' ? new section.Global() : null);
+};
+
 /** @return {!Array} */
 section.Global.prototype.output = function() {
   var self = this;
   return (self.outputBody(''));
 };
+/*
+Anonymous scope.
+*/
 /**
  * @constructor
  * @extends {section.Runnable}
@@ -4959,6 +4867,15 @@ section.Scope = function() {
 };
 goog.inherits(section.Scope, section.Runnable);
 section.Scope.prototype._classname = 'section.Scope';
+
+section.Scope.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @return {!section.Scope|null}
+ */
+function(scope, line) {
+  return (line === '##' ? new section.Scope() : null);
+};
 
 /** @return {!Array} */
 section.Scope.prototype.output = function() {
@@ -4978,6 +4895,20 @@ section.Typedef = function(context) {
 };
 goog.inherits(section.Typedef, section.Str);
 section.Typedef.prototype._classname = 'section.Typedef';
+
+section.Typedef.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @return {!section.Typedef|null}
+ */
+function(scope, line) {
+  var re;
+  re = /^\!\s*(\w+)$/.exec(line);
+  if (!re) {
+    return (null);
+  }
+  return (new section.Typedef(scope.copyContextWithName(re[1])));
+};
 
 /** @return {!Array.<!output.Line>} */
 section.Typedef.prototype.output = function() {
@@ -5017,6 +4948,38 @@ section.Accessor = function(context, name, return_type, isGetter) {
 };
 goog.inherits(section.Accessor, section.Callable);
 section.Accessor.prototype._classname = 'section.Accessor';
+
+section.Accessor.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @param {!input.Line} header
+ * @return {!section.Accessor|null}
+ */
+function(scope, line, header) {
+  var re;
+  re = /^\s*([a-zA-Z]\w*)\s*([+*])\s*(\\(.*)\\)?$/.exec(line);
+  if (!re) {
+    return (null);
+  }
+
+  // we should have seen a ctor.
+  if (!scope.context.cls) {
+    error(header, 'accessor marker w/o class');
+    return (null);
+  }
+  var name;
+  name = re[1];
+  var access_type;
+  access_type = re[2];
+  var ret_type;
+  ret_type = re[4];
+  if (ret_type) {
+    ret_type = new type.Parser(scope.context, header, ret_type).parse();
+  }
+  var ctx;
+  ctx = scope.copyContext(scope.context.cls.methodName(name));
+  return (new section.Accessor(ctx, name, ret_type, access_type === '+'));
+};
 
 /** @return {!Array} */
 section.Accessor.prototype.output = function() {
@@ -5080,6 +5043,30 @@ section.Constructor = function(context, opt_parent) {
 };
 goog.inherits(section.Constructor, section.Callable);
 section.Constructor.prototype._classname = 'section.Constructor';
+
+section.Constructor.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @return {!section.Constructor|null}
+ */
+function(scope, line) {
+  var re;
+  re = /^\:\s*(\w*)\s*(\^\s*(.*\S))?$/.exec(line);
+  if (!re) {
+    return (null);
+  }
+
+  // need to keep this in a member var too.
+  scope.context.cls = new context.Class();
+  var ctor;
+  ctor = new section.Constructor(scope.copyContextWithName(re[1]), re[3]);
+  scope.context.cls.ctor = ctor;
+  scope.types.addCtor(ctor.name());
+  if (re[3]) {
+    scope.types.setParent(ctor.parentName());
+  }
+  return (ctor);
+};
 
 /** @return {string} */
 section.Constructor.prototype.parentName = function() {
@@ -5155,6 +5142,36 @@ section.Method = function(context, return_type, overriding) {
 };
 goog.inherits(section.Method, section.Callable);
 section.Method.prototype._classname = 'section.Method';
+
+section.Method.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @param {!input.Line} header
+ * @return {!section.Method|null}
+ */
+function(scope, line, header) {
+  var re;
+  re = /^(\@?)\s*([a-zA-Z]\w*)\s*(\^?)\s*(\\(.*)\\)?$/.exec(line);
+  if (!re) {
+    return (null);
+  }
+
+  // we should have seen a ctor.
+  if (!scope.context.cls) {
+    error(header, 'method marker w/o class');
+    return (null);
+  }
+  var ret_type;
+  ret_type = re[5];
+  if (ret_type) {
+    ret_type = new type.Parser(scope.context, header, ret_type).parse();
+  }
+  return (new section.Method(
+      scope.copyContext(scope.context.cls.methodName((re[1] ? '_' : '') + re[2])),
+      ret_type,
+      !!re[3]
+  ));
+};
 
 /** @return {!Array} */
 section.Method.prototype.output = function() {

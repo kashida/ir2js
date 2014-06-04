@@ -431,7 +431,7 @@ module.exports = (function() {
         peg$c329 = function(member, name, access, marker, type, args) {
               return $.paramLine(
                   name, !!member, access || '', ['!', type], marker || '',
-                  ['new ', type, args]);
+                  ['new ', $.type(type), args]);
             },
         peg$c330 = function(member, name, access, type, marker, init) {
               return $.paramLine(

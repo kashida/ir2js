@@ -6,7 +6,7 @@ ParamLine
     type:QualifiedTypeId _ args:Arguments {
       return $.paramLine(
           name, !!member, access || '', ['!', type], marker || '',
-          ['new ', type, args]);
+          ['new ', $.type(type), args]);
     }
   / member:'@'? _ name:Identifier _ access:[+*&]?  _
     type:TypeLiteral marker:[$?~]?
