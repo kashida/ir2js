@@ -4,38 +4,12 @@ TODO: Make xformer available to the parser so that we don't need to do double
 conversion.
 ::
   @rule\s\$
+  @runner\\ parser.ParserRunner()
 
 :run\%.Result\
-  line\A<input.Line>|s\$
+  lines\A<input.Line>|s\$
   xformer\LineTransformer\$
-  show_error_line\b\?
-  if !(line instanceof Array)
-    line = [&input.Line('', line, 0)]
-
-  lines := line.map(##).join('\n')
-    l\input.Line\$
-    => l.line
-  try
-    result := _parser.parse(lines, {#})
+  => &%.TokenListBuilder(#, xformer).result()
+    @runner.run(lines, {#})
       startRule: @rule
       xformer: xformer
-  catch e
-    throw @addContextLines(e, line)
-
-  => &%.TokenListBuilder(result, xformer).result()
-
-:@addContextLines
-  e\O\$
-  line\A<input.Line>\$
-  e.contextLines = []
-  line.forEach(##)
-    l\input.Line\$
-    i\n\$
-    e.contextLines.push(l.line)
-    if i == e.line - 1
-      sp := ''
-      j := 0
-      for ; j < e.offset; j++
-        sp += ' '
-      e.contextLines.push(sp + '^')
-  => e
