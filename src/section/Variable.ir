@@ -9,27 +9,6 @@
   code_input := &input.Line(@line.file, rhs, @line.rowIndex)
   @codeLine = &CodeLine(@context, code_input, &LineParser(code_input))
 
-:re = ##
-  \re.Element\
-  => &re.Sequence(#).withCb(##)
-      &re.SeqItem('(\:{0,2})', 'colons')
-      &re.SeqItem('(\@?)', 'att')
-      '\s*'
-      &re.SeqItem('(\w+)', 'name')
-      '\s*\=\s*'
-      &re.SeqItem('(.*)', 'rest')
-      --
-      params\O\$
-      scope\FileScope\$
-      line\s\$
-      header\input.Line\$
-      => &%.Variable(#)
-        scope.copyContextWithName(params.name)
-        header
-        params.colons.length
-        !!params.att
-        params.rest
-
 :create = ##
   \%.Variable|-\
   scope\FileScope\$
