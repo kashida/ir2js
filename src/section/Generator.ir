@@ -1,7 +1,20 @@
+::HEADER_RE = null
+
 ::
   @scope\FileScope\$
+  if !%.HEADER_RE
+    %.HEADER_RE = &re.Selection(#).compile
+      %.Variable.re()
+      %.Constructor.re()
+      %.Method.re()
+      %.Accessor.re()
+      %.Str.re()
+      %.Global.re()
+      %.Native.re()
+      %.Scope.re()
+      %.Typedef.re()
 
-:generate\%.Code\
+:x_generate\%.Code\
   header\input.Line\$
   lines\A<input.Line>\$
   sec := null
@@ -27,3 +40,12 @@
     --
     error(header, 'line starts with colon and not a code section marker')
   => sec
+
+:generate\%.Code\
+  header\input.Line\$
+  lines\A<input.Line>\$
+  header_line := header.line.substr(1)
+  result := HEADER_RE.x(header_line, [@scope, header_line, header])
+  if !result
+    error(header, 'line starts with colon and not a code section marker')
+  => result
