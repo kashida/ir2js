@@ -15,6 +15,11 @@ ParamLine
           name, !!member, access || '', type, marker || '', init);
     }
 
+TemplateAndTypeLiteralLine
+  = tmpl:TemplateParams? type:TypeLiteralLine {
+      return $.tmplAndTypeLine(tmpl, type);
+    }
+
 BlockSeparator
   = '--' { $.grammar = 's'; return '--'; }
 
@@ -24,14 +29,14 @@ ParseLine = _ BlockLine _
 // This is for testing.
 BlockLine
   = PropertyAssignment
-  / TypeLiteralLine
+  / TemplateAndTypeLiteralLine
   / ParamLine
   / Statement
   / BlockSeparator
   / _
 
 FunctionBlockLine
-  = TypeLiteralLine
+  = TemplateAndTypeLiteralLine
   / ParamLine
   / Statement
   / BlockSeparator

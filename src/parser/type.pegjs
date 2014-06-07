@@ -61,10 +61,26 @@ TypeIdentifier = !TypeReservedWord n:IdentifierName { return n; }
 
 TypePathComponent = Identifier / '%'+
 
+TemplateParams
+  = '<' _ initId:Identifier ids:(_ ',' _ Identifier)* _ '>' _ {
+      var tmplIds = [];
+      tmplIds.push(initId);
+      ids.forEach(function(id) {
+        tmplIds.push(id[3]);
+      });
+      return tmplIds;
+    }
+
 QualifiedTypeId = (TypePathComponent '.')* TypeIdentifier
       //return $.resolveType(id);
 
-NonNullableTypeId = QualifiedTypeId { return ['!', text()]; }
+NonNullableTypeId = id:QualifiedTypeId tmpl:TemplateParams? {
+      var value = ['!', id];
+      if (tmpl) {
+        value.push('.<', tmpl, '>');
+      }
+      return value;
+    }
 
 TypeName
   = UndefinedType

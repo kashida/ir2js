@@ -59,6 +59,13 @@
     marker
     &parser.TokenListBuilder(init, @).build()
 
+:tmplAndTypeLine\parser.TmplAndTypeLine\
+  ids\A<s>\$
+  type\A\$
+  => &parser.TmplAndTypeLine(#)
+    ids
+    &parser.TokenListBuilder(type, @).build().str
+
 :prepend\F\
   line\A|O|s\$
   => (##)

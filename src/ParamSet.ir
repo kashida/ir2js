@@ -14,6 +14,7 @@
   @isCtor\b\? false
   @params\A<Param>\ []
   @returnType\s\ ''
+  @templateParams\A<s>|-\
 
 :transform
   param_done := false
@@ -51,10 +52,14 @@
 
 :@tryReturnType\b\
   line\CodeLine\$
-  re := /^\s*\\(.*)\\\s*$/.exec(line.str)
-  if !re
+  tokens := line.parsed.tokens
+  if tokens.list.length != 1
     => false
-  @returnType = line.parsed.tokens.str
+  token := tokens.list[0]
+  if !(token instanceof parser.TmplAndTypeLine)
+    => false
+  @returnType = token.type
+  @templateParams = token.ids
   => true
 
 :setReturnType
@@ -91,6 +96,8 @@
     => !!s
   if @returnType
     result.push('@return {' + @returnType + '}')
+  if @templateParams
+    result.push('@template ' + @templateParams.join(','))
   => result
 
 :outputParams\s\
