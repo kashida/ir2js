@@ -1160,6 +1160,19 @@ LineTransformer.prototype.paramLine = function(name, member, access, type, marke
 };
 
 /**
+ * @param {!Array.<string>} ids
+ * @param {!Array} type
+ * @return {!parser.TmplAndTypeLine}
+ */
+LineTransformer.prototype.tmplAndTypeLine = function(ids, type) {
+  var self = this;
+  return (new parser.TmplAndTypeLine(
+    ids,
+    new parser.TokenListBuilder(type, self).build().str
+  ));
+};
+
+/**
  * @param {!Array|!Object|string} line
  * @return {!Function}
  */
@@ -1531,8 +1544,18 @@ var ParamSet = function(context, block, opt_isCtor) {
   this._params = ([]);
   /** @private {string} */
   this._returnType = ('');
+  /** @private {!Array.<string>} */
+  this._templateParams = ([]);
 };
 ParamSet.prototype._classname = 'ParamSet';
+/** @type {!Array.<string>} */
+ParamSet.prototype.templateParams;
+ParamSet.prototype.__defineGetter__('templateParams', function() {
+return this._templateParams;
+});
+ParamSet.prototype.__defineSetter__('templateParams', function(value) {
+this._templateParams = value;
+});
 
 ParamSet.prototype.transform = function() {
   var self = this;
@@ -1598,12 +1621,18 @@ ParamSet.prototype._addLine = function(line, index) {
  */
 ParamSet.prototype._tryReturnType = function(line) {
   var self = this;
-  var re;
-  re = /^\s*\\(.*)\\\s*$/.exec(line.str);
-  if (!re) {
+  var tokens;
+  tokens = line.parsed.tokens;
+  if (tokens.list.length !== 1) {
     return (false);
   }
-  self._returnType = line.parsed.tokens.str;
+  var token;
+  token = tokens.list[0];
+  if (!(token instanceof parser.TmplAndTypeLine)) {
+    return (false);
+  }
+  self._returnType = token.type;
+  self._templateParams = token.ids;
   return (true);
 };
 
@@ -1672,6 +1701,9 @@ ParamSet.prototype.outputDecls = function() {
   });
   if (self._returnType) {
     result.push('@return {' + self._returnType + '}');
+  }
+  if (self._templateParams && self._templateParams.length) {
+    result.push('@template ' + self._templateParams.join(','));
   }
   return (result);
 };
@@ -3622,6 +3654,31 @@ parser.Target.prototype.run = function(lines, xformer) {
   ), xformer).result());
 };
 /**
+ * @param {!Array.<string>} ids
+ * @param {string} type
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+parser.TmplAndTypeLine = function(ids, type) {
+  var self = this;
+  /** @private {!Array.<string>} */
+  this._ids = ids;
+  /** @private {string} */
+  this._type = type;
+};
+parser.TmplAndTypeLine.prototype._classname = 'parser.TmplAndTypeLine';
+/** @type {!Array.<string>} */
+parser.TmplAndTypeLine.prototype.ids;
+parser.TmplAndTypeLine.prototype.__defineGetter__('ids', function() {
+return this._ids;
+});
+/** @type {string} */
+parser.TmplAndTypeLine.prototype.type;
+parser.TmplAndTypeLine.prototype.__defineGetter__('type', function() {
+return this._type;
+});
+/**
  * @param {string} type
  * @constructor
  * @struct
@@ -4756,17 +4813,20 @@ section.Variable.prototype.output = function() {
 /**
  * @param {!context.Context} context
  * @param {string} returnType
+ * @param {!Array.<string>} tmplVars
  * @constructor
  * @extends {section.Runnable}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-section.Callable = function(context, returnType) {
+section.Callable = function(context, returnType, tmplVars) {
   var self = this;
   /** @private {!context.Context} */
   this._context = context;
   /** @private {string} */
   this._returnType = returnType;
+  /** @private {!Array.<string>} */
+  this._tmplVars = tmplVars;
   /** @private {!ParamSet|null} */
   this._params = (null);
   section.Runnable.call(this);
@@ -4782,6 +4842,11 @@ return this._context;
 section.Callable.prototype.returnType;
 section.Callable.prototype.__defineGetter__('returnType', function() {
 return this._returnType;
+});
+/** @type {!Array.<string>} */
+section.Callable.prototype.tmplVars;
+section.Callable.prototype.__defineGetter__('tmplVars', function() {
+return this._tmplVars;
 });
 /** @type {!ParamSet|null} */
 section.Callable.prototype.params;
@@ -4815,6 +4880,7 @@ section.Callable.prototype.transform = function() {
     'callable takes 1 block -- found ' + self.numBlocks()
   );
   self._params = new ParamSet(self._context, self.block(0));
+  self._params.templateParams = self._tmplVars;
   self._params.transform();
   self._params.setReturnType(self._returnType);
   self.block(0).transform();
@@ -4944,7 +5010,7 @@ section.Accessor = function(context, name, return_type, isGetter) {
   /** @private {boolean} */
   this._isGetter = isGetter;
   context.isMethod = true;
-  section.Callable.call(this, context, return_type);
+  section.Callable.call(this, context, return_type, []);
 };
 goog.inherits(section.Accessor, section.Callable);
 section.Accessor.prototype._classname = 'section.Accessor';
@@ -5027,18 +5093,22 @@ section.Accessor.prototype.output = function() {
 };
 /**
  * @param {!context.Context} context
+ * @param {!Array.<string>} tmpl_vars
  * @param {string|null=} opt_parent
+ * @param {string|null=} opt_parentTmplVars
  * @constructor
  * @extends {section.Callable}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-section.Constructor = function(context, opt_parent) {
+section.Constructor = function(context, tmpl_vars, opt_parent, opt_parentTmplVars) {
   var self = this;
   /** @private {string|null} */
   this._parent = opt_parent === undefined ? (null) : opt_parent;
+  /** @private {string|null} */
+  this._parentTmplVars = opt_parentTmplVars === undefined ? (null) : opt_parentTmplVars;
   context.isCtor = true;
-  section.Callable.call(this, context, '');
+  section.Callable.call(this, context, '', tmpl_vars);
   self._parent = self._parent ? self.context.pkg.replace(self._parent) : '';
 };
 goog.inherits(section.Constructor, section.Callable);
@@ -5051,18 +5121,25 @@ section.Constructor.create = /**
  */
 function(scope, line) {
   var re;
-  re = /^\:\s*(\w*)\s*(\^\s*(.*\S))?$/.exec(line);
+  re = /^\:\s*(\w*)\s*(\<\s*([\w\,]+)\s*\>\s*)?(\^\s*(.*\w)\s*(\<([\w\s,]*)\>)?)?\s*$/.exec(line);
   if (!re) {
     return (null);
   }
 
-  // need to keep this in a member var too.
   scope.context.cls = new context.Class();
   var ctor;
-  ctor = new section.Constructor(scope.copyContextWithName(re[1]), re[3]);
+  ctor = new section.Constructor(scope.copyContextWithName(re[1]), (
+    re[2] ? re[3].split(',').map(
+    /** @param {string} name */
+    function(name) {
+      return (name.trim());
+    }) : []
+  ), re[5], (
+    re[7] && re[7].replace(/\s/g, '') || undefined
+  ));
   scope.context.cls.ctor = ctor;
   scope.types.addCtor(ctor.name());
-  if (re[3]) {
+  if (re[5]) {
     scope.types.setParent(ctor.parentName());
   }
   return (ctor);
@@ -5079,6 +5156,7 @@ section.Constructor.prototype.transform = function() {
   var self = this;
   assert(self.numBlocks() === 1, self.lines[0]);
   self.params = new ParamSet(self.context, self.block(0), true);
+  self.params.templateParams = self.tmplVars;
   self.params.transform();
   self.block(0).transform();
 };
@@ -5092,7 +5170,9 @@ section.Constructor.prototype.output = function() {
   var inherit;
   inherit = [];
   if (self._parent) {
-    decl.push('@extends {' + self._parent + '}');
+    decl.push('@extends {' + self._parent + (
+      self._parentTmplVars ? '.<' + self._parentTmplVars + '>' : ''
+    ) + '}');
     inherit.push([
       'goog.inherits(',
       self.context.name.ref,
@@ -5127,18 +5207,19 @@ section.Constructor.prototype.setType = function(types) {
 /**
  * @param {!context.Context} context
  * @param {string} return_type
+ * @param {!Array.<string>} tmpl_vars
  * @param {boolean} overriding
  * @constructor
  * @extends {section.Callable}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-section.Method = function(context, return_type, overriding) {
+section.Method = function(context, return_type, tmpl_vars, overriding) {
   var self = this;
   /** @private {boolean} */
   this._overriding = overriding;
   context.isMethod = true;
-  section.Callable.call(this, context, return_type);
+  section.Callable.call(this, context, return_type, tmpl_vars);
 };
 goog.inherits(section.Method, section.Callable);
 section.Method.prototype._classname = 'section.Method';
@@ -5151,7 +5232,7 @@ section.Method.create = /**
  */
 function(scope, line, header) {
   var re;
-  re = /^(\@?)\s*([a-zA-Z]\w*)\s*(\^?)\s*(\\(.*)\\)?$/.exec(line);
+  re = /^(\@?)\s*([a-zA-Z]\w*)\s*(\^?)(\<\s*([\w\,]+)\s*\>\s*)?\s*(\\(.*)\\)?$/.exec(line);
   if (!re) {
     return (null);
   }
@@ -5162,13 +5243,18 @@ function(scope, line, header) {
     return (null);
   }
   var ret_type;
-  ret_type = re[5];
+  ret_type = re[7];
   if (ret_type) {
     ret_type = new type.Parser(scope.context, header, ret_type).parse();
   }
   return (new section.Method(
       scope.copyContext(scope.context.cls.methodName((re[1] ? '_' : '') + re[2])),
       ret_type,
+      re[4] ? re[5].split(',').map(
+      /** @param {string} name */
+      function(name) {
+        return (name.trim());
+      }) : [],
       !!re[3]
   ));
 };
