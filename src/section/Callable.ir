@@ -1,6 +1,7 @@
 ::^%.Runnable
   @context+\context.Context\$
   @returnType+\s\$
+  @tmplVars+\A<s>\$
   @params&\ParamSet|-\
   ^()
 
@@ -17,6 +18,7 @@
     @.lines[0]
     'callable takes 1 block -- found ' + @.numBlocks()
   @params = &ParamSet(@context, @.block(0))
+  @params.templateParams = @tmplVars
   @params.transform()
   @params.setReturnType(@returnType)
   @.block(0).transform()

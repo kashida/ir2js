@@ -5,7 +5,7 @@ Overriding accessor.
   return_type\s\$
   @isGetter\b\$
   context.isMethod = true
-  ^(context, return_type)
+  ^(context, return_type, [])
 
 :create = ##
   \%.Accessor|-\

@@ -14,7 +14,7 @@
   @isCtor\b\? false
   @params\A<Param>\ []
   @returnType\s\ ''
-  @templateParams\A<s>|-\
+  @templateParams&\A<s>\ []
 
 :transform
   param_done := false
@@ -96,7 +96,7 @@
     => !!s
   if @returnType
     result.push('@return {' + @returnType + '}')
-  if @templateParams
+  if @templateParams && @templateParams.length
     result.push('@template ' + @templateParams.join(','))
   => result
 

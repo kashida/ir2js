@@ -1,0 +1,142 @@
+#{: function generics
+aaa = ##
+  <U,V>\U\
+  x\s\$
+  y\T\$
+  z\X<U>\?
+#=
+aaa =
+/**
+ * @param {string} x
+ * @param {!T} y
+ * @param {!X.<U>=} z
+ * @return {!U}
+ * @template U,V
+ */
+function(x, y, z) {
+};
+#}
+
+#{ class generics
+::classname<T,U>
+  x\n\$
+  @y\n\? 0
+
+:method<V>\s\
+  x\Abc<U>\$
+  y\Def<V>\?
+#=
+/**
+ * @param {number} x
+ * @param {number=} opt_y
+ * @template T,U
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+var classname = function(x, opt_y) {
+  var self = this;
+  /** @private {number} */
+  this._y = opt_y === undefined ? (0) : opt_y;
+};
+classname.prototype._classname = 'classname';
+
+/**
+ * @param {!Abc.<U>} x
+ * @param {!Def.<V>=} y
+ * @return {string}
+ * @template V
+ */
+classname.prototype.method = function(x, y) {
+  var self = this;
+};
+{
+  "cls": [
+    {
+      "name": "classname",
+      "args": [
+        "Number",
+        "Number"
+      ],
+      "methods": [
+        {
+          "name": "method",
+          "args": [
+            null,
+            null
+          ],
+          "methods": []
+        }
+      ]
+    }
+  ],
+  "fns": []
+}
+#}
+
+#{ inheritance
+::ParentClass<T,U>
+
+::ChildClass<V> ^ParentClass<string, V>
+:method<V>\s\
+  x\Abc<U>\$
+  y\Def<V>\?
+#=
+/**
+ * @template T,U
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+var ParentClass = function() {
+var self = this;
+};
+ParentClass.prototype._classname = 'ParentClass';
+
+/**
+ * @template V
+ * @constructor
+ * @extends {ParentClass.<string,V>}
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+var ChildClass = function() {
+var self = this;
+};
+goog.inherits(ChildClass, ParentClass);
+ChildClass.prototype._classname = 'ChildClass';
+/**
+ * @param {!Abc.<U>} x
+ * @param {!Def.<V>=} y
+ * @return {string}
+ * @template V
+ */
+ChildClass.prototype.method = function(x, y) {
+  var self = this;
+};
+{
+  "cls": [
+    {
+      "name": "ParentClass",
+      "args": [],
+      "methods": []
+    },
+    {
+      "name": "ChildClass",
+      "args": [],
+      "parent": "ParentClass",
+      "methods": [
+        {
+          "name": "method",
+          "args": [
+            null,
+            null
+          ],
+          "methods": []
+        }
+      ]
+    }
+  ],
+  "fns": []
+}
+#}
