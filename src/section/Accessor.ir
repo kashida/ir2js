@@ -7,26 +7,31 @@ Overriding accessor.
   context.isMethod = true
   ^(context, return_type, [])
 
+:re = [#]
+  {name: /[a-zA-Z]\w*/}
+  {accessType: /[+*]/}
+  {_: [#], _opt: true}
+    /\\/
+    {returnType: /.*/}
+    /\\/
+
 :create = ##
   \%.Accessor|-\
   scope\FileScope\$
   line\s\$
   header\input.Line\$
-  re := /^\s*([a-zA-Z]\w*)\s*([+*])\s*(\\(.*)\\)?$/.exec(line)
-  if !re
+  m := &re.Compiler(%.Accessor.re).eval(line)
+  if !m
     => null
 
   // we should have seen a ctor.
   if !scope.context.cls
     error(header, 'accessor marker w/o class')
     => null
-  name := re[1]
-  access_type := re[2]
-  ret_type := re[4]
-  if ret_type
-    ret_type = &type.Parser(scope.context, header, ret_type).parse()
-  ctx := scope.copyContext(scope.context.cls.methodName(name))
-  => &%.Accessor(ctx, name, ret_type, access_type == '+')
+  ret_type := m.returnType ? # : ''
+    &type.Parser(scope.context, header, m.returnType).parse()
+  ctx := scope.copyContext(scope.context.cls.methodName(m.name))
+  => &%.Accessor(ctx, m.name, ret_type, m.accessType == '+')
 
 :output\A\
   member := @.context.cls.member(@name)

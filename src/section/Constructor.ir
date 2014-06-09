@@ -8,19 +8,19 @@
   @parent = @parent ? @.context.pkg.replace(@parent) : ''
 
 :re = [#]
-  '\\:'
-  {name: '\\w+', _opt: true}
+  /\:/
+  {name: /\w+/, _opt: true}
   {_: [#], _opt: true}
-    '\\<'
-    {tmplVars: '[\\w\\s\\,]+'}
-    '\\>'
+    /\</
+    {tmplVars: /[\w\s\,]+/}
+    /\>/
   {parent: [#], _opt: true}
-    '\\^'
-    {parentName: '[\\w\\.\\%]+'}
+    /\^/
+    {parentName: /[\w\.\%]+/}
     {_: [#], _opt: true}
-      '\\<'
-      {parentTmplVars: '[\\w\\s\\,]+'}
-      '\\>'
+      /\</
+      {parentTmplVars: /[\w\s\,]+/}
+      /\>/
 
 :create = ##
   \%.Constructor|-\

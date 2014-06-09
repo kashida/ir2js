@@ -6,29 +6,45 @@
   context.isMethod = true
   ^(context, return_type, tmpl_vars)
 
+:re = [#]
+  {att: /\@/, _opt: true}
+  {name: /[a-zA-Z]\w*/}
+  {overriding: /\^/, _opt: true}
+  {_: [#], _opt: true}
+    /\</
+    {tmplVars: /[\w\s\,]+/}
+    /\>/
+  {_: [#], _opt: true}
+    /\\/
+    {returnType: /.*/}
+    /\\/
+
 :create =##
   \%.Method|-\
   scope\FileScope\$
   line\s\$
   header\input.Line\$
-  re := /^(\@?)\s*([a-zA-Z]\w*)\s*(\^?)(\<\s*([\w\,]+)\s*\>\s*)?\s*(\\(.*)\\)?$/.exec(line)
-  if !re
+  m := &re.Compiler(%.Method.re).eval(line)
+  if !m
     => null
+
+  tmplVars := ##
+    vars\s\$
+    => vars ? vars.split(',').map(##) : []
+      name\s\$
+      => name.trim()
 
   // we should have seen a ctor.
   if !scope.context.cls
     error(header, 'method marker w/o class')
     => null
-  ret_type := re[7]
-  if ret_type
-    ret_type = &type.Parser(scope.context, header, ret_type).parse()
+  ret_type := m.returnType ? # : ''
+    &type.Parser(scope.context, header, m.returnType).parse()
   => &%.Method(#)
-      scope.copyContext(scope.context.cls.methodName((re[1] ? '_' : '') + re[2]))
+      scope.copyContext(scope.context.cls.methodName((m.att ? '_' : '') + m.name))
       ret_type
-      re[4] ? re[5].split(',').map(##) : []
-        name\s\$
-        => name.trim()
-      !!re[3]
+      tmplVars(m.tmplVars)
+      !!m.overriding
 
 :output\A\
   decls := []

@@ -1,6 +1,5 @@
-The pattern is expressed as a tree of Strings, Arrays, and Objects.
-Strings are understood as a regular expression. Should not include parens.
-Arrays are sequence of patterns.
+The pattern is expressed as a tree of RegExp, Arrays, and Objects.
+RegExp should not include parens. Arrays are sequence of patterns.
 Each member of Objects are converted to alternative pattens. The result Objects
 will have field names mathcing these object field names.
 There are two meta data in the Object.
@@ -31,15 +30,14 @@ automatically).
   => result
 
 :@build\RegExp\
-  s := '^' + @buildReStr(@pattern) + '$'
-  => &RegExp(s)
-  //=> &RegExp('^' + @buildReStr(@pattern) + '$')
+  => &RegExp('^' + @buildReStr(@pattern) + '$')
 
 :@buildReStr\s\
   pattern\O\$
-  if typeof(pattern) == 'string' || pattern instanceof String
+  if pattern instanceof RegExp
     @numParens++
-    => '(' + pattern + ')'
+    pstr := pattern.toString()
+    => '(' + pstr.substring(1, pstr.length - 1) + ')'
 
   if pattern instanceof Array
     @numParens++
