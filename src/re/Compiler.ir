@@ -1,0 +1,62 @@
+The pattern is expressed as a tree of Strings, Arrays, and Objects.
+Strings are understood as a regular expression. Should not include parens.
+Arrays are sequence of patterns.
+Each member of Objects are converted to alternative pattens. The result Objects
+will have field names mathcing these object field names.
+There are two meta data in the Object.
+_opt (boolean, default false): makes the pattern optional (by appending '?').
+_spc (boolean, default true): add any number of spaces '\s*' before and after.
+
+The result of eval is either null (when the match afils), or an Object.
+Object has resulting partial matches.
+
+The regexp is always bound to both begenning and end (^ and $ added
+automatically).
+
+::
+  @pattern\O\$
+  @nameToPosition\O<n>\ []
+  @numParens\n\ 0
+
+:eval\O|-\
+  str\s\$
+  regex := @build()
+  match := regex.exec(str)
+  if !match
+    => null
+
+  result := {}
+  each name in @nameToPosition
+    result[name] = match[@nameToPosition[name]]
+  => result
+
+:@build\RegExp\
+  s := '^' + @buildReStr(@pattern) + '$'
+  => &RegExp(s)
+  //=> &RegExp('^' + @buildReStr(@pattern) + '$')
+
+:@buildReStr\s\
+  pattern\O\$
+  if typeof(pattern) == 'string' || pattern instanceof String
+    @numParens++
+    => '(' + pattern + ')'
+
+  if pattern instanceof Array
+    @numParens++
+    => '(' + pattern.map(##).join('') + ')'
+      item\O\$
+      => @buildReStr(item)
+
+  @numParens++
+  alts := []
+  each name in pattern
+    if name == '_opt' || name == '_spc'
+      continue
+
+    if name != '_'
+      @nameToPosition[name] = @numParens
+    alts.push(@buildReStr(pattern[name]))
+
+  opt := !!pattern._opt ? '?' : ''
+  spc := pattern['_spc'] == false ? '' : '\\s*'
+  => spc + '(' + alts.join('|') + ')' + opt + spc

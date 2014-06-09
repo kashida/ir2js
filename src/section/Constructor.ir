@@ -1,29 +1,50 @@
 ::^%.Callable
   context\context.Context\$
   tmpl_vars\A<s>\$
-  @parent\s|-\?
-  @parentTmplVars\s|-\?
+  @parent\s|-\$
+  @parentTmplVars\A<s>\$
   context.isCtor = true
   ^(context, '', tmpl_vars)
   @parent = @parent ? @.context.pkg.replace(@parent) : ''
+
+:re = [#]
+  '\\:'
+  {name: '\\w+', _opt: true}
+  {_: [#], _opt: true}
+    '\\<'
+    {tmplVars: '[\\w\\s\\,]+'}
+    '\\>'
+  {parent: [#], _opt: true}
+    '\\^'
+    {parentName: '[\\w\\.\\%]+'}
+    {_: [#], _opt: true}
+      '\\<'
+      {parentTmplVars: '[\\w\\s\\,]+'}
+      '\\>'
 
 :create = ##
   \%.Constructor|-\
   scope\FileScope\$
   line\s\$
-  re := /^\:\s*(\w*)\s*(\<\s*([\w\,]+)\s*\>\s*)?(\^\s*(.*\w)\s*(\<([\w\s,]*)\>)?)?\s*$/.exec(line)
-  if !re
+  m := &re.Compiler(%.Constructor.re).eval(line)
+  if !m
     => null
 
-  scope.context.cls = &context.Class()
-  ctor := &%.Constructor(scope.copyContextWithName(re[1]), #, re[5], #)
-    re[2] ? re[3].split(',').map(##) : []
+  tmplVars := ##
+    vars\s\$
+    => vars ? vars.split(',').map(##) : []
       name\s\$
       => name.trim()
-    re[7] && re[7].replace(/\s/g, '') || undefined
+
+  scope.context.cls = &context.Class()
+  ctor := &%.Constructor(#)
+    scope.copyContextWithName(m.name)
+    tmplVars(m.tmplVars)
+    m.parentName
+    tmplVars(m.parentTmplVars)
   scope.context.cls.ctor = ctor
   scope.types.addCtor(ctor.name())
-  if re[5]
+  if m.parentName
     scope.types.setParent(ctor.parentName())
   => ctor
 
@@ -43,7 +64,7 @@
   inherit := []
   if @parent
     decl.push('@extends {' + @parent + # + '}')
-      @parentTmplVars ? '.<' + @parentTmplVars + '>' : ''
+      @parentTmplVars.length ? '.<' + @parentTmplVars.join(',') + '>' : ''
     inherit.push([#].join(''))
       'goog.inherits('
       @.context.name.ref
