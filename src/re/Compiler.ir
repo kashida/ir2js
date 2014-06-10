@@ -14,8 +14,7 @@ automatically).
 
 ::
   @pattern\O\$
-  @nameToPosition\O<n>\ []
-  @numParens\n\ 0
+  @extractors\A<%.Extractor|->\ []
 
 :eval\O|-\
   str\s\$
@@ -25,36 +24,47 @@ automatically).
     => null
 
   result := {}
-  each name in @nameToPosition
-    result[name] = match[@nameToPosition[name]]
+  @extractors.forEach(##)
+    extractor\%.Extractor|-\$
+    i\n\$
+    extractor && extractor.set(\A<s>\(match), i, result)
   => result
 
 :@build\RegExp\
+  @extractors.push(null)
   => &RegExp('^' + @buildReStr(@pattern) + '$')
 
 :@buildReStr\s\
   pattern\O\$
   if pattern instanceof RegExp
-    @numParens++
+    @extractors.push(null)
     pstr := pattern.toString()
     => '(' + pstr.substring(1, pstr.length - 1) + ')'
 
   if pattern instanceof Array
-    @numParens++
+    @extractors.push(null)
     => '(' + pattern.map(##).join('') + ')'
       item\O\$
       => @buildReStr(item)
 
-  @numParens++
+  => @buildReStrWithMap(pattern)
+
+:@buildReStrWithMap
+  pattern\O\$
+  @extractors.push(null)
   alts := []
   each name in pattern
     if name == '_opt' || name == '_spc'
       continue
 
     if name != '_'
-      @nameToPosition[name] = @numParens
+      @setCurrent(name)
     alts.push(@buildReStr(pattern[name]))
 
   opt := !!pattern._opt ? '?' : ''
   spc := pattern['_spc'] == false ? '' : '\\s*'
   => spc + '(' + alts.join('|') + ')' + opt + spc
+
+:@setCurrent
+  name\s\$
+  @extractors[@extractors.length - 1] = &%.Extractor(name)

@@ -1,0 +1,8 @@
+::
+  @name\s\$
+
+:set
+  match\A<s>\$
+  i\n\$
+  out\O\$
+  out[@name] = match[i]
