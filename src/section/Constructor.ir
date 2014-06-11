@@ -10,17 +10,11 @@
 :re = [#]
   /\:/
   {name: /\w+/, _opt: true}
-  {_: [#], _opt: true}
-    /\</
-    {tmplVars: /[\w\s\,]+/}
-    /\>/
+  &re.TmplVarList('tmplVars')
   {parent: [#], _opt: true}
     /\^/
     {parentName: /[\w\.\%]+/}
-    {_: [#], _opt: true}
-      /\</
-      {parentTmplVars: /[\w\s\,]+/}
-      /\>/
+    &re.TmplVarList('pTmplVars')
 
 :create = ##
   \%.Constructor|-\
@@ -30,18 +24,12 @@
   if !m
     => null
 
-  tmplVars := ##
-    vars\s\$
-    => vars ? vars.split(',').map(##) : []
-      name\s\$
-      => name.trim()
-
   scope.context.cls = &context.Class()
   ctor := &%.Constructor(#)
     scope.copyContextWithName(m.name)
-    tmplVars(m.tmplVars)
+    m.tmplVars
     m.parentName
-    tmplVars(m.parentTmplVars)
+    m['pTmplVars']
   scope.context.cls.ctor = ctor
   scope.types.addCtor(ctor.name())
   if m.parentName

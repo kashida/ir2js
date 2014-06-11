@@ -1,0 +1,13 @@
+::^%.Matcher
+  @name+\s\$
+
+:re^
+  n := {}
+  n[@name] = /[\w\s\,]+/
+  => {_: [/\</, n, /\>/], _opt: true}
+
+:interpret\*\
+  match\s\$
+  => match ? match.split(',').map(##) : []
+    name\s\$
+    => name.trim()

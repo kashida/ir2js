@@ -1,8 +1,7 @@
 ::
-  @name\s\$
+  @name+\s\$
+  @matcher\%.Matcher\$
 
-:set
-  match\A<s>\$
-  i\n\$
-  out\O\$
-  out[@name] = match[i]
+:value
+  match\s\$
+  => @matcher.interpret(match)
