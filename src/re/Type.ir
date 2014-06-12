@@ -1,0 +1,7 @@
+::^%.Matcher
+  @name+\s\$
+
+:re^
+  t := {}
+  t[@name] = /.*/
+  => {_: [/\\/, t, /\\/], _opt: true}

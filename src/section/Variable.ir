@@ -9,28 +9,33 @@
   code_input := &input.Line(@line.file, rhs, @line.rowIndex)
   @codeLine = &CodeLine(@context, code_input, &LineParser(code_input))
 
+:re = [#]
+  {'colons': /\:{0,2}/}
+  {'private': /\@/, _opt: true}
+  &re.Id('name')
+  /\=/
+  {'rest': /.*/}
+
 :create = ##
   \%.Variable|-\
   scope\FileScope\$
   line\s\$
   header\input.Line\$
-  re := /^(\:{0,2})(\@?)\s*(\w+)\s*\=\s*(.*)$/.exec(line)
-  if !re
+  m := &re.Compiler(%.Variable.re).eval(line)
+  if !m
     => null
 
-  scope_level := re[1].length
-  is_private := !!re[2]
-  name := re[3]
-  rest := re[4]
+  scope_level := m.colons.length
+  is_private := !!m['private']
 
   if scope_level == 2 && is_private
     error(header, 'global variable can not be private')
   => &%.Variable(#)
-    scope.copyContextWithName(name)
+    scope.copyContextWithName(m.name)
     header
     scope_level
     is_private
-    rest
+    m.rest
 
 :close^
   c := &CodeScope(@context, @)

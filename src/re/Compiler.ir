@@ -35,7 +35,9 @@ automatically).
 
 :@build\RegExp\
   @extractors.push(null)
-  => &RegExp('^' + @buildReStr(@pattern, null) + '$')
+  regexp := '^' + @buildReStr(@pattern, null) + '$'
+  //l(regexp, 'regexp')
+  => &RegExp(regexp)
 
 :@buildReStr\s\
   pattern\O\$

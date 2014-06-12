@@ -9,11 +9,11 @@
 
 :re = [#]
   /\:/
-  {name: /\w+/, _opt: true}
+  &re.Id('name', true)
   &re.TmplVarList('tmplVars')
   {parent: [#], _opt: true}
     /\^/
-    {parentName: /[\w\.\%]+/}
+    &re.QualifiedId('parentName')
     &re.TmplVarList('pTmplVars')
 
 :create = ##

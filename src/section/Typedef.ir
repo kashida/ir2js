@@ -2,14 +2,18 @@
   context\context.Context\$
   ^(context)
 
+:re = [#]
+  /\!/
+  &re.Id('name')
+
 :create = ##
   \%.Typedef|-\
   scope\FileScope\$
   line\s\$
-  re := /^\!\s*(\w+)$/.exec(line)
-  if !re
+  m := &re.Compiler(%.Typedef.re).eval(line)
+  if !m
     => null
-  => &%.Typedef(scope.copyContextWithName(re[1]))
+  => &%.Typedef(scope.copyContextWithName(m.name))
 
 :output\A<output.Line>\
   decoder := &type.Decoder(@.context.pkg, @.strlines().join(''))

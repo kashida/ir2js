@@ -8,16 +8,10 @@
 
 :re = [#]
   {att: /\@/, _opt: true}
-  {name: /[a-zA-Z]\w*/}
+  &re.Id('name')
   {overriding: /\^/, _opt: true}
-  {_: [#], _opt: true}
-    /\</
-    {tmplVars: /[\w\s\,]+/}
-    /\>/
-  {_: [#], _opt: true}
-    /\\/
-    {returnType: /.*/}
-    /\\/
+  &re.TmplVarList('tmplVars')
+  &re.Type('returnType')
 
 :create =##
   \%.Method|-\
@@ -28,12 +22,6 @@
   if !m
     => null
 
-  tmplVars := ##
-    vars\s\$
-    => vars ? vars.split(',').map(##) : []
-      name\s\$
-      => name.trim()
-
   // we should have seen a ctor.
   if !scope.context.cls
     error(header, 'method marker w/o class')
@@ -43,7 +31,7 @@
   => &%.Method(#)
       scope.copyContext(scope.context.cls.methodName((m.att ? '_' : '') + m.name))
       ret_type
-      tmplVars(m.tmplVars)
+      m.tmplVars
       !!m.overriding
 
 :output\A\

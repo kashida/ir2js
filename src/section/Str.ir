@@ -3,14 +3,19 @@
   @indent\n\ -1
   ^()
 
+:re = [#]
+  /\'/
+  &re.Id('name')
+
 :create = ##
   \%.Str|-\
   scope\FileScope\$
   line\s\$
-  re := /^'\s*(\w+)$/.exec(line)
-  if !re
+  m := &re.Compiler(%.Str.re).eval(line)
+  if !m
     => null
-  => &%.Str(scope.copyContextWithName(re[1]))
+
+  => &%.Str(scope.copyContextWithName(m.name))
 
 same number of strings as @.lines.
 :strlines\A<s>\

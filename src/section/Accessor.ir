@@ -8,12 +8,9 @@ Overriding accessor.
   ^(context, return_type, [])
 
 :re = [#]
-  {name: /[a-zA-Z]\w*/}
+  &re.Id('name')
   {accessType: /[+*]/}
-  {_: [#], _opt: true}
-    /\\/
-    {returnType: /.*/}
-    /\\/
+  &re.Type('returnType')
 
 :create = ##
   \%.Accessor|-\

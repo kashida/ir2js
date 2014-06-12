@@ -1,0 +1,10 @@
+::^%.Matcher
+  @name+\s\$
+  @opt\b\? false
+
+:re^
+  n := {}
+  n[@name] = /[a-zA-Z]\w*/
+  if @opt
+    n['_opt'] = true
+  => n
