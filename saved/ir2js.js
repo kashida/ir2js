@@ -2,6 +2,7 @@ var context = {};
 var input = {};
 var output = {};
 var parser = {};
+var re = {};
 var section = {};
 var type = {};
 
@@ -4031,6 +4032,205 @@ parser.TokenListBuilder.prototype._addArray = function(data) {
     self._buildRec(elem);
   });
 };
+/*
+The pattern is expressed as a tree of RegExp, Arrays, and Objects.
+RegExp should not include parens. Arrays are sequence of patterns.
+Each member of Objects are converted to alternative pattens. The result Objects
+will have field names mathcing these object field names.
+There are two meta data in the Object.
+_opt (boolean, default false): makes the pattern optional (by appending '?').
+_spc (boolean, default true): add any number of spaces '\s*' before and after.
+
+The result of eval is either null (when the match afils), or an Object.
+Object has resulting partial matches.
+
+The regexp is always bound to both begenning and end (^ and $ added
+automatically).
+*/
+
+/**
+ * @param {!Object} pattern
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+re.Compiler = function(pattern) {
+  var self = this;
+  /** @private {!Object} */
+  this._pattern = pattern;
+  /** @private {!Array.<!re.Extractor|string|null>} */
+  this._extractors = ([]);
+};
+re.Compiler.prototype._classname = 're.Compiler';
+
+/**
+ * @param {string} str
+ * @return {!Object|null}
+ */
+re.Compiler.prototype.eval = function(str) {
+  var self = this;
+  var regex;
+  regex = self._build();
+  var match;
+  match = regex.exec(str);
+  if (!match) {
+    return (null);
+  }
+
+  var result;
+  result = {};
+  self._extractors.forEach(
+  /**
+   * @param {!re.Extractor|string|null} extractor
+   * @param {number} i
+   */
+  function(extractor, i) {
+    if (extractor instanceof re.Extractor) {
+      result[extractor.name] = extractor.value(match[i]);
+    }
+    else if (extractor) {
+      result[extractor] = match[i];
+    }
+  });
+  return (result);
+};
+
+/**
+ * @return {!RegExp}
+ * @private
+ */
+re.Compiler.prototype._build = function() {
+  var self = this;
+  self._extractors.push(null);
+  var regexp;
+  regexp = '^' + self._buildReStr(self._pattern, null) + '$';
+  //l(regexp, 'regexp')
+  return (new RegExp(regexp));
+};
+
+/**
+ * @param {!Object} pattern
+ * @param {!re.Matcher|null} matcher
+ * @return {string}
+ * @private
+ */
+re.Compiler.prototype._buildReStr = function(pattern, matcher) {
+  var self = this;
+  if (pattern instanceof RegExp) {
+    self._extractors.push(null);
+    var pstr;
+    pstr = pattern.toString();
+    return ('(' + pstr.substring(1, pstr.length - 1) + ')');
+  }
+
+  if (pattern instanceof Array) {
+    self._extractors.push(null);
+    return ('(' + pattern.map(
+    /** @param {!Object} item */
+    function(item) {
+      return (self._buildReStr(item, matcher));
+    }).join('') + ')');
+  }
+
+  if (pattern instanceof re.Matcher) {
+    return (self._buildReStr(pattern.re(), pattern));
+  }
+
+  return (self._buildReStrWithMap(pattern, matcher));
+};
+
+/**
+ * @param {!Object} pattern
+ * @param {!re.Matcher|null} matcher
+ * @private
+ */
+re.Compiler.prototype._buildReStrWithMap = function(pattern, matcher) {
+  var self = this;
+  self._extractors.push(null);
+  var alts;
+  alts = [];
+  var name;
+  for (name in pattern) {
+    if (name === '_opt' || name === '_spc') {
+      continue;
+    }
+
+    if (name !== '_') {
+      self._setCurrent(name, matcher);
+    }
+    alts.push(self._buildReStr(pattern[name], matcher));
+  }
+
+  var opt;
+  opt = !!pattern._opt ? '?' : '';
+  var spc;
+  spc = pattern['_spc'] === false ? '' : '\\s*';
+  return (spc + '(' + alts.join('|') + ')' + opt + spc);
+};
+
+/**
+ * @param {string} name
+ * @param {!re.Matcher|null} matcher
+ * @private
+ */
+re.Compiler.prototype._setCurrent = function(name, matcher) {
+  var self = this;
+  self._extractors[self._extractors.length - 1] = matcher ? (
+    new re.Extractor(name, matcher)
+  ) : name;
+};
+/**
+ * @param {string} name
+ * @param {!re.Matcher} matcher
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+re.Extractor = function(name, matcher) {
+  var self = this;
+  /** @private {string} */
+  this._name = name;
+  /** @private {!re.Matcher} */
+  this._matcher = matcher;
+};
+re.Extractor.prototype._classname = 're.Extractor';
+/** @type {string} */
+re.Extractor.prototype.name;
+re.Extractor.prototype.__defineGetter__('name', function() {
+return this._name;
+});
+
+/** @param {string} match */
+re.Extractor.prototype.value = function(match) {
+  var self = this;
+  return (self._matcher.interpret(match));
+};
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+re.Matcher = function() {
+var self = this;
+};
+re.Matcher.prototype._classname = 're.Matcher';
+
+/** @return {!Object} */
+re.Matcher.prototype.re = function() {
+var self = this;
+};
+
+/*
+Default impl simply returns the match with no interpretation.
+*/
+/**
+ * @param {string} match
+ * @return {*}
+ */
+re.Matcher.prototype.interpret = function(match) {
+  var self = this;
+  return (match);
+};
 /**
  * @param {!FileScope} scope
  * @constructor
@@ -4496,6 +4696,137 @@ CodeLine.prototype.output = function() {
   return (out);
 };
 /**
+ * @param {string} name
+ * @param {boolean=} opt_opt
+ * @constructor
+ * @extends {re.Matcher}
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+re.Id = function(name, opt_opt) {
+  var self = this;
+  /** @private {string} */
+  this._name = name;
+  /** @private {boolean} */
+  this._opt = opt_opt === undefined ? (false) : opt_opt;
+};
+goog.inherits(re.Id, re.Matcher);
+re.Id.prototype._classname = 're.Id';
+/** @type {string} */
+re.Id.prototype.name;
+re.Id.prototype.__defineGetter__('name', function() {
+return this._name;
+});
+
+/** @override */
+re.Id.prototype.re = function() {
+  var self = this;
+  var n;
+  n = {};
+  n[self._name] = /[a-zA-Z]\w*/;
+  if (self._opt) {
+    n['_opt'] = true;
+  }
+  return (n);
+};
+/**
+ * @param {string} name
+ * @constructor
+ * @extends {re.Matcher}
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+re.QualifiedId = function(name) {
+  var self = this;
+  /** @private {string} */
+  this._name = name;
+};
+goog.inherits(re.QualifiedId, re.Matcher);
+re.QualifiedId.prototype._classname = 're.QualifiedId';
+/** @type {string} */
+re.QualifiedId.prototype.name;
+re.QualifiedId.prototype.__defineGetter__('name', function() {
+return this._name;
+});
+
+/** @override */
+re.QualifiedId.prototype.re = function() {
+  var self = this;
+  var n;
+  n = {};
+  n[self._name] = /[\w\.\%]+/;
+  return (n);
+};
+/**
+ * @param {string} name
+ * @constructor
+ * @extends {re.Matcher}
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+re.TmplVarList = function(name) {
+  var self = this;
+  /** @private {string} */
+  this._name = name;
+};
+goog.inherits(re.TmplVarList, re.Matcher);
+re.TmplVarList.prototype._classname = 're.TmplVarList';
+/** @type {string} */
+re.TmplVarList.prototype.name;
+re.TmplVarList.prototype.__defineGetter__('name', function() {
+return this._name;
+});
+
+/** @override */
+re.TmplVarList.prototype.re = function() {
+  var self = this;
+  var n;
+  n = {};
+  n[self._name] = /[\w\s\,]+/;
+  return ({'_': [/\</, n, /\>/], '_opt': true});
+};
+
+/**
+ * @param {string} match
+ * @return {*}
+ */
+re.TmplVarList.prototype.interpret = function(match) {
+  var self = this;
+  return (match ? match.split(',').map(
+  /** @param {string} name */
+  function(name) {
+    return (name.trim());
+  }) : []);
+};
+/**
+ * @param {string} name
+ * @constructor
+ * @extends {re.Matcher}
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+re.Type = function(name) {
+  var self = this;
+  /** @private {string} */
+  this._name = name;
+};
+goog.inherits(re.Type, re.Matcher);
+re.Type.prototype._classname = 're.Type';
+/** @type {string} */
+re.Type.prototype.name;
+re.Type.prototype.__defineGetter__('name', function() {
+return this._name;
+});
+
+/** @override */
+re.Type.prototype.re = function() {
+  var self = this;
+  var t;
+  t = {};
+  t[self._name] = /.*/;
+  return ({'_': [/\\/, t, /\\/], '_opt': true});
+};
+/**
  * @constructor
  * @extends {section.Head}
  * @struct
@@ -4645,18 +4976,24 @@ section.Str.prototype.__defineGetter__('context', function() {
 return this._context;
 });
 
+section.Str.re = [
+  /\'/,
+  new re.Id('name')
+];
+
 section.Str.create = /**
  * @param {!FileScope} scope
  * @param {string} line
  * @return {!section.Str|null}
  */
 function(scope, line) {
-  var re;
-  re = /^'\s*(\w+)$/.exec(line);
-  if (!re) {
+  var m;
+  m = new re.Compiler(section.Str.re).eval(line);
+  if (!m) {
     return (null);
   }
-  return (new section.Str(scope.copyContextWithName(re[1])));
+
+  return (new section.Str(scope.copyContextWithName(m.name)));
 };
 
 /*
@@ -4739,6 +5076,14 @@ section.Variable = function(context, line, scopeLevel, isPrivate, rhs) {
 goog.inherits(section.Variable, section.Code);
 section.Variable.prototype._classname = 'section.Variable';
 
+section.Variable.re = [
+  {'colons': /\:{0,2}/},
+  {'private': /\@/, '_opt': true},
+  new re.Id('name'),
+  /\=/,
+  {'rest': /.*/}
+];
+
 section.Variable.create = /**
  * @param {!FileScope} scope
  * @param {string} line
@@ -4746,30 +5091,26 @@ section.Variable.create = /**
  * @return {!section.Variable|null}
  */
 function(scope, line, header) {
-  var re;
-  re = /^(\:{0,2})(\@?)\s*(\w+)\s*\=\s*(.*)$/.exec(line);
-  if (!re) {
+  var m;
+  m = new re.Compiler(section.Variable.re).eval(line);
+  if (!m) {
     return (null);
   }
 
   var scope_level;
-  scope_level = re[1].length;
+  scope_level = m.colons.length;
   var is_private;
-  is_private = !!re[2];
-  var name;
-  name = re[3];
-  var rest;
-  rest = re[4];
+  is_private = !!m['private'];
 
   if (scope_level === 2 && is_private) {
     error(header, 'global variable can not be private');
   }
   return (new section.Variable(
-    scope.copyContextWithName(name),
+    scope.copyContextWithName(m.name),
     header,
     scope_level,
     is_private,
-    rest
+    m.rest
   ));
 };
 
@@ -4962,18 +5303,23 @@ section.Typedef = function(context) {
 goog.inherits(section.Typedef, section.Str);
 section.Typedef.prototype._classname = 'section.Typedef';
 
+section.Typedef.re = [
+  /\!/,
+  new re.Id('name')
+];
+
 section.Typedef.create = /**
  * @param {!FileScope} scope
  * @param {string} line
  * @return {!section.Typedef|null}
  */
 function(scope, line) {
-  var re;
-  re = /^\!\s*(\w+)$/.exec(line);
-  if (!re) {
+  var m;
+  m = new re.Compiler(section.Typedef.re).eval(line);
+  if (!m) {
     return (null);
   }
-  return (new section.Typedef(scope.copyContextWithName(re[1])));
+  return (new section.Typedef(scope.copyContextWithName(m.name)));
 };
 
 /** @return {!Array.<!output.Line>} */
@@ -5015,6 +5361,12 @@ section.Accessor = function(context, name, return_type, isGetter) {
 goog.inherits(section.Accessor, section.Callable);
 section.Accessor.prototype._classname = 'section.Accessor';
 
+section.Accessor.re = [
+  new re.Id('name'),
+  {'accessType': /[+*]/},
+  new re.Type('returnType')
+];
+
 section.Accessor.create = /**
  * @param {!FileScope} scope
  * @param {string} line
@@ -5022,9 +5374,9 @@ section.Accessor.create = /**
  * @return {!section.Accessor|null}
  */
 function(scope, line, header) {
-  var re;
-  re = /^\s*([a-zA-Z]\w*)\s*([+*])\s*(\\(.*)\\)?$/.exec(line);
-  if (!re) {
+  var m;
+  m = new re.Compiler(section.Accessor.re).eval(line);
+  if (!m) {
     return (null);
   }
 
@@ -5033,18 +5385,13 @@ function(scope, line, header) {
     error(header, 'accessor marker w/o class');
     return (null);
   }
-  var name;
-  name = re[1];
-  var access_type;
-  access_type = re[2];
   var ret_type;
-  ret_type = re[4];
-  if (ret_type) {
-    ret_type = new type.Parser(scope.context, header, ret_type).parse();
-  }
+  ret_type = m.returnType ? (
+    new type.Parser(scope.context, header, m.returnType).parse()
+  ) : '';
   var ctx;
-  ctx = scope.copyContext(scope.context.cls.methodName(name));
-  return (new section.Accessor(ctx, name, ret_type, access_type === '+'));
+  ctx = scope.copyContext(scope.context.cls.methodName(m.name));
+  return (new section.Accessor(ctx, m.name, ret_type, m.accessType === '+'));
 };
 
 /** @return {!Array} */
@@ -5094,19 +5441,19 @@ section.Accessor.prototype.output = function() {
 /**
  * @param {!context.Context} context
  * @param {!Array.<string>} tmpl_vars
- * @param {string|null=} opt_parent
- * @param {string|null=} opt_parentTmplVars
+ * @param {string|null} parent
+ * @param {!Array.<string>} parentTmplVars
  * @constructor
  * @extends {section.Callable}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-section.Constructor = function(context, tmpl_vars, opt_parent, opt_parentTmplVars) {
+section.Constructor = function(context, tmpl_vars, parent, parentTmplVars) {
   var self = this;
   /** @private {string|null} */
-  this._parent = opt_parent === undefined ? (null) : opt_parent;
-  /** @private {string|null} */
-  this._parentTmplVars = opt_parentTmplVars === undefined ? (null) : opt_parentTmplVars;
+  this._parent = parent;
+  /** @private {!Array.<string>} */
+  this._parentTmplVars = parentTmplVars;
   context.isCtor = true;
   section.Callable.call(this, context, '', tmpl_vars);
   self._parent = self._parent ? self.context.pkg.replace(self._parent) : '';
@@ -5114,32 +5461,40 @@ section.Constructor = function(context, tmpl_vars, opt_parent, opt_parentTmplVar
 goog.inherits(section.Constructor, section.Callable);
 section.Constructor.prototype._classname = 'section.Constructor';
 
+section.Constructor.re = [
+  /\:/,
+  new re.Id('name', true),
+  new re.TmplVarList('tmplVars'),
+  {'parent': [
+    /\^/,
+    new re.QualifiedId('parentName'),
+    new re.TmplVarList('pTmplVars')
+  ], '_opt': true}
+];
+
 section.Constructor.create = /**
  * @param {!FileScope} scope
  * @param {string} line
  * @return {!section.Constructor|null}
  */
 function(scope, line) {
-  var re;
-  re = /^\:\s*(\w*)\s*(\<\s*([\w\,]+)\s*\>\s*)?(\^\s*(.*\w)\s*(\<([\w\s,]*)\>)?)?\s*$/.exec(line);
-  if (!re) {
+  var m;
+  m = new re.Compiler(section.Constructor.re).eval(line);
+  if (!m) {
     return (null);
   }
 
   scope.context.cls = new context.Class();
   var ctor;
-  ctor = new section.Constructor(scope.copyContextWithName(re[1]), (
-    re[2] ? re[3].split(',').map(
-    /** @param {string} name */
-    function(name) {
-      return (name.trim());
-    }) : []
-  ), re[5], (
-    re[7] && re[7].replace(/\s/g, '') || undefined
-  ));
+  ctor = new section.Constructor(
+    scope.copyContextWithName(m.name),
+    m.tmplVars,
+    m.parentName,
+    m['pTmplVars']
+  );
   scope.context.cls.ctor = ctor;
   scope.types.addCtor(ctor.name());
-  if (re[5]) {
+  if (m.parentName) {
     scope.types.setParent(ctor.parentName());
   }
   return (ctor);
@@ -5171,7 +5526,7 @@ section.Constructor.prototype.output = function() {
   inherit = [];
   if (self._parent) {
     decl.push('@extends {' + self._parent + (
-      self._parentTmplVars ? '.<' + self._parentTmplVars + '>' : ''
+      self._parentTmplVars.length ? '.<' + self._parentTmplVars.join(',') + '>' : ''
     ) + '}');
     inherit.push([
       'goog.inherits(',
@@ -5224,6 +5579,14 @@ section.Method = function(context, return_type, tmpl_vars, overriding) {
 goog.inherits(section.Method, section.Callable);
 section.Method.prototype._classname = 'section.Method';
 
+section.Method.re = [
+  {'att': /\@/, '_opt': true},
+  new re.Id('name'),
+  {'overriding': /\^/, '_opt': true},
+  new re.TmplVarList('tmplVars'),
+  new re.Type('returnType')
+];
+
 section.Method.create = /**
  * @param {!FileScope} scope
  * @param {string} line
@@ -5231,9 +5594,9 @@ section.Method.create = /**
  * @return {!section.Method|null}
  */
 function(scope, line, header) {
-  var re;
-  re = /^(\@?)\s*([a-zA-Z]\w*)\s*(\^?)(\<\s*([\w\,]+)\s*\>\s*)?\s*(\\(.*)\\)?$/.exec(line);
-  if (!re) {
+  var m;
+  m = new re.Compiler(section.Method.re).eval(line);
+  if (!m) {
     return (null);
   }
 
@@ -5243,19 +5606,14 @@ function(scope, line, header) {
     return (null);
   }
   var ret_type;
-  ret_type = re[7];
-  if (ret_type) {
-    ret_type = new type.Parser(scope.context, header, ret_type).parse();
-  }
+  ret_type = m.returnType ? (
+    new type.Parser(scope.context, header, m.returnType).parse()
+  ) : '';
   return (new section.Method(
-      scope.copyContext(scope.context.cls.methodName((re[1] ? '_' : '') + re[2])),
+      scope.copyContext(scope.context.cls.methodName((m.att ? '_' : '') + m.name)),
       ret_type,
-      re[4] ? re[5].split(',').map(
-      /** @param {string} name */
-      function(name) {
-        return (name.trim());
-      }) : [],
-      !!re[3]
+      m.tmplVars,
+      !!m.overriding
   ));
 };
 
