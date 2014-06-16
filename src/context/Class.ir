@@ -1,5 +1,6 @@
 ::
-  @ctor&\section.Constructor|-\
+  @isInterface&\b\? false
+  @ctor&\section.Constructor|section.Interface|-\
   @members\O<s,Member>\ {}
 
 :name\%.Name\

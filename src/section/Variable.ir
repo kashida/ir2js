@@ -11,7 +11,7 @@
 
 :re = [#]
   {'colons': /\:{0,2}/}
-  {'private': /\@/, _opt: true}
+  {'private': /\@/, _s: '?'}
   &re.Id('name')
   /\=/
   {'rest': /.*/}

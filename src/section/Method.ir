@@ -7,9 +7,9 @@
   ^(context, return_type, tmpl_vars)
 
 :re = [#]
-  {att: /\@/, _opt: true}
+  {att: /\@/, _s: '?'}
   &re.Id('name')
-  {overriding: /\^/, _opt: true}
+  {overriding: /\^/, _s: '?'}
   &re.TmplVarList('tmplVars')
   &re.Type('returnType')
 
@@ -42,11 +42,16 @@
     decls = @.params.outputDecls()
   if /^_/.test(@.context.name.id)
     decls.push('@private')
-  => [#]
-    docLines(decls)
-    @.outputFunc()
-    whitespaces(@.block(0).indent) + 'var self = this;'
-    @.outputBody('};')
+  if @.context.cls.isInterface
+    => [#]
+      docLines(decls)
+      @.context.name.decl + ' = function(' + @.params.outputParams() + ') {};'
+  else
+    => [#]
+      docLines(decls)
+      @.outputFunc()
+      whitespaces(@.block(0).indent) + 'var self = this;'
+      @.outputBody('};')
 
 :setType^
   types\s\$

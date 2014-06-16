@@ -1,10 +1,10 @@
 ::^%.Matcher
-  @name+\s\$
+  @name+\s\? '_'
 
 :re^
   n := {}
   n[@name] = /[\w\s\,]+/
-  => {_: [/\</, n, /\>/], _opt: true}
+  => {_: [/\</, n, /\>/], _s: '?'}
 
 :interpret\*\
   match\s\$

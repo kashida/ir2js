@@ -3,8 +3,8 @@ RegExp should not include parens. Arrays are sequence of patterns.
 Each member of Objects are converted to alternative pattens. The result Objects
 will have field names mathcing these object field names.
 There are two meta data in the Object.
-_opt (boolean, default false): makes the pattern optional (by appending '?').
-_spc (boolean, default true): add any number of spaces '\s*' before and after.
+_s (string) : suffix to the group, e.g. '?', '*', etc.
+_w (boolean, default true): add any number of spaces '\s*' before and after.
 
 The result of eval is either null (when the match afils), or an Object.
 Object has resulting partial matches.
@@ -14,12 +14,13 @@ automatically).
 
 ::
   @pattern\O\$
+  @global\b\? false
   @extractors\A<%.Extractor|s|->\ []
+  @regex\RegExp\ @build()
 
 :eval\O|-\
   str\s\$
-  regex := @build()
-  match := regex.exec(str)
+  match := @regex.exec(str)
   if !match
     => null
 
@@ -35,9 +36,11 @@ automatically).
 
 :@build\RegExp\
   @extractors.push(null)
-  regexp := '^' + @buildReStr(@pattern, null) + '$'
+  regexp := @buildReStr(@pattern, null)
+  if !@global
+    regexp = '^' + regexp + '$'
   //l(regexp, 'regexp')
-  => &RegExp(regexp)
+  => &RegExp(regexp, @global ? 'g' : '')
 
 :@buildReStr\s\
   pattern\O\$
@@ -64,15 +67,15 @@ automatically).
   @extractors.push(null)
   alts := []
   each name in pattern
-    if name == '_opt' || name == '_spc'
+    if name == '_s' || name == '_w'
       continue
 
     if name != '_'
       @setCurrent(name, matcher)
     alts.push(@buildReStr(pattern[name], matcher))
 
-  opt := !!pattern._opt ? '?' : ''
-  spc := pattern['_spc'] == false ? '' : '\\s*'
+  opt := pattern._s || ''
+  spc := pattern['_w'] == false ? '' : '\\s*'
   => spc + '(' + alts.join('|') + ')' + opt + spc
 
 :@setCurrent

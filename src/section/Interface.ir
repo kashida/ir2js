@@ -1,0 +1,57 @@
+::^%.Callable
+  context\context.Context\$
+  tmpl_vars\A<s>\$
+  @parent\s|-\$
+  @parentTmplVars\A<s>\$
+  context.isCtor = true
+  ^(context, '', tmpl_vars)
+  @parent = @parent ? @.context.pkg.replace(@parent) : ''
+
+:re = [#]
+  /\:\?/
+  &re.Id('name', true)
+  &re.TmplVarList('tmplVars')
+  {_: [#], _s: '?'}
+    /\;/
+    &re.QualifiedId('parentName')
+    &re.TmplVarList('pTmplVars')
+
+:create = ##
+  \%.Interface|-\
+  scope\FileScope\$
+  line\s\$
+  m := &re.Compiler(%.Interface.re).eval(line)
+  if !m
+    => null
+
+  scope.context.cls = &context.Class(true)
+  ctor := &%.Interface(#)
+    scope.copyContextWithName(m.name)
+    m.tmplVars
+    m.parentName
+    m['pTmplVars']
+  scope.context.cls.ctor = ctor
+  scope.types.addCtor(ctor.name())
+  if m.parentName
+    scope.types.setParent(ctor.parentName())
+  => ctor
+
+:parentName\s\
+  => \s\(@parent)
+
+:transform^
+  assert(@.numBlocks() == 0 || @.lines.length == 0, @.lines[0])
+
+:output\A\
+  decl := ['@interface']
+  if @parent
+    decl.push('@extends {' + @parent + # + '}')
+      @parentTmplVars.length ? '.<' + @parentTmplVars.join(',') + '>' : ''
+  => [#]
+    docLines(decl)
+    @.context.name.decl + ' = function() {};'
+    [#].join('')
+      @.context.name.property('_classname').decl
+      " = '"
+      @.context.name.ref
+      "';"

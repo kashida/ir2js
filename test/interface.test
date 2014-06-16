@@ -1,0 +1,81 @@
+#{ class
+::?name
+
+:method\b\
+  p0\s\$
+  p1\n\?
+#=
+/** @interface */
+var name = function() {};
+name.prototype._classname = 'name';
+
+/**
+ * @param {string} p0
+ * @param {number=} p1
+ * @return {boolean}
+ */
+name.prototype.method = function(p0, p1) {};
+{
+  "cls": [
+    {
+      "name": "name",
+      "args": [],
+      "methods": [
+        {
+          "name": "method",
+          "args": [
+            "String",
+            "Number"
+          ],
+          "methods": []
+        }
+      ]
+    }
+  ],
+  "fns": []
+}
+#}
+
+#{ class that implements interfaces
+::?iface0
+::?iface1
+::classname; iface0 iface1
+#=
+/** @interface */
+var iface0 = function() {};
+iface0.prototype._classname = 'iface0';
+/** @interface */
+var iface1 = function() {};
+iface1.prototype._classname = 'iface1';
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ * @implements {iface0}
+ * @implements {iface1}
+ */
+var classname = function() {
+var self = this;
+};
+classname.prototype._classname = 'classname';
+{
+  "cls": [
+    {
+      "name": "iface0",
+      "args": [],
+      "methods": []
+    },
+    {
+      "name": "iface1",
+      "args": [],
+      "methods": []
+    },
+    {
+      "name": "classname",
+      "args": [],
+      "methods": []
+    }
+  ],
+  "fns": []
+}
+#}

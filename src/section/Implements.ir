@@ -1,0 +1,25 @@
+::
+  @name\s\$
+  @tmplVars\A<s>\$
+
+:re = ##
+  => [#]
+    &re.QualifiedId('iName')
+    &re.TmplVarList('iTmplVars')
+
+:create = ##
+  \A<%.Implements>\
+  str\s\$
+  impls := []
+  regex := &re.Compiler(%.Implements.re(), true)
+  m := regex.eval(str)
+  while m && m.iName
+    impls.push(&%.Implements(#))
+      m.iName
+      m['iTmplVars']
+    m = regex.eval(str)
+  => impls
+
+:output\s\
+  => '@implements {' + @name + # + '}'
+    @tmplVars.length > 0 ? '<' + @tmplVars.join(',') + '>' : ''

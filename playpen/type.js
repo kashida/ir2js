@@ -29,7 +29,7 @@ x5(false, '');
 var x6 = {abc:'', def:{}};
 
 // Empty records get rejected.
-//** @type {{}} */
+///** @type {{}} */
 //var x7 = {};
 
 // null is recognized as a type. Setting it to undefined is not allowed, but
@@ -38,7 +38,7 @@ var x6 = {abc:'', def:{}};
 var x8 = null;
 /** @type {null} */
 var x9;
-/** @type {null} */
+///** @type {null} */
 //var x10 = undefined;
 
 // undefined is recognized as a type too.

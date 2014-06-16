@@ -3,6 +3,7 @@
   tmpl_vars\A<s>\$
   @parent\s|-\$
   @parentTmplVars\A<s>\$
+  @impls\A<%.Implements>\$
   context.isCtor = true
   ^(context, '', tmpl_vars)
   @parent = @parent ? @.context.pkg.replace(@parent) : ''
@@ -11,10 +12,13 @@
   /\:/
   &re.Id('name', true)
   &re.TmplVarList('tmplVars')
-  {parent: [#], _opt: true}
+  {_: [#], _s: '?'}
     /\^/
     &re.QualifiedId('parentName')
     &re.TmplVarList('pTmplVars')
+  {impls: [#], _s: '?'}
+    /\;/
+    {_: %.Implements.re(), _s: '*'}
 
 :create = ##
   \%.Constructor|-\
@@ -30,6 +34,7 @@
     m.tmplVars
     m.parentName
     m['pTmplVars']
+    %.Implements.create(m['impls'] || '')
   scope.context.cls.ctor = ctor
   scope.types.addCtor(ctor.name())
   if m.parentName
@@ -61,6 +66,9 @@
       ');'
   decl.push('@struct')
   decl.push('@suppress {checkStructDictInheritance}')
+  @impls.forEach(##)
+    impl\%.Implements\$
+    decl.push(impl.output())
   => [#]
     docLines(decl)
     @.outputFunc()

@@ -9,6 +9,7 @@
   if ![#].some(##)
     %.Variable.create
     %.Constructor.create
+    %.Interface.create
     %.Method.create
     %.Accessor.create
     %.Str.create

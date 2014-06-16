@@ -1,5 +1,5 @@
 ::^%.Matcher
-  @name+\s\$
+  @name+\s\? '_'
 
 :re^
   n := {}
