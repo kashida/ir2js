@@ -1,4 +1,4 @@
-#{ class
+#{ interface
 ::?name
 
 :method\b\
@@ -39,7 +39,8 @@ name.prototype.method = function(p0, p1) {};
 #{ class that implements interfaces
 ::?iface0
 ::?iface1
-::classname; iface0 iface1
+::?iface2; iface1
+::classname; iface0 iface2
 #=
 /** @interface */
 var iface0 = function() {};
@@ -48,11 +49,17 @@ iface0.prototype._classname = 'iface0';
 var iface1 = function() {};
 iface1.prototype._classname = 'iface1';
 /**
+ * @interface
+ * @extends {iface1}
+ */
+var iface2 = function() {};
+iface2.prototype._classname = 'iface2';
+/**
  * @constructor
  * @struct
  * @suppress {checkStructDictInheritance}
  * @implements {iface0}
- * @implements {iface1}
+ * @implements {iface2}
  */
 var classname = function() {
 var self = this;
@@ -71,9 +78,153 @@ classname.prototype._classname = 'classname';
       "methods": []
     },
     {
+      "name": "iface2",
+      "args": [],
+      "methods": []
+    },
+    {
       "name": "classname",
       "args": [],
       "methods": []
+    }
+  ],
+  "fns": []
+}
+#}
+
+#{ interface with generics
+::?iface0<T,U,V>
+:m0<W>\T\
+  p0\U\$
+
+::?iface1<X>
+:m1<Y>\s\
+  p0\Y\$
+
+::?iface2<B,C>; iface0<n,B,V>
+
+::classname<Z>; iface0<s,n,Z> iface2<B<n>,C>
+:m0<W>\s\
+  p0\n\$
+
+:m1<Y>\s\
+  p0\Y\$
+#=
+/**
+ * @interface
+ * @template T,U,V
+ */
+var iface0 = function() {};
+iface0.prototype._classname = 'iface0';
+/**
+ * @param {!U} p0
+ * @return {!T}
+ * @template W
+ */
+iface0.prototype.m0 = function(p0) {};
+
+/**
+ * @interface
+ * @template X
+ */
+var iface1 = function() {};
+iface1.prototype._classname = 'iface1';
+/**
+ * @param {!Y} p0
+ * @return {string}
+ * @template Y
+ */
+iface1.prototype.m1 = function(p0) {};
+
+/**
+ * @interface
+ * @template B,C
+ * @extends {iface0.<number,!B,!V>}
+ */
+var iface2 = function() {};
+iface2.prototype._classname = 'iface2';
+
+/**
+ * @template Z
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ * @implements {iface0.<string,number,!Z>}
+ * @implements {iface2.<!B.<number>,!C>}
+ */
+var classname = function() {
+var self = this;
+};
+classname.prototype._classname = 'classname';
+/**
+ * @param {number} p0
+ * @return {string}
+ * @template W
+ */
+classname.prototype.m0 = function(p0) {
+  var self = this;
+};
+
+/**
+ * @param {!Y} p0
+ * @return {string}
+ * @template Y
+ */
+classname.prototype.m1 = function(p0) {
+  var self = this;
+};
+{
+  "cls": [
+    {
+      "name": "iface0",
+      "args": [],
+      "methods": [
+        {
+          "name": "m0",
+          "args": [
+            "U"
+          ],
+          "methods": []
+        }
+      ]
+    },
+    {
+      "name": "iface1",
+      "args": [],
+      "methods": [
+        {
+          "name": "m1",
+          "args": [
+            "Y"
+          ],
+          "methods": []
+        }
+      ]
+    },
+    {
+      "name": "iface2",
+      "args": [],
+      "methods": []
+    },
+    {
+      "name": "classname",
+      "args": [],
+      "methods": [
+        {
+          "name": "m0",
+          "args": [
+            "Number"
+          ],
+          "methods": []
+        },
+        {
+          "name": "m1",
+          "args": [
+            "Y"
+          ],
+          "methods": []
+        }
+      ]
     }
   ],
   "fns": []

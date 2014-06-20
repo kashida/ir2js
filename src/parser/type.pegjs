@@ -61,6 +61,7 @@ TypeIdentifier = !TypeReservedWord n:IdentifierName { return n; }
 
 TypePathComponent = Identifier / '%'+
 
+// Template parameters used for template declarations.
 TemplateParams
   = '<' _ initId:Identifier ids:(_ ',' _ Identifier)* _ '>' _ {
       var tmplIds = [];
@@ -71,13 +72,18 @@ TemplateParams
       return tmplIds;
     }
 
+// Template parameters used for template instantiation, e.g. in var type.
+TemplateVars = '<' _ TypeExpressionList _ '>'
+
+TypeExpressionList = TypeExpression _ (',' _ TypeExpressionList)*
+
 QualifiedTypeId = (TypePathComponent '.')* TypeIdentifier
       //return $.resolveType(id);
 
-NonNullableTypeId = id:QualifiedTypeId tmpl:TemplateParams? {
+NonNullableTypeId = id:QualifiedTypeId tmpl:TemplateVars? {
       var value = ['!', id];
       if (tmpl) {
-        value.push('.<', tmpl, '>');
+        value.push('.', tmpl);
       }
       return value;
     }
@@ -104,3 +110,12 @@ TypeExpression = TypeAtom (_ '|' _ TypeAtom)*
 TypeExpressionP = a:TypeAtom x:(_ '|' _ TypeAtom)* {
       return x.length > 0 ? ['(', a, x, ')'] : a;
     }
+
+TypeInstantiation = id:QualifiedTypeId _ tmpl:TemplateVars? {
+      if (!tmpl) {
+        return id;
+      }
+      return [id, '.', tmpl]
+    }
+
+Implements = _ (_ TypeInstantiation)+

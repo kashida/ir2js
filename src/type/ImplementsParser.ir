@@ -1,0 +1,60 @@
+::
+  @context\context.Context\$
+  @input\input.Line\$
+  @type_str\s\$
+  @runner\\ parser.ParserRunner()
+
+:parse\A<s>\
+  => @reduce(@runner.run(@type_str, {#}))
+    startRule: 'Implements'
+    xformer: &LineTransformer(@context, @input)
+
+:@reduce
+  list+\*\$
+  => @unwrap(@clean(list), 2).map(##)
+    item\*\$
+    => @reduceToStr(item)
+
+Clean up the tree of arrays so that there is no null, undefined, or array with
+zero elements.
+:@clean
+  list+\*\$
+  if !(list instanceof Array)
+    => list
+  result := list.map(##).filter(##)
+    item\*\$
+    => @clean(item)
+    --
+    item\*\$
+    => #&&
+      item != null
+      item != undefined
+      !(item instanceof Array) || item.length > 0
+  => result
+
+Given a cleaned tree of arrays, returns an array of multiple elements.
+Only if there is only one element to the leaf, retuns the one item array.
+:@unwrap
+  list+\*\$
+  depth\n\$
+  if !(list instanceof Array)
+    => [list]
+  if list.length == 1 && depth > 0
+    => @unwrap(list[0], depth - 1)
+  => list
+
+:@reduceToStr
+  list+\*\$
+  r := []
+  @reduceRec(list, r)
+  => r.join('')
+
+:@reduceRec
+  list+\*\$
+  result\A\$
+  if list instanceof Array
+    list.forEach(##)
+      item\*\$
+      r := @reduceRec(item, result)
+  else
+    result.push(list)

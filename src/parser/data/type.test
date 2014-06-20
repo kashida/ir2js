@@ -74,3 +74,12 @@ param+\\ Abc(0, true)
 :ParseLine
 \s\ (@code.length ? @code[0] : '')
   \string\(self._code.length ? self._code[0] : '')
+
+:Implements
+iface
+iface iface2
+  ifaceiface2
+iface<*> iface2<A>
+  iface.<*>iface2.<!Array>
+iface<*,abc> iface2<A<a>, B<n, C<b>>>
+  iface.<*,!abc>iface2.<!Array.<!a>,!B.<number,!C.<boolean>>>

@@ -12,6 +12,15 @@ Object has resulting partial matches.
 The regexp is always bound to both begenning and end (^ and $ added
 automatically).
 
+If 'global' flag is true, multiple match is possible.
+  regex := &re.Compiler(pattern, true)
+  m := regex.eval(input_str)
+  while m && m.some_property
+    ...do something with m...
+    m = regex.eval(input_str)
+
+To reset the RegExp object, do: regex.eval('')
+
 ::
   @pattern\O\$
   @global\b\? false

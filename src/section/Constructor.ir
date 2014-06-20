@@ -16,14 +16,15 @@
     /\^/
     &re.QualifiedId('parentName')
     &re.TmplVarList('pTmplVars')
-  {impls: [#], _s: '?'}
+  {_: [#], _s: '?'}
     /\;/
-    {_: %.Implements.re(), _s: '*'}
+    {rest: /.*/}
 
 :create = ##
   \%.Constructor|-\
   scope\FileScope\$
   line\s\$
+  header\input.Line\$
   m := &re.Compiler(%.Constructor.re).eval(line)
   if !m
     => null
@@ -34,7 +35,7 @@
     m.tmplVars
     m.parentName
     m['pTmplVars']
-    %.Implements.create(m['impls'] || '')
+    %.Implements.create(scope.context, header, m.rest || '')
   scope.context.cls.ctor = ctor
   scope.types.addCtor(ctor.name())
   if m.parentName
@@ -68,7 +69,7 @@
   decl.push('@suppress {checkStructDictInheritance}')
   @impls.forEach(##)
     impl\%.Implements\$
-    decl.push(impl.output())
+    decl.push(impl.ctorOutput())
   => [#]
     docLines(decl)
     @.outputFunc()

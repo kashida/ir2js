@@ -4,8 +4,8 @@ NODE=nodejs
 NODE_TEST=NODE_PATH=compiled $(NODE)
 NODE_SAVED=NODE_PATH=saved $(NODE) saved/convert
 PEGJS=node_modules/.bin/pegjs
-PARSER_RULES=ParseLine,TypeExpression
-TEST_RULES=BlockLine,BlockMarker,ParseLine,FunctionBlockLine,Expression,Statement,Comment,PrimaryExpression,NewExpression,CallExpression,MemberExpression,Identifier,Literal,NumericLiteral,StringLiteral,RegularExpressionLiteral,ObjectLiteral,AdditiveExpression,TypeLiteralLine,ParamLine
+PARSER_RULES=ParseLine,TypeExpression,Implements
+TEST_RULES=BlockLine,BlockMarker,ParseLine,FunctionBlockLine,Expression,Statement,Comment,PrimaryExpression,NewExpression,CallExpression,MemberExpression,Identifier,Literal,NumericLiteral,StringLiteral,RegularExpressionLiteral,ObjectLiteral,AdditiveExpression,TypeLiteralLine,ParamLine,Implements
 
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
 JS_SRCS_WITH_TEST=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))

@@ -9,7 +9,7 @@ aaa =
 /**
  * @param {string} x
  * @param {!T} y
- * @param {!X.<U>=} z
+ * @param {!X.<!U>=} z
  * @return {!U}
  * @template U,V
  */
@@ -42,8 +42,8 @@ var classname = function(x, opt_y) {
 classname.prototype._classname = 'classname';
 
 /**
- * @param {!Abc.<U>} x
- * @param {!Def.<V>=} y
+ * @param {!Abc.<!U>} x
+ * @param {!Def.<!V>=} y
  * @return {string}
  * @template V
  */
@@ -106,8 +106,8 @@ var self = this;
 goog.inherits(ChildClass, ParentClass);
 ChildClass.prototype._classname = 'ChildClass';
 /**
- * @param {!Abc.<U>} x
- * @param {!Def.<V>=} y
+ * @param {!Abc.<!U>} x
+ * @param {!Def.<!V>=} y
  * @return {string}
  * @template V
  */

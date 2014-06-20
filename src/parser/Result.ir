@@ -13,13 +13,13 @@ Container and interface of the TokenList to the rest of the converter.
 
 :rendered\A<s>\
   lines := []
-  @tokens.prevLines.map(##)
+  @tokens.prevLines.forEach(##)
     line\%.TokenList|s\$
     lines.push(line.toString())
   code_line := @tokens.toString()
   if code_line
     lines.push(code_line)
-  @tokens.nextLines.map(##)
+  @tokens.nextLines.forEach(##)
     line\%.TokenList|s\$
     lines.push(line.toString())
   => lines
