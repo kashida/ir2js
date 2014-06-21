@@ -2484,19 +2484,30 @@ function(annotations) {
   ]));
 };
 /**
+ * @param {boolean=} opt_isInterface
  * @constructor
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-context.Class = function() {
+context.Class = function(opt_isInterface) {
   var self = this;
-  /** @private {!section.Constructor|null} */
+  /** @private {boolean} */
+  this._isInterface = opt_isInterface === undefined ? (false) : opt_isInterface;
+  /** @private {!section.Constructor|!section.Interface|null} */
   this._ctor = (null);
   /** @private {!Object.<string,!Member>} */
   this._members = ({});
 };
 context.Class.prototype._classname = 'context.Class';
-/** @type {!section.Constructor|null} */
+/** @type {boolean} */
+context.Class.prototype.isInterface;
+context.Class.prototype.__defineGetter__('isInterface', function() {
+return this._isInterface;
+});
+context.Class.prototype.__defineSetter__('isInterface', function(value) {
+this._isInterface = value;
+});
+/** @type {!section.Constructor|!section.Interface|null} */
 context.Class.prototype.ctor;
 context.Class.prototype.__defineGetter__('ctor', function() {
 return this._ctor;
@@ -3602,7 +3613,7 @@ parser.Result.prototype.rendered = function() {
   var self = this;
   var lines;
   lines = [];
-  self._tokens.prevLines.map(
+  self._tokens.prevLines.forEach(
   /** @param {!parser.TokenList|string} line */
   function(line) {
     lines.push(line.toString());
@@ -3612,7 +3623,7 @@ parser.Result.prototype.rendered = function() {
   if (code_line) {
     lines.push(code_line);
   }
-  self._tokens.nextLines.map(
+  self._tokens.nextLines.forEach(
   /** @param {!parser.TokenList|string} line */
   function(line) {
     lines.push(line.toString());
@@ -4038,28 +4049,42 @@ RegExp should not include parens. Arrays are sequence of patterns.
 Each member of Objects are converted to alternative pattens. The result Objects
 will have field names mathcing these object field names.
 There are two meta data in the Object.
-_opt (boolean, default false): makes the pattern optional (by appending '?').
-_spc (boolean, default true): add any number of spaces '\s*' before and after.
+_s (string) : suffix to the group, e.g. '?', '*', etc.
+_w (boolean, default true): add any number of spaces '\s*' before and after.
 
 The result of eval is either null (when the match afils), or an Object.
 Object has resulting partial matches.
 
 The regexp is always bound to both begenning and end (^ and $ added
 automatically).
+
+If 'global' flag is true, multiple match is possible.
+  regex := &re.Compiler(pattern, true)
+  m := regex.eval(input_str)
+  while m && m.some_property
+    ...do something with m...
+    m = regex.eval(input_str)
+
+To reset the RegExp object, do: regex.eval('')
 */
 
 /**
  * @param {!Object} pattern
+ * @param {boolean=} opt_global
  * @constructor
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-re.Compiler = function(pattern) {
+re.Compiler = function(pattern, opt_global) {
   var self = this;
   /** @private {!Object} */
   this._pattern = pattern;
+  /** @private {boolean} */
+  this._global = opt_global === undefined ? (false) : opt_global;
   /** @private {!Array.<!re.Extractor|string|null>} */
   this._extractors = ([]);
+  /** @private {!RegExp} */
+  this._regex = (self._build());
 };
 re.Compiler.prototype._classname = 're.Compiler';
 
@@ -4069,10 +4094,8 @@ re.Compiler.prototype._classname = 're.Compiler';
  */
 re.Compiler.prototype.eval = function(str) {
   var self = this;
-  var regex;
-  regex = self._build();
   var match;
-  match = regex.exec(str);
+  match = self._regex.exec(str);
   if (!match) {
     return (null);
   }
@@ -4103,9 +4126,12 @@ re.Compiler.prototype._build = function() {
   var self = this;
   self._extractors.push(null);
   var regexp;
-  regexp = '^' + self._buildReStr(self._pattern, null) + '$';
+  regexp = self._buildReStr(self._pattern, null);
+  if (!self._global) {
+    regexp = '^' + regexp + '$';
+  }
   //l(regexp, 'regexp')
-  return (new RegExp(regexp));
+  return (new RegExp(regexp, self._global ? 'g' : ''));
 };
 
 /**
@@ -4151,7 +4177,7 @@ re.Compiler.prototype._buildReStrWithMap = function(pattern, matcher) {
   alts = [];
   var name;
   for (name in pattern) {
-    if (name === '_opt' || name === '_spc') {
+    if (name === '_s' || name === '_w') {
       continue;
     }
 
@@ -4162,9 +4188,9 @@ re.Compiler.prototype._buildReStrWithMap = function(pattern, matcher) {
   }
 
   var opt;
-  opt = !!pattern._opt ? '?' : '';
+  opt = pattern._s || '';
   var spc;
-  spc = pattern['_spc'] === false ? '' : '\\s*';
+  spc = pattern['_w'] === false ? '' : '\\s*';
   return (spc + '(' + alts.join('|') + ')' + opt + spc);
 };
 
@@ -4258,6 +4284,7 @@ section.Generator.prototype.generate = function(header, lines) {
   if (![
     section.Variable.create,
     section.Constructor.create,
+    section.Interface.create,
     section.Method.create,
     section.Accessor.create,
     section.Str.create,
@@ -4340,6 +4367,50 @@ Needs to be overridden.
 section.Head.prototype.output = function() {
   var self = this;
   return ([]);
+};
+/**
+ * @param {string} str
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+section.Implements = function(str) {
+  var self = this;
+  /** @private {string} */
+  this._str = str;
+};
+section.Implements.prototype._classname = 'section.Implements';
+
+section.Implements.create = /**
+ * @param {!context.Context} context
+ * @param {!input.Line} line
+ * @param {string} str
+ * @return {!Array.<!section.Implements>}
+ */
+function(context, line, str) {
+  if (!str) {
+    return ([]);
+  }
+  var impls;
+  impls = new type.ImplementsParser(context, line, str).parse();
+  l(impls, 'impls');
+  return (impls.map(
+  /** @param {string} impl */
+  function(impl) {
+    return (new section.Implements(impl));
+  }));
+};
+
+/** @return {string} */
+section.Implements.prototype.ctorOutput = function() {
+  var self = this;
+  return ('@implements {' + self._str + '}');
+};
+
+/** @return {string} */
+section.Implements.prototype.ifaceOutput = function() {
+  var self = this;
+  return ('@extends {' + self._str + '}');
 };
 /**
  * @param {string} name
@@ -4443,6 +4514,130 @@ type.Decoder.prototype._process = function() {
 type.Decoder.prototype.output = function() {
   var self = this;
   return (self._decoded);
+};
+/**
+ * @param {!context.Context} context
+ * @param {!input.Line} input
+ * @param {string} type_str
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+type.ImplementsParser = function(context, input, type_str) {
+  var self = this;
+  /** @private {!context.Context} */
+  this._context = context;
+  /** @private {!input.Line} */
+  this._input = input;
+  /** @private {string} */
+  this._type_str = type_str;
+  /** @private {!parser.ParserRunner} */
+  this._runner = (new parser.ParserRunner());
+};
+type.ImplementsParser.prototype._classname = 'type.ImplementsParser';
+
+/** @return {!Array.<string>} */
+type.ImplementsParser.prototype.parse = function() {
+  var self = this;
+  return (self._reduce(self._runner.run(self._type_str, {
+    'startRule': 'Implements',
+    'xformer': new LineTransformer(self._context, self._input)
+  })));
+};
+
+/**
+ * @param {*} list
+ * @private
+ */
+type.ImplementsParser.prototype._reduce = function(list) {
+  var self = this;
+  return (self._unwrap(self._clean(list), 2).map(
+  /** @param {*} item */
+  function(item) {
+    return (self._reduceToStr(item));
+  }));
+};
+
+/*
+Clean up the tree of arrays so that there is no null, undefined, or array with
+zero elements.
+*/
+/**
+ * @param {*} list
+ * @private
+ */
+type.ImplementsParser.prototype._clean = function(list) {
+  var self = this;
+  if (!(list instanceof Array)) {
+    return (list);
+  }
+  var result;
+  result = list.map(
+  /** @param {*} item */
+  function(item) {
+    return (self._clean(item));
+  }).filter(
+  /** @param {*} item */
+  function(item) {
+    return ((
+      (item !== null) &&
+      (item !== undefined) &&
+      (!(item instanceof Array) || item.length > 0)
+    ));
+  });
+  return (result);
+};
+
+/*
+Given a cleaned tree of arrays, returns an array of multiple elements.
+Only if there is only one element to the leaf, retuns the one item array.
+*/
+/**
+ * @param {*} list
+ * @param {number} depth
+ * @private
+ */
+type.ImplementsParser.prototype._unwrap = function(list, depth) {
+  var self = this;
+  if (!(list instanceof Array)) {
+    return ([list]);
+  }
+  if (list.length === 1 && depth > 0) {
+    return (self._unwrap(list[0], depth - 1));
+  }
+  return (list);
+};
+
+/**
+ * @param {*} list
+ * @private
+ */
+type.ImplementsParser.prototype._reduceToStr = function(list) {
+  var self = this;
+  var r;
+  r = [];
+  self._reduceRec(list, r);
+  return (r.join(''));
+};
+
+/**
+ * @param {*} list
+ * @param {!Array} result
+ * @private
+ */
+type.ImplementsParser.prototype._reduceRec = function(list, result) {
+  var self = this;
+  if (list instanceof Array) {
+    list.forEach(
+    /** @param {*} item */
+    function(item) {
+      var r;
+      r = self._reduceRec(item, result);
+    });
+  }
+  else {
+    result.push(list);
+  }
 };
 type.TYPE_PARSER = null;
 
@@ -4696,17 +4891,17 @@ CodeLine.prototype.output = function() {
   return (out);
 };
 /**
- * @param {string} name
+ * @param {string=} opt_name
  * @param {boolean=} opt_opt
  * @constructor
  * @extends {re.Matcher}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-re.Id = function(name, opt_opt) {
+re.Id = function(opt_name, opt_opt) {
   var self = this;
   /** @private {string} */
-  this._name = name;
+  this._name = opt_name === undefined ? ('_') : opt_name;
   /** @private {boolean} */
   this._opt = opt_opt === undefined ? (false) : opt_opt;
 };
@@ -4725,21 +4920,21 @@ re.Id.prototype.re = function() {
   n = {};
   n[self._name] = /[a-zA-Z]\w*/;
   if (self._opt) {
-    n['_opt'] = true;
+    n['_s'] = '?';
   }
   return (n);
 };
 /**
- * @param {string} name
+ * @param {string=} opt_name
  * @constructor
  * @extends {re.Matcher}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-re.QualifiedId = function(name) {
+re.QualifiedId = function(opt_name) {
   var self = this;
   /** @private {string} */
-  this._name = name;
+  this._name = opt_name === undefined ? ('_') : opt_name;
 };
 goog.inherits(re.QualifiedId, re.Matcher);
 re.QualifiedId.prototype._classname = 're.QualifiedId';
@@ -4758,16 +4953,16 @@ re.QualifiedId.prototype.re = function() {
   return (n);
 };
 /**
- * @param {string} name
+ * @param {string=} opt_name
  * @constructor
  * @extends {re.Matcher}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-re.TmplVarList = function(name) {
+re.TmplVarList = function(opt_name) {
   var self = this;
   /** @private {string} */
-  this._name = name;
+  this._name = opt_name === undefined ? ('_') : opt_name;
 };
 goog.inherits(re.TmplVarList, re.Matcher);
 re.TmplVarList.prototype._classname = 're.TmplVarList';
@@ -4783,7 +4978,7 @@ re.TmplVarList.prototype.re = function() {
   var n;
   n = {};
   n[self._name] = /[\w\s\,]+/;
-  return ({'_': [/\</, n, /\>/], '_opt': true});
+  return ({'_': [/\</, n, /\>/], '_s': '?'});
 };
 
 /**
@@ -4799,16 +4994,16 @@ re.TmplVarList.prototype.interpret = function(match) {
   }) : []);
 };
 /**
- * @param {string} name
+ * @param {string=} opt_name
  * @constructor
  * @extends {re.Matcher}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-re.Type = function(name) {
+re.Type = function(opt_name) {
   var self = this;
   /** @private {string} */
-  this._name = name;
+  this._name = opt_name === undefined ? ('_') : opt_name;
 };
 goog.inherits(re.Type, re.Matcher);
 re.Type.prototype._classname = 're.Type';
@@ -4824,7 +5019,7 @@ re.Type.prototype.re = function() {
   var t;
   t = {};
   t[self._name] = /.*/;
-  return ({'_': [/\\/, t, /\\/], '_opt': true});
+  return ({'_': [/\\/, t, /\\/], '_s': '?'});
 };
 /**
  * @constructor
@@ -5078,7 +5273,7 @@ section.Variable.prototype._classname = 'section.Variable';
 
 section.Variable.re = [
   {'colons': /\:{0,2}/},
-  {'private': /\@/, '_opt': true},
+  {'private': /\@/, '_s': '?'},
   new re.Id('name'),
   /\=/,
   {'rest': /.*/}
@@ -5443,17 +5638,20 @@ section.Accessor.prototype.output = function() {
  * @param {!Array.<string>} tmpl_vars
  * @param {string|null} parent
  * @param {!Array.<string>} parentTmplVars
+ * @param {!Array.<!section.Implements>} impls
  * @constructor
  * @extends {section.Callable}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-section.Constructor = function(context, tmpl_vars, parent, parentTmplVars) {
+section.Constructor = function(context, tmpl_vars, parent, parentTmplVars, impls) {
   var self = this;
   /** @private {string|null} */
   this._parent = parent;
   /** @private {!Array.<string>} */
   this._parentTmplVars = parentTmplVars;
+  /** @private {!Array.<!section.Implements>} */
+  this._impls = impls;
   context.isCtor = true;
   section.Callable.call(this, context, '', tmpl_vars);
   self._parent = self._parent ? self.context.pkg.replace(self._parent) : '';
@@ -5465,19 +5663,24 @@ section.Constructor.re = [
   /\:/,
   new re.Id('name', true),
   new re.TmplVarList('tmplVars'),
-  {'parent': [
+  {'_': [
     /\^/,
     new re.QualifiedId('parentName'),
     new re.TmplVarList('pTmplVars')
-  ], '_opt': true}
+  ], '_s': '?'},
+  {'_': [
+    /\;/,
+    {'rest': /.*/}
+  ], '_s': '?'}
 ];
 
 section.Constructor.create = /**
  * @param {!FileScope} scope
  * @param {string} line
+ * @param {!input.Line} header
  * @return {!section.Constructor|null}
  */
-function(scope, line) {
+function(scope, line, header) {
   var m;
   m = new re.Compiler(section.Constructor.re).eval(line);
   if (!m) {
@@ -5490,7 +5693,8 @@ function(scope, line) {
     scope.copyContextWithName(m.name),
     m.tmplVars,
     m.parentName,
-    m['pTmplVars']
+    m['pTmplVars'],
+    section.Implements.create(scope.context, header, m.rest || '')
   );
   scope.context.cls.ctor = ctor;
   scope.types.addCtor(ctor.name());
@@ -5538,6 +5742,11 @@ section.Constructor.prototype.output = function() {
   }
   decl.push('@struct');
   decl.push('@suppress {checkStructDictInheritance}');
+  self._impls.forEach(
+  /** @param {!section.Implements} impl */
+  function(impl) {
+    decl.push(impl.ctorOutput());
+  });
   return ([
     docLines(decl),
     self.outputFunc(),
@@ -5561,6 +5770,92 @@ section.Constructor.prototype.setType = function(types) {
 };
 /**
  * @param {!context.Context} context
+ * @param {!Array.<string>} tmpl_vars
+ * @param {!Array.<!section.Implements>} impls
+ * @constructor
+ * @extends {section.Callable}
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+section.Interface = function(context, tmpl_vars, impls) {
+  var self = this;
+  // This is actually rendered as @extends.
+  /** @private {!Array.<!section.Implements>} */
+  this._impls = impls;
+  context.isCtor = true;
+  section.Callable.call(this, context, '', tmpl_vars);
+};
+goog.inherits(section.Interface, section.Callable);
+section.Interface.prototype._classname = 'section.Interface';
+
+section.Interface.re = [
+  /\:\?/,
+  new re.Id('name', true),
+  new re.TmplVarList('tmplVars'),
+  {'_': [
+    /\;/,
+    {'rest': /.*/}
+  ], '_s': '?'}
+];
+
+section.Interface.create = /**
+ * @param {!FileScope} scope
+ * @param {string} line
+ * @param {!input.Line} header
+ * @return {!section.Interface|null}
+ */
+function(scope, line, header) {
+  var m;
+  m = new re.Compiler(section.Interface.re).eval(line);
+  if (!m) {
+    return (null);
+  }
+
+  scope.context.cls = new context.Class(true);
+  var ctor;
+  ctor = new section.Interface(
+    scope.copyContextWithName(m.name),
+    m.tmplVars,
+    section.Implements.create(scope.context, header, m.rest || '')
+  );
+  scope.context.cls.ctor = ctor;
+  scope.types.addCtor(ctor.name());
+  return (ctor);
+};
+
+/** @override */
+section.Interface.prototype.transform = function() {
+  var self = this;
+  assert(self.numBlocks() === 0 || self.lines.length === 0, self.lines[0]);
+};
+
+/** @return {!Array} */
+section.Interface.prototype.output = function() {
+  var self = this;
+  var decl;
+  decl = ['@interface'];
+  if (self.tmplVars.length > 0) {
+    decl.push('@template ' + self.tmplVars.join(','));
+  }
+  self._impls.forEach(
+  /** @param {!section.Implements} impl */
+  function(impl) {
+    decl.push(impl.ifaceOutput());
+  });
+  l(decl, 'decl');
+  return ([
+    docLines(decl),
+    self.context.name.decl + ' = function() {};',
+    [
+      self.context.name.property('_classname').decl,
+      " = '",
+      self.context.name.ref,
+      "';"
+    ].join('')
+  ]);
+};
+/**
+ * @param {!context.Context} context
  * @param {string} return_type
  * @param {!Array.<string>} tmpl_vars
  * @param {boolean} overriding
@@ -5580,9 +5875,9 @@ goog.inherits(section.Method, section.Callable);
 section.Method.prototype._classname = 'section.Method';
 
 section.Method.re = [
-  {'att': /\@/, '_opt': true},
+  {'att': /\@/, '_s': '?'},
   new re.Id('name'),
-  {'overriding': /\^/, '_opt': true},
+  {'overriding': /\^/, '_s': '?'},
   new re.TmplVarList('tmplVars'),
   new re.Type('returnType')
 ];
@@ -5631,12 +5926,20 @@ section.Method.prototype.output = function() {
   if (/^_/.test(self.context.name.id)) {
     decls.push('@private');
   }
-  return ([
-    docLines(decls),
-    self.outputFunc(),
-    whitespaces(self.block(0).indent) + 'var self = this;',
-    self.outputBody('};')
-  ]);
+  if (self.context.cls.isInterface) {
+    return ([
+      docLines(decls),
+      self.context.name.decl + ' = function(' + self.params.outputParams() + ') {};'
+    ]);
+  }
+  else {
+    return ([
+      docLines(decls),
+      self.outputFunc(),
+      whitespaces(self.block(0).indent) + 'var self = this;',
+      self.outputBody('};')
+    ]);
+  }
 };
 
 /** @override */
