@@ -10,7 +10,7 @@ TEST_RULES=BlockLine,BlockMarker,ParseLine,FunctionBlockLine,Expression,Statemen
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
 JS_SRCS_WITH_TEST=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))
 JS_SRCS=$(filter-out */TestCase.ir,$(JS_SRCS_WITH_TEST))
-PEGJS_SRCS=src/parser/init.js $(wildcard src/parser/*.pegjs)
+PEGJS_SRCS=src/parser/rules/init.js $(wildcard src/parser/rules/*.pegjs)
 
 TESTS=$(wildcard test/*.test)
 
