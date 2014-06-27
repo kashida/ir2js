@@ -134,3 +134,50 @@ function(p0, opt_p1) {
   "fns": []
 }
 #}
+
+#{[abc.def] class statkc
+::Abc
+
+:def = ##
+  param\s\$
+  do_something()
+
+:ghi
+  ~def('jkl')
+#=
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+_o_.abc.def.Abc = function() {
+var self = this;
+};
+_o_.abc.def.Abc.prototype._classname = '_o_.abc.def.Abc';
+
+_o_.abc.def.Abc.def = /** @param {string} param */
+function(param) {
+  do_something();
+};
+
+_o_.abc.def.Abc.prototype.ghi = function() {
+  var self = this;
+  _o_.abc.def.Abc.def('jkl');
+};
+{
+  "cls": [
+    {
+      "name": "_o_.abc.def.Abc",
+      "args": [],
+      "methods": [
+        {
+          "name": "ghi",
+          "args": [],
+          "methods": []
+        }
+      ]
+    }
+  ],
+  "fns": []
+}
+#}
