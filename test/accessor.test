@@ -7,16 +7,16 @@
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
   var self = this;
   /** @private {string} */
   this._param = (null);
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [
         "String"
       ],
@@ -38,7 +38,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
   var self = this;
   /** @private {string} */
   this._param0 = (null);
@@ -47,29 +47,29 @@ var classname = function() {
   /** @private {string} */
   this._param2 = (null);
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 /** @type {string} */
-classname.prototype.param0;
-classname.prototype.__defineGetter__('param0', function() {
+_o_.classname.prototype.param0;
+_o_.classname.prototype.__defineGetter__('param0', function() {
 return this._param0;
 });
 /** @type {string} */
-classname.prototype.param1;
-classname.prototype.__defineSetter__('param1', function(value) {
+_o_.classname.prototype.param1;
+_o_.classname.prototype.__defineSetter__('param1', function(value) {
 this._param1 = value;
 });
 /** @type {string} */
-classname.prototype.param2;
-classname.prototype.__defineGetter__('param2', function() {
+_o_.classname.prototype.param2;
+_o_.classname.prototype.__defineGetter__('param2', function() {
 return this._param2;
 });
-classname.prototype.__defineSetter__('param2', function(value) {
+_o_.classname.prototype.__defineSetter__('param2', function(value) {
 this._param2 = value;
 });
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [
         "String",
         "String",
@@ -98,34 +98,34 @@ this._param2 = value;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
   var self = this;
   /** @private {string} */
   this._member = (null);
   /** @private {!Array.<string>} */
   this._member2 = (null);
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 /** @type {string} */
-classname.prototype.member;
-classname.prototype.__defineGetter__('member', function() {
+_o_.classname.prototype.member;
+_o_.classname.prototype.__defineGetter__('member', function() {
   var self = this;
   return ('');
 });
-classname.prototype.__defineSetter__('member', function(value) {
+_o_.classname.prototype.__defineSetter__('member', function(value) {
   var self = this;
   do_something_with(value);
 });
 /** @type {!Array.<string>} */
-classname.prototype.member2;
-classname.prototype.__defineGetter__('member2', function() {
+_o_.classname.prototype.member2;
+_o_.classname.prototype.__defineGetter__('member2', function() {
   var self = this;
   return ('');
 });
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [
         "String",
         null
@@ -148,25 +148,25 @@ classname.prototype.__defineGetter__('member2', function() {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
   var self = this;
   /** @private {string} */
   this._member = (null);
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 /** @type {string} */
-classname.prototype.member;
-classname.prototype.__defineSetter__('member', function(value) {
+_o_.classname.prototype.member;
+_o_.classname.prototype.__defineSetter__('member', function(value) {
 this._member = value;
 });
-classname.prototype.__defineGetter__('member', function() {
+_o_.classname.prototype.__defineGetter__('member', function() {
   var self = this;
   do_something();
 });
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [
         "String"
       ],
@@ -192,30 +192,30 @@ classname.prototype.__defineGetter__('member', function() {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
 var self = this;
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 /** @type {string} */
-classname.prototype.member;
-classname.prototype.__defineGetter__('member', function() {
+_o_.classname.prototype.member;
+_o_.classname.prototype.__defineGetter__('member', function() {
   var self = this;
   return ('');
 });
-classname.prototype.__defineSetter__('member', function(v) {
+_o_.classname.prototype.__defineSetter__('member', function(v) {
   var self = this;
   do_something_with(v);
 });
 /** @type {!Array.<string>} */
-classname.prototype.member2;
-classname.prototype.__defineGetter__('member2', function() {
+_o_.classname.prototype.member2;
+_o_.classname.prototype.__defineGetter__('member2', function() {
   var self = this;
   return ('');
 });
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [],
       "methods": []
     }
@@ -237,24 +237,24 @@ classname.prototype.__defineGetter__('member2', function() {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
 var self = this;
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 /** @type {string} */
-classname.prototype.member;
-classname.prototype.__defineSetter__('member', function(v) {
+_o_.classname.prototype.member;
+_o_.classname.prototype.__defineSetter__('member', function(v) {
   var self = this;
   do_something_with(v);
 });
-classname.prototype.__defineGetter__('member', function() {
+_o_.classname.prototype.__defineGetter__('member', function() {
   var self = this;
   return ('');
 });
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [],
       "methods": []
     }

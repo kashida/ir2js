@@ -4,9 +4,11 @@ NODE=nodejs
 NODE_TEST=NODE_PATH=compiled $(NODE)
 NODE_SAVED=NODE_PATH=saved $(NODE) saved/convert
 PEGJS=node_modules/.bin/pegjs
-PARSER_RULES=ParseLine,TypeExpression,Implements
+PARSER_RULES=Implements,ParseLine,TypeExpression,TypeInstantiation
 TEST_RULES=BlockLine,BlockMarker,ParseLine,FunctionBlockLine,Expression,Statement,Comment,PrimaryExpression,NewExpression,CallExpression,MemberExpression,Identifier,Literal,NumericLiteral,StringLiteral,RegularExpressionLiteral,ObjectLiteral,AdditiveExpression,TypeLiteralLine,ParamLine,Implements
 
+REQ_JS=compiled/imports.js compiled/base.js compiled/constants.js
+TEST_REQ_JS=compiled/base.js compiled/constants.js
 IR_SRCS=$(wildcard src/*.ir) $(wildcard src/*/*.ir)
 JS_SRCS_WITH_TEST=$(patsubst %.ir,%.js,$(subst src,compiled,$(IR_SRCS)))
 JS_SRCS=$(filter-out */TestCase.ir,$(JS_SRCS_WITH_TEST))
@@ -75,28 +77,24 @@ test: compiled/ir2js_test.js compiled/syntax.js compiled/test.js
 	@echo '===== TEST'
 	$(NODE_TEST) compiled/test.js $(TESTS)
 
-compiled/ir2js_test.js: compiled/_ir2js.js compiled/imports.js compiled/base.js
+compiled/ir2js_test.js: compiled/_ir2js.js $(REQ_JS)
 	@echo '===== MERGE ir2js_test'
 	$(NODE_SAVED) --merge --basedir=compiled --outfile=$@ \
-	compiled/imports.js compiled/base.js $(JS_SRCS_WITH_TEST)
-
+	$(REQ_JS) $(JS_SRCS_WITH_TEST)
 
 converter: compiled/ir2js.js compiled/syntax.js compiled/convert.js
 
 sort:
 	@echo "$(shell $(SORTJS) $(JS_SRCS))"
 
-compiled/ir2js.js: compiled/_ir2js.js compiled/imports.js compiled/base.js
+compiled/ir2js.js: compiled/_ir2js.js $(REQ_JS)
 	@echo '===== MERGE ir2js'
-	$(NODE_SAVED) --merge --basedir=compiled --outfile=$@ \
-	compiled/imports.js compiled/base.js $(JS_SRCS)
+	$(NODE_SAVED) --merge --basedir=compiled --outfile=$@ $(REQ_JS) $(JS_SRCS)
 
-
-compiled/_ir2js.js: $(JS_SRCS) $(PACKAGES_FILE) compiled/base.js
+compiled/_ir2js.js: $(JS_SRCS) $(PACKAGES_FILE) $(TEST_REQ_JS)
 	@echo '===== VERIFY ir2js: compiling'
 	java $(CLOSURE_ARGS) --js_output_file $@ --js $(PACKAGES_FILE) \
-	--js compiled/base.js \
-	$(addprefix --js ,$(shell $(SORTJS) $(JS_SRCS))) || \
+	$(addprefix --js ,$(TEST_REQ_JS) $(shell $(SORTJS) $(JS_SRCS))) || \
 	(rm -f $@ && false)
 
 $(PACKAGES_FILE):
@@ -107,7 +105,7 @@ $(PACKAGES_FILE):
 ############################################################
 # Parser targets.
 
-PARSER_TEST_SRCS=compiled/base.js \
+PARSER_TEST_SRCS=compiled/base.js compiled/constants.js \
 $(patsubst %.ir,%.js,$(subst src,compiled,$(wildcard src/parser/*.ir)))
 PARSER_TEST_SRCS+=compiled/input/Line.js
 

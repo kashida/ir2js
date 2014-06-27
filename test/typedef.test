@@ -1,9 +1,9 @@
 #{ one line typedef
 :!short_name
-  boolean|Array.<string>
+  b|A<s>
 #=
-/** @typedef {boolean|Array.<string>} */
-var short_name;
+/** @typedef {boolean|!Array.<string>} */
+_o_.short_name;
 {
   "cls": [],
   "fns": []
@@ -12,10 +12,10 @@ var short_name;
 
 #{[abc.def] with package name
 :!short_name
-  boolean|Array.<string>|%.MyClass
+  b|A<s>|~.MyClass
 #=
-/** @typedef {boolean|Array.<string>|abc.def.MyClass} */
-abc.def.short_name;
+/** @typedef {boolean|!Array.<string>|!_o_.abc.def.MyClass} */
+_o_.abc.def.short_name;
 {
   "cls": [],
   "fns": []
@@ -24,10 +24,10 @@ abc.def.short_name;
 
 #{ type name short-hands
 :!short_name
-  b|A.<s>
+  b|A<s>
 #=
-/** @typedef {boolean|Array.<string>} */
-var short_name;
+/** @typedef {boolean|!Array.<string>} */
+_o_.short_name;
 {
   "cls": [],
   "fns": []
@@ -36,12 +36,12 @@ var short_name;
 
 #{ mluti-line
 :!short_name
-  boolean|
-  A.<s>|
-  number
+  b|
+  A<s>|
+  n
 #=
-/** @typedef {boolean|Array.<string>|number} */
-var short_name;
+/** @typedef {boolean|!Array.<string>|number} */
+_o_.short_name;
 {
   "cls": [],
   "fns": []

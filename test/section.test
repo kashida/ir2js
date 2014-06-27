@@ -9,12 +9,12 @@ this should be a global comment.
     xyz
     xxx
 #=
-var abc = 3;
+_o_.abc = 3;
   // this comment should not make a block.
 /*
 this should be a global comment.
 */
-var def = [
+_o_.def = [
   0,
   ghi,
   (
@@ -40,17 +40,17 @@ var def = [
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var Klass = function() {
+_o_.Klass = function() {
 var self = this;
 };
-Klass.prototype._classname = 'Klass';
-Klass.abc = 0;
-var def = 1;
-var ghi = 2;
+_o_.Klass.prototype._classname = '_o_.Klass';
+_o_.Klass.abc = 0;
+_o_.def = 1;
+_o_.ghi = 2;
 {
   "cls": [
     {
-      "name": "Klass",
+      "name": "_o_.Klass",
       "args": [],
       "methods": []
     }
@@ -70,17 +70,17 @@ var ghi = 2;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-zzz.Klass = function() {
+_o_.zzz.Klass = function() {
 var self = this;
 };
-zzz.Klass.prototype._classname = 'zzz.Klass';
-zzz.Klass.abc = 0;
-zzz.def = 1;
-var ghi = 2;
+_o_.zzz.Klass.prototype._classname = '_o_.zzz.Klass';
+_o_.zzz.Klass.abc = 0;
+_o_.zzz.def = 1;
+_o_.ghi = 2;
 {
   "cls": [
     {
-      "name": "zzz.Klass",
+      "name": "_o_.zzz.Klass",
       "args": [],
       "methods": []
     }

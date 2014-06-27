@@ -13,7 +13,7 @@
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function(param, opt_member) {
+_o_.classname = function(param, opt_member) {
   var self = this;
   // first comment.
   // second comment.
@@ -21,11 +21,11 @@ var classname = function(param, opt_member) {
   this._member = opt_member === undefined ? (true) : opt_member;
   // last comment.
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [
         "Boolean",
         "Boolean"
@@ -51,18 +51,18 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function(param, opt_member) {
+_o_.classname = function(param, opt_member) {
   var self = this;
 
 
   /** @private {boolean} */
   this._member = opt_member === undefined ? (true) : opt_member;
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [
         "Boolean",
         "Boolean"
@@ -90,7 +90,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function(opt_param, opt_member) {
+_o_.classname = function(opt_param, opt_member) {
   var self = this;
   var param = opt_param === undefined ? (a + b + c + d) : opt_param;
   /** @private {number} */
@@ -100,11 +100,11 @@ var classname = function(opt_param, opt_member) {
     c
   )) : opt_member;
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [
         "Number",
         "Number"
@@ -127,11 +127,11 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var Class = function() {
+_o_.Class = function() {
 var self = this;
 };
-Class.prototype._classname = 'Class';
-Class.prototype.method = function() {
+_o_.Class.prototype._classname = '_o_.Class';
+_o_.Class.prototype.method = function() {
   var self = this;
   if (/^\s*\/\//.test(self._str)) {
     return;
@@ -140,7 +140,7 @@ Class.prototype.method = function() {
 {
   "cls": [
     {
-      "name": "Class",
+      "name": "_o_.Class",
       "args": [],
       "methods": [
         {
@@ -158,7 +158,7 @@ Class.prototype.method = function() {
 #{[aa.bb.cc] shorthand ctor call
 ::classname
   param+\\? x.ABC(a + b)
-  @member\\ %.xyz.ABC(#)
+  @member\\ ~.xyz.ABC(#)
     a
     b
     c
@@ -169,24 +169,24 @@ Class.prototype.method = function() {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-aa.bb.cc.classname = function(opt_param) {
+_o_.aa.bb.cc.classname = function(opt_param) {
   var self = this;
   var param = opt_param === undefined ? (new x.ABC(a + b)) : opt_param;
-  /** @private {!aa.bb.cc.xyz.ABC} */
-  this._member = (new aa.bb.cc.xyz.ABC(
+  /** @private {!_o_.aa.bb.cc.xyz.ABC} */
+  this._member = (new _o_.aa.bb.cc.xyz.ABC(
     a,
     b,
     c
   ));
 };
-aa.bb.cc.classname.prototype._classname = 'aa.bb.cc.classname';
+_o_.aa.bb.cc.classname.prototype._classname = '_o_.aa.bb.cc.classname';
 {
   "cls": [
     {
-      "name": "aa.bb.cc.classname",
+      "name": "_o_.aa.bb.cc.classname",
       "args": [
         "x.ABC",
-        "aa.bb.cc.xyz.ABC"
+        "_o_.aa.bb.cc.xyz.ABC"
       ],
       "methods": []
     }

@@ -129,7 +129,9 @@ ConvertFile.prototype.parse = function(line) {
 
 var TestTransformer = function() {};
 
-TestTransformer.prototype.pkgRef = function(str) { return str; };
+TestTransformer.prototype.COMPILED_PKGS_BASE = COMPILED_PKGS_BASE;
+TestTransformer.prototype.pkg = function() { return 'pkg'; };
+TestTransformer.prototype.klass = function() { return 'Klass'; };
 TestTransformer.prototype.type = function(t) { return ['\\', t, '\\']; };
 TestTransformer.prototype.cast = function(t) { return ['\\', t, '\\']; };
 TestTransformer.prototype.marker = function(t) { return ['|#', t, '|']; };

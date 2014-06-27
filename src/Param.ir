@@ -53,7 +53,7 @@ Function parameter and / or member declarion.
   typestr := @type.output()
   if @.initType == '?'
     typestr += '='
-  if @.initType == '~'
+  if @.initType == ';'
     typestr = '...' + typestr
   => '@param {' + typestr + '} ' + @paramName()
 
@@ -65,7 +65,7 @@ Variable initialization output as first statements of function body.
   out\output.Line\$
   pname := @paramName()
 
-  if !@.isMember && !@.hasInit && @.initType != '~'
+  if !@.isMember && !@.hasInit && @.initType != ';'
     =>
 
   if @.isMember
@@ -73,7 +73,7 @@ Variable initialization output as first statements of function body.
       '@private {' + @type.output() + '}'
 
   out.linePrefix = #+
-    @.isMember ? 'this._' : (@.initType == '~' ? '' : 'var ')
+    @.isMember ? 'this._' : (@.initType == ';' ? '' : 'var ')
     @.name
     ' = '
   switch @.initType
@@ -85,7 +85,7 @@ Variable initialization output as first statements of function body.
       out.lineSuffix = ') : ' + pname
     break
 
-    case '~'
+    case ';'
     out.linePrefix += 'Array.prototype.slice.call(arguments, ' + @.index + ')'
     break
 
@@ -103,7 +103,7 @@ Variable initialization output as first statements of function body.
 
 :argtype\s|-\
   type := @type.output()
-  re := /^\!?([a-zA-Z][\w\.]*)$/.exec(type)
+  re := /^\!?([a-zA-Z_][\w\.]*)$/.exec(type)
   if !re
     => null
   type_name := re[1]

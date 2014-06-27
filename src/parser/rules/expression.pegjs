@@ -9,7 +9,9 @@ Literal
 
 PrimaryExpression
   = Self
+  / RootPackage
   / CurrentPackage
+  / CurrentClass
   / BlockMarker
   / Identifier
   / Literal

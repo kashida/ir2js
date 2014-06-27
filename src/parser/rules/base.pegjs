@@ -292,9 +292,12 @@ RegularExpressionLiteral 'regular expression'
 
 Self = '@' _ name:Identifier? { return name ? 'self._' + name : 'self'; }
 
-CurrentPackage
-  = percents:('%'+) _ '.' _ name:Identifier {
-      return $.pkgRef(percents.join('') + '.' + name);
+RootPackage = '~~' _ name:Identifier { return [$.COMPILED_PKGS_BASE + name]; }
+
+CurrentPackage = '~.' _ name:Identifier { return $.pkg() + '.' + name; }
+
+CurrentClass = '~' _ name:Identifier?{
+      return $.klass() + (name ? '.' + name : '');
     }
 
 BinaryOpBlockMarker

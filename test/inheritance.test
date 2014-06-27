@@ -1,5 +1,5 @@
 #{ inheritance
-::classname ^parent
+::classname ^~~parent
   @param_a\s\$
   @param_b\s\? init_val
   do_something()
@@ -9,30 +9,30 @@
  * @param {string} param_a
  * @param {string=} opt_param_b
  * @constructor
- * @extends {parent}
+ * @extends {_o_.parent}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function(param_a, opt_param_b) {
+_o_.classname = function(param_a, opt_param_b) {
   var self = this;
   /** @private {string} */
   this._param_a = param_a;
   /** @private {string} */
   this._param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
   do_something();
-  parent.call(this, param_b, something_else());
+  _o_.parent.call(this, param_b, something_else());
 };
-goog.inherits(classname, parent);
-classname.prototype._classname = 'classname';
+goog.inherits(_o_.classname, _o_.parent);
+_o_.classname.prototype._classname = '_o_.classname';
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [
         "String",
         "String"
       ],
-      "parent": "parent",
+      "parent": "_o_.parent",
       "methods": []
     }
   ],
@@ -56,16 +56,16 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
   var self = this;
   do_something();
   parent.call(this, something_else());
 };
-goog.inherits(classname, parent);
-classname.prototype._classname = 'classname';
+goog.inherits(_o_.classname, parent);
+_o_.classname.prototype._classname = '_o_.classname';
 
 /** @param {string} param */
-classname.prototype.method = function(param) {
+_o_.classname.prototype.method = function(param) {
   var self = this;
   do_something();
   parent.prototype.method.call(this, param, '');
@@ -73,7 +73,7 @@ classname.prototype.method = function(param) {
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [],
       "parent": "parent",
       "methods": [
@@ -92,7 +92,7 @@ classname.prototype.method = function(param) {
 #}
 
 #{ super calls with blocks.
-::classname ^parent
+::classname ^~~parent
   do_something()
   ^(#)
     another_line(##)
@@ -113,14 +113,14 @@ classname.prototype.method = function(param) {
 #=
 /**
  * @constructor
- * @extends {parent}
+ * @extends {_o_.parent}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
   var self = this;
   do_something();
-  parent.call(this, (
+  _o_.parent.call(this, (
     another_line(
     /** @param {string} x */
     function(x) {
@@ -128,14 +128,14 @@ var classname = function() {
     })
   ));
 };
-goog.inherits(classname, parent);
-classname.prototype._classname = 'classname';
+goog.inherits(_o_.classname, _o_.parent);
+_o_.classname.prototype._classname = '_o_.classname';
 
 /** @param {string} param */
-classname.prototype.method = function(param) {
+_o_.classname.prototype.method = function(param) {
   var self = this;
   do_something();
-  parent.prototype.method.call(this, param, '', (
+  _o_.parent.prototype.method.call(this, param, '', (
     (method()) +
     (a + b + c)
   ), (
@@ -143,16 +143,16 @@ classname.prototype.method = function(param) {
   ));
 };
 
-classname.prototype.method2 = function() {
+_o_.classname.prototype.method2 = function() {
   var self = this;
-  parent.prototype.method2.call(this);
+  _o_.parent.prototype.method2.call(this);
 };
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [],
-      "parent": "parent",
+      "parent": "_o_.parent",
       "methods": [
         {
           "name": "method",

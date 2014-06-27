@@ -1,65 +1,92 @@
 #{[abc.def] self reference
 :
-  a(%.call_function())
+  a(~.call_function())
 #=
-  a(abc.def.call_function());
+  a(_o_.abc.def.call_function());
 {
   "cls": [],
   "fns": []
 }
 #}
 
-#{[abc.def] up reference
-:
-  a(%%.call_function(), %%%.call_function())
+#{[abc.def] self class reference.
+::K
+
+:m
+  a(~call_function(), a instanceof ~)
 #=
-  a(abc.call_function(), call_function());
+/**
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+_o_.abc.def.K = function() {
+var self = this;
+};
+_o_.abc.def.K.prototype._classname = '_o_.abc.def.K';
+
+_o_.abc.def.K.prototype.m = function() {
+  var self = this;
+  a(_o_.abc.def.K.call_function(), a instanceof _o_.abc.def.K);
+};
 {
-  "cls": [],
+  "cls": [
+    {
+      "name": "_o_.abc.def.K",
+      "args": [],
+      "methods": [
+        {
+          "name": "m",
+          "args": [],
+          "methods": []
+        }
+      ]
+    }
+  ],
   "fns": []
 }
 #}
 
 #{[abc.def] class
-::classname ^%.path.parent
-  @param\s\? %.value
+::classname ^~.path.parent
+  @param\s\? ~.value
   ^(param)
 
 :methodname\\
   param\n\$
-  a(%.something)
+  a(~.something)
   ^(param, 0)
 #=
 /**
  * @param {string=} opt_param
  * @constructor
- * @extends {abc.def.path.parent}
+ * @extends {_o_.abc.def.path.parent}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-abc.def.classname = function(opt_param) {
+_o_.abc.def.classname = function(opt_param) {
   var self = this;
   /** @private {string} */
-  this._param = opt_param === undefined ? (abc.def.value) : opt_param;
-  abc.def.path.parent.call(this, param);
+  this._param = opt_param === undefined ? (_o_.abc.def.value) : opt_param;
+  _o_.abc.def.path.parent.call(this, param);
 };
-goog.inherits(abc.def.classname, abc.def.path.parent);
-abc.def.classname.prototype._classname = 'abc.def.classname';
+goog.inherits(_o_.abc.def.classname, _o_.abc.def.path.parent);
+_o_.abc.def.classname.prototype._classname = '_o_.abc.def.classname';
 
 /** @param {number} param */
-abc.def.classname.prototype.methodname = function(param) {
+_o_.abc.def.classname.prototype.methodname = function(param) {
   var self = this;
-  a(abc.def.something);
-  abc.def.path.parent.prototype.methodname.call(this, param, 0);
+  a(_o_.abc.def.something);
+  _o_.abc.def.path.parent.prototype.methodname.call(this, param, 0);
 };
 {
   "cls": [
     {
-      "name": "abc.def.classname",
+      "name": "_o_.abc.def.classname",
       "args": [
         "String"
       ],
-      "parent": "abc.def.path.parent",
+      "parent": "_o_.abc.def.path.parent",
       "methods": [
         {
           "name": "methodname",
@@ -77,17 +104,17 @@ abc.def.classname.prototype.methodname = function(param) {
 
 #{[abc.def] type
 ::func = ##
-  \%.some.type\
-  p0\%.another.type\$
-  p1\A<%%.yet.another.type>\? %%%%.global.value
+  \~.some.type\
+  p0\~.another.type\$
+  p1\A<~~yet.another.type>\? ~~global.value
 #=
-abc.def.func = /**
- * @param {!abc.def.another.type} p0
- * @param {!Array.<!abc.yet.another.type>=} opt_p1
- * @return {!abc.def.some.type}
+_o_.abc.def.func = /**
+ * @param {!_o_.abc.def.another.type} p0
+ * @param {!Array.<!_o_.yet.another.type>=} opt_p1
+ * @return {!_o_.abc.def.some.type}
  */
 function(p0, opt_p1) {
-  var p1 = opt_p1 === undefined ? (global.value) : opt_p1;
+  var p1 = opt_p1 === undefined ? (_o_.global.value) : opt_p1;
 };
 {
   "cls": [],
@@ -97,11 +124,11 @@ function(p0, opt_p1) {
 
 #{[abc.def] package ref member lookup
 :
-  %.varname
-  %.varname
+  ~.varname
+  ~.varname
 #=
-  abc.def.varname;
-  abc.def.varname;
+  _o_.abc.def.varname;
+  _o_.abc.def.varname;
 {
   "cls": [],
   "fns": []

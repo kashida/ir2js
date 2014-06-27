@@ -29,8 +29,14 @@
   \function()|null\
 \f(a,b?)|f(n?)\
   \function(!a,boolean=)|function(number=)\
-\f(s,a~)|f(b~)\
+\f(s,a;)|f(b;)\
   \function(string,...[!a])|function(...[boolean])\
+\~\
+  \!Klass\
+\~.SamePackageClass\
+  \!pkg.SamePackageClass\
+\~~abc.SomeClass\
+  \!_o_.abc.SomeClass\
 
 :!
 \abc-\

@@ -10,10 +10,14 @@
   // 'm' for marker.
   @grammar&\s\ ''
 
-:pkgRef\s\
-  name\s\$
-  // relative package reference.
-  => @context.pkg.replace(name)
+:COMPILED_PKGS_BASE+\s\
+  => COMPILED_PKGS_BASE
+
+:pkg\s\
+  => @context.pkg.toString()
+
+:klass\s\
+  => @context.cls.name().ref
 
 :cast\s\
   type_name\A\$

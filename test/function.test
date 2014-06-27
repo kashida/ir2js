@@ -28,7 +28,7 @@ abc(##)
   \n\
   param0\s\$
   param1\s\$
-  varg\s\~
+  varg\s\;
   body0
   body1
 #=

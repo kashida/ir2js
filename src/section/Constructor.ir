@@ -2,11 +2,11 @@
   context\context.Context\$
   tmpl_vars\A<s>\$
   @parent\s|-\$
-  @parentTmplVars\A<s>\$
+  @parentFull\s|-\$
   @impls\A<%.Implements>\$
   context.isCtor = true
   ^(context, '', tmpl_vars)
-  @parent = @parent ? @.context.pkg.replace(@parent) : ''
+  @parentFull = @parentFull ? @.context.pkg.replace(@parentFull) : ''
 
 :re = [#]
   /\:/
@@ -33,8 +33,11 @@
   ctor := &%.Constructor(#)
     scope.copyContextWithName(m.name)
     m.tmplVars
-    m.parentName
-    m['pTmplVars']
+    m.parentName ? # : null
+      &type.SingleParser(scope.context, header, m.parentName).parse()
+    m.parentName ? # : null
+      &type.SingleParser(scope.context, header, m.parentName + #).parse()
+        m['pTmplVars'].length ? '<' + m['pTmplVars'].join(',') + '>' : ''
     %.Implements.create(scope.context, header, m.rest || '')
   scope.context.cls.ctor = ctor
   scope.types.addCtor(ctor.name())
@@ -43,7 +46,7 @@
   => ctor
 
 :parentName\s\
-  => \s\(@parent)
+  => \s\(@parentFull)
 
 :transform^
   assert(@.numBlocks() == 1, @.lines[0])
@@ -56,15 +59,10 @@
   decl := @.params.outputDecls()
   decl.push('@constructor')
   inherit := []
-  if @parent
-    decl.push('@extends {' + @parent + # + '}')
-      @parentTmplVars.length ? '.<' + @parentTmplVars.join(',') + '>' : ''
+  if @parentFull
+    decl.push('@extends {' + @parentFull + '}')
     inherit.push([#].join(''))
-      'goog.inherits('
-      @.context.name.ref
-      ', '
-      @parent
-      ');'
+      'goog.inherits(' + @.context.name.ref + ', ' + @parent + ');'
   decl.push('@struct')
   decl.push('@suppress {checkStructDictInheritance}')
   @impls.forEach(##)

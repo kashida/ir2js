@@ -8,7 +8,7 @@ parse file scope and separate code sections from comments.
   @defaultClsName\s\$
   @context+\context.Context\ &context.Context(#)
     file_name
-    &context.Package(pkg_name)
+    &context.Package(COMPILED_PKGS_BASE + pkg_name)
   @types+\type.Set\ &type.Set()
   @list\A<OutputSection>|-\
 

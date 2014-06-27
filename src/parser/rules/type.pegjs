@@ -16,7 +16,7 @@ FunctionType = 'f' !Identifier _
     }
 
 TypeParameter
-  = t:TypeExpressionP _ '~' { return ['...[', t, ']']; }
+  = t:TypeExpressionP _ ';' { return ['...[', t, ']']; }
   / t:TypeExpressionP _ '?' { return [t, '=']; }
   / TypeExpressionP
 
@@ -59,8 +59,6 @@ TypeReservedWord
 
 TypeIdentifier = !TypeReservedWord n:IdentifierName { return n; }
 
-TypePathComponent = Identifier / '%'+
-
 // Template parameters used for template declarations.
 TemplateParams
   = '<' _ initId:Identifier ids:(_ ',' _ Identifier)* _ '>' _ {
@@ -77,8 +75,15 @@ TemplateVars = '<' _ TypeExpressionList _ '>'
 
 TypeExpressionList = TypeExpression _ (',' _ TypeExpressionList)*
 
-QualifiedTypeId = (TypePathComponent '.')* TypeIdentifier
-      //return $.resolveType(id);
+QualifiedTypeId
+  = (Identifier '.')* TypeIdentifier
+  / '~~' path:(Identifier '.')* name:TypeIdentifier {
+      return [$.COMPILED_PKGS_BASE, path, name];
+    }
+  / '~.' path:(Identifier '.')* name:TypeIdentifier {
+      return [$.pkg(), '.', path, name];
+    }
+  / '~' { return $.klass(); }
 
 NonNullableTypeId = id:QualifiedTypeId tmpl:TemplateVars? {
       var value = ['!', id];

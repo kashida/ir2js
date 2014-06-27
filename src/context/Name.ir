@@ -4,13 +4,13 @@ Name in file scope.
   @id+\s\$
 
 :decl+\s\
-  => (@pkg.empty() ? 'var ' : '') + @pkg.fullname(@id)
+  => @pkg.fullname(@id)
 
 :ref+\s\
   => @pkg.fullname(@id)
 
 :global\%.Name\
-  => &%.Name(&%.Package(''), @id)
+  => &%.Name(&%.Package(COMPILED_PKGS_BASE), @id)
 
 :property\%.Name\
   id\s\$

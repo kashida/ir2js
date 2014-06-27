@@ -23,11 +23,20 @@ abc(#)
 &abc(#)
   new abc|#p|
 ^('abc')
-1 % %.abc % 3
-%% . a
-  %%.a
+1 % ~.abc % 3
+  1 % pkg.abc % 3
+~ a
+  Klass.a
+a instanceof ~
+  a instanceof Klass
+~~ abc
+  _o_.abc
+~~abc.A
+  _o_.abc.A
 pkg?pkg+connector:''
   pkg ? pkg + connector : ''
+a *= 0 ? 'abc' && &~() || true : "def"
+  a *= 0 ? 'abc' && new Klass() || true : "def"
 
 :!
 a =: b
@@ -40,8 +49,14 @@ a.%('abc')
 :PrimaryExpression
 @
   self
+~
+  Klass
 @member
   self._member
+~static_method
+  Klass.static_method
+~.A
+  pkg.A
 null
 102.3
 [expr, expr, expr]

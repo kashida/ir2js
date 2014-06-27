@@ -9,22 +9,22 @@
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
 var self = this;
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 
-classname.prototype.methodname = function() {
+_o_.classname.prototype.methodname = function() {
 var self = this;
 };
 /** @private */
-classname.prototype._methodname_2 = function() {
+_o_.classname.prototype._methodname_2 = function() {
 var self = this;
 };
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [],
       "methods": [
         {
@@ -56,24 +56,24 @@ var self = this;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var classname = function() {
+_o_.classname = function() {
 var self = this;
 };
-classname.prototype._classname = 'classname';
+_o_.classname.prototype._classname = '_o_.classname';
 
 /**
  * @param {string} param_a
  * @param {string=} opt_param_b
  * @return {string}
  */
-classname.prototype.methodname = function(param_a, opt_param_b) {
+_o_.classname.prototype.methodname = function(param_a, opt_param_b) {
   var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 {
   "cls": [
     {
-      "name": "classname",
+      "name": "_o_.classname",
       "args": [],
       "methods": [
         {
@@ -109,15 +109,15 @@ classname.prototype.methodname = function(param_a, opt_param_b) {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-var Classname = function() {
+_o_.Classname = function() {
   var self = this;
   Parent.call(this);
 };
-goog.inherits(Classname, Parent);
-Classname.prototype._classname = 'Classname';
+goog.inherits(_o_.Classname, Parent);
+_o_.Classname.prototype._classname = '_o_.Classname';
 
 /** @override */
-Classname.prototype.methodname = function(param_a, opt_param_b) {
+_o_.Classname.prototype.methodname = function(param_a, opt_param_b) {
   var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
@@ -126,14 +126,14 @@ Classname.prototype.methodname = function(param_a, opt_param_b) {
  * @override
  * @private
  */
-Classname.prototype._methodname2 = function(param_a, opt_param_b) {
+_o_.Classname.prototype._methodname2 = function(param_a, opt_param_b) {
   var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 {
   "cls": [
     {
-      "name": "Classname",
+      "name": "_o_.Classname",
       "args": [],
       "parent": "Parent",
       "methods": [
