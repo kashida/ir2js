@@ -1,4 +1,4 @@
-::^%.Matcher
+::^~.Matcher
   @name+\s\? '_'
   @opt\b\? false
 

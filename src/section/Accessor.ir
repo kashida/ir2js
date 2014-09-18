@@ -1,6 +1,6 @@
 Overriding accessor.
-::^%.Callable
-  context\context.Context\$
+::^~.Callable
+  context\~~context.Context\$
   @name\s\$
   return_type\s\$
   @isGetter\b\$
@@ -8,27 +8,27 @@ Overriding accessor.
   ^(context, return_type, [])
 
 :re = [#]
-  &re.Id('name')
+  &~~re.Id('name')
   {accessType: /[+*]/}
-  &re.Type('returnType')
+  &~~re.Type('returnType')
 
 :create = ##
-  \%.Accessor|-\
-  scope\FileScope\$
+  \~|-\
+  scope\~~FileScope\$
   line\s\$
-  header\input.Line\$
-  m := &re.Compiler(%.Accessor.re).eval(line)
+  header\~~input.Line\$
+  m := &~~re.Compiler(~re).eval(line)
   if !m
     => null
 
   // we should have seen a ctor.
   if !scope.context.cls
-    error(header, 'accessor marker w/o class')
+    ~~error(header, 'accessor marker w/o class')
     => null
   ret_type := m.returnType ? # : ''
-    &type.Parser(scope.context, header, m.returnType).parse()
+    &~~type.Parser(scope.context, header, m.returnType).parse()
   ctx := scope.copyContext(scope.context.cls.methodName(m.name))
-  => &%.Accessor(ctx, m.name, ret_type, m.accessType == '+')
+  => &~(ctx, m.name, ret_type, m.accessType == '+')
 
 :output\A\
   member := @.context.cls.member(@name)
@@ -42,12 +42,12 @@ Overriding accessor.
   if !member
     // accessor with no corresponding member. use the given param and return types.
     if @isGetter && !@.returnType
-      error(@.lines[0], 'getter with no return type')
+      ~~error(@.lines[0], 'getter with no return type')
     if !@isGetter && @.params.numParams != 1
-      error(@.lines[0], 'non-member setter should have one param')
+      ~~error(@.lines[0], 'non-member setter should have one param')
 
     member_type := @isGetter ? # : #
-      &type.Decoder(@.context.pkg, @.returnType)
+      &~~type.Decoder(@.context.pkg, @.returnType)
       @.params.paramType(0)
     member = @.context.cls.addMember(#)
       @name
@@ -58,5 +58,5 @@ Overriding accessor.
   => [#]
     member.outputDecl(class_name)
     member.outputAccessor(class_name, @isGetter, [#], @.params)
-      whitespaces(@.block(0).indent) + 'var self = this;'
+      ~~whitespaces(@.block(0).indent) + 'var self = this;'
       @.outputBody('')

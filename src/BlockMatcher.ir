@@ -1,11 +1,11 @@
 Match markers and blocks.
 
 ::
-  @context\context.Context\$
-  @input\input.Line\$
-  @code\A<parser.BlockMarker|s>\$
-  @blocks\A<IndentBlock>\$
-  @params\A<ParamSet>\ []
+  @context\~~context.Context\$
+  @input\~~input.Line\$
+  @code\A<~~parser.BlockMarker|s>\$
+  @blocks\A<~~IndentBlock>\$
+  @params\A<~~ParamSet>\ []
   @isBlockStatement+\b\ false
 
 :transform
@@ -14,20 +14,20 @@ Match markers and blocks.
 
 Returns true only if matching succeeds.
 :@matchBlocks
-  itr := &CodeBlockItr(@input, @code, @blocks)
+  itr := &~~CodeBlockItr(@input, @code, @blocks)
   itr.blockCb = ##
     type\s\$
     with_param\b\$
     if with_param
       sub_context := @context.clone()
       sub_context.isFileScope = false
-      param := &ParamSet(sub_context, @blocks[itr.bidx])
+      param := &~~ParamSet(sub_context, @blocks[itr.bidx])
       @params.push(param)
   itr.run()
   @isBlockStatement = itr.isBlockStatement
 
 :@transformBlocks
-  itr := &CodeBlockItr(@input, @code, @blocks)
+  itr := &~~CodeBlockItr(@input, @code, @blocks)
   itr.blockCb = ##
     type\s\$
     with_param\b\$
@@ -59,8 +59,8 @@ Returns true only if matching succeeds.
   itr.run()
 
 :output
-  out\output.Line\$
-  itr := &CodeBlockItr(@input, @code, @blocks)
+  out\~~output.Line\$
+  itr := &~~CodeBlockItr(@input, @code, @blocks)
   itr.blockCb = ##
     type\s\$
     with_param\b\$
@@ -75,12 +75,12 @@ Returns true only if matching succeeds.
   itr.run()
 
 :@outputParams
-  out\output.Line\$
-  param\ParamSet\$
+  out\~~output.Line\$
+  param\~~ParamSet\$
   if param.isDeclEmpty()
     out.lines.appendStr('function(' + param.outputParams() + ')')
   else
     // we don't try to merge the frg into first line.
     out.lines.terminateLine()
-    out.lines.appendLines(docLines(param.outputDecls()))
+    out.lines.appendLines(~~docLines(param.outputDecls()))
     out.lines.appendStr('function(' + param.outputParams() + ')')

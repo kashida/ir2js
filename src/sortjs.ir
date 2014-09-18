@@ -69,7 +69,7 @@
 
 :removeDeps
   file\s\$
-  provided_files\StringSet\$
+  provided_files\~~StringSet\$
   @depends[file] = @depends[file].filter(##)
     dep\s\$
     i\n\$
@@ -80,14 +80,14 @@
   exports.createSortedList = ##
     \A<s>\
     files\A<s>\$
-    deps := &ClassDeps()
+    deps := &~~ClassDeps()
     deps.load(files)
 
     // sort the files in inheritance order.
     all := files.concat()
-    sorted := &StringSet()
+    sorted := &~~StringSet()
     while all.length
-      found := &StringSet()
+      found := &~~StringSet()
       all.forEach(##)
         f\s\$
         // remove the dependencies already satisfied.

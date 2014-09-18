@@ -11,7 +11,7 @@
 
 
 ::TokenList
-  @list+\A<%.BlockMarker|s>\ []
+  @list+\A<~.BlockMarker|s>\ []
   @prevLines+\A<s>\ []
   @nextLines+\A<s>\ []
 
@@ -22,19 +22,19 @@
     => true
   if @list.length >= 2
     => false
-  => !(@list[0] instanceof %.BlockMarker) && @list[0] == ''
+  => !(@list[0] instanceof ~.BlockMarker) && @list[0] == ''
 
-:add\%.TokenList\
-  args\*\~
+:add\~\
+  args\*\;
   args.forEach(##)
     arg\*\$
     if !arg
       =>
 
     // Recursive cases.
-    if arg instanceof %.TokenList
+    if arg instanceof ~
       arg.list.forEach(##)
-        token\%.BlockMarker|s\$
+        token\~.BlockMarker|s\$
         @.add(token)
       arg.prevLines.forEach(##)
         l\s\$
@@ -50,21 +50,21 @@
       =>
 
     // Always append a marker.
-    if arg instanceof %.BlockMarker
+    if arg instanceof ~.BlockMarker
       @list.push(arg)
       =>
 
     // Should be a string. Append only if we can't add to the last element.
     last := @list.length - 1
-    if !@list.length || @list[last] instanceof %.BlockMarker
+    if !@list.length || @list[last] instanceof ~.BlockMarker
       @list.push(arg)
       =>
     @list[last] += arg
   => @
 
-:prepend\%.TokenList\
-  line\%.TokenList|s\$
-  if line instanceof %.TokenList
+:prepend\~.TokenList\
+  line\~.TokenList|s\$
+  if line instanceof ~.TokenList
     @prevLines = @prevLines.concat(line.prevLines)
     @nextLines = @nextLines.concat(line.nextLines)
   str := line.toString()
@@ -72,8 +72,8 @@
   => @
 
 :append
-  line\%.TokenList|s\$
-  if line instanceof %.TokenList
+  line\~.TokenList|s\$
+  if line instanceof ~.TokenList
     @prevLines = @prevLines.concat(line.prevLines)
     @nextLines = @nextLines.concat(line.nextLines)
   str := line.toString()
@@ -91,13 +91,13 @@ String representation of the token list. Works only if there is no marker.
     @nextLines.join('')
 
 
-::ParamLine ^%.TokenList
+::ParamLine ^~.TokenList
   @name+\s\$
   @isMember+\b\$
   @access+\s\$
   @type+\s\$
   @marker+\s\$
-  @init+\%.TokenList\$
+  @init+\~.TokenList\$
   ^()
 
 :toString\s\

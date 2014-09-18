@@ -1,13 +1,13 @@
 Comment section in a file.
 ::
-  @lines\A<%.Line>\$
+  @lines\A<~.Line>\$
 
 :output
   result := []
   buffer := []
   state := 's'
   @lines.forEach(##)
-    line\%.Line\$
+    line\~.Line\$
     switch state
       // starting state -- output all the blank lines as is.
       case 's'

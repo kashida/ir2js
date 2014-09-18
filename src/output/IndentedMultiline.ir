@@ -1,7 +1,7 @@
 Helper for Line to construct the output.
 ::
   num_indent\n\$
-  @indent\s\ whitespaces(num_indent)
+  @indent\s\ ~~whitespaces(num_indent)
   @lines\A<s>\ []
   @lastLineOpen\b\ false
 

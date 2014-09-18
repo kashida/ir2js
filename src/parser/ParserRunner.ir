@@ -1,13 +1,13 @@
 ::
 
-:run\%.TokenList|A|O|s\
-  lines\A<input.Line>|s\$
+:run\~.TokenList|A|O|s\
+  lines\A<~~input.Line>|s\$
   params\O\$
   if !(lines instanceof Array)
-    lines = [&input.Line('', lines, 0)]
+    lines = [&~~input.Line('', lines, 0)]
 
   input_lines := lines.map(##).join('\n')
-    l\input.Line\$
+    l\~~input.Line\$
     => l.line
 
   try
@@ -17,10 +17,10 @@
 
 :@addContextLines
   e\O\$
-  line\A<input.Line>\$
+  line\A<~~input.Line>\$
   e.contextLines = []
   line.forEach(##)
-    l\input.Line\$
+    l\~~input.Line\$
     i\n\$
     e.contextLines.push(l.line)
     if i == e.line - 1

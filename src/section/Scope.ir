@@ -1,12 +1,12 @@
 Anonymous scope.
-::^%.Runnable
+::^~.Runnable
   ^()
 
 :create = ##
-  \%.Scope|-\
-  scope\FileScope\$
+  \~|-\
+  scope\~~FileScope\$
   line\s\$
-  => line == '##' ? &%.Scope() : null
+  => line == '##' ? &~() : null
 
 :output\A\
   => ['(function() {', @.outputBody('})();')]

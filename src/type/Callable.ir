@@ -1,12 +1,12 @@
 ::
   @name\s\$
   @parent&\s\ ''
-  @methods\A<%.Callable>\ []
+  @methods\A<~>\ []
   @args\A<s|->\ []
 
 :addMethod
   name\s\$
-  m := &%.Callable(name)
+  m := &~(name)
   @methods.push(m)
   => m
 
@@ -20,6 +20,6 @@
     obj['parent'] = @parent
   if @methods
     obj['methods'] = @methods.map(##)
-      m\%.Callable\$
+      m\~\$
       => m.extract()
   => obj

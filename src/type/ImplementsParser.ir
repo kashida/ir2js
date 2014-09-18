@@ -1,13 +1,13 @@
 ::
-  @context\context.Context\$
-  @input\input.Line\$
+  @context\~~context.Context\$
+  @input\~~input.Line\$
   @type_str\s\$
-  @runner\\ parser.ParserRunner()
+  @runner\\ ~~parser.ParserRunner()
 
 :parse\A<s>\
   => @reduce(@runner.run(@type_str, {#}))
     startRule: 'Implements'
-    xformer: &LineTransformer(@context, @input)
+    xformer: &~~LineTransformer(@context, @input)
 
 :@reduce
   list+\*\$

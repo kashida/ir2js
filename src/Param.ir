@@ -1,22 +1,22 @@
 Function parameter and / or member declarion.
 ::
-  @context\context.Context\$
+  @context\~~context.Context\$
   is_ctor\b\$
-  inputs\input.Line\$
-  parsed\parser.Result|-\$
+  inputs\~~input.Line\$
+  parsed\~~parser.Result|-\$
 
-  @line\parser.ParamLine|-\
+  @line\~~parser.ParamLine|-\
   @success+\b\ false
-  @type+\type.Decoder|-\
-  @valueLine+\A<parser.BlockMarker|s>|-\
+  @type+\~~type.Decoder|-\
+  @valueLine+\A<~~parser.BlockMarker|s>|-\
   @index&\n|-\
 
-  if !(parsed.tokens instanceof parser.ParamLine)
+  if !(parsed.tokens instanceof ~~parser.ParamLine)
     =>
 
   @line = parsed.tokens
   @success = true
-  @type = &type.Decoder(@context.pkg, @line.type)
+  @type = &~~type.Decoder(@context.pkg, @line.type)
 
   @valueLine = @line.init && !@line.init.isEmpty ? @line.init.list : null
   if @.isMember && @.initType != '$' && !@valueLine
@@ -25,9 +25,9 @@ Function parameter and / or member declarion.
 
   // sanity check the param consistency.
   if !is_ctor && @.isMember
-    error(inputs, 'member param for non-constructor method')
+    ~~error(inputs, 'member param for non-constructor method')
   if !@.isMember && @.initType != '?' && @valueLine
-    error(inputs, 'initial value for non-member non-optional')
+    ~~error(inputs, 'initial value for non-member non-optional')
 
 :isMember+\b\
   => @line.isMember
@@ -62,14 +62,14 @@ Function parameter and / or member declarion.
 
 Variable initialization output as first statements of function body.
 :outputInit
-  out\output.Line\$
+  out\~~output.Line\$
   pname := @paramName()
 
   if !@.isMember && !@.hasInit && @.initType != ';'
     =>
 
   if @.isMember
-    out.prefixLines = out.prefixLines.concat(docLines([#]))
+    out.prefixLines = out.prefixLines.concat(~~docLines([#]))
       '@private {' + @type.output() + '}'
 
   out.linePrefix = #+

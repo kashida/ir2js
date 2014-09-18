@@ -1,19 +1,19 @@
 TODO: Make this an interface.
 ::
-  @blocks+\A<IndentBlock>\ []
+  @blocks+\A<~~IndentBlock>\ []
 
 :addBlock
-  block\IndentBlock\$
+  block\~~IndentBlock\$
   @blocks.push(block)
 
 :numBlocks\n\
   => @blocks.length
 
-:block\IndentBlock\
+:block\~~IndentBlock\
   index\n\$
   => @blocks[index]
 
-:lastBlock\IndentBlock\
+:lastBlock\~~IndentBlock\
   => @blocks[@blocks.length - 1]
 
 Do all the work necessary to produce code output.

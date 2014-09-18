@@ -3,21 +3,21 @@ Parses input lines into comments and sections.
 ::
   @name\s\$
   @input\A<s>\$
-  @result\A<%.Comment|%.Section>\ []
-  @buffer\A<%.Line>\ []
+  @result\A<~.Comment|~.Section>\ []
+  @buffer\A<~.Line>\ []
   @lastValidIndex\n|-\
 
-:parse\A<%.Comment|%.Section>\
+:parse\A<~.Comment|~.Section>\
   @input.forEach(##)
     line\s\$
     index\n\$
     line = line.trimRight()
-    @processLine(&%.Line(@name, line, index))
+    @processLine(&~.Line(@name, line, index))
   @flushBuffer()
   => @result
 
 :@processLine
-  line\%.Line\$
+  line\~.Line\$
   if line.startsWithColon
     // should be a start of a code section.
     @flushBuffer()
@@ -38,10 +38,10 @@ Parses input lines into comments and sections.
   while @buffer.length
     next_buffer := []
     if @lastValidIndex != null
-      section := &%.Section(@buffer[0])
+      section := &~.Section(@buffer[0])
       @result.push(section)
       @buffer.forEach(##)
-        line\%.Line\$
+        line\~.Line\$
         index\n\$
         if index == 0
           // we already passed the header line to section.
@@ -53,6 +53,6 @@ Parses input lines into comments and sections.
           next_buffer.push(line)
     else
       // we'll give buffer a new array so no need to clone for global comment.
-      @result.push(&%.Comment(@buffer))
+      @result.push(&~.Comment(@buffer))
     @lastValidIndex = null
     @buffer = next_buffer

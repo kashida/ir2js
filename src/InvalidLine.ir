@@ -1,11 +1,11 @@
 either blank line or comment only line.
 ::
-  @input+\input.Line\$
+  @input+\~~input.Line\$
 
 :str+\s\
   => @input.line
 
-:output\output.Line\
-  out := &output.Line(@input)
+:output\~~output.Line\
+  out := &~~output.Line(@input)
   out.appendLine(@input.trim)
   => out

@@ -26,4 +26,4 @@ trailing whitespace should have been stripped already.
   re := /\S/.exec(@line)
   => re ? re.index : 0
 
-::UnknownInputLine = &%.Line('(unknown)', '', -1)
+::UnknownInputLine = &~('(unknown)', '', -1)

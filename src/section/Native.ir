@@ -1,15 +1,15 @@
-::^%.Code
+::^~.Code
   ^()
 
 :create = ##
-  \%.Native|-\
-  scope\FileScope\$
+  \~|-\
+  scope\~~FileScope\$
   line\s\$
-  => line == '~' ? &%.Native() : null
+  => line == '~' ? &~() : null
 
-:output\A<output.Line>\
+:output\A<~~output.Line>\
   => @.lines.map(##)
-    line\input.Line\$
-    out := &output.Line(line)
+    line\~~input.Line\$
+    out := &~~output.Line(line)
     out.appendLine(line.trim)
     => out

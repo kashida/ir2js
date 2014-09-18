@@ -4,12 +4,12 @@ TODO: Make xformer available to the parser so that we don't need to do double
 conversion.
 ::
   @rule\s\$
-  @runner\\ %.ParserRunner()
+  @runner\\ ~.ParserRunner()
 
-:run\%.Result\
-  lines\A<input.Line>|s\$
-  xformer\LineTransformer\$
-  => &%.TokenListBuilder(#, xformer).result()
+:run\~.Result\
+  lines\A<~~input.Line>|s\$
+  xformer\~~LineTransformer\$
+  => &~.TokenListBuilder(#, xformer).result()
     @runner.run(lines, {#})
       startRule: @rule
       xformer: xformer

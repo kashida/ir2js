@@ -1,27 +1,27 @@
-::^%.Code
-  @context\context.Context\$
-  @line\input.Line\$
+::^~.Code
+  @context\~~context.Context\$
+  @line\~~input.Line\$
   @scopeLevel\n\$
   @isPrivate\b\$
   rhs\s\$
-  @codeLine\CodeLine|-\
+  @codeLine\~~CodeLine|-\
   ^()
-  code_input := &input.Line(@line.file, rhs, @line.rowIndex)
-  @codeLine = &CodeLine(@context, code_input, &LineParser(code_input))
+  code_input := &~~input.Line(@line.file, rhs, @line.rowIndex)
+  @codeLine = &~~CodeLine(@context, code_input, &~~LineParser(code_input))
 
 :re = [#]
   {'colons': /\:{0,2}/}
   {'private': /\@/, _s: '?'}
-  &re.Id('name')
+  &~~re.Id('name')
   /\=/
   {'rest': /.*/}
 
 :create = ##
-  \%.Variable|-\
-  scope\FileScope\$
+  \~|-\
+  scope\~~FileScope\$
   line\s\$
-  header\input.Line\$
-  m := &re.Compiler(%.Variable.re).eval(line)
+  header\~~input.Line\$
+  m := &~~re.Compiler(~re).eval(line)
   if !m
     => null
 
@@ -29,8 +29,8 @@
   is_private := !!m['private']
 
   if scope_level == 2 && is_private
-    error(header, 'global variable can not be private')
-  => &%.Variable(#)
+    ~~error(header, 'global variable can not be private')
+  => &~(#)
     scope.copyContextWithName(m.name)
     header
     scope_level
@@ -38,22 +38,22 @@
     m.rest
 
 :close^
-  c := &CodeScope(@context, @)
+  c := &~~CodeScope(@context, @)
   c.process(@.lines)
 
 :transform^
   @.blocks.forEach(##)
-    block\IndentBlock\$
+    block\~~IndentBlock\$
     if block.hasValidLine
       @codeLine.addBlock(block)
   @codeLine.transform()
 
 :output\A\
   if @scopeLevel == 0 && !@context.cls
-    error(@line, 'class scope outside of class.')
+    ~~error(@line, 'class scope outside of class.')
   out := @codeLine.output()
   out.linePrefix = @context.scopedName(@scopeLevel).decl + ' = ' + out.linePrefix
   out.lineSuffix += ';'
   => [out.output, @.blocks.map(##)]
-    block\IndentBlock\$
+    block\~~IndentBlock\$
     => block.hasValidLine ? [] : block.output()

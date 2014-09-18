@@ -1,6 +1,6 @@
 ::
-  @context\context.Context\$
-  @input\input.Line\$
+  @context\~~context.Context\$
+  @input\~~input.Line\$
   // TODO: This field is not used -- only 's' is set and LineParser pre-parses 
   //     for a separator.
   // '' for unknown (or statement).
@@ -11,26 +11,28 @@
   @grammar&\s\ ''
 
 :COMPILED_PKGS_BASE+\s\
-  => COMPILED_PKGS_BASE
+  => ~~COMPILED_PKGS_BASE
 
 :pkg\s\
   => @context.pkg.toString()
 
 :klass\s\
+  if !@context.cls
+    throw "Class name requested outside of class context."
   => @context.cls.name().ref
 
 :cast\s\
   type_name\A\$
-  => '/** @type {' + &type.Decoder(@context.pkg, #).output() + '} */'
-    &parser.TokenListBuilder(type_name, @).build().str
+  => '/** @type {' + &~~type.Decoder(@context.pkg, #).output() + '} */'
+    &~~parser.TokenListBuilder(type_name, @).build().str
 
 :type\s\
   type_name\A\$
-  => &type.Decoder(@context.pkg, #).output()
-    &parser.TokenListBuilder(type_name, @).build().str
+  => &~~type.Decoder(@context.pkg, #).output()
+    &~~parser.TokenListBuilder(type_name, @).build().str
 
 :parentCall\A\
-  args\parser.TokenList\$
+  args\~~parser.TokenList\$
   end := !args ? ')' : [', ', args, ')']
   if @context.isCtor
     => [@context.cls.ctor.parentName() + '.call(this', end]
@@ -41,45 +43,45 @@
       @context.name.id
       '.call(this'
   else
-    error(@input, 'parent call appeared in non-ctor / non-method.')
+    ~~error(@input, 'parent call appeared in non-ctor / non-method.')
     => ['^(', args, ')']
 
-:marker\parser.BlockMarker\
+:marker\~~parser.BlockMarker\
   type\s\$
-  => &parser.BlockMarker(type)
+  => &~~parser.BlockMarker(type)
 
-:paramLine\parser.ParamLine\
+:paramLine\~~parser.ParamLine\
   name\s\$
   member\b\$
   access\s\$
   type\A\$
   marker\s\$
   init\A\$
-  => &parser.ParamLine(#)
+  => &~~parser.ParamLine(#)
     name
     member
     access
-    &parser.TokenListBuilder(type, @).build().str
+    &~~parser.TokenListBuilder(type, @).build().str
     marker
-    &parser.TokenListBuilder(init, @).build()
+    &~~parser.TokenListBuilder(init, @).build()
 
-:tmplAndTypeLine\parser.TmplAndTypeLine\
+:tmplAndTypeLine\~~parser.TmplAndTypeLine\
   ids\A<s>\$
   type\A\$
-  => &parser.TmplAndTypeLine(#)
+  => &~~parser.TmplAndTypeLine(#)
     ids
-    &parser.TokenListBuilder(type, @).build().str
+    &~~parser.TokenListBuilder(type, @).build().str
 
 :prepend\F\
   line\A|O|s\$
   => (##)
-    tokens\parser.TokenList\$
-    tokens.prepend(&parser.TokenListBuilder(line, @).build())
+    tokens\~~parser.TokenList\$
+    tokens.prepend(&~~parser.TokenListBuilder(line, @).build())
     => ''
 
 :append\F\
   line\A|O|s\$
   => (##)
-    tokens\parser.TokenList\$
-    tokens.append(&parser.TokenListBuilder(line, @).build())
+    tokens\~~parser.TokenList\$
+    tokens.append(&~~parser.TokenListBuilder(line, @).build())
     => ''

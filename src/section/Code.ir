@@ -1,11 +1,11 @@
-::^%.Head
-  @lines&\A<input.Line>\ []
+::^~.Head
+  @lines&\A<~~input.Line>\ []
   ^()
 
 Abstract method.
 :close
   file_name\s\$
-  pkg\context.Package\?
+  pkg\~~context.Package\?
 
 :setType
-  types\type.Set\$
+  types\~~type.Set\$

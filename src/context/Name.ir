@@ -1,6 +1,6 @@
 Name in file scope.
 ::
-  @pkg+\%.Package\$
+  @pkg+\~.Package\$
   @id+\s\$
 
 :decl+\s\
@@ -9,16 +9,16 @@ Name in file scope.
 :ref+\s\
   => @pkg.fullname(@id)
 
-:global\%.Name\
-  => &%.Name(&%.Package(COMPILED_PKGS_BASE), @id)
+:global\~\
+  => &~(&~.Package(~~COMPILED_PKGS_BASE), @id)
 
-:property\%.Name\
+:property\~\
   id\s\$
-  => &%.Name(&%.Package(@.ref + '.prototype'), id)
+  => &~(&~.Package(@.ref + '.prototype'), id)
 
-:staticProperty\%.Name\
+:staticProperty\~\
   id\s\$
-  => &%.Name(&%.Package(@.ref), id)
+  => &~(&~.Package(@.ref), id)
 
 :toString\s\
   => '[' + @pkg + ':' + @id + ']'

@@ -1,5 +1,5 @@
-::^%.Callable
-  context\context.Context\$
+::^~.Callable
+  context\~~context.Context\$
   return_type\s\$
   tmpl_vars\A<s>\$
   @overriding\b\$
@@ -8,27 +8,27 @@
 
 :re = [#]
   {att: /\@/, _s: '?'}
-  &re.Id('name')
+  &~~re.Id('name')
   {overriding: /\^/, _s: '?'}
-  &re.TmplVarList('tmplVars')
-  &re.Type('returnType')
+  &~~re.TmplVarList('tmplVars')
+  &~~re.Type('returnType')
 
 :create =##
-  \%.Method|-\
-  scope\FileScope\$
+  \~|-\
+  scope\~~FileScope\$
   line\s\$
-  header\input.Line\$
-  m := &re.Compiler(%.Method.re).eval(line)
+  header\~~input.Line\$
+  m := &~~re.Compiler(~re).eval(line)
   if !m
     => null
 
   // we should have seen a ctor.
   if !scope.context.cls
-    error(header, 'method marker w/o class')
+    ~~error(header, 'method marker w/o class')
     => null
   ret_type := m.returnType ? # : ''
-    &type.Parser(scope.context, header, m.returnType).parse()
-  => &%.Method(#)
+    &~~type.Parser(scope.context, header, m.returnType).parse()
+  => &~(#)
       scope.copyContext(scope.context.cls.methodName((m.att ? '_' : '') + m.name))
       ret_type
       m.tmplVars
@@ -44,13 +44,13 @@
     decls.push('@private')
   if @.context.cls.isInterface
     => [#]
-      docLines(decls)
+      ~~docLines(decls)
       @.context.name.decl + ' = function(' + @.params.outputParams() + ') {};'
   else
     => [#]
-      docLines(decls)
+      ~~docLines(decls)
       @.outputFunc()
-      whitespaces(@.block(0).indent) + 'var self = this;'
+      ~~whitespaces(@.block(0).indent) + 'var self = this;'
       @.outputBody('};')
 
 :setType^

@@ -2,17 +2,17 @@
   @str\s\$
 
 :create = ##
-  \A<%.Implements>\
-  context\context.Context\$
-  line\input.Line\$
+  \A<~>\
+  context\~~context.Context\$
+  line\~~input.Line\$
   str\s\$
   if !str
     => []
-  impls := &type.ImplementsParser(context, line, str).parse()
-  l(impls, 'impls')
+  impls := &~~type.ImplementsParser(context, line, str).parse()
+  ~~l(impls, 'impls')
   => impls.map(##)
     impl\s\$
-    => &%.Implements(impl)
+    => &~(impl)
 
 :ctorOutput\s\
   => '@implements {' + @str + '}'

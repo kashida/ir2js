@@ -1,6 +1,6 @@
 First pass line parsing for constructing the block structure.
 ::
-  @input\input.Line\$
+  @input\~~input.Line\$
 
   @isValid+\b\ false
   @indent+\n\ 0
@@ -24,10 +24,10 @@ First pass line parsing for constructing the block structure.
 
   @indent = spaces_re[1].length
   if !/ */.test(spaces_re[1])
-    error(@input, 'non-ascii 0x20 space for indentation')
+    ~~error(@input, 'non-ascii 0x20 space for indentation')
 
   if spaces_re[3] != ''
-    error(@input, 'trailing space')
+    ~~error(@input, 'trailing space')
 
 :@checkContinuation
   cont_re := /^\s*\|/.exec(@input.line)

@@ -1,11 +1,11 @@
-::^%.Runnable
+::^~.Runnable
   ^()
 
 :create = ##
-  \%.Global|-\
-  scope\FileScope\$
+  \~|-\
+  scope\~~FileScope\$
   line\s\$
-  => line == '' ? &%.Global() : null
+  => line == '' ? &~() : null
 
 :output\A\
   => @.outputBody('')

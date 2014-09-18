@@ -1,23 +1,23 @@
-::^%.Runnable
-  @context+\context.Context\$
+::^~.Runnable
+  @context+\~~context.Context\$
   @returnType+\s\$
   @tmplVars+\A<s>\$
-  @params&\ParamSet|-\
+  @params&\~~ParamSet|-\
   ^()
 
 :name\s\
   => @context.name.ref
 
 :close^
-  c := &CodeScope(@context, @)
+  c := &~~CodeScope(@context, @)
   c.process(@.lines)
 
 :transform^
-  assert(#)
+  ~~assert(#)
     @.numBlocks() == 1
     @.lines[0]
     'callable takes 1 block -- found ' + @.numBlocks()
-  @params = &ParamSet(@context, @.block(0))
+  @params = &~~ParamSet(@context, @.block(0))
   @params.templateParams = @tmplVars
   @params.transform()
   @params.setReturnType(@returnType)

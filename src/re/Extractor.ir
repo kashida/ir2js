@@ -1,6 +1,6 @@
 ::
   @name+\s\$
-  @matcher\%.Matcher\$
+  @matcher\~.Matcher\$
 
 :value
   match\s\$

@@ -1,6 +1,7 @@
 ::
 
 :re\O\
+  => {}
 
 Default impl simply returns the match with no interpretation.
 :interpret\*\

@@ -30,6 +30,7 @@ use this.
   function(childCtor, parentCtor) {
     childCtor.prototype = Object.create(parentCtor.prototype);
   };
+var COMPILED_PKGS_BASE = '_o_.';
 /*
 Match markers and blocks.
 */
@@ -602,7 +603,7 @@ var FileScope = function(file_name, pkg_name, defaultClsName) {
   /** @private {!context.Context} */
   this._context = (new context.Context(
     file_name,
-    new context.Package(pkg_name)
+    new context.Package(COMPILED_PKGS_BASE + pkg_name)
   ));
   /** @private {!type.Set} */
   this._types = (new type.Set());
@@ -1073,14 +1074,23 @@ LineTransformer.prototype.__defineSetter__('grammar', function(value) {
 this._grammar = value;
 });
 
-/**
- * @param {string} name
- * @return {string}
- */
-LineTransformer.prototype.pkgRef = function(name) {
+/** @type {string} */
+LineTransformer.prototype.COMPILED_PKGS_BASE;
+LineTransformer.prototype.__defineGetter__('COMPILED_PKGS_BASE', function() {
   var self = this;
-  // relative package reference.
-  return (self._context.pkg.replace(name));
+  return (COMPILED_PKGS_BASE);
+});
+
+/** @return {string} */
+LineTransformer.prototype.pkg = function() {
+  var self = this;
+  return (self._context.pkg.toString());
+};
+
+/** @return {string} */
+LineTransformer.prototype.klass = function() {
+  var self = this;
+  return (self._context.cls.name().ref);
 };
 
 /**
@@ -1429,7 +1439,7 @@ Param.prototype.outputDecl = function() {
   if (self.initType === '?') {
     typestr += '=';
   }
-  if (self.initType === '~') {
+  if (self.initType === ';') {
     typestr = '...' + typestr;
   }
   return ('@param {' + typestr + '} ' + self._paramName());
@@ -1450,7 +1460,7 @@ Param.prototype.outputInit = function(out) {
   var pname;
   pname = self._paramName();
 
-  if (!self.isMember && !self.hasInit && self.initType !== '~') {
+  if (!self.isMember && !self.hasInit && self.initType !== ';') {
     return;
   }
 
@@ -1461,7 +1471,7 @@ Param.prototype.outputInit = function(out) {
   }
 
   out.linePrefix = (
-    (self.isMember ? 'this._' : (self.initType === '~' ? '' : 'var ')) +
+    (self.isMember ? 'this._' : (self.initType === ';' ? '' : 'var ')) +
     (self.name) +
     (' = ')
   );
@@ -1475,7 +1485,7 @@ Param.prototype.outputInit = function(out) {
     }
     break;
 
-    case '~':;
+    case ';':;
     out.linePrefix += 'Array.prototype.slice.call(arguments, ' + self.index + ')';
     break;
 
@@ -1506,7 +1516,7 @@ Param.prototype.argtype = function() {
   var type;
   type = self._type.output();
   var re;
-  re = /^\!?([a-zA-Z][\w\.]*)$/.exec(type);
+  re = /^\!?([a-zA-Z_][\w\.]*)$/.exec(type);
   if (!re) {
     return (null);
   }
@@ -2725,7 +2735,7 @@ return this._id;
 context.Name.prototype.decl;
 context.Name.prototype.__defineGetter__('decl', function() {
   var self = this;
-  return ((self._pkg.empty() ? 'var ' : '') + self._pkg.fullname(self._id));
+  return (self._pkg.fullname(self._id));
 });
 
 /** @type {string} */
@@ -2738,7 +2748,7 @@ context.Name.prototype.__defineGetter__('ref', function() {
 /** @return {!context.Name} */
 context.Name.prototype.global = function() {
   var self = this;
-  return (new context.Name(new context.Package(''), self._id));
+  return (new context.Name(new context.Package(COMPILED_PKGS_BASE), self._id));
 };
 
 /**
@@ -2792,7 +2802,7 @@ context.Package.prototype.empty = function() {
  */
 context.Package.prototype.fullname = function(id) {
   var self = this;
-  return ((self._pkg ? self._pkg + '.' : '') + id);
+  return (self._pkg + (self._pkg.slice(-1) === '.' ? '' : '.') + id);
 };
 
 /**
@@ -4749,6 +4759,41 @@ type.Set.prototype.extract = function() {
   }
   return (obj);
 };
+type.SINGLE_PARSER = null;
+
+/**
+ * @param {!context.Context} context
+ * @param {!input.Line} input
+ * @param {string} type_str
+ * @constructor
+ * @struct
+ * @suppress {checkStructDictInheritance}
+ */
+type.SingleParser = function(context, input, type_str) {
+  var self = this;
+  /** @private {!context.Context} */
+  this._context = context;
+  /** @private {!input.Line} */
+  this._input = input;
+  /** @private {string} */
+  this._type_str = type_str;
+};
+type.SingleParser.prototype._classname = 'type.SingleParser';
+
+/** @return {string} */
+type.SingleParser.prototype.parse = function() {
+  var self = this;
+  type.SINGLE_PARSER = type.SINGLE_PARSER || new parser.Target('TypeInstantiation');
+  try {
+    return (type.SINGLE_PARSER.run(
+      self._type_str,
+      new LineTransformer(self._context, self._input)
+    ).rendered().join(''));
+  }
+  catch (e) {
+    error(self._input, '(syntax error) ' + e.message, e.contextLines);
+  }
+};
 var CODE_PARSER = null;
 
 /**
@@ -4949,7 +4994,7 @@ re.QualifiedId.prototype.re = function() {
   var self = this;
   var n;
   n = {};
-  n[self._name] = /[\w\.\%]+/;
+  n[self._name] = /[\w\.\~]+/;
   return (n);
 };
 /**
@@ -5520,13 +5565,13 @@ function(scope, line) {
 /** @return {!Array.<!output.Line>} */
 section.Typedef.prototype.output = function() {
   var self = this;
-  var decoder;
-  decoder = new type.Decoder(self.context.pkg, self.strlines().join(''));
   var out;
   out = new output.Line(self.lines[0]);
   out.indent = 0;
   out.lines.appendLines([
-    docLines(['@typedef {' + decoder.output() + '}']),
+    docLines(['@typedef {' + (
+      new type.Parser(self.context, self.lines[0], self.strlines().join('')).parse()
+    ) + '}']),
     self.context.name.decl + ';'
   ]);
   return ([out]);
@@ -5637,24 +5682,24 @@ section.Accessor.prototype.output = function() {
  * @param {!context.Context} context
  * @param {!Array.<string>} tmpl_vars
  * @param {string|null} parent
- * @param {!Array.<string>} parentTmplVars
+ * @param {string|null} parentFull
  * @param {!Array.<!section.Implements>} impls
  * @constructor
  * @extends {section.Callable}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-section.Constructor = function(context, tmpl_vars, parent, parentTmplVars, impls) {
+section.Constructor = function(context, tmpl_vars, parent, parentFull, impls) {
   var self = this;
   /** @private {string|null} */
   this._parent = parent;
-  /** @private {!Array.<string>} */
-  this._parentTmplVars = parentTmplVars;
+  /** @private {string|null} */
+  this._parentFull = parentFull;
   /** @private {!Array.<!section.Implements>} */
   this._impls = impls;
   context.isCtor = true;
   section.Callable.call(this, context, '', tmpl_vars);
-  self._parent = self._parent ? self.context.pkg.replace(self._parent) : '';
+  self._parentFull = self._parentFull ? self.context.pkg.replace(self._parentFull) : '';
 };
 goog.inherits(section.Constructor, section.Callable);
 section.Constructor.prototype._classname = 'section.Constructor';
@@ -5692,8 +5737,14 @@ function(scope, line, header) {
   ctor = new section.Constructor(
     scope.copyContextWithName(m.name),
     m.tmplVars,
-    m.parentName,
-    m['pTmplVars'],
+    m.parentName ? (
+      new type.SingleParser(scope.context, header, m.parentName).parse()
+    ) : null,
+    m.parentName ? (
+      new type.SingleParser(scope.context, header, m.parentName + (
+        m['pTmplVars'].length ? '<' + m['pTmplVars'].join(',') + '>' : ''
+      )).parse()
+    ) : null,
     section.Implements.create(scope.context, header, m.rest || '')
   );
   scope.context.cls.ctor = ctor;
@@ -5707,7 +5758,7 @@ function(scope, line, header) {
 /** @return {string} */
 section.Constructor.prototype.parentName = function() {
   var self = this;
-  return (/** @type {string} */(self._parent));
+  return (/** @type {string} */(self._parentFull));
 };
 
 /** @override */
@@ -5728,16 +5779,10 @@ section.Constructor.prototype.output = function() {
   decl.push('@constructor');
   var inherit;
   inherit = [];
-  if (self._parent) {
-    decl.push('@extends {' + self._parent + (
-      self._parentTmplVars.length ? '.<' + self._parentTmplVars.join(',') + '>' : ''
-    ) + '}');
+  if (self._parentFull) {
+    decl.push('@extends {' + self._parentFull + '}');
     inherit.push([
-      'goog.inherits(',
-      self.context.name.ref,
-      ', ',
-      self._parent,
-      ');'
+      'goog.inherits(' + self.context.name.ref + ', ' + self._parent + ');'
     ].join(''));
   }
   decl.push('@struct');

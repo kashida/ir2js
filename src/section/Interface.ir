@@ -1,50 +1,50 @@
-::^%.Callable
-  context\context.Context\$
+::^~.Callable
+  context\~~context.Context\$
   tmpl_vars\A<s>\$
   // This is actually rendered as @extends.
-  @impls\A<%.Implements>\$
+  @impls\A<~.Implements>\$
   context.isCtor = true
   ^(context, '', tmpl_vars)
 
 :re = [#]
   /\:\?/
-  &re.Id('name', true)
-  &re.TmplVarList('tmplVars')
+  &~~re.Id('name', true)
+  &~~re.TmplVarList('tmplVars')
   {_: [#], _s: '?'}
     /\;/
     {rest: /.*/}
 
 :create = ##
-  \%.Interface|-\
-  scope\FileScope\$
+  \~|-\
+  scope\~~FileScope\$
   line\s\$
-  header\input.Line\$
-  m := &re.Compiler(%.Interface.re).eval(line)
+  header\~~input.Line\$
+  m := &~~re.Compiler(~re).eval(line)
   if !m
     => null
 
-  scope.context.cls = &context.Class(true)
-  ctor := &%.Interface(#)
+  scope.context.cls = &~~context.Class(true)
+  ctor := &~(#)
     scope.copyContextWithName(m.name)
     m.tmplVars
-    %.Implements.create(scope.context, header, m.rest || '')
+    ~.Implements.create(scope.context, header, m.rest || '')
   scope.context.cls.ctor = ctor
   scope.types.addCtor(ctor.name())
   => ctor
 
 :transform^
-  assert(@.numBlocks() == 0 || @.lines.length == 0, @.lines[0])
+  ~~assert(@.numBlocks() == 0 || @.lines.length == 0, @.lines[0])
 
 :output\A\
   decl := ['@interface']
   if @.tmplVars.length > 0
     decl.push('@template ' + @.tmplVars.join(','))
   @impls.forEach(##)
-    impl\%.Implements\$
+    impl\~.Implements\$
     decl.push(impl.ifaceOutput())
-  l(decl, 'decl')
+  ~~l(decl, 'decl')
   => [#]
-    docLines(decl)
+    ~~docLines(decl)
     @.context.name.decl + ' = function() {};'
     [#].join('')
       @.context.name.property('_classname').decl
