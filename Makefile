@@ -73,9 +73,12 @@ compiled/test.js: test/test.ir
 ############################################################
 # Converter targets.
 
-test: compiled/ir2js_test.js compiled/syntax.js compiled/test.js
+test: compiled/ir2js_test.js compiled/syntax.js compiled/test_runner.js
 	@echo '===== TEST'
-	$(NODE_TEST) compiled/test.js $(TESTS)
+	$(NODE_TEST) compiled/test_runner.js $(TESTS)
+
+compiled/test_runner.js: $(PACKAGES_FILE) compiled/test.js
+	cat $^ > $@
 
 compiled/ir2js_test.js: compiled/_ir2js.js $(REQ_JS)
 	@echo '===== MERGE ir2js_test'

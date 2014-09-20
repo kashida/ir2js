@@ -2163,10 +2163,11 @@ function(item, title) {
       });
     });
 
-    return (Object.keys(pkgs).sort().map(
+
+    return ['var _o_ = {};'].concat(Object.keys(pkgs).sort().map(
     /** @param {string} pkg */
     function(pkg) {
-      return ((pkg.indexOf('.') >= 0 ? '' : 'var ') + pkg + ' = {};');
+      return COMPILED_PKGS_BASE + pkg + ' = {};'
     }));
   };
 /**
