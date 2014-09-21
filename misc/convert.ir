@@ -2,6 +2,7 @@
   _fs := require('fs')
   _ir2js := require('./ir2js')
   _optimist := require('optimist')
+  _o_ := {}
 
 ::mergeToFile = ##
   base_dir\s\$
@@ -58,7 +59,7 @@
     pkgs := _ir2js.createPackageList(base_dir, input_files)
     console.log(pkgs.join('\n'))
   else if argv.merge
-    mergeToFile(base_dir, input_files, argv.outfile || 'outfile.js')
+    ~~mergeToFile(base_dir, input_files, argv.outfile || 'outfile.js')
   else if argv.help
     console.log(_optimist.help())
   else

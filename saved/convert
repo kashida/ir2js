@@ -6,8 +6,10 @@
   _ir2js = require('./ir2js');
   var _optimist;
   _optimist = require('optimist');
+  var _o_;
+  _o_ = {};
 
-var mergeToFile = /**
+_o_.mergeToFile = /**
  * @param {string} base_dir
  * @param {!Array.<string>} in_files
  * @param {string} out_file
@@ -80,7 +82,7 @@ function(base_dir, in_files, out_file) {
     console.log(pkgs.join('\n'));
   }
   else if (argv.merge) {
-    mergeToFile(base_dir, input_files, argv.outfile || 'outfile.js');
+    _o_.mergeToFile(base_dir, input_files, argv.outfile || 'outfile.js');
   }
   else if (argv.help) {
     console.log(_optimist.help());
