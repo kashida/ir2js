@@ -50,7 +50,7 @@ function(param0, param1, param2, param3) {
   a := param0
   c := param1
 #=
-_o_.func_name = /**
+func_name = /**
  * @param {string} param0
  * @param {number=} opt_param1
  * @param {!Test|null=} param2
@@ -75,9 +75,9 @@ function(param0, opt_param1, param2) {
   p2\n|-\?
   p3\RegExp\?
 #=
-_o_.some.package.func_name = /**
+$some.package.func_name = /**
  * @param {string} p0
- * @param {!_o_.some.package.SomeClass|null=} p1
+ * @param {!$some.package.SomeClass|null=} p1
  * @param {number|null=} p2
  * @param {!RegExp=} p3
  */
@@ -103,28 +103,28 @@ function(p0, p1, p2, p3) {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function() {
+classname = function() {
 var self = this;
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 
 /**
  * @param {string} param_a
  * @param {!Test=} opt_param_b
  */
-_o_.classname.prototype.methodname1 = function(param_a, opt_param_b) {
+classname.prototype.methodname1 = function(param_a, opt_param_b) {
   var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
 
 /** @private */
-_o_.classname.prototype._methodname2 = function() {
+classname.prototype._methodname2 = function() {
 var self = this;
 };
 {
   "cls": [
     {
-      "name": "_o_.classname",
+      "name": "classname",
       "args": [],
       "methods": [
         {
@@ -155,14 +155,14 @@ var self = this;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function() {
+classname = function() {
 var self = this;
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 {
   "cls": [
     {
-      "name": "_o_.classname",
+      "name": "classname",
       "args": [],
       "methods": []
     }
@@ -183,15 +183,15 @@ _o_.classname.prototype._classname = '_o_.classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function(param_a, opt_param_b) {
+classname = function(param_a, opt_param_b) {
   var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 {
   "cls": [
     {
-      "name": "_o_.classname",
+      "name": "classname",
       "args": [
         "String",
         "Number"
@@ -213,22 +213,19 @@ _o_.classname.prototype._classname = '_o_.classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function() {
+classname = function() {
   var self = this;
   /** @private {string} */
   this._param_a = (init_val);
   /** @private {number} */
   this._param_b = (null);
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 {
   "cls": [
     {
-      "name": "_o_.classname",
-      "args": [
-        "String",
-        "Number"
-      ],
+      "name": "classname",
+      "args": [],
       "methods": []
     }
   ],
@@ -248,18 +245,18 @@ _o_.classname.prototype._classname = '_o_.classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function(param_a, opt_param_b) {
+classname = function(param_a, opt_param_b) {
   var self = this;
   /** @private {string} */
   this._param_a = param_a;
   /** @private {number} */
   this._param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 {
   "cls": [
     {
-      "name": "_o_.classname",
+      "name": "classname",
       "args": [
         "String",
         "Number"
@@ -280,24 +277,22 @@ _o_.classname.prototype._classname = '_o_.classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function() {
+classname = function() {
   var self = this;
   /** @private {string} */
   this._param = (null);
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 /** @type {string} */
-_o_.classname.prototype.param;
-_o_.classname.prototype.__defineGetter__('param', function() {
+classname.prototype.param;
+classname.prototype.__defineGetter__('param', function() {
 return this._param;
 });
 {
   "cls": [
     {
-      "name": "_o_.classname",
-      "args": [
-        "String"
-      ],
+      "name": "classname",
+      "args": [],
       "methods": []
     }
   ],
@@ -315,38 +310,35 @@ return this._param;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function() {
+classname = function() {
   var self = this;
   /** @private {string} */
   this._param0 = (null);
   /** @private {!Test} */
   this._param1 = (null);
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 /** @type {string} */
-_o_.classname.prototype.param0;
-_o_.classname.prototype.__defineGetter__('param0', function() {
+classname.prototype.param0;
+classname.prototype.__defineGetter__('param0', function() {
 return this._param0;
 });
-_o_.classname.prototype.__defineSetter__('param0', function(value) {
+classname.prototype.__defineSetter__('param0', function(value) {
 this._param0 = value;
 });
 /** @type {!Test} */
-_o_.classname.prototype.param1;
-_o_.classname.prototype.__defineGetter__('param1', function() {
+classname.prototype.param1;
+classname.prototype.__defineGetter__('param1', function() {
 return this._param1;
 });
-_o_.classname.prototype.__defineSetter__('param1', function(value) {
+classname.prototype.__defineSetter__('param1', function(value) {
 this._param1 = value;
 });
 {
   "cls": [
     {
-      "name": "_o_.classname",
-      "args": [
-        "String",
-        "Test"
-      ],
+      "name": "classname",
+      "args": [],
       "methods": []
     }
   ],

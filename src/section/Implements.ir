@@ -9,7 +9,6 @@
   if !str
     => []
   impls := &~~type.ImplementsParser(context, line, str).parse()
-  ~~l(impls, 'impls')
   => impls.map(##)
     impl\s\$
     => &~(impl)

@@ -36,7 +36,7 @@
 \~.SamePackageClass\
   \!pkg.SamePackageClass\
 \~~abc.SomeClass\
-  \!_o_.abc.SomeClass\
+  \!$abc.SomeClass\
 
 :!
 \abc-\

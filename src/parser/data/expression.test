@@ -30,9 +30,9 @@ abc(#)
 a instanceof ~
   a instanceof Klass
 ~~ abc
-  _o_.abc
+  $abc
 ~~abc.A
-  _o_.abc.A
+  $abc.A
 pkg?pkg+connector:''
   pkg ? pkg + connector : ''
 a *= 0 ? 'abc' && &~() || true : "def"

@@ -10,7 +10,7 @@ Name in file scope.
   => @pkg.fullname(@id)
 
 :global\~\
-  => &~(&~.Package(~~COMPILED_PKGS_BASE), @id)
+  => &~(&~.Package(''), @id)
 
 :property\~\
   id\s\$

@@ -7,7 +7,7 @@ Package name.
 
 :fullname\s\
   id\s\$
-  => @pkg + (@pkg.slice(-1) == '.' ? '' : '.') + id
+  => @pkg ? @pkg + (@pkg.slice(-1) == '.' ? '' : '.') + id : id
 
 :replace\s\
   str\s\$

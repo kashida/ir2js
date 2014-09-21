@@ -42,7 +42,6 @@
   @impls.forEach(##)
     impl\~.Implements\$
     decl.push(impl.ifaceOutput())
-  ~~l(decl, 'decl')
   => [#]
     ~~docLines(decl)
     @.context.name.decl + ' = function() {};'

@@ -6,14 +6,14 @@
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function() {
+classname = function() {
 var self = this;
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 {
   "cls": [
     {
-      "name": "_o_.classname",
+      "name": "classname",
       "args": [],
       "methods": []
     }
@@ -34,15 +34,15 @@ _o_.classname.prototype._classname = '_o_.classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function(param_a, opt_param_b) {
+classname = function(param_a, opt_param_b) {
   var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 {
   "cls": [
     {
-      "name": "_o_.classname",
+      "name": "classname",
       "args": [
         "String",
         "String"
@@ -64,22 +64,19 @@ _o_.classname.prototype._classname = '_o_.classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function() {
+classname = function() {
   var self = this;
   /** @private {string} */
   this._param_a = (init_val);
   /** @private {string} */
   this._param_b = (null);
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 {
   "cls": [
     {
-      "name": "_o_.classname",
-      "args": [
-        "String",
-        "String"
-      ],
+      "name": "classname",
+      "args": [],
       "methods": []
     }
   ],
@@ -101,7 +98,7 @@ _o_.classname.prototype._classname = '_o_.classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function(param_a, opt_param_b, opt_param_c) {
+classname = function(param_a, opt_param_b, opt_param_c) {
   var self = this;
   /** @private {string} */
   this._param_a = param_a;
@@ -110,11 +107,11 @@ _o_.classname = function(param_a, opt_param_b, opt_param_c) {
   /** @private {string} */
   this._param_c = opt_param_c === undefined ? (null) : opt_param_c;
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 {
   "cls": [
     {
-      "name": "_o_.classname",
+      "name": "classname",
       "args": [
         "String",
         "String",
@@ -137,11 +134,11 @@ _o_.classname.prototype._classname = '_o_.classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.Class1 = function() {
+Class1 = function() {
 var self = this;
 };
-_o_.Class1.prototype._classname = '_o_.Class1';
-_o_.Class1.prototype.method = function() {
+Class1.prototype._classname = 'Class1';
+Class1.prototype.method = function() {
 var self = this;
 };
 /**
@@ -149,14 +146,14 @@ var self = this;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.Class2 = function() {
+Class2 = function() {
 var self = this;
 };
-_o_.Class2.prototype._classname = '_o_.Class2';
+Class2.prototype._classname = 'Class2';
 {
   "cls": [
     {
-      "name": "_o_.Class1",
+      "name": "Class1",
       "args": [],
       "methods": [
         {
@@ -167,7 +164,7 @@ _o_.Class2.prototype._classname = '_o_.Class2';
       ]
     },
     {
-      "name": "_o_.Class2",
+      "name": "Class2",
       "args": [],
       "methods": []
     }
@@ -184,14 +181,14 @@ _o_.Class2.prototype._classname = '_o_.Class2';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.FileName = function() {
+FileName = function() {
 var self = this;
 };
-_o_.FileName.prototype._classname = '_o_.FileName';
+FileName.prototype._classname = 'FileName';
 {
   "cls": [
     {
-      "name": "_o_.FileName",
+      "name": "FileName",
       "args": [],
       "methods": []
     }

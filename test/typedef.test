@@ -3,7 +3,7 @@
   b|A<s>
 #=
 /** @typedef {boolean|!Array.<string>} */
-_o_.short_name;
+short_name;
 {
   "cls": [],
   "fns": []
@@ -14,8 +14,8 @@ _o_.short_name;
 :!short_name
   b|A<s>|~.MyClass
 #=
-/** @typedef {boolean|!Array.<string>|!_o_.abc.def.MyClass} */
-_o_.abc.def.short_name;
+/** @typedef {boolean|!Array.<string>|!$abc.def.MyClass} */
+$abc.def.short_name;
 {
   "cls": [],
   "fns": []
@@ -27,7 +27,7 @@ _o_.abc.def.short_name;
   b|A<s>
 #=
 /** @typedef {boolean|!Array.<string>} */
-_o_.short_name;
+short_name;
 {
   "cls": [],
   "fns": []
@@ -41,7 +41,7 @@ _o_.short_name;
   n
 #=
 /** @typedef {boolean|!Array.<string>|number} */
-_o_.short_name;
+short_name;
 {
   "cls": [],
   "fns": []

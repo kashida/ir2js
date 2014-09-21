@@ -118,4 +118,5 @@
   types\~~type.Callable|-\$
   @params.forEach(##)
     p\~~Param\$
-    types.addArg(p.argtype())
+    if p.type && p.initType
+      types.addArg(p.argtype())

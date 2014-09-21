@@ -34,12 +34,12 @@ function(x, y, z) {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.classname = function(x, opt_y) {
+classname = function(x, opt_y) {
   var self = this;
   /** @private {number} */
   this._y = opt_y === undefined ? (0) : opt_y;
 };
-_o_.classname.prototype._classname = '_o_.classname';
+classname.prototype._classname = 'classname';
 
 /**
  * @param {!Abc.<!U>} x
@@ -47,13 +47,13 @@ _o_.classname.prototype._classname = '_o_.classname';
  * @return {string}
  * @template V
  */
-_o_.classname.prototype.method = function(x, y) {
+classname.prototype.method = function(x, y) {
   var self = this;
 };
 {
   "cls": [
     {
-      "name": "_o_.classname",
+      "name": "classname",
       "args": [
         "Number",
         "Number"
@@ -77,7 +77,7 @@ _o_.classname.prototype.method = function(x, y) {
 #{ inheritance
 ::ParentClass<T,U>
 
-::ChildClass<V> ^~~ParentClass<s, V>
+::ChildClass<V> ^ParentClass<s, V>
 :method<V>\s\
   x\Abc<U>\$
   y\Def<V>\?
@@ -88,43 +88,43 @@ _o_.classname.prototype.method = function(x, y) {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.ParentClass = function() {
+ParentClass = function() {
 var self = this;
 };
-_o_.ParentClass.prototype._classname = '_o_.ParentClass';
+ParentClass.prototype._classname = 'ParentClass';
 
 /**
  * @template V
  * @constructor
- * @extends {_o_.ParentClass.<string,!V>}
+ * @extends {ParentClass.<string,!V>}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.ChildClass = function() {
+ChildClass = function() {
 var self = this;
 };
-goog.inherits(_o_.ChildClass, _o_.ParentClass);
-_o_.ChildClass.prototype._classname = '_o_.ChildClass';
+goog.inherits(ChildClass, ParentClass);
+ChildClass.prototype._classname = 'ChildClass';
 /**
  * @param {!Abc.<!U>} x
  * @param {!Def.<!V>=} y
  * @return {string}
  * @template V
  */
-_o_.ChildClass.prototype.method = function(x, y) {
+ChildClass.prototype.method = function(x, y) {
   var self = this;
 };
 {
   "cls": [
     {
-      "name": "_o_.ParentClass",
+      "name": "ParentClass",
       "args": [],
       "methods": []
     },
     {
-      "name": "_o_.ChildClass",
+      "name": "ChildClass",
       "args": [],
-      "parent": "_o_.ParentClass.<string,!V>",
+      "parent": "ParentClass.<string,!V>",
       "methods": [
         {
           "name": "method",

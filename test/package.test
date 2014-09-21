@@ -2,7 +2,7 @@
 :
   a(~.call_function())
 #=
-  a(_o_.abc.def.call_function());
+  a($abc.def.call_function());
 {
   "cls": [],
   "fns": []
@@ -20,19 +20,19 @@
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.abc.def.K = function() {
+$abc.def.K = function() {
 var self = this;
 };
-_o_.abc.def.K.prototype._classname = '_o_.abc.def.K';
+$abc.def.K.prototype._classname = '$abc.def.K';
 
-_o_.abc.def.K.prototype.m = function() {
+$abc.def.K.prototype.m = function() {
   var self = this;
-  a(_o_.abc.def.K.call_function(), a instanceof _o_.abc.def.K);
+  a($abc.def.K.call_function(), a instanceof $abc.def.K);
 };
 {
   "cls": [
     {
-      "name": "_o_.abc.def.K",
+      "name": "$abc.def.K",
       "args": [],
       "methods": [
         {
@@ -60,33 +60,33 @@ _o_.abc.def.K.prototype.m = function() {
 /**
  * @param {string=} opt_param
  * @constructor
- * @extends {_o_.abc.def.path.parent}
+ * @extends {$abc.def.path.parent}
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.abc.def.classname = function(opt_param) {
+$abc.def.classname = function(opt_param) {
   var self = this;
   /** @private {string} */
-  this._param = opt_param === undefined ? (_o_.abc.def.value) : opt_param;
-  _o_.abc.def.path.parent.call(this, param);
+  this._param = opt_param === undefined ? ($abc.def.value) : opt_param;
+  $abc.def.path.parent.call(this, param);
 };
-goog.inherits(_o_.abc.def.classname, _o_.abc.def.path.parent);
-_o_.abc.def.classname.prototype._classname = '_o_.abc.def.classname';
+goog.inherits($abc.def.classname, $abc.def.path.parent);
+$abc.def.classname.prototype._classname = '$abc.def.classname';
 
 /** @param {number} param */
-_o_.abc.def.classname.prototype.methodname = function(param) {
+$abc.def.classname.prototype.methodname = function(param) {
   var self = this;
-  a(_o_.abc.def.something);
-  _o_.abc.def.path.parent.prototype.methodname.call(this, param, 0);
+  a($abc.def.something);
+  $abc.def.path.parent.prototype.methodname.call(this, param, 0);
 };
 {
   "cls": [
     {
-      "name": "_o_.abc.def.classname",
+      "name": "$abc.def.classname",
       "args": [
         "String"
       ],
-      "parent": "_o_.abc.def.path.parent",
+      "parent": "$abc.def.path.parent",
       "methods": [
         {
           "name": "methodname",
@@ -106,15 +106,15 @@ _o_.abc.def.classname.prototype.methodname = function(param) {
 ::func = ##
   \~.some.type\
   p0\~.another.type\$
-  p1\A<~~yet.another.type>\? ~~global.value
+  p1\A<$yet.another.type>\? $global.value
 #=
-_o_.abc.def.func = /**
- * @param {!_o_.abc.def.another.type} p0
- * @param {!Array.<!_o_.yet.another.type>=} opt_p1
- * @return {!_o_.abc.def.some.type}
+$abc.def.func = /**
+ * @param {!$abc.def.another.type} p0
+ * @param {!Array.<!$yet.another.type>=} opt_p1
+ * @return {!$abc.def.some.type}
  */
 function(p0, opt_p1) {
-  var p1 = opt_p1 === undefined ? (_o_.global.value) : opt_p1;
+  var p1 = opt_p1 === undefined ? ($global.value) : opt_p1;
 };
 {
   "cls": [],
@@ -127,8 +127,8 @@ function(p0, opt_p1) {
   ~.varname
   ~.varname
 #=
-  _o_.abc.def.varname;
-  _o_.abc.def.varname;
+  $abc.def.varname;
+  $abc.def.varname;
 {
   "cls": [],
   "fns": []
@@ -150,24 +150,24 @@ function(p0, opt_p1) {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-_o_.abc.def.Abc = function() {
+$abc.def.Abc = function() {
 var self = this;
 };
-_o_.abc.def.Abc.prototype._classname = '_o_.abc.def.Abc';
+$abc.def.Abc.prototype._classname = '$abc.def.Abc';
 
-_o_.abc.def.Abc.def = /** @param {string} param */
+$abc.def.Abc.def = /** @param {string} param */
 function(param) {
   do_something();
 };
 
-_o_.abc.def.Abc.prototype.ghi = function() {
+$abc.def.Abc.prototype.ghi = function() {
   var self = this;
-  _o_.abc.def.Abc.def('jkl');
+  $abc.def.Abc.def('jkl');
 };
 {
   "cls": [
     {
-      "name": "_o_.abc.def.Abc",
+      "name": "$abc.def.Abc",
       "args": [],
       "methods": [
         {
