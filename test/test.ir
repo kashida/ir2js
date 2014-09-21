@@ -118,7 +118,7 @@ argv[0] is node binary and argv[1] is the executing js.
     contents := _fs.readFileSync(infile, 'utf-8')
     console.log(' [ ' + infile + ' ] ')
 
-    test := &~~TestFile(infile)
+    test := &TestFile(infile)
     test.parse(contents)
     test.run()
     if test.failed

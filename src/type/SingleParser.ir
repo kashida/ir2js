@@ -1,15 +1,15 @@
 ::
-  @context\~~context.Context\$
-  @input\~~input.Line\$
+  @context\$context.Context\$
+  @input\$input.Line\$
   @type_str\s\$
 
 :SINGLE_PARSER = null
 
 :parse\s\
-  ~SINGLE_PARSER = ~SINGLE_PARSER || &~~parser.Target('TypeInstantiation')
+  ~SINGLE_PARSER = ~SINGLE_PARSER || &$parser.Target('TypeInstantiation')
   try
     => ~SINGLE_PARSER.run(#).rendered().join('')
       @type_str
-      &~~LineTransformer(@context, @input)
+      &LineTransformer(@context, @input)
   catch e
-    ~~error(@input, '(syntax error) ' + e.message, e.contextLines)
+    error(@input, '(syntax error) ' + e.message, e.contextLines)

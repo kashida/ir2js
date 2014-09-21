@@ -1,5 +1,5 @@
 ::^~.Callable
-  context\~~context.Context\$
+  context\$context.Context\$
   tmpl_vars\A<s>\$
   // This is actually rendered as @extends.
   @impls\A<~.Implements>\$
@@ -8,22 +8,22 @@
 
 :re = [#]
   /\:\?/
-  &~~re.Id('name', true)
-  &~~re.TmplVarList('tmplVars')
+  &$re.Id('name', true)
+  &$re.TmplVarList('tmplVars')
   {_: [#], _s: '?'}
     /\;/
     {rest: /.*/}
 
 :create = ##
   \~|-\
-  scope\~~FileScope\$
+  scope\FileScope\$
   line\s\$
-  header\~~input.Line\$
-  m := &~~re.Compiler(~re).eval(line)
+  header\$input.Line\$
+  m := &$re.Compiler(~re).eval(line)
   if !m
     => null
 
-  scope.context.cls = &~~context.Class(true)
+  scope.context.cls = &$context.Class(true)
   ctor := &~(#)
     scope.copyContextWithName(m.name)
     m.tmplVars
@@ -33,7 +33,7 @@
   => ctor
 
 :transform^
-  ~~assert(@.numBlocks() == 0 || @.lines.length == 0, @.lines[0])
+  assert(@.numBlocks() == 0 || @.lines.length == 0, @.lines[0])
 
 :output\A\
   decl := ['@interface']
@@ -43,7 +43,7 @@
     impl\~.Implements\$
     decl.push(impl.ifaceOutput())
   => [#]
-    ~~docLines(decl)
+    docLines(decl)
     @.context.name.decl + ' = function() {};'
     [#].join('')
       @.context.name.property('_classname').decl

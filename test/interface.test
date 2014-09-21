@@ -6,7 +6,7 @@
   p1\n\?
 #=
 /** @interface */
-name = function() {};
+var name = function() {};
 name.prototype._classname = 'name';
 
 /**
@@ -43,16 +43,16 @@ name.prototype.method = function(p0, p1) {};
 ::classname; iface0 iface2
 #=
 /** @interface */
-iface0 = function() {};
+var iface0 = function() {};
 iface0.prototype._classname = 'iface0';
 /** @interface */
-iface1 = function() {};
+var iface1 = function() {};
 iface1.prototype._classname = 'iface1';
 /**
  * @interface
  * @extends {iface1}
  */
-iface2 = function() {};
+var iface2 = function() {};
 iface2.prototype._classname = 'iface2';
 /**
  * @constructor
@@ -61,7 +61,7 @@ iface2.prototype._classname = 'iface2';
  * @implements {iface0}
  * @implements {iface2}
  */
-classname = function() {
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';
@@ -114,7 +114,7 @@ classname.prototype._classname = 'classname';
  * @interface
  * @template T,U,V
  */
-iface0 = function() {};
+var iface0 = function() {};
 iface0.prototype._classname = 'iface0';
 /**
  * @param {!U} p0
@@ -127,7 +127,7 @@ iface0.prototype.m0 = function(p0) {};
  * @interface
  * @template X
  */
-iface1 = function() {};
+var iface1 = function() {};
 iface1.prototype._classname = 'iface1';
 /**
  * @param {!Y} p0
@@ -141,7 +141,7 @@ iface1.prototype.m1 = function(p0) {};
  * @template B,C
  * @extends {iface0.<number,!B,!V>}
  */
-iface2 = function() {};
+var iface2 = function() {};
 iface2.prototype._classname = 'iface2';
 
 /**
@@ -152,7 +152,7 @@ iface2.prototype._classname = 'iface2';
  * @implements {iface0.<string,number,!Z>}
  * @implements {iface2.<!B.<number>,!C>}
  */
-classname = function() {
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';

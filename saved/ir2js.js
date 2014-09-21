@@ -31,7 +31,7 @@ use this.
   function(childCtor, parentCtor) {
     childCtor.prototype = Object.create(parentCtor.prototype);
   };
-_o_.COMPILED_PKGS_BASE = '_o_.';
+_o_.COMPILED_PKGS_BASE = '$';
 /*
 Match markers and blocks.
 */
@@ -604,7 +604,7 @@ _o_.FileScope = function(file_name, pkg_name, defaultClsName) {
   /** @private {!_o_.context.Context} */
   this._context = (new _o_.context.Context(
     file_name,
-    new _o_.context.Package(_o_.COMPILED_PKGS_BASE + pkg_name)
+    new _o_.context.Package(pkg_name ? _o_.COMPILED_PKGS_BASE + pkg_name : '')
   ));
   /** @private {!_o_.type.Set} */
   this._types = (new _o_.type.Set());
@@ -1073,13 +1073,6 @@ return this._grammar;
 });
 _o_.LineTransformer.prototype.__defineSetter__('grammar', function(value) {
 this._grammar = value;
-});
-
-/** @type {string} */
-_o_.LineTransformer.prototype.COMPILED_PKGS_BASE;
-_o_.LineTransformer.prototype.__defineGetter__('COMPILED_PKGS_BASE', function() {
-  var self = this;
-  return (_o_.COMPILED_PKGS_BASE);
 });
 
 /** @return {string} */
@@ -1754,7 +1747,9 @@ _o_.ParamSet.prototype.setArgTypes = function(types) {
   self._params.forEach(
   /** @param {!_o_.Param} p */
   function(p) {
-    types.addArg(p.argtype());
+    if (p.type && p.initType) {
+      types.addArg(p.argtype());
+    }
   });
 };
 /**
@@ -2167,11 +2162,12 @@ function(item, title) {
       });
     });
 
-    return (['var _o_ = {};'].concat(Object.keys(pkgs).sort().map(
+    return Object.keys(pkgs).sort().map(
     /** @param {string} pkg */
     function(pkg) {
-      return (_o_.COMPILED_PKGS_BASE + pkg + ' = {};');
-    })));
+      return (pkg.indexOf('.') >= 0 ? '' : 'var ') +
+      _o_.COMPILED_PKGS_BASE + pkg + ' = {};';
+    });
   };
 /**
  * @constructor
@@ -2739,7 +2735,7 @@ return this._id;
 _o_.context.Name.prototype.decl;
 _o_.context.Name.prototype.__defineGetter__('decl', function() {
   var self = this;
-  return (self._pkg.fullname(self._id));
+  return (self._pkg.empty() ? 'var ' : '') + self._pkg.fullname(self._id)
 });
 
 /** @type {string} */
@@ -2752,7 +2748,7 @@ _o_.context.Name.prototype.__defineGetter__('ref', function() {
 /** @return {!_o_.context.Name} */
 _o_.context.Name.prototype.global = function() {
   var self = this;
-  return (new _o_.context.Name(new _o_.context.Package(_o_.COMPILED_PKGS_BASE), self._id));
+  return (new _o_.context.Name(new _o_.context.Package(''), self._id));
 };
 
 /**
@@ -2806,7 +2802,7 @@ _o_.context.Package.prototype.empty = function() {
  */
 _o_.context.Package.prototype.fullname = function(id) {
   var self = this;
-  return (self._pkg + (self._pkg.slice(-1) === '.' ? '' : '.') + id);
+  return (self._pkg ? self._pkg + (self._pkg.slice(-1) === '.' ? '' : '.') + id : id);
 };
 
 /**
@@ -4408,7 +4404,6 @@ function(context, line, str) {
   }
   var impls;
   impls = new _o_.type.ImplementsParser(context, line, str).parse();
-  _o_.l(impls, 'impls');
   return (impls.map(
   /** @param {string} impl */
   function(impl) {
@@ -4999,7 +4994,7 @@ _o_.re.QualifiedId.prototype.re = function() {
   var self = this;
   var n;
   n = {};
-  n[self._name] = /[\w\.\~]+/;
+  n[self._name] = /[\$\w\.\~]+/;
   return (n);
 };
 /**
@@ -5892,7 +5887,6 @@ _o_.section.Interface.prototype.output = function() {
   function(impl) {
     decl.push(impl.ifaceOutput());
   });
-  _o_.l(decl, 'decl');
   return ([
     _o_.docLines(decl),
     self.context.name.decl + ' = function() {};',

@@ -2,7 +2,7 @@ Pseudo member is a place holder for class members that don't exist, but there
 are accessors for.
 ::
   @name\s\$
-  @type\~~type.Decoder|-\$
+  @type\$type.Decoder|-\$
   @accessType\s\$
   @isPseudo\b\$
   @declared\b\ false
@@ -10,7 +10,7 @@ are accessors for.
 returns an array with member declaration if it hasn't been output already.
 returns an empty array otherwise.
 :outputDecl\A<s>\
-  class_name\~~context.Name\$
+  class_name\$context.Name\$
   if @declared
     => []
   @declared = true
@@ -22,10 +22,10 @@ returns an empty array otherwise.
 
 output a getter or a setter.
 :outputAccessor\A\
-  class_name\~~context.Name\$
+  class_name\$context.Name\$
   is_getter\b\$
   body\A\$
-  params\~~ParamSet\?
+  params\ParamSet\?
   p := @isPseudo && params ? params.outputParams() : 'value'
   => [is_getter ? # : #, body, '});']
     #+
@@ -37,7 +37,7 @@ output a getter or a setter.
 
 produce necessary accessor methods based on the access type specification.
 :outputAccessors\A\
-  class_name\~~context.Name\$
+  class_name\$context.Name\$
   if !@accessType || @isPseudo
     => []
   result := [@.outputDecl(class_name)]

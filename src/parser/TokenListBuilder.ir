@@ -1,6 +1,6 @@
 ::
   @parsed\~.TokenList|A|O|s\$
-  @xformer\~~LineTransformer\$
+  @xformer\LineTransformer\$
   @tokens\~.TokenList\ &~.TokenList()
 
 :build\~.TokenList\

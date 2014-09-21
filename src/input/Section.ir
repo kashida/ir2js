@@ -2,7 +2,7 @@ Input code section.
 ::
   @header+\~.Line\$
   @lines+\A<~.Line>\ []
-  @code&\~~section.Code|-\
+  @code&\$section.Code|-\
 
 :push
   line\~.Line\$

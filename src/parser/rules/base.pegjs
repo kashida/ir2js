@@ -292,8 +292,6 @@ RegularExpressionLiteral 'regular expression'
 
 Self = '@' _ name:Identifier? { return name ? 'self._' + name : 'self'; }
 
-RootPackage = '~~' _ name:Identifier { return [$.COMPILED_PKGS_BASE + name]; }
-
 CurrentPackage = '~.' _ name:Identifier { return $.pkg() + '.' + name; }
 
 CurrentClass = '~' _ name:Identifier?{

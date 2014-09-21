@@ -9,7 +9,6 @@ Literal
 
 PrimaryExpression
   = Self
-  / RootPackage
   / CurrentPackage
   / CurrentClass
   / BlockMarker

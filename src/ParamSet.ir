@@ -9,35 +9,35 @@
     'RegExp': 'null'
 
 ::
-  @context\~~context.Context\$
-  @block\~~IndentBlock\$
+  @context\$context.Context\$
+  @block\IndentBlock\$
   @isCtor\b\? false
-  @params\A<~~Param>\ []
+  @params\A<Param>\ []
   @returnType\s\ ''
   @templateParams&\A<s>\ []
 
 :transform
   param_done := false
   @block.eachLine(##, @context)
-    line\~~SectionLine|-\$
+    line\SectionLine|-\$
     i\n\$
     if param_done
       =>
-    if line instanceof ~~SeparatorLine
+    if line instanceof SeparatorLine
       param_done = true
       =>
-    if line instanceof ~~CodeLine && !line.isContinuation
-      p := @addLine(\~~CodeLine\(line), i)
+    if line instanceof CodeLine && !line.isContinuation
+      p := @addLine(\CodeLine\(line), i)
       if p
         line.param = p
       else
         param_done = true
     // skip invalid lines and continuation lines.
 
-:@addLine\~~Param|b|-\
-  line\~~CodeLine\$
+:@addLine\Param|b|-\
+  line\CodeLine\$
   index\n\$
-  p := &~~Param(@context, @isCtor, line.input, line.parsed)
+  p := &Param(@context, @isCtor, line.input, line.parsed)
   if !p.success
     if index != 0 || @context.isFileScope
       => null
@@ -51,12 +51,12 @@
   => p
 
 :@tryReturnType\b\
-  line\~~CodeLine\$
+  line\CodeLine\$
   tokens := line.parsed.tokens
   if tokens.list.length != 1
     => false
   token := tokens.list[0]
-  if !(token instanceof ~~parser.TmplAndTypeLine)
+  if !(token instanceof $parser.TmplAndTypeLine)
     => false
   @returnType = token.type
   @templateParams = token.ids
@@ -65,7 +65,7 @@
 :setReturnType
   return_type\s\$
   if return_type
-    @returnType = &~~type.Decoder(@context.pkg, return_type).output()
+    @returnType = &$type.Decoder(@context.pkg, return_type).output()
 
 :isEmpty\b\
   => @params.length == 0
@@ -73,23 +73,23 @@
 :numParams+\n\
   => @params.length
 
-:paramType\~~type.Decoder|-\
+:paramType\$type.Decoder|-\
   i\n\$
   => @params[i].type
 
 :isInitEmpty\b\
   => !@params.some(##)
-    p\~~Param\$
+    p\Param\$
     => p.isMember || p.initType == '?'
 
 :isDeclEmpty\b\
   => !@returnType && !@params.some(##)
-    p\~~Param\$
+    p\Param\$
     => !!p.type
 
 :outputDecls\A<s>\
   result := @params.map(##).filter(##)
-    p\~~Param\$
+    p\Param\$
     => p.outputDecl()
     --
     s\s\$
@@ -103,7 +103,7 @@
 :outputParams\s\
   // function parameter output.
   => @params.map(##).filter(##).join(', ')
-    p\~~Param\$
+    p\Param\$
     => p.outputParam()
     --
     s\s\$
@@ -111,12 +111,12 @@
 
 :outputArgTypes\s\
   => '[' + @params.map(##).join(', ') + ']'
-    p\~~Param\$
+    p\Param\$
     => p.outputArgType()
 
 :setArgTypes
-  types\~~type.Callable|-\$
+  types\$type.Callable|-\$
   @params.forEach(##)
-    p\~~Param\$
+    p\Param\$
     if p.type && p.initType
       types.addArg(p.argtype())

@@ -1,25 +1,25 @@
 ::^~.Str
-  context\~~context.Context\$
+  context\$context.Context\$
   ^(context)
 
 :re = [#]
   /\!/
-  &~~re.Id('name')
+  &$re.Id('name')
 
 :create = ##
   \~|-\
-  scope\~~FileScope\$
+  scope\FileScope\$
   line\s\$
-  m := &~~re.Compiler(~re).eval(line)
+  m := &$re.Compiler(~re).eval(line)
   if !m
     => null
   => &~(scope.copyContextWithName(m.name))
 
-:output\A<~~output.Line>\
-  out := &~~output.Line(@.lines[0])
+:output\A<$output.Line>\
+  out := &$output.Line(@.lines[0])
   out.indent = 0
   out.lines.appendLines([#])
-    ~~docLines(['@typedef {' + # + '}'])
-      &~~type.Parser(@.context, @.lines[0], @.strlines().join('')).parse()
+    docLines(['@typedef {' + # + '}'])
+      &$type.Parser(@.context, @.lines[0], @.strlines().join('')).parse()
     @.context.name.decl + ';'
   => [out]

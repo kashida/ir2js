@@ -1,14 +1,14 @@
 :!SectionLine
-  ~~CodeLine|~~SeparatorLine|~~InvalidLine
+  CodeLine|SeparatorLine|InvalidLine
 
 ::
-  @context\~~context.Context\$
+  @context\$context.Context\$
 
-:createLine\~~SectionLine\
-  line\~~input.Line\$
-  parsed := &~~LineParser(line)
+:createLine\SectionLine\
+  line\$input.Line\$
+  parsed := &LineParser(line)
   if !parsed.isValid
-    => &~~InvalidLine(line)
+    => &InvalidLine(line)
   if parsed.isSeparator
-    => &~~SeparatorLine(line, parsed)
-  => &~~CodeLine(@context, line, parsed)
+    => &SeparatorLine(line, parsed)
+  => &CodeLine(@context, line, parsed)

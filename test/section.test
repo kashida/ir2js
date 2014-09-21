@@ -9,12 +9,12 @@ this should be a global comment.
     xyz
     xxx
 #=
-abc = 3;
+var abc = 3;
   // this comment should not make a block.
 /*
 this should be a global comment.
 */
-def = [
+var def = [
   0,
   ghi,
   (
@@ -40,13 +40,13 @@ def = [
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-Klass = function() {
+var Klass = function() {
 var self = this;
 };
 Klass.prototype._classname = 'Klass';
 Klass.abc = 0;
-def = 1;
-ghi = 2;
+var def = 1;
+var ghi = 2;
 {
   "cls": [
     {
@@ -76,7 +76,7 @@ var self = this;
 $zzz.Klass.prototype._classname = '$zzz.Klass';
 $zzz.Klass.abc = 0;
 $zzz.def = 1;
-ghi = 2;
+var ghi = 2;
 {
   "cls": [
     {

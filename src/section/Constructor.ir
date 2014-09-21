@@ -1,5 +1,5 @@
 ::^~.Callable
-  context\~~context.Context\$
+  context\$context.Context\$
   tmpl_vars\A<s>\$
   @parent\s|-\$
   @parentFull\s|-\$
@@ -10,33 +10,33 @@
 
 :re = [#]
   /\:/
-  &~~re.Id('name', true)
-  &~~re.TmplVarList('tmplVars')
+  &$re.Id('name', true)
+  &$re.TmplVarList('tmplVars')
   {_: [#], _s: '?'}
     /\^/
-    &~~re.QualifiedId('parentName')
-    &~~re.TmplVarList('pTmplVars')
+    &$re.QualifiedId('parentName')
+    &$re.TmplVarList('pTmplVars')
   {_: [#], _s: '?'}
     /\;/
     {rest: /.*/}
 
 :create = ##
   \~|-\
-  scope\~~FileScope\$
+  scope\FileScope\$
   line\s\$
-  header\~~input.Line\$
-  m := &~~re.Compiler(~re).eval(line)
+  header\$input.Line\$
+  m := &$re.Compiler(~re).eval(line)
   if !m
     => null
 
-  scope.context.cls = &~~context.Class()
+  scope.context.cls = &$context.Class()
   ctor := &~(#)
     scope.copyContextWithName(m.name)
     m.tmplVars
     m.parentName ? # : null
-      &~~type.SingleParser(scope.context, header, m.parentName).parse()
+      &$type.SingleParser(scope.context, header, m.parentName).parse()
     m.parentName ? # : null
-      &~~type.SingleParser(scope.context, header, m.parentName + #).parse()
+      &$type.SingleParser(scope.context, header, m.parentName + #).parse()
         m['pTmplVars'].length ? '<' + m['pTmplVars'].join(',') + '>' : ''
     ~.Implements.create(scope.context, header, m.rest || '')
   scope.context.cls.ctor = ctor
@@ -49,8 +49,8 @@
   => \s\(@parentFull)
 
 :transform^
-  ~~assert(@.numBlocks() == 1, @.lines[0])
-  @.params = &~~ParamSet(@.context, @.block(0), true)
+  assert(@.numBlocks() == 1, @.lines[0])
+  @.params = &ParamSet(@.context, @.block(0), true)
   @.params.templateParams = @.tmplVars
   @.params.transform()
   @.block(0).transform()
@@ -69,9 +69,9 @@
     impl\~.Implements\$
     decl.push(impl.ctorOutput())
   => [#]
-    ~~docLines(decl)
+    docLines(decl)
     @.outputFunc()
-    ~~whitespaces(@.block(0).indent) + 'var self = this;'
+    whitespaces(@.block(0).indent) + 'var self = this;'
     @.outputBody('};')
     inherit
     [#].join('')
@@ -82,5 +82,5 @@
     @.context.cls.outputAccessors()
 
 :setType^
-  types\~~type.Set\$
+  types\$type.Set\$
   @.params.setArgTypes(types.getCurrentCtor())

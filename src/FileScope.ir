@@ -1,46 +1,46 @@
 parse file scope and separate code sections from comments.
 :!OutputSection
-  ~~input.Comment|~~section.Code
+  $input.Comment|$section.Code
 
 ::
   file_name\s\$
   pkg_name\s\$
   @defaultClsName\s\$
-  @context+\~~context.Context\ &~~context.Context(#)
+  @context+\$context.Context\ &$context.Context(#)
     file_name
-    &~~context.Package(pkg_name ? ~~COMPILED_PKGS_BASE + pkg_name : '')
-  @types+\~~type.Set\ &~~type.Set()
-  @list\A<~~OutputSection>|-\
+    &$context.Package(pkg_name ? COMPILED_PKGS_BASE + pkg_name : '')
+  @types+\$type.Set\ &$type.Set()
+  @list\A<OutputSection>|-\
 
   @context.isFileScope = true
 
 :processLines
   line\A<s>\$
-  gen := &~~section.Generator(@)
-  input_list := &~~input.File(@context.fileName, line).parse()
+  gen := &$section.Generator(@)
+  input_list := &$input.File(@context.fileName, line).parse()
   @list = input_list.map(##)
-    section\~~input.Comment|~~input.Section\$
+    section\$input.Comment|$input.Section\$
     index\n\$
     // convert input.Section to section.Code and leave input.Comment as is.
-    => section instanceof ~~input.Section ? gen.generate(#) : section
+    => section instanceof $input.Section ? gen.generate(#) : section
       section.header
       section.lines
 
-:copyContext\~~context.Context\
-  name\~~context.Name\$
+:copyContext\$context.Context\
+  name\$context.Name\$
   ctxt := @context.clone()
   ctxt.name = name
   ctxt.cls = @context.cls
   ctxt.isFileScope = @context.isFileScope
   => ctxt
 
-:copyContextWithName\~~context.Context\
+:copyContextWithName\$context.Context\
   name\s\$
   cls_name := name || @defaultClsName
-  fullname := &~~context.Name(@context.pkg, cls_name)
+  fullname := &$context.Name(@context.pkg, cls_name)
   => @.copyContext(fullname)
 
 :output\A<s>\
-  => ~~arrFlatten(@list.map(##))
-    elem\~~OutputSection\$
+  => arrFlatten(@list.map(##))
+    elem\OutputSection\$
     => elem.output()

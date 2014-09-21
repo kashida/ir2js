@@ -1,20 +1,20 @@
 ::
-  @context\~~context.Context\$
-  @head\~~section.Head\? &~~section.Global()
+  @context\$context.Context\$
+  @head\$section.Head\? &$section.Global()
 
 :processLines
   lines\A<s>\$
   i := 0
   @.process(lines.map(##))
     line\s\$
-    => &~~input.Line(@context.fileName, line, i++)
+    => &$input.Line(@context.fileName, line, i++)
 
 :process
-  input_lines\A<~~input.Line>\$
-  &~~CodeParser(@context, @head).parse(input_lines)
+  input_lines\A<$input.Line>\$
+  &CodeParser(@context, @head).parse(input_lines)
   @head.transform()
 
 :output
-  => ~~arrFlatten(@head.output()).map(##)
+  => arrFlatten(@head.output()).map(##)
     line\s\$
     => line.replace(/\s*$/, '')

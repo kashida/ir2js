@@ -6,7 +6,7 @@
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';
@@ -34,7 +34,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function(param_a, opt_param_b) {
+var classname = function(param_a, opt_param_b) {
   var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
@@ -64,7 +64,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   /** @private {string} */
   this._param_a = (init_val);
@@ -98,7 +98,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function(param_a, opt_param_b, opt_param_c) {
+var classname = function(param_a, opt_param_b, opt_param_c) {
   var self = this;
   /** @private {string} */
   this._param_a = param_a;
@@ -134,7 +134,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-Class1 = function() {
+var Class1 = function() {
 var self = this;
 };
 Class1.prototype._classname = 'Class1';
@@ -146,7 +146,7 @@ var self = this;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-Class2 = function() {
+var Class2 = function() {
 var self = this;
 };
 Class2.prototype._classname = 'Class2';
@@ -181,7 +181,7 @@ Class2.prototype._classname = 'Class2';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-FileName = function() {
+var FileName = function() {
 var self = this;
 };
 FileName.prototype._classname = 'FileName';

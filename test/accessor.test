@@ -7,7 +7,7 @@
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   /** @private {string} */
   this._param = (null);
@@ -36,7 +36,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   /** @private {string} */
   this._param0 = (null);
@@ -92,7 +92,7 @@ this._param2 = value;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   /** @private {string} */
   this._member = (null);
@@ -139,7 +139,7 @@ classname.prototype.__defineGetter__('member2', function() {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   /** @private {string} */
   this._member = (null);
@@ -181,7 +181,7 @@ classname.prototype.__defineGetter__('member', function() {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';
@@ -226,7 +226,7 @@ classname.prototype.__defineGetter__('member2', function() {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';

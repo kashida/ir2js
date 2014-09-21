@@ -13,7 +13,7 @@
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function(param_a, opt_param_b) {
+var classname = function(param_a, opt_param_b) {
   var self = this;
   /** @private {string} */
   this._param_a = param_a;
@@ -56,7 +56,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   do_something();
   parent.call(this, something_else());
@@ -117,7 +117,7 @@ classname.prototype.method = function(param) {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   do_something();
   parent.call(this, (

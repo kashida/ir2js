@@ -4,7 +4,7 @@ Anonymous scope.
 
 :create = ##
   \~|-\
-  scope\~~FileScope\$
+  scope\FileScope\$
   line\s\$
   => line == '##' ? &~() : null
 

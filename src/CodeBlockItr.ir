@@ -1,7 +1,7 @@
 ::
-  @input\~~input.Line\$
-  @code\A<~~parser.BlockMarker|s>\$
-  @blocks\A<~~IndentBlock>\$
+  @input\$input.Line\$
+  @code\A<$parser.BlockMarker|s>\$
+  @blocks\A<IndentBlock>\$
   @blockCb&\f(s, b)|-\
   @codeCb&\f()|-\
   @cidx+\n\ 0
@@ -12,10 +12,10 @@
 
 :run
   @code.forEach(##)
-    frg\~~parser.BlockMarker|s\$
+    frg\$parser.BlockMarker|s\$
     i\n\$
     @cidx = i
-    if frg instanceof ~~parser.BlockMarker
+    if frg instanceof $parser.BlockMarker
       @handleMarker(frg)
     else
       if @codeCb
@@ -27,14 +27,14 @@
 
   // There may be one extra block.
   if @bidx != @blocks.length
-    ~~error(@input, #+)
+    error(@input, #+)
       '# of blocks does not match # of markers: '
       @bidx
       ', '
       @blocks.length
 
 :@handleMarker
-  marker\~~parser.BlockMarker\$
+  marker\$parser.BlockMarker\$
   if marker.type != 'l'
     if @lidx > 0
       @lidx = 0

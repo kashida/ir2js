@@ -3,12 +3,12 @@
 
 :create = ##
   \A<~>\
-  context\~~context.Context\$
-  line\~~input.Line\$
+  context\$context.Context\$
+  line\$input.Line\$
   str\s\$
   if !str
     => []
-  impls := &~~type.ImplementsParser(context, line, str).parse()
+  impls := &$type.ImplementsParser(context, line, str).parse()
   => impls.map(##)
     impl\s\$
     => &~(impl)

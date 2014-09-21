@@ -25,6 +25,9 @@
         name += segment
         pkgs[name] = true
 
-    => ['var _o_ = {};'].concat(Object.keys(pkgs).sort().map(##))
+    => Object.keys(pkgs).sort().map(##)
       pkg\s\$
-      => ~~COMPILED_PKGS_BASE + pkg + ' = {};'
+      => #+
+        pkg.indexOf('.') >= 0 ? '' : 'var '
+        COMPILED_PKGS_BASE + pkg
+        ' = {};'

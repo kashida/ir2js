@@ -1,10 +1,10 @@
 ::
-  @input+\~~input.Line\$
-  p\~~LineParser\$
+  @input+\$input.Line\$
+  p\LineParser\$
   @indent+\n\ p.indent
 
 :isContinuation+\b\
   => false
 
-:output\~~output.Line|-\
+:output\$output.Line|-\
   => null

@@ -2,15 +2,15 @@
   base_dir\s\$
   in_file\s\$
   out_file\s\$
-  pkg_name := ~~relativeFileName(#).replace(/[\/\\]/, '.')
+  pkg_name := relativeFileName(#).replace(/[\/\\]/, '.')
     base_dir
     in_file.replace(/[\/\\][^\/\\]*$/, '')
   file_name := in_file.replace(/.*[\/\\]/, '').replace(/\..*$/, '')
 
-  c := &~~FileScope(in_file, pkg_name, file_name)
+  c := &FileScope(in_file, pkg_name, file_name)
   c.processLines(_fs.readFileSync(in_file, 'utf-8').split('\n'))
-  ~~writeFile(out_file, c.output().join('\n'))
-  ~~writeFile(#)
+  writeFile(out_file, c.output().join('\n'))
+  writeFile(#)
     out_file.replace(/\.js$/, '.tk')
     JSON.stringify(c.types.extract())
 
@@ -26,7 +26,7 @@
   base_dir\s\$
   in_file\s\$
   out_dir\s\$
-  => out_dir + '/' + ~~relativeFileName(base_dir, #)
+  => out_dir + '/' + relativeFileName(base_dir, #)
     in_file.replace(/\.ir$/, '.js')
 
 ::needCompile = ##
@@ -47,18 +47,18 @@
     in_files.forEach(##)
       in_file\s\$
 
-      out_file := ~~outputFileName(base_dir, in_file, out_dir)
+      out_file := outputFileName(base_dir, in_file, out_dir)
       logstr := '[' + in_file + ' => ' + out_file + '] '
 
       if !_fs.existsSync(in_file)
         console.error(logstr + 'input not found')
         =>
 
-      if !~~needCompile(in_file, out_file)
+      if !needCompile(in_file, out_file)
         if !silent
           console.log(logstr + 'skipping')
         =>
 
       if !silent
         console.log(logstr + 'compiling')
-      ~~transformToJs(base_dir, in_file, out_file)
+      transformToJs(base_dir, in_file, out_file)

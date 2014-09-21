@@ -50,7 +50,7 @@ function(param0, param1, param2, param3) {
   a := param0
   c := param1
 #=
-func_name = /**
+var func_name = /**
  * @param {string} param0
  * @param {number=} opt_param1
  * @param {!Test|null=} param2
@@ -103,7 +103,7 @@ function(p0, p1, p2, p3) {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';
@@ -155,7 +155,7 @@ var self = this;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
 var self = this;
 };
 classname.prototype._classname = 'classname';
@@ -183,7 +183,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function(param_a, opt_param_b) {
+var classname = function(param_a, opt_param_b) {
   var self = this;
   var param_b = opt_param_b === undefined ? (init_val) : opt_param_b;
 };
@@ -213,7 +213,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   /** @private {string} */
   this._param_a = (init_val);
@@ -245,7 +245,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function(param_a, opt_param_b) {
+var classname = function(param_a, opt_param_b) {
   var self = this;
   /** @private {string} */
   this._param_a = param_a;
@@ -277,7 +277,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   /** @private {string} */
   this._param = (null);
@@ -310,7 +310,7 @@ return this._param;
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function() {
+var classname = function() {
   var self = this;
   /** @private {string} */
   this._param0 = (null);

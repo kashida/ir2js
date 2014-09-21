@@ -47,7 +47,7 @@
   a := param0
   c := param1
 #=
-func_name = /**
+var func_name = /**
  * @param {boolean} param0
  * @param {boolean=} opt_param1
  * @return {number}
@@ -78,7 +78,7 @@ function(param0, opt_param1) {
     a := param0
   c := param1
 #=
-func_name = /**
+var func_name = /**
  * @param {boolean} param0
  * @param {boolean=} opt_param1
  * @return {number}
@@ -113,7 +113,7 @@ function(param0, opt_param1) {
 
   line3
 #=
-str_name =
+var str_name =
   'line0\n' +
   '  line1\n' +
   '\n' +

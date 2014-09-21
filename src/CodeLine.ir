@@ -1,13 +1,13 @@
 ::CODE_PARSER = null
 
-::^~~section.Head
-  @context\~~context.Context\$
-  @input+\~~input.Line\$
-  @lineParsed\~~LineParser\$
-  @parsed\~~parser.Result|-\
-  @continueLines&\A<~~CodeLine>\ []
-  @param&\~~Param|b|-\
-  @matcher\~~BlockMatcher|-\
+::^$section.Head
+  @context\$context.Context\$
+  @input+\$input.Line\$
+  @lineParsed\LineParser\$
+  @parsed\$parser.Result|-\
+  @continueLines&\A<CodeLine>\ []
+  @param&\Param|b|-\
+  @matcher\BlockMatcher|-\
   ^()
 
 :str+\s\
@@ -22,30 +22,30 @@
 :isBlockStatement+\b\
   => @matcher.isBlockStatement
 
-:parsed+\~~parser.Result\
+:parsed+\$parser.Result\
   if @.isContinuation
-    ~~error(@input, 'parse requested for cont. line')
+    error(@input, 'parse requested for cont. line')
   if !@parsed
     // TODO: need to use different parsing targets.
     // e.g. parameter init and section.Variable need to be parsed as rhs value.
-    ~CODE_PARSER = ~CODE_PARSER || &~~parser.Target('ParseLine')
+    ~CODE_PARSER = ~CODE_PARSER || &$parser.Target('ParseLine')
     lines := [@input].concat(@continueLines)
     try
       @parsed = ~CODE_PARSER.run(#)
         lines
-        &~~LineTransformer(@context, @input)
+        &LineTransformer(@context, @input)
     catch e
-      ~~error(@input, '(syntax error) ' + e.message, e.contextLines)
+      error(@input, '(syntax error) ' + e.message, e.contextLines)
   => @parsed
 
 :transform
   code := (@param && @param != true && @param.valueLine) || @.parsed.code
 
-  @matcher = &~~BlockMatcher(@context, @input, code, @.blocks)
+  @matcher = &BlockMatcher(@context, @input, code, @.blocks)
   @matcher.transform()
 
-:output\~~output.Line\
-  out := &~~output.Line(@input)
+:output\$output.Line\
+  out := &$output.Line(@input)
   if @param == true
     => out
 

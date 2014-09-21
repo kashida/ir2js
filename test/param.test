@@ -13,7 +13,7 @@
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function(param, opt_member) {
+var classname = function(param, opt_member) {
   var self = this;
   // first comment.
   // second comment.
@@ -51,7 +51,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function(param, opt_member) {
+var classname = function(param, opt_member) {
   var self = this;
 
 
@@ -90,7 +90,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function(opt_param, opt_member) {
+var classname = function(opt_param, opt_member) {
   var self = this;
   var param = opt_param === undefined ? (a + b + c + d) : opt_param;
   /** @private {number} */
@@ -127,7 +127,7 @@ classname.prototype._classname = 'classname';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-Class = function() {
+var Class = function() {
 var self = this;
 };
 Class.prototype._classname = 'Class';

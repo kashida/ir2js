@@ -1,8 +1,8 @@
 ::
   @lineNo+\n\$
   @indent+\n\$
-  @head\~~section.Head|-\$
-  @lines\A<~~SectionLine>\ []
+  @head\$section.Head|-\$
+  @lines\A<SectionLine>\ []
   // TODO: type to BlockType when it's enum.
   @marker\n\ BlockType.BLOCK
 
@@ -36,14 +36,14 @@
   |')', ')',   ')',   ')',    ')']
 
 :add
-  line\~~SectionLine\$
+  line\SectionLine\$
   @lines.push(line)
 
 :lastLine
   => @lines[@lines.length - 1]
 
 :eachLine
-  cb\f(~~SectionLine, n)\$
+  cb\f(SectionLine, n)\$
   ctxt\O\$
   @lines.forEach(cb, ctxt)
 
@@ -56,8 +56,8 @@ TODO: change marker's type to BlockType when it's enum.
   if marker != undefined
     @marker = marker
   @lines.forEach(##)
-    line\~~SectionLine\$
-    if !(line instanceof ~~InvalidLine)
+    line\SectionLine\$
+    if !(line instanceof InvalidLine)
       line.transform()
 
 :startStr+\s\
@@ -69,38 +69,38 @@ TODO: change marker's type to BlockType when it's enum.
 
 :hasValidLine+\b\
   => @lines.some(##)
-    line\~~SectionLine\$
-    => !(line instanceof ~~InvalidLine)
+    line\SectionLine\$
+    => !(line instanceof InvalidLine)
 
-:output\~~output.Block\
+:output\$output.Block\
   line_index\n\?
   // find the last valid line.
   last_index := -1
   @lines.forEach(##)
-    line\~~SectionLine\$
+    line\SectionLine\$
     i\n\$
-    if !(line instanceof ~~InvalidLine) && !line.param
+    if !(line instanceof InvalidLine) && !line.param
       last_index = i
-  ~~assert(#)
+  assert(#)
     #||
       last_index >= 0
       @marker == BlockType.BLOCK
       @marker == BlockType.FUNCTION
-    @lines.length ? @lines[0].input : ~~input.UnknownInputLine
+    @lines.length ? @lines[0].input : $input.UnknownInputLine
     'block with no valid lines.'
 
-  out := &~~output.Block()
+  out := &$output.Block()
   accum_suffix := ''
   valid_line_count := 0
   @lines.forEach(##)
-    line\~~SectionLine\$
+    line\SectionLine\$
     i\n\$
-    if !(line instanceof ~~InvalidLine) && !line.param
+    if !(line instanceof InvalidLine) && !line.param
       valid_line_count++
     if line_index != undefined && line_index + 1 != valid_line_count
       =>
     out_line := line.output()
-    if line instanceof ~~InvalidLine || out_line.empty
+    if line instanceof InvalidLine || out_line.empty
       accum_suffix += out_line.lineSuffix
       out_line.lineSuffix = ''
     else

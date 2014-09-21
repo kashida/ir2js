@@ -59,7 +59,7 @@ TestFile.prototype.run_if_ready = function() {
 };
 
 TestFile.prototype.run_test = function(line, expected) {
-  var target = new _o_.parser.Target(this.rule_name);
+  var target = new $parser.Target(this.rule_name);
   lines = line.replace(/\s*\/\|\/\s*/, '\n')
   try {
     var result = target.run(lines, xformer)
@@ -113,7 +113,7 @@ ConvertFile.prototype.run = function() {
 
 ConvertFile.prototype.parse = function(line) {
   try {
-    var target = new _o_.parser.Target('BlockLine');
+    var target = new $parser.Target('BlockLine');
     console.log('O|  ' + target.run(line, xformer).rendered().join(' /|/ '));
   } catch (e) {
     console.log('X|  ' + line);
@@ -129,7 +129,7 @@ ConvertFile.prototype.parse = function(line) {
 
 var TestTransformer = function() {};
 
-TestTransformer.prototype.COMPILED_PKGS_BASE = _o_.COMPILED_PKGS_BASE;
+TestTransformer.prototype.COMPILED_PKGS_BASE = COMPILED_PKGS_BASE;
 TestTransformer.prototype.pkg = function() { return 'pkg'; };
 TestTransformer.prototype.klass = function() { return 'Klass'; };
 TestTransformer.prototype.type = function(t) { return ['\\', t, '\\']; };
@@ -146,14 +146,14 @@ TestTransformer.prototype.paramLine = function(
 TestTransformer.prototype.prepend = function(line) {
   var self = this;
   return function(tokens) {
-    tokens.prepend(new _o_.parser.TokenListBuilder(line, self).build())
+    tokens.prepend(new $parser.TokenListBuilder(line, self).build())
     return '';
   }
 };
 TestTransformer.prototype.append = function(line) {
   var self = this;
   return function(tokens) {
-    tokens.append(new _o_.parser.TokenListBuilder(line, self).build())
+    tokens.append(new $parser.TokenListBuilder(line, self).build())
     return '';
   }
 };

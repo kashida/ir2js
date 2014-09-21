@@ -3,22 +3,22 @@
 
 :close^
   file_name\s\$
-  pkg\~~context.Package\?
+  pkg\$context.Package\?
   // TODO: necessary to create a new instance of context here?
   // take one in ctor like Callable?
-  c := &~~CodeScope(&~~context.Context(#), @)
+  c := &CodeScope(&$context.Context(#), @)
     file_name
-    pkg || &~~context.Package('')
+    pkg || &$context.Package('')
   c.process(@.lines)
 
 :transform^
-  ~~assert(#)
+  assert(#)
     @.numBlocks() == 1
     @.lines[0]
     'Runnable has ' + @.numBlocks() + ' blocks'
   @.block(0).transform()
 
-:outputBody\A<~~output.Line>\
+:outputBody\A<$output.Line>\
   block_suffix\s\$
   lines := []
   body_lines := @.lastBlock().output()

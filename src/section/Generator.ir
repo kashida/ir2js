@@ -1,9 +1,9 @@
 ::
-  @scope\~~FileScope\$
+  @scope\FileScope\$
 
 :generate\~.Code\
-  header\~~input.Line\$
-  lines\A<~~input.Line>\$
+  header\$input.Line\$
+  lines\A<$input.Line>\$
   sec := null
   header_line := header.line.substr(1)
   if ![#].some(##)
@@ -26,5 +26,5 @@
       sec.setType(@scope.types)
     => !!sec
     --
-    ~~error(header, 'line starts with colon and not a code section marker')
+    error(header, 'line starts with colon and not a code section marker')
   => sec

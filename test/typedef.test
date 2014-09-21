@@ -3,7 +3,7 @@
   b|A<s>
 #=
 /** @typedef {boolean|!Array.<string>} */
-short_name;
+var short_name;
 {
   "cls": [],
   "fns": []
@@ -27,7 +27,7 @@ $abc.def.short_name;
   b|A<s>
 #=
 /** @typedef {boolean|!Array.<string>} */
-short_name;
+var short_name;
 {
   "cls": [],
   "fns": []
@@ -41,7 +41,7 @@ short_name;
   n
 #=
 /** @typedef {boolean|!Array.<string>|number} */
-short_name;
+var short_name;
 {
   "cls": [],
   "fns": []

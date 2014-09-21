@@ -9,9 +9,9 @@
 
 :run
   c := @isGlobal ? (#) : (#)
-    &~~FileScope(@name, @packageName, 'FileName')
+    &FileScope(@name, @packageName, 'FileName')
     --
-    &~~CodeScope(&~~context.Context(@name, &~~context.Package('')))
+    &CodeScope(&$context.Context(@name, &$context.Package('')))
 
   actual_output := ''
   ~OUTPUT_ERROR = !@expectError
@@ -52,9 +52,9 @@
     lines\s|A\$
     level\n\$
     if typeof(lines) == 'string'
-      console.log(~~whitespaces(4 + level * 2) + lines)
+      console.log(whitespaces(4 + level * 2) + lines)
     else
-      if lines instanceof ~~output.Line
+      if lines instanceof $output.Line
         lines = lines.output
       lines.forEach(##)
         line\s|A\$
@@ -83,4 +83,4 @@
   => result
 
 :
-  exports.TestCase = ~~TestCase
+  exports.TestCase = TestCase

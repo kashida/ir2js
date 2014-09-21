@@ -1,26 +1,26 @@
 ::OUTPUT_ERROR = true
 
 ::error = ##
-  line\~~input.Line\$
+  line\$input.Line\$
   msg\s\? '*warning*'
   additional_lines\A<s>\?
-  if ~~OUTPUT_ERROR
+  if OUTPUT_ERROR
     console.error(line.file + ':' + line.lineNo + ': ERROR - ' + msg)
   if additional_lines
     additional_lines.forEach(##)
       additional_line\s\$
-      if ~~OUTPUT_ERROR
+      if OUTPUT_ERROR
         console.error(additional_line)
   else
-    if ~~OUTPUT_ERROR
+    if OUTPUT_ERROR
       console.error(line.line)
-  if ~~OUTPUT_ERROR
+  if OUTPUT_ERROR
     console.trace()
   throw "Compile Error"
 
 ::assert = ##
   check\*\$
-  line\~~input.Line\? ~~input.UnknownInputLine
+  line\$input.Line\? $input.UnknownInputLine
   msg\s\? '*assertion*'
   console.assert(#)
     check

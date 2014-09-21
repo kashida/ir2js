@@ -4,7 +4,7 @@ Name in file scope.
   @id+\s\$
 
 :decl+\s\
-  => @pkg.fullname(@id)
+  => (@pkg.empty() ? 'var ' : '') + @pkg.fullname(@id)
 
 :ref+\s\
   => @pkg.fullname(@id)

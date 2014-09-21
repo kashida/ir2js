@@ -1,17 +1,17 @@
 ::^~.Code
-  @context+\~~context.Context\$
+  @context+\$context.Context\$
   @indent\n\ -1
   ^()
 
 :re = [#]
   /\'/
-  &~~re.Id('name')
+  &$re.Id('name')
 
 :create = ##
   \~|-\
-  scope\~~FileScope\$
+  scope\FileScope\$
   line\s\$
-  m := &~~re.Compiler(~re).eval(line)
+  m := &$re.Compiler(~re).eval(line)
   if !m
     => null
 
@@ -21,7 +21,7 @@ same number of strings as @.lines.
 :strlines\A<s>\
   result := []
   @.lines.forEach(##)
-    line\~~input.Line\$
+    line\$input.Line\$
     if line.isBlank
       // empty line is fine.
       result.push('')
@@ -29,19 +29,19 @@ same number of strings as @.lines.
     if @indent < 0
       @indent = line.indent
     else if line.indent < @indent
-      ~~error(line, 'inconsistent indentation')
+      error(line, 'inconsistent indentation')
       =>
     result.push(line.line.substr(@indent))
   => result
 
-:output\A<~~output.Line>\
+:output\A<$output.Line>\
   lines := @.strlines()
   => [#]
     @context.name.decl + ' ='
     lines.map(##)
       line\s\$
       i\n\$
-      out := &~~output.Line(@.lines[i])
+      out := &$output.Line(@.lines[i])
       out.indent = @indent
       out.appendLine("'" + line + "\\n'" + (i == lines.length - 1 ? ';' : ' +'))
       => out

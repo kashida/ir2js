@@ -34,7 +34,7 @@ function(x, y, z) {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-classname = function(x, opt_y) {
+var classname = function(x, opt_y) {
   var self = this;
   /** @private {number} */
   this._y = opt_y === undefined ? (0) : opt_y;
@@ -88,7 +88,7 @@ classname.prototype.method = function(x, y) {
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-ParentClass = function() {
+var ParentClass = function() {
 var self = this;
 };
 ParentClass.prototype._classname = 'ParentClass';
@@ -100,7 +100,7 @@ ParentClass.prototype._classname = 'ParentClass';
  * @struct
  * @suppress {checkStructDictInheritance}
  */
-ChildClass = function() {
+var ChildClass = function() {
 var self = this;
 };
 goog.inherits(ChildClass, ParentClass);
