@@ -14,7 +14,7 @@
     &CodeScope(&$context.Context(@name, &$context.Package('')))
 
   actual_output := ''
-  ~OUTPUT_ERROR = !@expectError
+  OUTPUT_ERROR = !@expectError
   try
     c.processLines(@input)
     actual_output = c.output()

@@ -7,16 +7,16 @@
   sec := null
   header_line := header.line.substr(1)
   if ![#].some(##)
-    ~.Variable.create
-    ~.Constructor.create
-    ~.Interface.create
-    ~.Method.create
-    ~.Accessor.create
-    ~.Str.create
-    ~.Global.create
-    ~.Native.create
-    ~.Scope.create
-    ~.Typedef.create
+    ~Variable.create
+    ~Constructor.create
+    ~Interface.create
+    ~Method.create
+    ~Accessor.create
+    ~Str.create
+    ~Global.create
+    ~Native.create
+    ~Scope.create
+    ~Typedef.create
     --
     method\F\$
     sec = method.call(undefined, @scope, header_line, header)

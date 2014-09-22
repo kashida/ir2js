@@ -6,9 +6,9 @@
 :SINGLE_PARSER = null
 
 :parse\s\
-  ~SINGLE_PARSER = ~SINGLE_PARSER || &$parser.Target('TypeInstantiation')
+  ~.SINGLE_PARSER = ~.SINGLE_PARSER || &$parser.Target('TypeInstantiation')
   try
-    => ~SINGLE_PARSER.run(#).rendered().join('')
+    => ~.SINGLE_PARSER.run(#).rendered().join('')
       @type_str
       &LineTransformer(@context, @input)
   catch e

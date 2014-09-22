@@ -28,10 +28,10 @@
   if !@parsed
     // TODO: need to use different parsing targets.
     // e.g. parameter init and section.Variable need to be parsed as rhs value.
-    ~CODE_PARSER = ~CODE_PARSER || &$parser.Target('ParseLine')
+    CODE_PARSER = CODE_PARSER || &$parser.Target('ParseLine')
     lines := [@input].concat(@continueLines)
     try
-      @parsed = ~CODE_PARSER.run(#)
+      @parsed = CODE_PARSER.run(#)
         lines
         &LineTransformer(@context, @input)
     catch e

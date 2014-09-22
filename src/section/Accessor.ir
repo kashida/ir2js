@@ -17,7 +17,7 @@ Overriding accessor.
   scope\FileScope\$
   line\s\$
   header\$input.Line\$
-  m := &$re.Compiler(~re).eval(line)
+  m := &$re.Compiler(~.re).eval(line)
   if !m
     => null
 

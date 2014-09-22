@@ -1,7 +1,7 @@
 ::
   @parsed\~TokenList|A|O|s\$
   @xformer\LineTransformer\$
-  @tokens\~TokenList\ &~.TokenList()
+  @tokens\~TokenList\ &~TokenList()
 
 :build\~TokenList\
   @buildRec(@parsed)
@@ -9,18 +9,18 @@
 
 :result\~Result\
   @.build()
-  => &~.Result(@tokens)
+  => &~Result(@tokens)
 
 :@buildRec
   data\~TokenList|A|O|s\$
-  if data instanceof ~.ParamLine
+  if data instanceof ~ParamLine
     // TODO: Drop this renaming vars if possible.
     t := @tokens
     @tokens = data
     @tokens.add(t)
     =>
 
-  if data instanceof ~.TokenList
+  if data instanceof ~TokenList
     @tokens.add(data)
     =>
 
@@ -28,7 +28,7 @@
     @addArray(data)
     =>
 
-  if data instanceof ~.BlockMarker
+  if data instanceof ~BlockMarker
     @tokens.add(data)
     =>
 

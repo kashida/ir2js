@@ -5,13 +5,13 @@
 
 :addCtor\~Callable|-\
   name\s\$
-  @ctor = &~.Callable(name)
+  @ctor = &~Callable(name)
   @classes.push(@ctor)
   => @ctor
 
 :addFunct\~Callable\
   name\s\$
-  fn := &~.Callable(name)
+  fn := &~Callable(name)
   @functs.push(fn)
   => fn
 

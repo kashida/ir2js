@@ -19,7 +19,7 @@
   scope\FileScope\$
   line\s\$
   header\$input.Line\$
-  m := &$re.Compiler(~re).eval(line)
+  m := &$re.Compiler(~.re).eval(line)
   if !m
     => null
 
@@ -27,7 +27,7 @@
   ctor := &~(#)
     scope.copyContextWithName(m.name)
     m.tmplVars
-    ~.Implements.create(scope.context, header, m.rest || '')
+    ~Implements.create(scope.context, header, m.rest || '')
   scope.context.cls.ctor = ctor
   scope.types.addCtor(ctor.name())
   => ctor

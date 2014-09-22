@@ -25,7 +25,7 @@
   scope\FileScope\$
   line\s\$
   header\$input.Line\$
-  m := &$re.Compiler(~re).eval(line)
+  m := &$re.Compiler(~.re).eval(line)
   if !m
     => null
 
@@ -38,7 +38,7 @@
     m.parentName ? # : null
       &$type.SingleParser(scope.context, header, m.parentName + #).parse()
         m['pTmplVars'].length ? '<' + m['pTmplVars'].join(',') + '>' : ''
-    ~.Implements.create(scope.context, header, m.rest || '')
+    ~Implements.create(scope.context, header, m.rest || '')
   scope.context.cls.ctor = ctor
   scope.types.addCtor(ctor.name())
   if m.parentName

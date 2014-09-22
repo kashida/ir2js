@@ -10,7 +10,7 @@
   \~|-\
   scope\FileScope\$
   line\s\$
-  m := &$re.Compiler(~re).eval(line)
+  m := &$re.Compiler(~.re).eval(line)
   if !m
     => null
   => &~(scope.copyContextWithName(m.name))

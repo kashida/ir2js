@@ -10,15 +10,15 @@ Name in file scope.
   => @pkg.fullname(@id)
 
 :global\~\
-  => &~(&~.Package(''), @id)
+  => &~(&~Package(''), @id)
 
 :property\~\
   id\s\$
-  => &~(&~.Package(@.ref + '.prototype'), id)
+  => &~(&~Package(@.ref + '.prototype'), id)
 
 :staticProperty\~\
   id\s\$
-  => &~(&~.Package(@.ref), id)
+  => &~(&~Package(@.ref), id)
 
 :toString\s\
   => '[' + @pkg + ':' + @id + ']'

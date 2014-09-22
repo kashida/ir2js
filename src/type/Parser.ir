@@ -6,9 +6,9 @@
 :TYPE_PARSER = null
 
 :parse\s\
-  ~TYPE_PARSER = ~TYPE_PARSER || &$parser.Target('TypeExpression')
+  ~.TYPE_PARSER = ~.TYPE_PARSER || &$parser.Target('TypeExpression')
   try
-    => ~TYPE_PARSER.run(#).rendered().join('')
+    => ~.TYPE_PARSER.run(#).rendered().join('')
       @type_str
       &LineTransformer(@context, @input)
   catch e

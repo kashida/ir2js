@@ -37,7 +37,7 @@ To reset the RegExp object, do: regex.eval('')
   @extractors.forEach(##)
     extractor\~Extractor|s|-\$
     i\n\$
-    if extractor instanceof ~.Extractor
+    if extractor instanceof ~Extractor
       result[extractor.name] = extractor.value(match[i])
     else if extractor
       result[extractor] = match[i]
@@ -65,7 +65,7 @@ To reset the RegExp object, do: regex.eval('')
       item\O\$
       => @buildReStr(item, matcher)
 
-  if pattern instanceof ~.Matcher
+  if pattern instanceof ~Matcher
     => @buildReStr(pattern.re(), pattern)
 
   => @buildReStrWithMap(pattern, matcher)
@@ -91,4 +91,4 @@ To reset the RegExp object, do: regex.eval('')
   name\s\$
   matcher\~Matcher|-\$
   @extractors[@extractors.length - 1] = matcher ? # : name
-    &~.Extractor(name, matcher)
+    &~Extractor(name, matcher)
