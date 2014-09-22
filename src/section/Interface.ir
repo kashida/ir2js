@@ -45,8 +45,3 @@
   => [#]
     docLines(decl)
     @.context.name.decl + ' = function() {};'
-    [#].join('')
-      @.context.name.property('_classname').decl
-      " = '"
-      @.context.name.ref
-      "';"

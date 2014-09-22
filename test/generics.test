@@ -39,7 +39,6 @@ var classname = function(x, opt_y) {
   /** @private {number} */
   this._y = opt_y === undefined ? (0) : opt_y;
 };
-classname.prototype._classname = 'classname';
 
 /**
  * @param {!Abc.<!U>} x
@@ -91,7 +90,6 @@ classname.prototype.method = function(x, y) {
 var ParentClass = function() {
 var self = this;
 };
-ParentClass.prototype._classname = 'ParentClass';
 
 /**
  * @template V
@@ -104,7 +102,6 @@ var ChildClass = function() {
 var self = this;
 };
 goog.inherits(ChildClass, ParentClass);
-ChildClass.prototype._classname = 'ChildClass';
 /**
  * @param {!Abc.<!U>} x
  * @param {!Def.<!V>=} y

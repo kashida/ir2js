@@ -23,7 +23,6 @@
 $abc.def.K = function() {
 var self = this;
 };
-$abc.def.K.prototype._classname = '$abc.def.K';
 
 $abc.def.K.prototype.m = function() {
   var self = this;
@@ -71,7 +70,6 @@ $abc.def.classname = function(opt_param) {
   $abc.def.path.parent.call(this, param);
 };
 goog.inherits($abc.def.classname, $abc.def.path.parent);
-$abc.def.classname.prototype._classname = '$abc.def.classname';
 
 /** @param {number} param */
 $abc.def.classname.prototype.methodname = function(param) {
@@ -153,7 +151,6 @@ function(p0, opt_p1) {
 $abc.def.Abc = function() {
 var self = this;
 };
-$abc.def.Abc.prototype._classname = '$abc.def.Abc';
 
 $abc.def.Abc.def = /** @param {string} param */
 function(param) {

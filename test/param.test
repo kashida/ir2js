@@ -21,7 +21,6 @@ var classname = function(param, opt_member) {
   this._member = opt_member === undefined ? (true) : opt_member;
   // last comment.
 };
-classname.prototype._classname = 'classname';
 {
   "cls": [
     {
@@ -58,7 +57,6 @@ var classname = function(param, opt_member) {
   /** @private {boolean} */
   this._member = opt_member === undefined ? (true) : opt_member;
 };
-classname.prototype._classname = 'classname';
 {
   "cls": [
     {
@@ -100,7 +98,6 @@ var classname = function(opt_param, opt_member) {
     c
   )) : opt_member;
 };
-classname.prototype._classname = 'classname';
 {
   "cls": [
     {
@@ -130,7 +127,6 @@ classname.prototype._classname = 'classname';
 var Class = function() {
 var self = this;
 };
-Class.prototype._classname = 'Class';
 Class.prototype.method = function() {
   var self = this;
   if (/^\s*\/\//.test(self._str)) {
@@ -179,7 +175,6 @@ $aa.bb.cc.classname = function(opt_param) {
     c
   ));
 };
-$aa.bb.cc.classname.prototype._classname = '$aa.bb.cc.classname';
 {
   "cls": [
     {

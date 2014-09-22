@@ -12,7 +12,6 @@
 var classname = function() {
 var self = this;
 };
-classname.prototype._classname = 'classname';
 
 classname.prototype.methodname = function() {
 var self = this;
@@ -59,7 +58,6 @@ var self = this;
 var classname = function() {
 var self = this;
 };
-classname.prototype._classname = 'classname';
 
 /**
  * @param {string} param_a
@@ -114,7 +112,6 @@ var Classname = function() {
   Parent.call(this);
 };
 goog.inherits(Classname, Parent);
-Classname.prototype._classname = 'Classname';
 
 /** @override */
 Classname.prototype.methodname = function(param_a, opt_param_b) {

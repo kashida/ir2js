@@ -74,11 +74,6 @@
     whitespaces(@.block(0).indent) + 'var self = this;'
     @.outputBody('};')
     inherit
-    [#].join('')
-      @.context.name.property('_classname').decl
-      " = '"
-      @.context.name.ref
-      "';"
     @.context.cls.outputAccessors()
 
 :setType^

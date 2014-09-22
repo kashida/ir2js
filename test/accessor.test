@@ -12,7 +12,6 @@ var classname = function() {
   /** @private {string} */
   this._param = (null);
 };
-classname.prototype._classname = 'classname';
 {
   "cls": [
     {
@@ -45,7 +44,6 @@ var classname = function() {
   /** @private {string} */
   this._param2 = (null);
 };
-classname.prototype._classname = 'classname';
 /** @type {string} */
 classname.prototype.param0;
 classname.prototype.__defineGetter__('param0', function() {
@@ -99,7 +97,6 @@ var classname = function() {
   /** @private {!Array.<string>} */
   this._member2 = (null);
 };
-classname.prototype._classname = 'classname';
 /** @type {string} */
 classname.prototype.member;
 classname.prototype.__defineGetter__('member', function() {
@@ -144,7 +141,6 @@ var classname = function() {
   /** @private {string} */
   this._member = (null);
 };
-classname.prototype._classname = 'classname';
 /** @type {string} */
 classname.prototype.member;
 classname.prototype.__defineSetter__('member', function(value) {
@@ -184,7 +180,6 @@ classname.prototype.__defineGetter__('member', function() {
 var classname = function() {
 var self = this;
 };
-classname.prototype._classname = 'classname';
 /** @type {string} */
 classname.prototype.member;
 classname.prototype.__defineGetter__('member', function() {
@@ -229,7 +224,6 @@ classname.prototype.__defineGetter__('member2', function() {
 var classname = function() {
 var self = this;
 };
-classname.prototype._classname = 'classname';
 /** @type {string} */
 classname.prototype.member;
 classname.prototype.__defineSetter__('member', function(v) {

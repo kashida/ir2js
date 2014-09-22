@@ -23,7 +23,6 @@ var classname = function(param_a, opt_param_b) {
   parent.call(this, param_b, something_else());
 };
 goog.inherits(classname, parent);
-classname.prototype._classname = 'classname';
 {
   "cls": [
     {
@@ -62,7 +61,6 @@ var classname = function() {
   parent.call(this, something_else());
 };
 goog.inherits(classname, parent);
-classname.prototype._classname = 'classname';
 
 /** @param {string} param */
 classname.prototype.method = function(param) {
@@ -129,7 +127,6 @@ var classname = function() {
   ));
 };
 goog.inherits(classname, parent);
-classname.prototype._classname = 'classname';
 
 /** @param {string} param */
 classname.prototype.method = function(param) {

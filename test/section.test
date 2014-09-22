@@ -43,7 +43,6 @@ var def = [
 var Klass = function() {
 var self = this;
 };
-Klass.prototype._classname = 'Klass';
 Klass.abc = 0;
 var def = 1;
 var ghi = 2;
@@ -73,7 +72,6 @@ var ghi = 2;
 $zzz.Klass = function() {
 var self = this;
 };
-$zzz.Klass.prototype._classname = '$zzz.Klass';
 $zzz.Klass.abc = 0;
 $zzz.def = 1;
 var ghi = 2;
