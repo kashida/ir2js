@@ -1,6 +1,6 @@
 #{[abc.def] self reference
 :
-  a(~.call_function())
+  a(~call_function())
 #=
   a($abc.def.call_function());
 {
@@ -13,7 +13,7 @@
 ::K
 
 :m
-  a(~call_function(), a instanceof ~)
+  a(~.call_function(), a instanceof ~)
 #=
 /**
  * @constructor
@@ -49,12 +49,12 @@ $abc.def.K.prototype.m = function() {
 
 #{[abc.def] class
 ::classname ^~path.parent
-  @param\s\? ~.value
+  @param\s\? ~value
   ^(param)
 
 :methodname\\
   param\n\$
-  a(~.something)
+  a(~something)
   ^(param, 0)
 #=
 /**
@@ -124,8 +124,8 @@ function(p0, opt_p1) {
 
 #{[abc.def] package ref member lookup
 :
-  ~.varname
-  ~.varname
+  ~varname
+  ~varname
 #=
   $abc.def.varname;
   $abc.def.varname;
@@ -143,7 +143,7 @@ function(p0, opt_p1) {
   do_something()
 
 :ghi
-  ~def('jkl')
+  ~.def('jkl')
 #=
 /**
  * @constructor
