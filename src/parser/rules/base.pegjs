@@ -292,11 +292,9 @@ RegularExpressionLiteral 'regular expression'
 
 Self = '@' _ name:Identifier? { return name ? 'self._' + name : 'self'; }
 
-CurrentPackage = '~.' _ name:Identifier { return $.pkg() + '.' + name; }
+CurrentPackage = '~' name:Identifier { return $.pkg() + '.' + name; }
 
-CurrentClass = '~' _ name:Identifier?{
-      return $.klass() + (name ? '.' + name : '');
-    }
+CurrentClass = '~' !IdentifierStart { return $.klass(); }
 
 BinaryOpBlockMarker
   = '#' op:('.' / '*' / '+' / '&&' / '||') {

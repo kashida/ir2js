@@ -23,9 +23,9 @@ abc(#)
 &abc(#)
   new abc|#p|
 ^('abc')
-1 % ~.abc % 3
+1 % ~abc % 3
   1 % pkg.abc % 3
-~ a
+~. a
   Klass.a
 a instanceof ~
   a instanceof Klass
@@ -49,9 +49,7 @@ a.%('abc')
   Klass
 @member
   self._member
-~static_method
-  Klass.static_method
-~.A
+~A
   pkg.A
 null
 102.3
@@ -88,3 +86,5 @@ expr
 a.b.c
 @.b
   self.b
+~.static_method
+  Klass.static_method
