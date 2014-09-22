@@ -77,7 +77,7 @@ TypeExpressionList = TypeExpression _ (',' _ TypeExpressionList)*
 
 QualifiedTypeId
   = (Identifier '.')* TypeIdentifier
-  / '~.' path:(Identifier '.')* name:TypeIdentifier {
+  / '~' path:(Identifier '.')* name:TypeIdentifier {
       return [$.pkg(), '.', path, name];
     }
   / '~' { return $.klass(); }

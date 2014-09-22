@@ -1,18 +1,18 @@
 ::
-  @parsed\~.TokenList|A|O|s\$
+  @parsed\~TokenList|A|O|s\$
   @xformer\LineTransformer\$
-  @tokens\~.TokenList\ &~.TokenList()
+  @tokens\~TokenList\ &~.TokenList()
 
-:build\~.TokenList\
+:build\~TokenList\
   @buildRec(@parsed)
   => @tokens
 
-:result\~.Result\
+:result\~Result\
   @.build()
   => &~.Result(@tokens)
 
 :@buildRec
-  data\~.TokenList|A|O|s\$
+  data\~TokenList|A|O|s\$
   if data instanceof ~.ParamLine
     // TODO: Drop this renaming vars if possible.
     t := @tokens
@@ -43,5 +43,5 @@
 :@addArray
   data\A\$
   data.forEach(##)
-    elem\~.TokenList|A|O|s\$
+    elem\~TokenList|A|O|s\$
     @buildRec(elem)

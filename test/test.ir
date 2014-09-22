@@ -100,7 +100,7 @@ Also for tests that are supposed to error:
 
 :run
   @tests.forEach(##)
-    test\~.Test\$
+    test\~Test\$
     test.run()
     if test.failed
       //@failed = true

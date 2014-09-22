@@ -1,21 +1,21 @@
 ::
-  @ctor\~.Callable|-\
+  @ctor\~Callable|-\
   @classes\A\ []
   @functs\A\ []
 
-:addCtor\~.Callable|-\
+:addCtor\~Callable|-\
   name\s\$
   @ctor = &~.Callable(name)
   @classes.push(@ctor)
   => @ctor
 
-:addFunct\~.Callable\
+:addFunct\~Callable\
   name\s\$
   fn := &~.Callable(name)
   @functs.push(fn)
   => fn
 
-:getCurrentCtor\~.Callable|-\
+:getCurrentCtor\~Callable|-\
   => @ctor
 
 :setParent
@@ -32,6 +32,6 @@
       => cls.extract()
   if @functs
     obj['fns'] = @functs.map(##)
-      fn\~.Callable\$
+      fn\~Callable\$
       => fn.extract()
   => obj

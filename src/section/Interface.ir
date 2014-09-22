@@ -1,8 +1,8 @@
-::^~.Callable
+::^~Callable
   context\$context.Context\$
   tmpl_vars\A<s>\$
   // This is actually rendered as @extends.
-  @impls\A<~.Implements>\$
+  @impls\A<~Implements>\$
   context.isCtor = true
   ^(context, '', tmpl_vars)
 
@@ -40,7 +40,7 @@
   if @.tmplVars.length > 0
     decl.push('@template ' + @.tmplVars.join(','))
   @impls.forEach(##)
-    impl\~.Implements\$
+    impl\~Implements\$
     decl.push(impl.ifaceOutput())
   => [#]
     docLines(decl)

@@ -1,4 +1,4 @@
-::^~.Runnable
+::^~Runnable
   @context+\$context.Context\$
   @returnType+\s\$
   @tmplVars+\A<s>\$

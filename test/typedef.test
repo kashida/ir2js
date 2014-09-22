@@ -12,7 +12,7 @@ var short_name;
 
 #{[abc.def] with package name
 :!short_name
-  b|A<s>|~.MyClass
+  b|A<s>|~MyClass
 #=
 /** @typedef {boolean|!Array.<string>|!$abc.def.MyClass} */
 $abc.def.short_name;

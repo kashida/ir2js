@@ -1,9 +1,9 @@
-::^~.Callable
+::^~Callable
   context\$context.Context\$
   tmpl_vars\A<s>\$
   @parent\s|-\$
   @parentFull\s|-\$
-  @impls\A<~.Implements>\$
+  @impls\A<~Implements>\$
   context.isCtor = true
   ^(context, '', tmpl_vars)
   @parentFull = @parentFull ? @.context.pkg.replace(@parentFull) : ''
@@ -66,7 +66,7 @@
   decl.push('@struct')
   decl.push('@suppress {checkStructDictInheritance}')
   @impls.forEach(##)
-    impl\~.Implements\$
+    impl\~Implements\$
     decl.push(impl.ctorOutput())
   => [#]
     docLines(decl)

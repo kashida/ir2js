@@ -1,9 +1,9 @@
 Input code section.
 ::
-  @header+\~.Line\$
-  @lines+\A<~.Line>\ []
+  @header+\~Line\$
+  @lines+\A<~Line>\ []
   @code&\$section.Code|-\
 
 :push
-  line\~.Line\$
+  line\~Line\$
   @lines.push(line)

@@ -48,7 +48,7 @@ $abc.def.K.prototype.m = function() {
 #}
 
 #{[abc.def] class
-::classname ^~.path.parent
+::classname ^~path.parent
   @param\s\? ~.value
   ^(param)
 
@@ -104,8 +104,8 @@ $abc.def.classname.prototype.methodname = function(param) {
 
 #{[abc.def] type
 ::func = ##
-  \~.some.type\
-  p0\~.another.type\$
+  \~some.type\
+  p0\~another.type\$
   p1\A<$yet.another.type>\? $global.value
 #=
 $abc.def.func = /**

@@ -158,7 +158,7 @@ Class.prototype.method = function() {
 #{[aa.bb.cc] shorthand ctor call
 ::classname
   param+\\? x.ABC(a + b)
-  @member\\ ~.xyz.ABC(#)
+  @member\\ ~xyz.ABC(#)
     a
     b
     c

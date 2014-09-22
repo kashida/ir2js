@@ -71,7 +71,7 @@ function(param0, opt_param1, param2) {
 #{[some.package] special arg types
 ::func_name = ##
   p0\s\$
-  p1\~.SomeClass|-\?
+  p1\~SomeClass|-\?
   p2\n|-\?
   p3\RegExp\?
 #=

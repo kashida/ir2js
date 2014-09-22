@@ -1,6 +1,6 @@
 Name in file scope.
 ::
-  @pkg+\~.Package\$
+  @pkg+\~Package\$
   @id+\s\$
 
 :decl+\s\

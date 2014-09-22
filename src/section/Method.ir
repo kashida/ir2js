@@ -1,4 +1,4 @@
-::^~.Callable
+::^~Callable
   context\$context.Context\$
   return_type\s\$
   tmpl_vars\A<s>\$

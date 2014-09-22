@@ -1,8 +1,8 @@
 Container and interface of the TokenList to the rest of the converter.
 ::
-  @tokens+\~.TokenList\$
+  @tokens+\~TokenList\$
 
-:code+\A<~.BlockMarker|s>\
+:code+\A<~BlockMarker|s>\
   => @tokens.list
 
 :prevLines+\A<s>\
@@ -14,12 +14,12 @@ Container and interface of the TokenList to the rest of the converter.
 :rendered\A<s>\
   lines := []
   @tokens.prevLines.forEach(##)
-    line\~.TokenList|s\$
+    line\~TokenList|s\$
     lines.push(line.toString())
   code_line := @tokens.toString()
   if code_line
     lines.push(code_line)
   @tokens.nextLines.forEach(##)
-    line\~.TokenList|s\$
+    line\~TokenList|s\$
     lines.push(line.toString())
   => lines

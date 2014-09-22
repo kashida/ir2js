@@ -1,13 +1,13 @@
 ::
   @fileName+\s\$
-  @pkg&\~.Package\$
-  @name&\\ ~.Name(@pkg, '')
-  @cls&\~.Class|-\
+  @pkg&\~Package\$
+  @name&\\ ~Name(@pkg, '')
+  @cls&\~Class|-\
   @isCtor&\b\ false
   @isMethod&\b\ false
   @isFileScope&\b\ false
 
-:scopedName\~.Name\
+:scopedName\~Name\
   // 0: class, 1: package, 2: global.
   scopeLevel\n\$
   switch scopeLevel
@@ -21,7 +21,7 @@
     => @name.global()
 
 :clone\~\
-  c := &~.Context(@fileName, @pkg)
+  c := &~(@fileName, @pkg)
   c.name = @name
   c.cls = @cls
   c.isCtor = @isCtor

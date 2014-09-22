@@ -3,11 +3,11 @@ Parses input lines into comments and sections.
 ::
   @name\s\$
   @input\A<s>\$
-  @result\A<~.Comment|~.Section>\ []
-  @buffer\A<~.Line>\ []
+  @result\A<~Comment|~Section>\ []
+  @buffer\A<~Line>\ []
   @lastValidIndex\n|-\
 
-:parse\A<~.Comment|~.Section>\
+:parse\A<~Comment|~Section>\
   @input.forEach(##)
     line\s\$
     index\n\$
@@ -17,7 +17,7 @@ Parses input lines into comments and sections.
   => @result
 
 :@processLine
-  line\~.Line\$
+  line\~Line\$
   if line.startsWithColon
     // should be a start of a code section.
     @flushBuffer()
@@ -41,7 +41,7 @@ Parses input lines into comments and sections.
       section := &~.Section(@buffer[0])
       @result.push(section)
       @buffer.forEach(##)
-        line\~.Line\$
+        line\~Line\$
         index\n\$
         if index == 0
           // we already passed the header line to section.

@@ -1,5 +1,5 @@
 Overriding accessor.
-::^~.Callable
+::^~Callable
   context\$context.Context\$
   @name\s\$
   return_type\s\$

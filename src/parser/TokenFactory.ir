@@ -11,7 +11,7 @@
 
 
 ::TokenList
-  @list+\A<~.BlockMarker|s>\ []
+  @list+\A<~BlockMarker|s>\ []
   @prevLines+\A<s>\ []
   @nextLines+\A<s>\ []
 
@@ -34,7 +34,7 @@
     // Recursive cases.
     if arg instanceof ~
       arg.list.forEach(##)
-        token\~.BlockMarker|s\$
+        token\~BlockMarker|s\$
         @.add(token)
       arg.prevLines.forEach(##)
         l\s\$
@@ -62,8 +62,8 @@
     @list[last] += arg
   => @
 
-:prepend\~.TokenList\
-  line\~.TokenList|s\$
+:prepend\~TokenList\
+  line\~TokenList|s\$
   if line instanceof ~.TokenList
     @prevLines = @prevLines.concat(line.prevLines)
     @nextLines = @nextLines.concat(line.nextLines)
@@ -72,7 +72,7 @@
   => @
 
 :append
-  line\~.TokenList|s\$
+  line\~TokenList|s\$
   if line instanceof ~.TokenList
     @prevLines = @prevLines.concat(line.prevLines)
     @nextLines = @nextLines.concat(line.nextLines)
@@ -91,13 +91,13 @@ String representation of the token list. Works only if there is no marker.
     @nextLines.join('')
 
 
-::ParamLine ^~.TokenList
+::ParamLine ^~TokenList
   @name+\s\$
   @isMember+\b\$
   @access+\s\$
   @type+\s\$
   @marker+\s\$
-  @init+\~.TokenList\$
+  @init+\~TokenList\$
   ^()
 
 :toString\s\

@@ -8657,12 +8657,12 @@ module.exports = (function() {
       }
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
-        if (input.substr(peg$currPos, 2) === peg$c246) {
-          s1 = peg$c246;
-          peg$currPos += 2;
+        if (input.charCodeAt(peg$currPos) === 126) {
+          s1 = peg$c249;
+          peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c247); }
+          if (peg$silentFails === 0) { peg$fail(peg$c250); }
         }
         if (s1 !== peg$FAILED) {
           s2 = [];

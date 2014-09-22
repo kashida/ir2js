@@ -33,7 +33,7 @@
   \function(string,...[!a])|function(...[boolean])\
 \~\
   \!Klass\
-\~.SamePackageClass\
+\~SamePackageClass\
   \!pkg.SamePackageClass\
 \abc.SomeClass\
   \!abc.SomeClass\

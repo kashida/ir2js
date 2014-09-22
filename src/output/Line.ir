@@ -3,7 +3,7 @@ Output lines corresponds to one input line.
   @input\$input.Line\$
   @indent&\n\ input.indent
   @prefixLines&\A<s>\ []
-  @lines+\~.Multiline\ &~.Multiline()
+  @lines+\~Multiline\ &~.Multiline()
   @linePrefix&\s\ ''
   @lineSuffix&\s\ ''
   @tailComment&\A<s>\ []
@@ -21,7 +21,7 @@ Output lines corresponds to one input line.
   out.appendAll(@prefixLines)
   out.appendLine(@linePrefix, false)
   @lines.lines.forEach(##)
-    line\s|~.Block\$
+    line\s|~Block\$
     i\n\$
     if line instanceof ~.Block
       out.appendBlock(line.output)

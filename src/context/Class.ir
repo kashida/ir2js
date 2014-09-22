@@ -3,7 +3,7 @@
   @ctor&\$section.Constructor|$section.Interface|-\
   @members\O<s,Member>\ {}
 
-:name\~.Name\
+:name\~Name\
   => @ctor.context.name
 
 :member
@@ -15,11 +15,11 @@
   member\Member\$
   @members[name] = member
 
-:methodName\~.Name\
+:methodName\~Name\
   method_name\s\$
   => @.name().property(method_name)
 
-:staticName\~.Name\
+:staticName\~Name\
   property_name\s\$
   => @.name().staticProperty(property_name)
 

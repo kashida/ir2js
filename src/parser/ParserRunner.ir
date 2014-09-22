@@ -1,6 +1,6 @@
 ::
 
-:run\~.TokenList|A|O|s\
+:run\~TokenList|A|O|s\
   lines\A<$input.Line>|s\$
   params\O\$
   if !(lines instanceof Array)
