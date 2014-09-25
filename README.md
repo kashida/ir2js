@@ -14,8 +14,8 @@ requierd for function parameters and class members variables.
 Closure annotations. Smaller code lowers refactoring barrier.
 - Explicit class system. Smaller overhead of defining a new class promotes
 designing code based on classes and how they interact with each other.
-- Indentations to express code blocks (as in Python) as well as data structures.
-This makes the code and data structures visually clearer.
+- Indentations to express code blocks (as in Python) as well as data structures
+(like YAML). This makes the code and data structures visually clearer.
 
 
 ## Features of the converter

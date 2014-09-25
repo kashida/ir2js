@@ -30,12 +30,12 @@ This is another comment.
 */
 ```
 
-As in this example, a code section starts with a line with a colon (with no
+As seen in this example, a code section starts with a line with a colon (with no
 indentation), followed by an indented block. There are several types of code
 sections. What is used here is simply `:` which marks a block of code. See
 [Code section types] for the complete list.
 
-Comments inside the code sections need to start with `//` (same as the line
+Comments inside the code sections need to start with a `//` (same as the line
 comments in JavaScript). __ir__ does not support block comments `/* ... */`.
 
 Also note, __ir__ is a line based language -- a line terminated by `\n` is one
@@ -158,7 +158,7 @@ ilst.
 
 Two concective `#`s introduces an anonymous function. Later we describe
 anonymous functions which take parameters.
-Simple `#` can be used for any parenthesized expression if the indented
+Simple `#` can be used for any parenthesized sub-expression if the indented
 block has only one line.
 
 ```
@@ -178,7 +178,7 @@ Here each indented line simply replaces one `#`.
 Also note this form of `#` matches one `#` to one line in the block while all
 other forms of `#` expressions match one `#` token to the entire block.
 
-The indented blocks can nest, and one line can take multiple `#` block markers.
+The indented blocks can nest, and one line can have multiple `#` block markers.
 
 ```
 :
@@ -214,15 +214,15 @@ block.
 These `#` tokens usually makes it unnecessary to use `|` to break a line.
 Using `#` to decompose the line is preferred over `|` because in this form the
 first line shows the overall structure of the expression while the following
-block fills the details of each sub-expressions.
+block fills the details of each sub-expression.
 
 
 ## Types
 
 In __ir__, all type annotations are enclosed in two back slashes. The allowed
 type names are same as what are allowed in Closure annotations, except that
-trailing `=` (denotes optional parameter) is not necessary and some shorthand
-type names are allowed:
+trailing `=` (denotes optional parameter) is not necessary, primitive type names
+are shorthanded, and the period after Array and Object are not necessary:
 
   b -- boolean
   s -- string
@@ -233,7 +233,7 @@ type names are allowed:
 
 ```
 :
-  a := \A.<n>\(some_function(##))
+  a := \A<n>\(some_function(##))
     i\n\$
     => i * i
 ```
@@ -251,12 +251,12 @@ Type notations in __ir__ are used in two places:
 2) Function return and parameter types (and member variables, see the section
 [Class]).
 
-The first line shows type casing. `A.<n>` is a shorthand of `Array.<number>`,
+The first line shows type casing. `A<n>` is a shorthand of `Array.<number>`,
 meaning the value is casted to an array of numbers. The cast always has the
 format: `/type_expression/(value_expression)`.
 
 As in Clousre, type casting is just for the static type checking (no coercion).
-So, this line: `a := \A.<n>\(some_function(##))` 
+So, this line: `a := \A<n>\(some_function(##))` 
 calls a function `some_function`, casts its return value to array of numbers,
 and then assigns the value to the variable `a`.
 
@@ -330,9 +330,9 @@ As shown, a class definition actually creates a constructor function. Since it
 is effectively a global function, it can have the same set of parameter
 declarations global functions can have (except that a constructor function can
 not have a return type).
-The class name in `::MyClass` line can be dropped (so the line is just `::`)
-in which case the converter uses the file name (minus `.ir` extension) for
-the class name.
+The class name in `::MyClass` line can be dropped (so the line becomes just
+`::`) in which case the converter uses the file name (minus `.ir` extension)
+for the class name.
 
 Member variables can also be declared in the class block along with the
 constructor parameters.
@@ -367,7 +367,7 @@ declarations, depending on how they are initialized.
 The member gets initialized with the `init_value`, which can be any expression
 and it may include parameter or member variables declared before this line.
 `init_value` is optional -- when it is not specified, the member is initialized
-with `null` (and you get Closure compiler gives you type error if the member
+with `null` (and you get a Closure compiler type error if the member
 variable type is not compatible with `null`).
 
 `@member_name\type_expression\$`
@@ -383,8 +383,9 @@ If the parameter is not provided, `default_value` is evaluated and used to
 initialize the member. `default_value` is optional -- when it is not specified
 and the parameter is not given, the member is initialzied with `null`.
 
-These member declarations and their initialization methods makes constructors
-to have nothing else to do which is often good for the object design.
+These member declarations and their initialization methods often allows
+constructors to have nothing else to do in the excution block which is in
+general good for the object design.
 
 Note in __ir__ member variables are always private, which means we need to
 create accessors in order to make them available even to sub-classes. __ir__
@@ -428,7 +429,7 @@ setter. These are JavaScript native getter / setter, so one can treat them
 like object properties.
 
 ```
-a := new MyClass(0, 1)
+a := &MyClass(0, 1)
 
 // This should output 1 (since the member is initialized with the second
 // constructor parameter above.
@@ -438,6 +439,7 @@ console.log(a.member)
 a.member = 2
 ```
 
+Constructing a class object uses `&` in __ir__ (instead of `new`).
 The point of allowing accessors to be created so easily is not to promote
 creating lots of data classes, but to make it easy to grow classes from static
 data container to one that have behaviors. In order to do that, __ir__ also
@@ -530,7 +532,7 @@ functions without passing around `this`.
 The members and methods can be accessed using `@`. Note while `@member_name`
 accesses the member variable from within the class (e.g. from a method),
 but `@.member_name` (note the period after `@`) accesses the accessor
-(which might be overridden).
+(which might be overridden) of the same name.
 For methods, private methods need to be accessed as `@method_name`, while
 public methods need to be accessed as `@.method_name`.
 
@@ -547,9 +549,9 @@ Optional parts of the line formats are in square brackets.
 This defines a class named ClassName. The file name is used as a class name
 if the name is not provided.
 
-`:[<][@]method_name[\return_type\]`
+`:[@]method_name[^][\return_type\]`
 
-This defines a method of the most recently defined class. `<` declares the
+This defines a method of the most recently defined class. `^` declares the
 method overrides a parent class method of the same name. `@` makes the method
 is private.
 
